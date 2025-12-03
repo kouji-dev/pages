@@ -16,7 +16,8 @@ This phase focuses on building the foundational features required for a function
 
 #### 1.1.1 Project Structure & Repository Setup
 **Priority**: Critical  
-**Estimated Time**: 3-5 days
+**Estimated Time**: 3-5 days  
+**Assigned To**: BATATA1, HWIMDA1 (shared setup)
 
 **Tasks**:
 - [ ] Initialize monorepo structure (or separate repos for frontend/backend)
@@ -40,7 +41,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.1.2 Database Schema Design & Setup
 **Priority**: Critical  
 **Estimated Time**: 5-7 days  
-**Dependencies**: 1.1.1
+**Dependencies**: 1.1.1  
+**Assigned To**: BATATA1
 
 **Backend Tasks**:
 - [ ] Design core database schema (users, organizations, projects, issues, pages, comments)
@@ -74,7 +76,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.1.3 Authentication & Authorization Foundation
 **Priority**: Critical  
 **Estimated Time**: 7-10 days  
-**Dependencies**: 1.1.2
+**Dependencies**: 1.1.2  
+**Assigned To**: HWIMDA1
 
 **Backend Tasks**:
 - [ ] Implement password hashing (bcrypt/Argon2)
@@ -136,7 +139,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.1.4 Basic API Structure & Infrastructure
 **Priority**: Critical  
 **Estimated Time**: 5-7 days  
-**Dependencies**: 1.1.1, 1.1.2
+**Dependencies**: 1.1.1, 1.1.2  
+**Assigned To**: BATATA1
 
 **Backend Tasks**:
 - [ ] Set up Express/Fastify/FastAPI server
@@ -165,7 +169,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.1.5 Frontend Foundation & UI Setup
 **Priority**: Critical  
 **Estimated Time**: 7-10 days  
-**Dependencies**: 1.1.1
+**Dependencies**: 1.1.1  
+**Assigned To**: BATATA2, HWIMDA2 (shared setup)
 
 **Frontend Tasks**:
 - [ ] Initialize React/Vue project with TypeScript
@@ -214,7 +219,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.2.1 User Management Backend
 **Priority**: High  
 **Estimated Time**: 5-7 days  
-**Dependencies**: 1.1.3, 1.1.4
+**Dependencies**: 1.1.3, 1.1.4  
+**Assigned To**: HWIMDA1
 
 **Tasks**:
 - [ ] Create user profile endpoint (GET /api/users/me)
@@ -242,7 +248,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.2.2 Organization Management Backend
 **Priority**: High  
 **Estimated Time**: 7-10 days  
-**Dependencies**: 1.1.2, 1.1.4
+**Dependencies**: 1.1.2, 1.1.4  
+**Assigned To**: BATATA1
 
 **Tasks**:
 - [ ] Create organization creation endpoint (POST /api/organizations)
@@ -284,7 +291,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.2.3 User & Organization Management Frontend
 **Priority**: High  
 **Estimated Time**: 7-10 days  
-**Dependencies**: 1.2.1, 1.2.2, 1.1.5
+**Dependencies**: 1.2.1, 1.2.2, 1.1.5  
+**Assigned To**: BATATA2
 
 **Tasks**:
 - [ ] Create user profile page
@@ -324,7 +332,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.3.1 Project Management Backend - Projects
 **Priority**: Critical  
 **Estimated Time**: 7-10 days  
-**Dependencies**: 1.2.2, 1.1.4
+**Dependencies**: 1.2.2, 1.1.4  
+**Assigned To**: HWIMDA1
 
 **Tasks**:
 - [ ] Create project creation endpoint (POST /api/projects)
@@ -361,7 +370,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.3.2 Project Management Backend - Issues (Part 1: Core CRUD)
 **Priority**: Critical  
 **Estimated Time**: 10-14 days  
-**Dependencies**: 1.3.1, 1.1.4
+**Dependencies**: 1.3.1, 1.1.4  
+**Assigned To**: BATATA1
 
 **Tasks**:
 - [ ] Create issue creation endpoint (POST /api/issues)
@@ -411,7 +421,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.3.3 Project Management Backend - Issues (Part 2: Comments)
 **Priority**: High  
 **Estimated Time**: 5-7 days  
-**Dependencies**: 1.3.2
+**Dependencies**: 1.3.2  
+**Assigned To**: HWIMDA1
 
 **Tasks**:
 - [ ] Create comment creation endpoint (POST /api/issues/:id/comments)
@@ -446,7 +457,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.3.4 Project Management Backend - File Attachments
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
-**Dependencies**: 1.3.2, 1.1.4
+**Dependencies**: 1.3.2, 1.1.4  
+**Assigned To**: BATATA1
 
 **Tasks**:
 - [ ] Set up file storage (S3 or local filesystem)
@@ -479,7 +491,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.3.5 Project Management Frontend - Projects
 **Priority**: Critical  
 **Estimated Time**: 7-10 days  
-**Dependencies**: 1.3.1, 1.1.5
+**Dependencies**: 1.3.1, 1.1.5  
+**Assigned To**: HWIMDA2
 
 **Tasks**:
 - [ ] Create project list page
@@ -515,7 +528,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.3.6 Project Management Frontend - Issues (Part 1: List & Detail)
 **Priority**: Critical  
 **Estimated Time**: 10-14 days  
-**Dependencies**: 1.3.2, 1.1.5
+**Dependencies**: 1.3.2, 1.1.5  
+**Assigned To**: BATATA2
 
 **Tasks**:
 - [ ] Create issue list page
@@ -564,7 +578,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.3.7 Project Management Frontend - Comments & Attachments
 **Priority**: High  
 **Estimated Time**: 7-10 days  
-**Dependencies**: 1.3.3, 1.3.4, 1.3.6
+**Dependencies**: 1.3.3, 1.3.4, 1.3.6  
+**Assigned To**: HWIMDA2
 
 **Tasks**:
 - [ ] Create comment component
@@ -605,7 +620,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.3.8 Project Management Frontend - Kanban Board
 **Priority**: Critical  
 **Estimated Time**: 10-14 days  
-**Dependencies**: 1.3.6, 1.1.5
+**Dependencies**: 1.3.6, 1.1.5  
+**Assigned To**: BATATA2
 
 **Tasks**:
 - [ ] Create Kanban board component
@@ -646,7 +662,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.4.1 Documentation Backend - Spaces
 **Priority**: High  
 **Estimated Time**: 5-7 days  
-**Dependencies**: 1.2.2, 1.1.4
+**Dependencies**: 1.2.2, 1.1.4  
+**Assigned To**: HWIMDA1
 
 **Tasks**:
 - [ ] Create space creation endpoint (POST /api/spaces)
@@ -678,7 +695,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.4.2 Documentation Backend - Pages (Part 1: Core CRUD)
 **Priority**: Critical  
 **Estimated Time**: 10-14 days  
-**Dependencies**: 1.4.1, 1.1.4
+**Dependencies**: 1.4.1, 1.1.4  
+**Assigned To**: BATATA1
 
 **Tasks**:
 - [ ] Create page creation endpoint (POST /api/pages)
@@ -724,7 +742,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.4.3 Documentation Backend - Pages (Part 2: Comments)
 **Priority**: High  
 **Estimated Time**: 3-5 days  
-**Dependencies**: 1.4.2
+**Dependencies**: 1.4.2  
+**Assigned To**: HWIMDA1
 
 **Tasks**:
 - [ ] Create page comment creation endpoint (POST /api/pages/:id/comments)
@@ -746,7 +765,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.4.4 Documentation Backend - Rich Text & Templates
 **Priority**: Medium  
 **Estimated Time**: 5-7 days  
-**Dependencies**: 1.4.2
+**Dependencies**: 1.4.2  
+**Assigned To**: BATATA1
 
 **Tasks**:
 - [ ] Set up rich text storage format (HTML, Markdown, or JSON)
@@ -770,7 +790,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.4.5 Documentation Frontend - Spaces
 **Priority**: High  
 **Estimated Time**: 5-7 days  
-**Dependencies**: 1.4.1, 1.1.5
+**Dependencies**: 1.4.1, 1.1.5  
+**Assigned To**: HWIMDA2
 
 **Tasks**:
 - [ ] Create space list page
@@ -794,7 +815,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.4.6 Documentation Frontend - Page Editor
 **Priority**: Critical  
 **Estimated Time**: 10-14 days  
-**Dependencies**: 1.4.2, 1.4.4, 1.1.5
+**Dependencies**: 1.4.2, 1.4.4, 1.1.5  
+**Assigned To**: BATATA2
 
 **Tasks**:
 - [ ] Choose and integrate rich text editor (Tiptap, Slate, Draft.js, or similar)
@@ -841,7 +863,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.4.7 Documentation Frontend - Page Comments
 **Priority**: High  
 **Estimated Time**: 3-5 days  
-**Dependencies**: 1.4.3, 1.4.6
+**Dependencies**: 1.4.3, 1.4.6  
+**Assigned To**: HWIMDA2
 
 **Tasks**:
 - [ ] Reuse comment components from issue comments (1.3.7)
@@ -863,7 +886,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.5.1 Basic Search Backend
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
-**Dependencies**: 1.3.2, 1.4.2, 1.1.4
+**Dependencies**: 1.3.2, 1.4.2, 1.1.4  
+**Assigned To**: HWIMDA1
 
 **Tasks**:
 - [ ] Set up search solution (PostgreSQL full-text search or basic Elasticsearch)
@@ -893,7 +917,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.5.2 Search Frontend
 **Priority**: Medium  
 **Estimated Time**: 5-7 days  
-**Dependencies**: 1.5.1, 1.1.5
+**Dependencies**: 1.5.1, 1.1.5  
+**Assigned To**: BATATA2
 
 **Tasks**:
 - [ ] Create search bar component (in header)
@@ -921,7 +946,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.6.1 Notifications Backend
 **Priority**: High  
 **Estimated Time**: 7-10 days  
-**Dependencies**: 1.3.2, 1.4.2, 1.1.4
+**Dependencies**: 1.3.2, 1.4.2, 1.1.4  
+**Assigned To**: BATATA1
 
 **Tasks**:
 - [ ] Design notification system architecture
@@ -955,7 +981,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.6.2 Notifications Frontend
 **Priority**: High  
 **Estimated Time**: 5-7 days  
-**Dependencies**: 1.6.1, 1.1.5
+**Dependencies**: 1.6.1, 1.1.5  
+**Assigned To**: HWIMDA2
 
 **Tasks**:
 - [ ] Create notification bell icon component (in header)
@@ -992,7 +1019,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.7.1 REST API Documentation & Authentication
 **Priority**: Medium  
 **Estimated Time**: 5-7 days  
-**Dependencies**: 1.1.4, 1.1.3
+**Dependencies**: 1.1.4, 1.1.3  
+**Assigned To**: HWIMDA1
 
 **Tasks**:
 - [ ] Set up API authentication for external access
@@ -1019,7 +1047,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.7.2 Basic Integrations - Slack
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
-**Dependencies**: 1.7.1, 1.3.2
+**Dependencies**: 1.7.1, 1.3.2  
+**Assigned To**: BATATA1
 
 **Tasks**:
 - [ ] Set up Slack app in Slack API
@@ -1051,7 +1080,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.7.3 Basic Integrations - GitHub
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
-**Dependencies**: 1.7.1, 1.3.2
+**Dependencies**: 1.7.1, 1.3.2  
+**Assigned To**: HWIMDA1
 
 **Tasks**:
 - [ ] Set up GitHub OAuth app
@@ -1087,7 +1117,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.8.1 Mobile Responsive Design
 **Priority**: High  
 **Estimated Time**: 10-14 days  
-**Dependencies**: All frontend tasks
+**Dependencies**: All frontend tasks  
+**Assigned To**: BATATA2, HWIMDA2 (shared)
 
 **Tasks**:
 - [ ] Audit all pages for mobile responsiveness
@@ -1117,7 +1148,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.8.2 Performance Optimization
 **Priority**: Medium  
 **Estimated Time**: 5-7 days  
-**Dependencies**: All frontend tasks
+**Dependencies**: All frontend tasks  
+**Assigned To**: BATATA2
 
 **Tasks**:
 - [ ] Implement code splitting
@@ -1147,7 +1179,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.8.3 Error Handling & User Feedback
 **Priority**: High  
 **Estimated Time**: 5-7 days  
-**Dependencies**: All tasks
+**Dependencies**: All tasks  
+**Assigned To**: HWIMDA2
 
 **Tasks**:
 - [ ] Create comprehensive error boundary components
@@ -1173,7 +1206,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.9.1 Backend Testing
 **Priority**: Critical  
 **Estimated Time**: 10-14 days  
-**Dependencies**: All backend tasks
+**Dependencies**: All backend tasks  
+**Assigned To**: BATATA1, HWIMDA1 (shared)
 
 **Tasks**:
 - [ ] Set up testing framework (Jest, pytest, etc.)
@@ -1202,7 +1236,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.9.2 Frontend Testing
 **Priority**: High  
 **Estimated Time**: 10-14 days  
-**Dependencies**: All frontend tasks
+**Dependencies**: All frontend tasks  
+**Assigned To**: BATATA2, HWIMDA2 (shared)
 
 **Tasks**:
 - [ ] Set up testing framework (Jest, Vitest, etc.)
@@ -1235,7 +1270,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.10.1 Infrastructure Setup
 **Priority**: Critical  
 **Estimated Time**: 10-14 days  
-**Dependencies**: All tasks
+**Dependencies**: All tasks  
+**Assigned To**: BATATA1, HWIMDA1 (shared)
 
 **Tasks**:
 - [ ] Set up cloud infrastructure (AWS/GCP/Azure)
@@ -1271,7 +1307,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.10.2 Security & Compliance
 **Priority**: Critical  
 **Estimated Time**: 7-10 days  
-**Dependencies**: All tasks
+**Dependencies**: All tasks  
+**Assigned To**: HWIMDA1
 
 **Tasks**:
 - [ ] Security audit
@@ -1295,7 +1332,8 @@ This phase focuses on building the foundational features required for a function
 #### 1.10.3 Documentation & Launch Materials
 **Priority**: High  
 **Estimated Time**: 7-10 days  
-**Dependencies**: All tasks
+**Dependencies**: All tasks  
+**Assigned To**: BATATA2, HWIMDA2 (shared)
 
 **Tasks**:
 - [ ] Write user documentation

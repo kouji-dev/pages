@@ -17,7 +17,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.1.1 Sprint Management Backend
 **Priority**: High  
 **Estimated Time**: 7-10 days  
-**Dependencies**: Phase 1.3.2
+**Dependencies**: Phase 1.3.2  
+**Assigned To**: BATATA1
 
 **Tasks**:
 - [ ] Design sprint data model
@@ -54,7 +55,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.1.2 Scrum Board Frontend
 **Priority**: High  
 **Estimated Time**: 10-14 days  
-**Dependencies**: 2.1.1, Phase 1.3.8
+**Dependencies**: 2.1.1, Phase 1.3.8  
+**Assigned To**: BATATA2
 
 **Tasks**:
 - [ ] Create sprint selector component
@@ -90,7 +92,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.1.3 Backlog Management Backend
 **Priority**: High  
 **Estimated Time**: 5-7 days  
-**Dependencies**: 2.1.1
+**Dependencies**: 2.1.1  
+**Assigned To**: HWIMDA1
 
 **Tasks**:
 - [ ] Create backlog endpoint (GET /api/projects/:id/backlog)
@@ -113,7 +116,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.1.4 Backlog Management Frontend
 **Priority**: High  
 **Estimated Time**: 7-10 days  
-**Dependencies**: 2.1.3, Phase 1.3.6
+**Dependencies**: 2.1.3, Phase 1.3.6  
+**Assigned To**: HWIMDA2
 
 **Tasks**:
 - [ ] Create backlog view component
@@ -138,7 +142,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.2.1 Custom Workflows Backend
 **Priority**: High  
 **Estimated Time**: 10-14 days  
-**Dependencies**: Phase 1.3.2
+**Dependencies**: Phase 1.3.2  
+**Assigned To**: HWIMDA1
 
 **Tasks**:
 - [ ] Design workflow data model
@@ -171,7 +176,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.2.2 Custom Workflows Frontend
 **Priority**: High  
 **Estimated Time**: 10-14 days  
-**Dependencies**: 2.2.1, Phase 1.3.6
+**Dependencies**: 2.2.1, Phase 1.3.6  
+**Assigned To**: HWIMDA2
 
 **Tasks**:
 - [ ] Create workflow builder UI
@@ -196,7 +202,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.2.3 Custom Fields Backend
 **Priority**: High  
 **Estimated Time**: 10-14 days  
-**Dependencies**: Phase 1.3.2
+**Dependencies**: Phase 1.3.2  
+**Assigned To**: BATATA1
 
 **Tasks**:
 - [ ] Design custom field data model
@@ -228,7 +235,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.2.4 Custom Fields Frontend
 **Priority**: High  
 **Estimated Time**: 10-14 days  
-**Dependencies**: 2.2.3, Phase 1.3.6
+**Dependencies**: 2.2.3, Phase 1.3.6  
+**Assigned To**: BATATA2
 
 **Tasks**:
 - [ ] Create custom field form component
@@ -257,7 +265,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.2.5 Issue Linking Backend
 **Priority**: Medium  
 **Estimated Time**: 5-7 days  
-**Dependencies**: Phase 1.3.2
+**Dependencies**: Phase 1.3.2  
+**Assigned To**: HWIMDA1
 
 **Tasks**:
 - [ ] Design issue link data model
@@ -279,7 +288,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.2.6 Issue Linking Frontend
 **Priority**: Medium  
 **Estimated Time**: 5-7 days  
-**Dependencies**: 2.2.5, Phase 1.3.6
+**Dependencies**: 2.2.5, Phase 1.3.6  
+**Assigned To**: HWIMDA2
 
 **Tasks**:
 - [ ] Create issue link component
@@ -303,7 +313,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.2.7 Advanced Search & Filters Backend
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
-**Dependencies**: Phase 1.5.1, 2.2.3
+**Dependencies**: Phase 1.5.1, 2.2.3  
+**Assigned To**: BATATA1
 
 **Tasks**:
 - [ ] Enhance search with advanced filters
@@ -329,7 +340,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.2.8 Advanced Search & Filters Frontend
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
-**Dependencies**: 2.2.7, Phase 1.5.2
+**Dependencies**: 2.2.7, Phase 1.5.2  
+**Assigned To**: BATATA2
 
 **Tasks**:
 - [ ] Create advanced filter builder UI
@@ -355,7 +367,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.2.9 Time Tracking Backend
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
-**Dependencies**: Phase 1.3.2
+**Dependencies**: Phase 1.3.2  
+**Assigned To**: HWIMDA1
 
 **Tasks**:
 - [ ] Design time tracking data model
@@ -380,7 +393,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.2.10 Time Tracking Frontend
 **Priority**: Medium  
 **Estimated Time**: 5-7 days  
-**Dependencies**: 2.2.9, Phase 1.3.6
+**Dependencies**: 2.2.9, Phase 1.3.6  
+**Assigned To**: HWIMDA2
 
 **Tasks**:
 - [ ] Create time entry form component
@@ -405,7 +419,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.2.11 Subtasks Backend
 **Priority**: Medium  
 **Estimated Time**: 5-7 days  
-**Dependencies**: Phase 1.3.2
+**Dependencies**: Phase 1.3.2  
+**Assigned To**: BATATA1
 
 **Tasks**:
 - [ ] Extend issue model to support parent-child relationships
@@ -429,7 +444,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.2.12 Subtasks Frontend
 **Priority**: Medium  
 **Estimated Time**: 5-7 days  
-**Dependencies**: 2.2.11, Phase 1.3.6
+**Dependencies**: 2.2.11, Phase 1.3.6  
+**Assigned To**: BATATA2
 
 **Tasks**:
 - [ ] Create subtask list component
@@ -452,7 +468,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.2.13 Basic Dashboards Backend
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
-**Dependencies**: Phase 1.3.2, 2.1.1
+**Dependencies**: Phase 1.3.2, 2.1.1  
+**Assigned To**: HWIMDA1
 
 **Tasks**:
 - [ ] Design dashboard data model
@@ -480,7 +497,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.2.14 Basic Dashboards Frontend
 **Priority**: Medium  
 **Estimated Time**: 10-14 days  
-**Dependencies**: 2.2.13, Phase 1.1.5
+**Dependencies**: 2.2.13, Phase 1.1.5  
+**Assigned To**: HWIMDA2
 
 **Tasks**:
 - [ ] Choose charting library (Recharts, Chart.js, etc.)
@@ -515,7 +533,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.3.1 Real-Time Collaboration Backend
 **Priority**: High  
 **Estimated Time**: 10-14 days  
-**Dependencies**: Phase 1.4.2
+**Dependencies**: Phase 1.4.2  
+**Assigned To**: BATATA1
 
 **Tasks**:
 - [ ] Set up WebSocket server (Socket.io or similar)
@@ -544,7 +563,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.3.2 Real-Time Collaboration Frontend
 **Priority**: High  
 **Estimated Time**: 10-14 days  
-**Dependencies**: 2.3.1, Phase 1.4.6
+**Dependencies**: 2.3.1, Phase 1.4.6  
+**Assigned To**: BATATA2
 
 **Tasks**:
 - [ ] Integrate WebSocket client
@@ -574,7 +594,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.3.3 Version History Backend
 **Priority**: High  
 **Estimated Time**: 7-10 days  
-**Dependencies**: Phase 1.4.2
+**Dependencies**: Phase 1.4.2  
+**Assigned To**: HWIMDA1
 
 **Tasks**:
 - [ ] Design version history data model
@@ -601,7 +622,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.3.4 Version History Frontend
 **Priority**: High  
 **Estimated Time**: 7-10 days  
-**Dependencies**: 2.3.3, Phase 1.4.6
+**Dependencies**: 2.3.3, Phase 1.4.6  
+**Assigned To**: HWIMDA2
 
 **Tasks**:
 - [ ] Create version history sidebar/panel
@@ -628,7 +650,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.3.5 Advanced Templates & Macros Backend
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
-**Dependencies**: Phase 1.4.4
+**Dependencies**: Phase 1.4.4  
+**Assigned To**: BATATA1
 
 **Tasks**:
 - [ ] Expand template system
@@ -661,7 +684,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.3.6 Advanced Templates & Macros Frontend
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
-**Dependencies**: 2.3.5, Phase 1.4.6
+**Dependencies**: 2.3.5, Phase 1.4.6  
+**Assigned To**: BATATA2
 
 **Tasks**:
 - [ ] Create template gallery UI
@@ -687,7 +711,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.3.7 Whiteboards Backend
 **Priority**: Medium  
 **Estimated Time**: 10-14 days  
-**Dependencies**: Phase 1.4.2
+**Dependencies**: Phase 1.4.2  
+**Assigned To**: HWIMDA1
 
 **Tasks**:
 - [ ] Design whiteboard data model
@@ -711,7 +736,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.3.8 Whiteboards Frontend
 **Priority**: Medium  
 **Estimated Time**: 10-14 days  
-**Dependencies**: 2.3.7, 2.3.1
+**Dependencies**: 2.3.7, 2.3.1  
+**Assigned To**: HWIMDA2
 
 **Tasks**:
 - [ ] Choose whiteboard library (Excalidraw, Fabric.js, etc.) or build custom
@@ -741,7 +767,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.3.9 Advanced Permissions Backend
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
-**Dependencies**: Phase 1.4.1
+**Dependencies**: Phase 1.4.1  
+**Assigned To**: BATATA1
 
 **Tasks**:
 - [ ] Extend permission system
@@ -765,7 +792,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.3.10 Advanced Permissions Frontend
 **Priority**: Medium  
 **Estimated Time**: 5-7 days  
-**Dependencies**: 2.3.9, Phase 1.4.5
+**Dependencies**: 2.3.9, Phase 1.4.5  
+**Assigned To**: BATATA2
 
 **Tasks**:
 - [ ] Create permission management UI
@@ -785,7 +813,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.3.11 Export Functionality Backend
 **Priority**: Low  
 **Estimated Time**: 5-7 days  
-**Dependencies**: Phase 1.4.2
+**Dependencies**: Phase 1.4.2  
+**Assigned To**: HWIMDA1
 
 **Tasks**:
 - [ ] Create PDF export endpoint (GET /api/pages/:id/export/pdf)
@@ -808,7 +837,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.3.12 Export Functionality Frontend
 **Priority**: Low  
 **Estimated Time**: 3-5 days  
-**Dependencies**: 2.3.11, Phase 1.4.6
+**Dependencies**: 2.3.11, Phase 1.4.6  
+**Assigned To**: HWIMDA2
 
 **Tasks**:
 - [ ] Create export menu/button
@@ -832,7 +862,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.4.1 Mobile Apps - iOS/Android Setup
 **Priority**: High  
 **Estimated Time**: 5-7 days  
-**Dependencies**: Phase 1.7.1
+**Dependencies**: Phase 1.7.1  
+**Assigned To**: BATATA2, HWIMDA2 (shared)
 
 **Tasks**:
 - [ ] Choose mobile framework (React Native, Flutter)
@@ -853,7 +884,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.4.2 Mobile Apps - Core Features
 **Priority**: High  
 **Estimated Time**: 14-21 days  
-**Dependencies**: 2.4.1, Phase 1
+**Dependencies**: 2.4.1, Phase 1  
+**Assigned To**: BATATA2, HWIMDA2 (shared)
 
 **Tasks**:
 - [ ] Implement authentication screens (login, register)
@@ -880,7 +912,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.4.3 Advanced API - Webhooks
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
-**Dependencies**: Phase 1.7.1
+**Dependencies**: Phase 1.7.1  
+**Assigned To**: BATATA1
 
 **Tasks**:
 - [ ] Design webhook data model
@@ -907,7 +940,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.4.4 Advanced API - GraphQL (Optional)
 **Priority**: Low  
 **Estimated Time**: 10-14 days  
-**Dependencies**: Phase 1.7.1
+**Dependencies**: Phase 1.7.1  
+**Assigned To**: HWIMDA1
 
 **Tasks**:
 - [ ] Set up GraphQL server (Apollo Server, GraphQL.js)
@@ -931,7 +965,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.4.5 Additional Integrations
 **Priority**: Medium  
 **Estimated Time**: 5-7 days per integration  
-**Dependencies**: Phase 1.7.1
+**Dependencies**: Phase 1.7.1  
+**Assigned To**: BATATA1, HWIMDA1 (shared)
 
 **Tasks**:
 - [ ] **GitLab Integration** (similar to GitHub)
@@ -962,7 +997,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.4.6 Automation Rules Backend
 **Priority**: High  
 **Estimated Time**: 10-14 days  
-**Dependencies**: Phase 1.3.2, 2.2.1
+**Dependencies**: Phase 1.3.2, 2.2.1  
+**Assigned To**: HWIMDA1
 
 **Tasks**:
 - [ ] Design automation rule data model
@@ -997,7 +1033,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.4.7 Automation Rules Frontend
 **Priority**: High  
 **Estimated Time**: 10-14 days  
-**Dependencies**: 2.4.6, Phase 1.1.5
+**Dependencies**: 2.4.6, Phase 1.1.5  
+**Assigned To**: HWIMDA2
 
 **Tasks**:
 - [ ] Create automation rule list page
@@ -1022,7 +1059,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.4.8 Advanced Reporting Backend
 **Priority**: Medium  
 **Estimated Time**: 10-14 days  
-**Dependencies**: Phase 1.3.2, 2.1.1, 2.2.9
+**Dependencies**: Phase 1.3.2, 2.1.1, 2.2.9  
+**Assigned To**: BATATA1
 
 **Tasks**:
 - [ ] Create report generation system
@@ -1048,7 +1086,8 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 #### 2.4.9 Advanced Reporting Frontend
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
-**Dependencies**: 2.4.8, 2.2.14
+**Dependencies**: 2.4.8, 2.2.14  
+**Assigned To**: BATATA2
 
 **Tasks**:
 - [ ] Create report selection UI
