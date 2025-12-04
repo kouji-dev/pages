@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { BaseLayoutComponent } from './base-layout.component';
+import { BaseLayout } from './base-layout';
 
-describe('BaseLayoutComponent', () => {
-  let component: BaseLayoutComponent;
-  let fixture: ComponentFixture<BaseLayoutComponent>;
+describe('BaseLayout', () => {
+  let component: BaseLayout;
+  let fixture: ComponentFixture<BaseLayout>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BaseLayoutComponent, RouterTestingModule],
+      imports: [BaseLayout, RouterTestingModule],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(BaseLayoutComponent);
+    fixture = TestBed.createComponent(BaseLayout);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

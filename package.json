@@ -77,7 +77,8 @@
     "vitest": "^4.0.8"
   },
   "imports": {
-    "#theme": "./libraries/shared-ui/src/styles.css"
+    "#theme": "./libraries/shared-ui/src/styles.css",
+    "#mainstyles": "./clients/app1/src/styles.css"
   },
   "engines": {
     "node": ">=20.0.0",
