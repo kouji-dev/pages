@@ -1,0 +1,92 @@
+{
+  "name": "pages-monorepo",
+  "version": "0.0.1",
+  "description": "Pages - Jira and Confluence alternative",
+  "workspaces": [
+    "clients/*",
+    "libraries/*"
+  ],
+  "scripts": {
+    "ng": "ng",
+    "dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up",
+    "dev:app1": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up app1",
+    "start": "ng serve",
+    "start:app1": "ng serve app1",
+    "build": "docker-compose run --rm app1 pnpm build",
+    "build:app1": "ng build app1",
+    "watch": "ng build --watch --configuration development",
+    "test": "docker-compose run --rm app1 pnpm test",
+    "test:app1": "ng test app1",
+    "lint": "docker-compose run --rm app1 pnpm oxlint",
+    "lint:type-aware": "docker-compose run --rm app1 pnpm oxlint --type-aware",
+    "lint:local": "oxlint",
+    "format": "prettier --write \"**/*.{ts,html,css,scss,json,md}\" --ignore-path .prettierignore",
+    "format:check": "prettier --check \"**/*.{ts,html,css,scss,json,md}\" --ignore-path .prettierignore",
+    "typecheck": "docker-compose run --rm app1 pnpm typecheck",
+    "typecheck:app1": "ng build app1 --configuration development",
+    "clean": "docker-compose down -v && docker system prune -f",
+    "logs": "docker-compose logs -f",
+    "logs:app1": "docker-compose logs -f app1",
+    "prepare": "husky"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "singleQuote": true,
+    "overrides": [
+      {
+        "files": "*.html",
+        "options": {
+          "parser": "angular"
+        }
+      }
+    ]
+  },
+  "private": true,
+  "packageManager": "pnpm@10.14.0",
+  "dependencies": {
+    "@angular/animations": "^21.0.0",
+    "@angular/common": "^21.0.0",
+    "@angular/compiler": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "@angular/forms": "^21.0.0",
+    "@angular/platform-browser": "^21.0.0",
+    "@angular/platform-browser-dynamic": "^21.0.0",
+    "@angular/router": "^21.0.0",
+    "echarts": "^5.5.0",
+    "luxon": "^3.5.0",
+    "ngx-echarts": "^17.0.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "^0.15.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^21.0.2",
+    "@angular/cli": "^21.0.2",
+    "@angular/compiler-cli": "^21.0.0",
+    "@tailwindcss/postcss": "^4.1.17",
+    "@types/node": "^22.0.0",
+    "husky": "^9.0.0",
+    "jsdom": "^27.1.0",
+    "lint-staged": "^15.2.0",
+    "ng-packagr": "^21.0.0",
+    "oxlint": "^0.15.0",
+    "postcss": "^8.5.6",
+    "prettier": "^3.3.0",
+    "tailwindcss": "^4.1.17",
+    "typescript": "~5.9.0",
+    "vitest": "^4.0.8"
+  },
+  "imports": {
+    "#theme": "./libraries/shared-ui/src/styles.css"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "lint-staged": {
+    "*.{ts,html,css,scss,json,md}": [
+      "prettier --write",
+      "oxlint --tsconfig tsconfig.json"
+    ]
+  }
+}

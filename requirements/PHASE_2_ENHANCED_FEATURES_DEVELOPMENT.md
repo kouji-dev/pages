@@ -1,4 +1,5 @@
 # Phase 2: Enhanced Features Development Tasks
+
 **Timeline**: Months 6-12  
 **Goal**: Add advanced project management features, documentation enhancements, and platform improvements
 
@@ -8,19 +9,41 @@
 
 This phase builds upon the MVP foundation, adding advanced features that enhance productivity, collaboration, and platform capabilities. Tasks are organized by dependency order and feature areas.
 
+### Task Organization Principles
+
+**Each task is designed to be:**
+
+- **Concise**: Focused on a single, clear deliverable
+- **Isolated**: Contains separated logic that doesn't overlap with other tasks
+- **Independent**: Can be worked on independently by assigned developers
+- **Testable**: Includes its own testing requirements
+- **Parallelizable**: Multiple tasks can be worked on simultaneously when dependencies allow
+
+**Task Structure:**
+
+- Each task has a unique ID (e.g., `2.1.1`, `2.2.5`)
+- Clear dependencies listed (minimal and specific)
+- Single developer assignment (or shared for collaborative tasks)
+- Estimated time for completion
+- Deliverables clearly defined
+
 ---
 
 ## Phase 2.1: Project Management Enhancements - Sprints & Scrum (Weeks 1-4)
 
 ### Dependencies: Phase 1.3 (Issues, Kanban Board)
 
-#### 2.1.1 Sprint Management Backend
+**Note**: Tasks in this phase are split into independent backend and frontend tasks that can be worked on in parallel after initial dependencies are met. Backend tasks (2.1.1-2.1.11) can be started once Phase 1.3.2 (Issue CRUD) is complete. Frontend tasks (2.1.4-2.1.14) depend on corresponding backend APIs and Phase 1 frontend foundation.
+
+#### 2.1.1 Sprint Data Model and CRUD API
+
 **Priority**: High  
-**Estimated Time**: 7-10 days  
+**Estimated Time**: 3-4 days  
 **Dependencies**: Phase 1.3.2  
 **Assigned To**: BATATA1
 
-**Tasks**:
+**Backend Tasks**:
+
 - [ ] Design sprint data model
   - [ ] Sprints table (id, project_id, name, goal, start_date, end_date, status)
   - [ ] SprintIssues table (sprint_id, issue_id, order)
@@ -28,110 +51,397 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
   - [ ] Validate dates (start < end)
   - [ ] Check for overlapping sprints
   - [ ] Set default sprint name (e.g., "Sprint 1")
+  - [ ] Create sprint record
 - [ ] Create sprint retrieval endpoint (GET /api/sprints/:id)
   - [ ] Include sprint issues
-  - [ ] Include sprint metrics (velocity, completion)
+  - [ ] Include basic sprint info (name, goal, dates, status)
 - [ ] Create sprint list endpoint (GET /api/projects/:id/sprints)
   - [ ] Filter by status (active, planned, completed)
   - [ ] Sort by start date
+  - [ ] Pagination support
 - [ ] Create sprint update endpoint (PUT /api/sprints/:id)
   - [ ] Update name, goal, dates
   - [ ] Update status
+  - [ ] Validate date ranges
 - [ ] Create sprint deletion endpoint (DELETE /api/sprints/:id)
-- [ ] Create add issue to sprint endpoint (PUT /api/sprints/:id/issues)
-- [ ] Create remove issue from sprint endpoint (DELETE /api/sprints/:id/issues/:issueId)
-- [ ] Create sprint completion endpoint (POST /api/sprints/:id/complete)
-  - [ ] Move incomplete issues to backlog
-  - [ ] Calculate sprint metrics
-- [ ] Implement sprint velocity calculation
-- [ ] Write sprint API tests
+  - [ ] Permission check (project admin)
+  - [ ] Handle sprint issues (move to backlog or delete)
+- [ ] Write sprint CRUD API tests
 
 **Deliverables**:
-- Sprint management APIs
-- Sprint velocity tracking
+
+- Sprint data model and migrations
+- Sprint CRUD API endpoints
+- API tests
 
 ---
 
-#### 2.1.2 Scrum Board Frontend
+#### 2.1.2 Sprint Issue Management API
+
 **Priority**: High  
-**Estimated Time**: 10-14 days  
+**Estimated Time**: 2-3 days  
+**Dependencies**: 2.1.1  
+**Assigned To**: BATATA1
+
+**Backend Tasks**:
+
+- [ ] Create add issue to sprint endpoint (PUT /api/sprints/:id/issues)
+  - [ ] Validate issue belongs to same project
+  - [ ] Check issue not already in another active sprint
+  - [ ] Add issue to SprintIssues table with order
+- [ ] Create remove issue from sprint endpoint (DELETE /api/sprints/:id/issues/:issueId)
+  - [ ] Remove from SprintIssues table
+  - [ ] Move issue back to backlog
+- [ ] Create reorder sprint issues endpoint (PUT /api/sprints/:id/issues/reorder)
+  - [ ] Update order of issues in sprint
+- [ ] Write sprint issue management API tests
+
+**Deliverables**:
+
+- Sprint issue management endpoints
+- API tests
+
+---
+
+#### 2.1.3 Sprint Metrics and Completion API
+
+**Priority**: High  
+**Estimated Time**: 2-3 days  
+**Dependencies**: 2.1.1  
+**Assigned To**: BATATA1
+
+**Backend Tasks**:
+
+- [ ] Implement sprint velocity calculation
+  - [ ] Calculate completed story points per sprint
+  - [ ] Track velocity over multiple sprints
+  - [ ] Average velocity calculation
+- [ ] Create sprint metrics endpoint (GET /api/sprints/:id/metrics)
+  - [ ] Return velocity, completion percentage
+  - [ ] Return issue counts by status
+  - [ ] Return burndown data points
+- [ ] Create sprint completion endpoint (POST /api/sprints/:id/complete)
+  - [ ] Validate all issues moved to final status or handle incomplete
+  - [ ] Move incomplete issues to backlog
+  - [ ] Calculate and store sprint metrics
+  - [ ] Update sprint status to completed
+- [ ] Write sprint metrics API tests
+
+**Deliverables**:
+
+- Sprint velocity calculation
+- Sprint metrics endpoint
+- Sprint completion functionality
+- API tests
+
+---
+
+#### 2.1.4 Sprint Selector Component
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
 **Dependencies**: 2.1.1, Phase 1.3.8  
 **Assigned To**: BATATA2
 
-**Tasks**:
-- [ ] Create sprint selector component
-  - [ ] Active sprint dropdown
-  - [ ] Create new sprint button
-- [ ] Create sprint board component
-  - [ ] Similar to Kanban but sprint-focused
-  - [ ] Sprint header (name, dates, goal, progress)
-  - [ ] Columns (Backlog, To Do, In Progress, In Review, Done)
-- [ ] Create sprint creation modal
-  - [ ] Sprint name input
-  - [ ] Start/end date pickers
-  - [ ] Sprint goal textarea
-- [ ] Create sprint detail view
-  - [ ] Sprint information panel
-  - [ ] Sprint metrics (velocity, burndown chart)
-  - [ ] Sprint issues list
-- [ ] Implement drag and drop between sprint and backlog
-- [ ] Create sprint planning UI
-  - [ ] Add issues to sprint from backlog
-  - [ ] Remove issues from sprint
-- [ ] Create sprint completion UI
-  - [ ] Complete sprint button
-  - [ ] Handle incomplete issues
-- [ ] Add loading states and error handling
+**Frontend Tasks**:
+
+- [ ] Create sprint selector component (`sprint-selector.component.ts`)
+  - [ ] Dropdown showing active/selected sprint
+  - [ ] List of available sprints (active, planned, completed)
+  - [ ] Create new sprint button (opens modal)
+- [ ] Integrate with sprint list API
+- [ ] Implement sprint switching functionality
+- [ ] Apply BOM CSS methodology
+- [ ] Write component tests
 
 **Deliverables**:
-- Scrum board UI
-- Sprint planning interface
+
+- Sprint selector component
+- Component tests
 
 ---
 
-#### 2.1.3 Backlog Management Backend
+#### 2.1.5 Sprint Creation Modal
+
 **Priority**: High  
-**Estimated Time**: 5-7 days  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 2.1.1, 1.1.10, 1.1.9  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Create sprint creation modal component (`create-sprint-modal.component.ts`)
+  - [ ] Sprint name input (use input component)
+  - [ ] Start date picker
+  - [ ] End date picker
+  - [ ] Sprint goal textarea
+  - [ ] Create and Cancel buttons (use button component)
+- [ ] Integrate with sprint creation API
+- [ ] Add form validation
+  - [ ] Name required
+  - [ ] Start date before end date
+  - [ ] No overlapping sprints (async validation)
+- [ ] Implement loading and error states
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Sprint creation modal
+- Form validation
+- Component tests
+
+---
+
+#### 2.1.6 Sprint Board Component
+
+**Priority**: High  
+**Estimated Time**: 3-4 days  
+**Dependencies**: 2.1.1, 2.1.4, Phase 1.3.8  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Create sprint board component (`sprint-board.component.ts`)
+  - [ ] Similar to Kanban board but sprint-focused
+  - [ ] Sprint header (name, dates, goal, progress bar)
+  - [ ] Columns (Backlog, To Do, In Progress, In Review, Done)
+  - [ ] Issue cards in columns
+- [ ] Implement drag and drop for sprint issues
+  - [ ] Move issues between columns (status change)
+  - [ ] Update issue status on drop
+  - [ ] Optimistic updates
+- [ ] Integrate with sprint issues API
+- [ ] Display sprint progress (completed vs total)
+- [ ] Apply BOM CSS methodology
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Sprint board component
+- Drag and drop functionality
+- Component tests
+
+---
+
+#### 2.1.7 Sprint Detail View
+
+**Priority**: High  
+**Estimated Time**: 2-3 days  
+**Dependencies**: 2.1.1, 2.1.3  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Create sprint detail view component (`sprint-detail.component.ts`)
+  - [ ] Sprint information panel (name, goal, dates, status)
+  - [ ] Sprint metrics display (velocity, completion percentage)
+  - [ ] Sprint issues list (all issues in sprint)
+- [ ] Integrate with sprint metrics API
+- [ ] Create burndown chart component (using ECharts)
+  - [ ] Display burndown chart visualization
+  - [ ] Show ideal vs actual progress
+- [ ] Add loading states and error handling
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Sprint detail view
+- Sprint metrics display
+- Burndown chart component
+- Component tests
+
+---
+
+#### 2.1.8 Sprint Planning UI
+
+**Priority**: High  
+**Estimated Time**: 2-3 days  
+**Dependencies**: 2.1.1, 2.1.2, 2.1.6  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Create sprint planning page/component (`sprint-planning.component.ts`)
+  - [ ] Split view: backlog on left, sprint issues on right
+  - [ ] Drag and drop from backlog to sprint
+  - [ ] Remove issues from sprint (drag back or button)
+- [ ] Implement drag and drop between backlog and sprint
+  - [ ] Add issue to sprint on drop
+  - [ ] Remove issue from sprint
+  - [ ] Update sprint issue order
+- [ ] Integrate with sprint issue management APIs
+- [ ] Add loading states and error handling
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Sprint planning interface
+- Drag and drop between backlog and sprint
+- Component tests
+
+---
+
+#### 2.1.9 Sprint Completion UI
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 2.1.3, 2.1.7  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Create sprint completion modal component (`complete-sprint-modal.component.ts`)
+  - [ ] Display incomplete issues list
+  - [ ] Option to move incomplete issues to backlog
+  - [ ] Complete sprint button
+  - [ ] Confirmation message
+- [ ] Integrate with sprint completion API
+- [ ] Handle incomplete issues (show list, move to backlog)
+- [ ] Show completion summary after sprint completion
+- [ ] Add loading states and error handling
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Sprint completion UI
+- Incomplete issue handling
+- Component tests
+
+---
+
+#### 2.1.10 Backlog List API
+
+**Priority**: High  
+**Estimated Time**: 2-3 days  
 **Dependencies**: 2.1.1  
 **Assigned To**: HWIMDA1
 
-**Tasks**:
+**Backend Tasks**:
+
 - [ ] Create backlog endpoint (GET /api/projects/:id/backlog)
   - [ ] Return issues not in any sprint
-  - [ ] Filter and sort options
+  - [ ] Include backlog order/priority
+  - [ ] Filter options (by type, assignee, priority)
+  - [ ] Sort options (priority, created date, updated date)
   - [ ] Pagination support
-- [ ] Create backlog prioritization endpoint (PUT /api/projects/:id/backlog/prioritize)
-  - [ ] Update issue order in backlog
-  - [ ] Store backlog order
-- [ ] Create backlog issue list with priority order
-- [ ] Implement backlog filtering (by type, assignee, etc.)
-- [ ] Write backlog API tests
+- [ ] Implement backlog filtering logic
+  - [ ] Filter by issue type
+  - [ ] Filter by assignee
+  - [ ] Filter by priority
+- [ ] Write backlog list API tests
 
 **Deliverables**:
-- Backlog management APIs
-- Backlog prioritization
+
+- Backlog list endpoint with filtering and pagination
+- API tests
 
 ---
 
-#### 2.1.4 Backlog Management Frontend
-**Priority**: High  
-**Estimated Time**: 7-10 days  
-**Dependencies**: 2.1.3, Phase 1.3.6  
-**Assigned To**: HWIMDA2
+#### 2.1.11 Backlog Prioritization API
 
-**Tasks**:
-- [ ] Create backlog view component
-  - [ ] Issue list with drag-and-drop ordering
-  - [ ] Priority indicators
-  - [ ] Filter and search
-- [ ] Implement backlog prioritization (drag to reorder)
-- [ ] Create "Add to Sprint" functionality from backlog
-- [ ] Create backlog filtering UI
-- [ ] Add loading states and error handling
+**Priority**: High  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 2.1.10  
+**Assigned To**: HWIMDA1
+
+**Backend Tasks**:
+
+- [ ] Design backlog order storage (add order field to issues table or separate table)
+- [ ] Create backlog prioritization endpoint (PUT /api/projects/:id/backlog/prioritize)
+  - [ ] Accept array of issue IDs in priority order
+  - [ ] Update issue order in backlog
+  - [ ] Store backlog order
+- [ ] Create reorder single issue endpoint (PUT /api/projects/:id/backlog/issues/:issueId/reorder)
+  - [ ] Move issue to specific position
+- [ ] Write backlog prioritization API tests
 
 **Deliverables**:
-- Backlog management UI
-- Backlog prioritization interface
+
+- Backlog prioritization endpoints
+- API tests
+
+---
+
+#### 2.1.12 Backlog View Component
+
+**Priority**: High  
+**Estimated Time**: 3-4 days  
+**Dependencies**: 2.1.10, Phase 1.3.6  
+**Assigned To**: HWIMDA2
+
+**Frontend Tasks**:
+
+- [ ] Create backlog view component (`backlog.component.ts`)
+  - [ ] Display issue list
+  - [ ] Priority indicators
+  - [ ] Issue cards with key info (title, type, assignee, priority)
+- [ ] Implement drag-and-drop ordering
+  - [ ] Reorder issues by dragging
+  - [ ] Update priority order on drop
+  - [ ] Visual feedback during drag
+- [ ] Integrate with backlog list API
+- [ ] Integrate with backlog prioritization API
+- [ ] Apply BOM CSS methodology
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Backlog view component
+- Drag-and-drop prioritization
+- Component tests
+
+---
+
+#### 2.1.13 Backlog Filtering UI
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 2.1.10, 2.1.12  
+**Assigned To**: HWIMDA2
+
+**Frontend Tasks**:
+
+- [ ] Create backlog filter component (`backlog-filters.component.ts`)
+  - [ ] Filter by issue type (dropdown)
+  - [ ] Filter by assignee (user selector)
+  - [ ] Filter by priority (checkbox group)
+  - [ ] Clear filters button
+- [ ] Implement search functionality
+  - [ ] Search by issue title/description
+- [ ] Integrate filters with backlog API
+- [ ] Apply BOM CSS methodology
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Backlog filtering UI
+- Search functionality
+- Component tests
+
+---
+
+#### 2.1.14 Backlog to Sprint Integration
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 2.1.12, 2.1.8  
+**Assigned To**: HWIMDA2
+
+**Frontend Tasks**:
+
+- [ ] Add "Add to Sprint" functionality to backlog view
+  - [ ] Button/menu item on each backlog issue
+  - [ ] Sprint selector dropdown
+  - [ ] Add to selected sprint
+- [ ] Integrate with sprint issue management API
+- [ ] Update backlog after adding to sprint (remove from backlog list)
+- [ ] Add loading states and error handling
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Add to Sprint functionality from backlog
+- Component tests
 
 ---
 
@@ -140,12 +450,14 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 ### Dependencies: Phase 1.3
 
 #### 2.2.1 Custom Workflows Backend
+
 **Priority**: High  
 **Estimated Time**: 10-14 days  
 **Dependencies**: Phase 1.3.2  
 **Assigned To**: HWIMDA1
 
 **Tasks**:
+
 - [ ] Design workflow data model
   - [ ] Workflows table (id, project_id, name, is_default)
   - [ ] WorkflowStatuses table (id, workflow_id, name, order, is_initial, is_final)
@@ -168,18 +480,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Write workflow API tests
 
 **Deliverables**:
+
 - Custom workflow system
 - Workflow validation
 
 ---
 
 #### 2.2.2 Custom Workflows Frontend
+
 **Priority**: High  
 **Estimated Time**: 10-14 days  
 **Dependencies**: 2.2.1, Phase 1.3.6  
 **Assigned To**: HWIMDA2
 
 **Tasks**:
+
 - [ ] Create workflow builder UI
   - [ ] Visual workflow editor
   - [ ] Status nodes
@@ -194,18 +509,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Workflow builder UI
 - Workflow visualization
 
 ---
 
 #### 2.2.3 Custom Fields Backend
+
 **Priority**: High  
 **Estimated Time**: 10-14 days  
 **Dependencies**: Phase 1.3.2  
 **Assigned To**: BATATA1
 
 **Tasks**:
+
 - [ ] Design custom field data model
   - [ ] CustomFields table (id, project_id, name, type, is_required, default_value, options)
   - [ ] CustomFieldValues table (id, custom_field_id, issue_id, value)
@@ -227,18 +545,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Write custom field API tests
 
 **Deliverables**:
+
 - Custom field system
 - Custom field value storage
 
 ---
 
 #### 2.2.4 Custom Fields Frontend
+
 **Priority**: High  
 **Estimated Time**: 10-14 days  
 **Dependencies**: 2.2.3, Phase 1.3.6  
 **Assigned To**: BATATA2
 
 **Tasks**:
+
 - [ ] Create custom field form component
   - [ ] Dynamic form based on field type
   - [ ] Validation
@@ -257,18 +578,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Custom field management UI
 - Custom fields in issue forms
 
 ---
 
 #### 2.2.5 Issue Linking Backend
+
 **Priority**: Medium  
 **Estimated Time**: 5-7 days  
 **Dependencies**: Phase 1.3.2  
 **Assigned To**: HWIMDA1
 
 **Tasks**:
+
 - [ ] Design issue link data model
   - [ ] IssueLinks table (id, source_issue_id, target_issue_id, link_type)
 - [ ] Implement link types (Blocks, Blocked by, Relates to, Duplicate, etc.)
@@ -280,18 +604,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Write issue linking API tests
 
 **Deliverables**:
+
 - Issue linking system
 - Link validation
 
 ---
 
 #### 2.2.6 Issue Linking Frontend
+
 **Priority**: Medium  
 **Estimated Time**: 5-7 days  
 **Dependencies**: 2.2.5, Phase 1.3.6  
 **Assigned To**: HWIMDA2
 
 **Tasks**:
+
 - [ ] Create issue link component
   - [ ] Display linked issues
   - [ ] Link type indicators
@@ -305,18 +632,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Issue linking UI
 - Link management interface
 
 ---
 
 #### 2.2.7 Advanced Search & Filters Backend
+
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
 **Dependencies**: Phase 1.5.1, 2.2.3  
 **Assigned To**: BATATA1
 
 **Tasks**:
+
 - [ ] Enhance search with advanced filters
   - [ ] Filter by custom fields
   - [ ] Filter by date ranges
@@ -332,18 +662,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Write advanced search API tests
 
 **Deliverables**:
+
 - Advanced search system
 - Saved filters
 
 ---
 
 #### 2.2.8 Advanced Search & Filters Frontend
+
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
 **Dependencies**: 2.2.7, Phase 1.5.2  
 **Assigned To**: BATATA2
 
 **Tasks**:
+
 - [ ] Create advanced filter builder UI
   - [ ] Add filter conditions
   - [ ] Select field, operator, value
@@ -359,18 +692,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Advanced filter UI
 - Saved filters interface
 
 ---
 
 #### 2.2.9 Time Tracking Backend
+
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
 **Dependencies**: Phase 1.3.2  
 **Assigned To**: HWIMDA1
 
 **Tasks**:
+
 - [ ] Design time tracking data model
   - [ ] TimeEntries table (id, issue_id, user_id, hours, date, description, created_at)
 - [ ] Create time entry creation endpoint (POST /api/issues/:id/time-entries)
@@ -385,18 +721,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Write time tracking API tests
 
 **Deliverables**:
+
 - Time tracking system
 - Time entry APIs
 
 ---
 
 #### 2.2.10 Time Tracking Frontend
+
 **Priority**: Medium  
 **Estimated Time**: 5-7 days  
 **Dependencies**: 2.2.9, Phase 1.3.6  
 **Assigned To**: HWIMDA2
 
 **Tasks**:
+
 - [ ] Create time entry form component
   - [ ] Hours input
   - [ ] Date picker
@@ -411,18 +750,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Time tracking UI
 - Time entry management
 
 ---
 
 #### 2.2.11 Subtasks Backend
+
 **Priority**: Medium  
 **Estimated Time**: 5-7 days  
 **Dependencies**: Phase 1.3.2  
 **Assigned To**: BATATA1
 
 **Tasks**:
+
 - [ ] Extend issue model to support parent-child relationships
   - [ ] Add parent_issue_id to issues table
   - [ ] Add migration
@@ -436,18 +778,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Write subtask API tests
 
 **Deliverables**:
+
 - Subtask system
 - Subtask APIs
 
 ---
 
 #### 2.2.12 Subtasks Frontend
+
 **Priority**: Medium  
 **Estimated Time**: 5-7 days  
 **Dependencies**: 2.2.11, Phase 1.3.6  
 **Assigned To**: BATATA2
 
 **Tasks**:
+
 - [ ] Create subtask list component
   - [ ] Display subtasks
   - [ ] Indent/hierarchy display
@@ -460,18 +805,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Subtask UI
 - Subtask management
 
 ---
 
 #### 2.2.13 Basic Dashboards Backend
+
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
 **Dependencies**: Phase 1.3.2, 2.1.1  
 **Assigned To**: HWIMDA1
 
 **Tasks**:
+
 - [ ] Design dashboard data model
   - [ ] Dashboards table (id, project_id, user_id, name, layout)
   - [ ] DashboardWidgets table (id, dashboard_id, type, config, position)
@@ -489,18 +837,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Write dashboard API tests
 
 **Deliverables**:
+
 - Dashboard system
 - Widget data APIs
 
 ---
 
 #### 2.2.14 Basic Dashboards Frontend
+
 **Priority**: Medium  
 **Estimated Time**: 10-14 days  
 **Dependencies**: 2.2.13, Phase 1.1.5  
 **Assigned To**: HWIMDA2
 
 **Tasks**:
+
 - [ ] Choose charting library (Recharts, Chart.js, etc.)
 - [ ] Create dashboard page layout
   - [ ] Grid layout system
@@ -521,6 +872,7 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Dashboard UI
 - Widget system
 
@@ -531,12 +883,14 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 ### Dependencies: Phase 1.4
 
 #### 2.3.1 Real-Time Collaboration Backend
+
 **Priority**: High  
 **Estimated Time**: 10-14 days  
 **Dependencies**: Phase 1.4.2  
 **Assigned To**: BATATA1
 
 **Tasks**:
+
 - [ ] Set up WebSocket server (Socket.io or similar)
 - [ ] Implement room-based connections (per page)
 - [ ] Create presence tracking
@@ -555,18 +909,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Write collaboration API tests
 
 **Deliverables**:
+
 - Real-time collaboration system
 - Presence tracking
 
 ---
 
 #### 2.3.2 Real-Time Collaboration Frontend
+
 **Priority**: High  
 **Estimated Time**: 10-14 days  
 **Dependencies**: 2.3.1, Phase 1.4.6  
 **Assigned To**: BATATA2
 
 **Tasks**:
+
 - [ ] Integrate WebSocket client
 - [ ] Create presence indicator component
   - [ ] Show active users on page
@@ -586,18 +943,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Real-time collaboration UI
 - Live editing with cursors
 
 ---
 
 #### 2.3.3 Version History Backend
+
 **Priority**: High  
 **Estimated Time**: 7-10 days  
 **Dependencies**: Phase 1.4.2  
 **Assigned To**: HWIMDA1
 
 **Tasks**:
+
 - [ ] Design version history data model
   - [ ] PageVersions table (id, page_id, content, title, created_by, created_at, version_number)
 - [ ] Create version on page update
@@ -614,18 +974,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Write version history API tests
 
 **Deliverables**:
+
 - Version history system
 - Version restoration
 
 ---
 
 #### 2.3.4 Version History Frontend
+
 **Priority**: High  
 **Estimated Time**: 7-10 days  
 **Dependencies**: 2.3.3, Phase 1.4.6  
 **Assigned To**: HWIMDA2
 
 **Tasks**:
+
 - [ ] Create version history sidebar/panel
   - [ ] List versions with timestamps
   - [ ] Show author for each version
@@ -642,18 +1005,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Version history UI
 - Version comparison and restoration
 
 ---
 
 #### 2.3.5 Advanced Templates & Macros Backend
+
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
 **Dependencies**: Phase 1.4.4  
 **Assigned To**: BATATA1
 
 **Tasks**:
+
 - [ ] Expand template system
   - [ ] Template categories
   - [ ] Template variables/placeholders
@@ -676,18 +1042,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Write macro API tests
 
 **Deliverables**:
+
 - Macro system
 - Template enhancements
 
 ---
 
 #### 2.3.6 Advanced Templates & Macros Frontend
+
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
 **Dependencies**: 2.3.5, Phase 1.4.6  
 **Assigned To**: BATATA2
 
 **Tasks**:
+
 - [ ] Create template gallery UI
   - [ ] Browse templates by category
   - [ ] Preview templates
@@ -703,18 +1072,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Template gallery UI
 - Macro editor integration
 
 ---
 
 #### 2.3.7 Whiteboards Backend
+
 **Priority**: Medium  
 **Estimated Time**: 10-14 days  
 **Dependencies**: Phase 1.4.2  
 **Assigned To**: HWIMDA1
 
 **Tasks**:
+
 - [ ] Design whiteboard data model
   - [ ] Whiteboards table (id, space_id, name, data (JSON), created_by, updated_by)
 - [ ] Create whiteboard creation endpoint (POST /api/whiteboards)
@@ -728,18 +1100,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Write whiteboard API tests
 
 **Deliverables**:
+
 - Whiteboard system
 - Whiteboard APIs
 
 ---
 
 #### 2.3.8 Whiteboards Frontend
+
 **Priority**: Medium  
 **Estimated Time**: 10-14 days  
 **Dependencies**: 2.3.7, 2.3.1  
 **Assigned To**: HWIMDA2
 
 **Tasks**:
+
 - [ ] Choose whiteboard library (Excalidraw, Fabric.js, etc.) or build custom
 - [ ] Create whiteboard component
   - [ ] Infinite canvas
@@ -759,18 +1134,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Whiteboard UI
 - Real-time whiteboard collaboration
 
 ---
 
 #### 2.3.9 Advanced Permissions Backend
+
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
 **Dependencies**: Phase 1.4.1  
 **Assigned To**: BATATA1
 
 **Tasks**:
+
 - [ ] Extend permission system
   - [ ] Page-level permissions (read, edit, delete, admin)
   - [ ] Space-level permissions (view, create, edit, delete, admin)
@@ -784,18 +1162,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Write permission API tests
 
 **Deliverables**:
+
 - Advanced permission system
 - Permission inheritance
 
 ---
 
 #### 2.3.10 Advanced Permissions Frontend
+
 **Priority**: Medium  
 **Estimated Time**: 5-7 days  
 **Dependencies**: 2.3.9, Phase 1.4.5  
 **Assigned To**: BATATA2
 
 **Tasks**:
+
 - [ ] Create permission management UI
   - [ ] Permission matrix/grid
   - [ ] User/group permission assignment
@@ -806,17 +1187,20 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Permission management UI
 
 ---
 
 #### 2.3.11 Export Functionality Backend
+
 **Priority**: Low  
 **Estimated Time**: 5-7 days  
 **Dependencies**: Phase 1.4.2  
 **Assigned To**: HWIMDA1
 
 **Tasks**:
+
 - [ ] Create PDF export endpoint (GET /api/pages/:id/export/pdf)
   - [ ] Convert page content to PDF
   - [ ] Include images and formatting
@@ -829,18 +1213,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Write export API tests
 
 **Deliverables**:
+
 - Export functionality
 - Multiple export formats
 
 ---
 
 #### 2.3.12 Export Functionality Frontend
+
 **Priority**: Low  
 **Estimated Time**: 3-5 days  
 **Dependencies**: 2.3.11, Phase 1.4.6  
 **Assigned To**: HWIMDA2
 
 **Tasks**:
+
 - [ ] Create export menu/button
 - [ ] Create export options UI
   - [ ] Format selector (PDF, Markdown, HTML)
@@ -850,6 +1237,7 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Export UI
 - Export functionality
 
@@ -860,12 +1248,14 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 ### Dependencies: Phase 1
 
 #### 2.4.1 Mobile Apps - iOS/Android Setup
+
 **Priority**: High  
 **Estimated Time**: 5-7 days  
 **Dependencies**: Phase 1.7.1  
 **Assigned To**: BATATA2, HWIMDA2 (shared)
 
 **Tasks**:
+
 - [ ] Choose mobile framework (React Native, Flutter)
 - [ ] Set up mobile project structure
 - [ ] Configure iOS project (Xcode)
@@ -876,18 +1266,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Create basic app shell/navigation
 
 **Deliverables**:
+
 - Mobile app foundation
 - Basic navigation
 
 ---
 
 #### 2.4.2 Mobile Apps - Core Features
+
 **Priority**: High  
 **Estimated Time**: 14-21 days  
 **Dependencies**: 2.4.1, Phase 1  
 **Assigned To**: BATATA2, HWIMDA2 (shared)
 
 **Tasks**:
+
 - [ ] Implement authentication screens (login, register)
 - [ ] Implement issue list screen
 - [ ] Implement issue detail screen
@@ -904,18 +1297,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Test on Android devices
 
 **Deliverables**:
+
 - Mobile apps for iOS and Android
 - Core features on mobile
 
 ---
 
 #### 2.4.3 Advanced API - Webhooks
+
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
 **Dependencies**: Phase 1.7.1  
 **Assigned To**: BATATA1
 
 **Tasks**:
+
 - [ ] Design webhook data model
   - [ ] Webhooks table (id, organization_id, url, events, secret, active)
 - [ ] Create webhook creation endpoint (POST /api/webhooks)
@@ -932,18 +1328,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Write webhook API tests
 
 **Deliverables**:
+
 - Webhook system
 - Webhook management APIs
 
 ---
 
 #### 2.4.4 Advanced API - GraphQL (Optional)
+
 **Priority**: Low  
 **Estimated Time**: 10-14 days  
 **Dependencies**: Phase 1.7.1  
 **Assigned To**: HWIMDA1
 
 **Tasks**:
+
 - [ ] Set up GraphQL server (Apollo Server, GraphQL.js)
 - [ ] Define GraphQL schema
   - [ ] Types (User, Issue, Page, etc.)
@@ -957,18 +1356,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Create GraphQL client examples
 
 **Deliverables**:
+
 - GraphQL API
 - GraphQL documentation
 
 ---
 
 #### 2.4.5 Additional Integrations
+
 **Priority**: Medium  
 **Estimated Time**: 5-7 days per integration  
 **Dependencies**: Phase 1.7.1  
 **Assigned To**: BATATA1, HWIMDA1 (shared)
 
 **Tasks**:
+
 - [ ] **GitLab Integration** (similar to GitHub)
   - [ ] OAuth setup
   - [ ] Webhook receiver
@@ -989,18 +1391,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
   - [ ] Reply to comments via email
 
 **Deliverables**:
+
 - Multiple integrations
 - Integration documentation
 
 ---
 
 #### 2.4.6 Automation Rules Backend
+
 **Priority**: High  
 **Estimated Time**: 10-14 days  
 **Dependencies**: Phase 1.3.2, 2.2.1  
 **Assigned To**: HWIMDA1
 
 **Tasks**:
+
 - [ ] Design automation rule data model
   - [ ] AutomationRules table (id, project_id, name, trigger, conditions, actions, enabled)
 - [ ] Implement trigger types
@@ -1025,18 +1430,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Write automation rule API tests
 
 **Deliverables**:
+
 - Automation rule system
 - Rule execution engine
 
 ---
 
 #### 2.4.7 Automation Rules Frontend
+
 **Priority**: High  
 **Estimated Time**: 10-14 days  
 **Dependencies**: 2.4.6, Phase 1.1.5  
 **Assigned To**: HWIMDA2
 
 **Tasks**:
+
 - [ ] Create automation rule list page
 - [ ] Create automation rule builder UI
   - [ ] Trigger selector
@@ -1051,18 +1459,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Automation rule builder UI
 - Rule management interface
 
 ---
 
 #### 2.4.8 Advanced Reporting Backend
+
 **Priority**: Medium  
 **Estimated Time**: 10-14 days  
 **Dependencies**: Phase 1.3.2, 2.1.1, 2.2.9  
 **Assigned To**: BATATA1
 
 **Tasks**:
+
 - [ ] Create report generation system
   - [ ] Velocity reports
   - [ ] Burndown charts data
@@ -1078,18 +1489,21 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Write report API tests
 
 **Deliverables**:
+
 - Reporting system
 - Report data APIs
 
 ---
 
 #### 2.4.9 Advanced Reporting Frontend
+
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
 **Dependencies**: 2.4.8, 2.2.14  
 **Assigned To**: BATATA2
 
 **Tasks**:
+
 - [ ] Create report selection UI
 - [ ] Create velocity chart visualization
 - [ ] Create burndown chart visualization
@@ -1101,6 +1515,7 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Report visualizations
 - Report UI
 
@@ -1111,15 +1526,16 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 **Total Estimated Timeline**: 24 weeks (6 months)
 
 **Key Milestones**:
+
 - Week 4: Sprints and Scrum complete
 - Week 10: Advanced PM features complete
 - Week 16: Documentation enhancements complete
 - Week 24: Platform improvements complete
 
 **Team Size Recommendations**:
+
 - 2-3 Backend developers
 - 2-3 Frontend developers
 - 1-2 Mobile developers
 - 1 DevOps engineer
 - 1 QA engineer
-

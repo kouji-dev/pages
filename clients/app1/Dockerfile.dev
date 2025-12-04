@@ -1,0 +1,24 @@
+FROM node:20-alpine
+
+# Install pnpm
+RUN npm install -g pnpm@10.14.0
+
+WORKDIR /app
+
+# Copy workspace root package files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY angular.json tsconfig.json ./
+
+# Copy library package.json if it exists (for dependency resolution)
+# Note: Angular apps in workspace use root package.json, so no need to copy app1/package.json
+COPY libraries/shared-ui/package.json ./libraries/shared-ui/
+
+# Install all workspace dependencies
+RUN pnpm install
+
+# Expose Angular dev server port
+EXPOSE 4200
+
+# Default command - serve from workspace root
+# Note: Source code will be mounted as volume in docker-compose
+CMD ["pnpm", "exec", "ng", "serve", "app1", "--host", "0.0.0.0", "--port", "4200"]

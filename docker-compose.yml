@@ -1,0 +1,18 @@
+services:
+  app1:
+    build:
+      context: .
+      dockerfile: clients/app1/Dockerfile
+    container_name: pages-app1
+    ports:
+      - "${APP1_PORT:-4200}:80"
+    environment:
+      - API_URL=${API_URL:-http://localhost:8000}
+    networks:
+      - pages-network
+    restart: unless-stopped
+
+networks:
+  pages-network:
+    driver: bridge
+

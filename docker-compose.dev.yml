@@ -1,0 +1,25 @@
+services:
+  app1:
+    build:
+      context: .
+      dockerfile: clients/app1/Dockerfile.dev
+    volumes:
+      # Mount entire workspace root
+      - .:/app
+      # Prevent overwriting node_modules with host's (if they exist)
+      - /app/node_modules
+      # Exclude library node_modules if they exist
+      - /app/libraries/shared-ui/node_modules
+    ports:
+      - "${APP1_PORT:-4200}:4200"
+    environment:
+      - NODE_ENV=development
+      - API_URL=${API_URL:-http://localhost:8000}
+    command: pnpm exec ng serve app1 --host 0.0.0.0 --port 4200
+    networks:
+      - pages-network
+
+networks:
+      pages-network:
+        driver: bridge
+

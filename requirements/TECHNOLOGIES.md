@@ -1,4 +1,5 @@
 # Technology Stack & Tools
+
 **Last Updated**: 2024  
 **Status**: Finalized Technology Decisions
 
@@ -11,6 +12,7 @@ This document outlines the finalized technology stack for the project based on t
 ---
 
 ## Frontend Stack
+
 ```
 Framework:          Angular 21 with TypeScript 5.7+
 Architecture:       Domain-Driven Design (DDD) - Domain models, bounded contexts
@@ -22,7 +24,7 @@ Component Library:  Custom Shared UI Library (built from scratch, in libraries/)
 CSS Methodology:    BOM (Block Object Modifier) with Tailwind `@apply`
 Component Style:    Inline templates and styles (single TS file per component)
 State Management:   Angular Signals + RxJS (signals for reactive state, RxJS for async streams)
-Modern APIs:        Signals, input()/output(), model(), effect(), computed(), 
+Modern APIs:        Signals, input()/output(), model(), effect(), computed(),
                      inject(), httpResource(), resource(), new template blocks (@if, @for, @switch), @defer
 Forms:              Angular Reactive Forms + Validators
 HTTP Client:        Angular HttpClient with httpResource() (new resource API)
@@ -40,17 +42,20 @@ Real-time:          Native WebSockets (via Angular WebSocket service)
 ### Component Architecture with BOM + Tailwind
 
 **Component Structure**:
+
 - Each Angular component uses a **single TypeScript file** (no separate HTML/CSS files)
 - **Inline template** and **inline styles** in the `@Component` decorator
 - Template uses **only CSS classes** following BOM convention
 - Inline CSS uses **Tailwind `@apply` directive** to implement classes
 
 **BOM (Block Object Modifier) Methodology**:
+
 - **Block**: Main component name (e.g., `card`, `button`, `form`)
 - **Object**: Child element or sub-component (e.g., `card_header`, `card_body`, `button_icon`)
 - **Modifier**: Variations (e.g., `card--large`, `button--primary`, `card_header--collapsed`)
 
 **Component Example**:
+
 ```typescript
 @Component({
   selector: 'app-card',
@@ -65,53 +70,56 @@ Real-time:          Native WebSockets (via Angular WebSocket service)
       </div>
     </div>
   `,
-  styles: [`
-    .card {
-      @apply rounded-lg shadow-md bg-white p-6;
-    }
-    
-    .card_header {
-      @apply flex items-center justify-between mb-4;
-    }
-    
-    .card_title {
-      @apply text-xl font-semibold text-gray-900;
-    }
-    
-    .card_close {
-      @apply text-gray-400 hover:text-gray-600 transition-colors;
-    }
-    
-    .card_body {
-      @apply text-gray-700;
-    }
-    
-    /* Modifiers */
-    .card--large {
-      @apply p-8;
-    }
-    
-    .card_header--collapsed {
-      @apply mb-0;
-    }
-  `]
+  styles: [
+    `
+      .card {
+        @apply rounded-lg shadow-md bg-white p-6;
+      }
+
+      .card_header {
+        @apply flex items-center justify-between mb-4;
+      }
+
+      .card_title {
+        @apply text-xl font-semibold text-gray-900;
+      }
+
+      .card_close {
+        @apply text-gray-400 hover:text-gray-600 transition-colors;
+      }
+
+      .card_body {
+        @apply text-gray-700;
+      }
+
+      /* Modifiers */
+      .card--large {
+        @apply p-8;
+      }
+
+      .card_header--collapsed {
+        @apply mb-0;
+      }
+    `,
+  ],
 })
 export class CardComponent {
   // Using modern input() API instead of @Input()
   title = input.required<string>();
-  
+
   // Optional input with default
   size = input<'small' | 'medium' | 'large'>('medium');
-  
+
   // Output with modern output() API
   onClose = output<void>();
-  
+
   // Dependency injection with inject()
   private logger = inject(LoggerService);
 }
 ```
 
 **Benefits**:
+
 - **Single file components**: Easier to maintain and understand
 - **BOM naming**: Clear, semantic class names following consistent pattern
 - **Tailwind utilities**: Leverage Tailwind's utility classes via `@apply`
@@ -122,6 +130,7 @@ export class CardComponent {
 ### Modern Angular APIs & Patterns
 
 **Core Reactive APIs**:
+
 - **Signals**: Use `signal()` for reactive state management (preferred over BehaviorSubject for simple state)
 - **Computed**: Use `computed()` for derived reactive values based on signals
 - **Effect**: Use `effect()` for side effects triggered by signal changes
@@ -129,18 +138,21 @@ export class CardComponent {
 - **HttpResource**: Use `httpResource()` for HTTP requests with automatic loading/error states
 
 **Component APIs**:
+
 - **input()**: Use `input()` function instead of `@Input()` decorator (type-safe, required/optional)
 - **output()**: Use `output()` function instead of `@Output()` decorator (type-safe event emitters)
 - **model()**: Use `model()` for two-way binding with signals [(ngModel)] alternative
 - **inject()**: Use `inject()` function instead of constructor injection (cleaner DI)
 
 **Template Syntax**:
+
 - **@if**: Use `@if` control flow instead of `*ngIf` (better performance, type narrowing)
 - **@for**: Use `@for` instead of `*ngFor` (better performance, trackBy built-in)
 - **@switch**: Use `@switch/@case/@default` instead of `[ngSwitch]`
 - **@defer**: Use `@defer` for lazy loading blocks (improves initial load time)
 
 **Component Example with Modern APIs**:
+
 ```typescript
 import { Component, signal, computed, effect, input, output, model, inject } from '@angular/core';
 import { httpResource } from '@angular/common/http';
@@ -161,9 +173,7 @@ interface Task {
         <div class="task">
           <h3 class="task_title">{{ task.title }}</h3>
           <p class="task_description">{{ task.description }}</p>
-          <button class="task_button" (click)="onComplete.emit(task.id)">
-            Complete
-          </button>
+          <button class="task_button" (click)="onComplete.emit(task.id)">Complete</button>
         </div>
       } @empty {
         <p>No tasks found</p>
@@ -180,58 +190,58 @@ interface Task {
       <div>Loading heavy component...</div>
     }
   `,
-  styles: [`
-    .task {
-      @apply p-4 border rounded-lg mb-4;
-    }
-    .task_title {
-      @apply text-lg font-semibold mb-2;
-    }
-    .task_description {
-      @apply text-gray-600 mb-4;
-    }
-    .task_button {
-      @apply px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600;
-    }
-  `]
+  styles: [
+    `
+      .task {
+        @apply p-4 border rounded-lg mb-4;
+      }
+      .task_title {
+        @apply text-lg font-semibold mb-2;
+      }
+      .task_description {
+        @apply text-gray-600 mb-4;
+      }
+      .task_button {
+        @apply px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600;
+      }
+    `,
+  ],
 })
 export class TaskListComponent {
   // Modern input/output API
   userId = input.required<number>();
   status = input<'all' | 'active' | 'completed'>('all');
-  
+
   onComplete = output<number>();
   onTaskSelected = output<Task>();
-  
+
   // Two-way binding with signals
   selectedTaskId = model<number | null>(null);
-  
+
   // Dependency injection with inject()
   private http = inject(HttpClient);
-  
+
   // Signals for reactive state
   private filter = signal(this.status());
   tasks = signal<Task[]>([]);
-  
+
   // Computed derived values
   filteredTasks = computed(() => {
     const allTasks = this.tasks();
     const statusFilter = this.filter();
-    return statusFilter === 'all' 
-      ? allTasks 
-      : allTasks.filter(t => t.status === statusFilter);
+    return statusFilter === 'all' ? allTasks : allTasks.filter((t) => t.status === statusFilter);
   });
-  
+
   // HttpResource for async data loading
   tasksResource = httpResource({
-    request: () => this.http.get<Task[]>(`/api/tasks?userId=${this.userId()}`)
+    request: () => this.http.get<Task[]>(`/api/tasks?userId=${this.userId()}`),
   });
-  
+
   // Effect for side effects
   private logger = effect(() => {
     console.log('Selected task changed:', this.selectedTaskId());
   });
-  
+
   // Update filter when status input changes
   constructor() {
     effect(() => {
@@ -242,6 +252,7 @@ export class TaskListComponent {
 ```
 
 **Service Example with Modern APIs**:
+
 ```typescript
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -249,20 +260,18 @@ import { HttpClient } from '@angular/common/http';
 @Injectable({ providedIn: 'root' })
 export class TaskService {
   private http = inject(HttpClient);
-  
+
   // State with signals
   private tasks = signal<Task[]>([]);
   private loading = signal(false);
-  
+
   // Public readonly signals
   readonly tasks$ = this.tasks.asReadonly();
   readonly loading$ = this.loading.asReadonly();
-  
+
   // Computed derived state
-  readonly activeTasks = computed(() => 
-    this.tasks().filter(t => t.status === 'active')
-  );
-  
+  readonly activeTasks = computed(() => this.tasks().filter((t) => t.status === 'active'));
+
   async loadTasks(userId: number): Promise<Task[]> {
     this.loading.set(true);
     try {
@@ -277,6 +286,7 @@ export class TaskService {
 ```
 
 **Benefits of Modern Angular APIs**:
+
 - **Better Performance**: Signals are more efficient than observables for simple state
 - **Type Safety**: `input()`/`output()` provide better type inference and required/optional handling
 - **Cleaner Syntax**: `inject()` is cleaner than constructor injection
@@ -288,6 +298,7 @@ export class TaskService {
 ---
 
 ### Backend Stack
+
 ```
 Runtime:            Python 3.12+
 Framework:          FastAPI
@@ -311,6 +322,7 @@ Async Pattern:      Use async/await throughout (async functions where appropriat
 ---
 
 ### Database & Storage
+
 ```
 Primary DB:         PostgreSQL 17+ (hosted on Supabase)
                      Connection: Standard PostgreSQL connection string (direct connection, not Supabase SDK)
@@ -329,6 +341,7 @@ File Storage:       PostgreSQL Large Objects (pg_largeobject - built-in, open so
 ---
 
 ### Infrastructure & DevOps
+
 ```
 Containerization:   Docker (all services, apps, libraries)
 Orchestration:      Docker Compose (development, staging, production)
@@ -346,6 +359,7 @@ SSL:                Let's Encrypt
 ---
 
 ### Monitoring & Logging
+
 ```
 Error Tracking:     Sentry (free tier available)
 APM:                Not needed for MVP (add in Phase 2)
@@ -360,6 +374,7 @@ Uptime Monitoring:  UptimeRobot (free tier)
 ---
 
 ### AI/ML Stack
+
 ```
 Multi-Agent Framework: CrewAI (multi-agent orchestration)
 LLM Provider:       OpenAI API (GPT-4)
@@ -375,6 +390,7 @@ Agent Communication: Asynchronous messaging protocol
 ---
 
 ### Mobile Strategy
+
 ```
 Approach:           PWA (Progressive Web App) Only
 Service Worker:     Angular Service Worker (@angular/pwa)
@@ -388,6 +404,7 @@ Install Prompt:     PWA install prompts
 ---
 
 ### Development Tools
+
 ```
 Package Manager:    pnpm
 Version Control:    Git + GitHub
@@ -416,6 +433,7 @@ Scripts:            Development scripts (pnpm dev, pnpm test, etc.)
 ---
 
 ### Security Tools
+
 ```
 Authentication:     JWT (python-jose) + passlib (bcrypt/Argon2)
 SSO:                python-saml (SAML)
@@ -433,6 +451,7 @@ Secret Management:  python-dotenv (environment variables)
 ---
 
 ### Third-Party Services & Integrations
+
 ```
 Email:              SendGrid (free tier available)
 Slack Integration:  slack-sdk (Python)
@@ -449,6 +468,7 @@ Payment Processing: Stripe
 ## Technology Versions & Compatibility
 
 ### Python Ecosystem
+
 ```json
 {
   "python": ">=3.12.0",
@@ -457,10 +477,12 @@ Payment Processing: Stripe
 ```
 
 ### Python Package Management
+
 **Tool**: Poetry
 **Configuration**: `pyproject.toml`
 
 **Example pyproject.toml structure**:
+
 ```toml
 [tool.poetry]
 name = "backend"
@@ -497,11 +519,13 @@ mypy = "^1.10.0"
 ```
 
 **Key Dependencies (Python - Backend)**:
+
 - All dependencies managed via Poetry (pyproject.toml)
 - Async versions of libraries (SQLAlchemy with asyncio, asyncpg)
 - Development dependencies in separate group
 
 ### Key Dependencies (Angular - Frontend)
+
 ```json
 {
   "@angular/core": "^21.0.0",
@@ -526,31 +550,33 @@ mypy = "^1.10.0"
 
 ## Selected Technology Decisions
 
-| Technology Area | Selected Choice | Rationale |
-|----------------|----------------|-----------|
-| **Frontend** | Angular 21 + TypeScript 5.7 | Enterprise-focused, full-featured framework with strong TypeScript support |
-| **Backend** | Python 3.12+ + FastAPI | Excellent for AI/ML features, automatic API docs, strong performance |
-| **Rich Text Editor** | Lexical 0.18+ | Modern, extensible, high-performance editor framework |
-| **Database** | PostgreSQL 17+ (Supabase) | Managed PostgreSQL via Supabase, standard connection (no SDK), supports full-text search and pgvector |
-| **Search** | PostgreSQL Full-Text Search | Built-in, no additional infrastructure needed for MVP |
-| **Caching** | Redis 8+ | Fast, feature-rich caching layer |
-| **Mobile** | PWA Only | Reduce complexity, no native app development needed initially |
-| **Cloud** | Google Cloud Platform (GCP) | Excellent for AI/ML, Kubernetes support, Python-friendly |
-| **Deployment** | Docker Compose (Monorepo) | All services, apps, libraries in containers. Python/pnpm versions pinned in Docker images |
-| **CI/CD** | GitHub Actions | Free, integrated with GitHub |
-| **Monitoring** | Sentry | Excellent error tracking and monitoring |
-| **Real-time** | Native WebSockets | Lightweight, no additional dependencies |
-| **AI Provider** | OpenAI API | Easy integration, excellent models, pay-per-use |
-| **Package Manager** | pnpm 10+ | Fast, disk-efficient, strict dependency management |
+| Technology Area      | Selected Choice             | Rationale                                                                                             |
+| -------------------- | --------------------------- | ----------------------------------------------------------------------------------------------------- |
+| **Frontend**         | Angular 21 + TypeScript 5.7 | Enterprise-focused, full-featured framework with strong TypeScript support                            |
+| **Backend**          | Python 3.12+ + FastAPI      | Excellent for AI/ML features, automatic API docs, strong performance                                  |
+| **Rich Text Editor** | Lexical 0.18+               | Modern, extensible, high-performance editor framework                                                 |
+| **Database**         | PostgreSQL 17+ (Supabase)   | Managed PostgreSQL via Supabase, standard connection (no SDK), supports full-text search and pgvector |
+| **Search**           | PostgreSQL Full-Text Search | Built-in, no additional infrastructure needed for MVP                                                 |
+| **Caching**          | Redis 8+                    | Fast, feature-rich caching layer                                                                      |
+| **Mobile**           | PWA Only                    | Reduce complexity, no native app development needed initially                                         |
+| **Cloud**            | Google Cloud Platform (GCP) | Excellent for AI/ML, Kubernetes support, Python-friendly                                              |
+| **Deployment**       | Docker Compose (Monorepo)   | All services, apps, libraries in containers. Python/pnpm versions pinned in Docker images             |
+| **CI/CD**            | GitHub Actions              | Free, integrated with GitHub                                                                          |
+| **Monitoring**       | Sentry                      | Excellent error tracking and monitoring                                                               |
+| **Real-time**        | Native WebSockets           | Lightweight, no additional dependencies                                                               |
+| **AI Provider**      | OpenAI API                  | Easy integration, excellent models, pay-per-use                                                       |
+| **Package Manager**  | pnpm 10+                    | Fast, disk-efficient, strict dependency management                                                    |
 
 ---
 
 ## Architecture Considerations
 
 ### Repository Structure
+
 **Recommendation**: Monorepo with Docker Compose orchestration
 
 **Structure**:
+
 ```
 monorepo/
 ├── clients/
@@ -575,6 +601,7 @@ monorepo/
 ```
 
 **Rationale**:
+
 - Single repository for all code
 - Clear separation: `clients/` for frontend apps, `services/` for backend APIs
 - Shared `libraries/` directory at root for Angular libraries used across all clients
@@ -588,9 +615,11 @@ monorepo/
 ---
 
 ### Docker Compose Strategy
+
 **Recommendation**: Docker Compose for all services and clients
 
 **Approach**:
+
 - **Every service/client** runs in its own Docker container
 - **Python version** pinned in Dockerfile (Python 3.12.x)
 - **pnpm version** pinned in Dockerfile (pnpm 10.x)
@@ -600,6 +629,7 @@ monorepo/
 - **Shared volumes** for node_modules and Python packages (optional optimization)
 
 **Benefits**:
+
 - Consistent environments across all developers
 - No local Python/pnpm/Node.js version conflicts
 - Reproducible builds
@@ -613,6 +643,7 @@ monorepo/
 ### Local Development Scripts
 
 **Package.json scripts (Root monorepo)**:
+
 ```json
 {
   "scripts": {
@@ -639,6 +670,7 @@ monorepo/
 ```
 
 **Poetry scripts (Backend)**:
+
 ```toml
 [tool.poetry.scripts]
 dev = "uvicorn src.main:app --reload --host 0.0.0.0 --port 8000"
@@ -654,6 +686,7 @@ typecheck = "mypy src"
 ### oxlint Configuration
 
 **Installation**:
+
 ```bash
 pnpm add -D oxlint@latest
 # For type-aware linting (preview):
@@ -661,13 +694,10 @@ pnpm add -D oxlint-tsgolint@latest
 ```
 
 **Configuration file** (`.oxlintrc.json`):
+
 ```json
 {
-  "deny": [
-    "correctness",
-    "suspicious",
-    "perf"
-  ],
+  "deny": ["correctness", "suspicious", "perf"],
   "allow": [],
   "warn": ["style"],
   "plugins": []
@@ -675,6 +705,7 @@ pnpm add -D oxlint-tsgolint@latest
 ```
 
 **Features**:
+
 - 50-100x faster than ESLint ([benchmark](https://oxc.rs/docs/guide/usage/linter.html))
 - 600+ rules from ESLint, TypeScript, React, Jest, JSX A11y, Unicorn
 - No configuration needed by default
@@ -683,6 +714,7 @@ pnpm add -D oxlint-tsgolint@latest
 - Comment disabling support (`// oxlint-disable`)
 
 **Usage**:
+
 - Basic: `pnpm oxlint`
 - Type-aware: `pnpm oxlint --type-aware`
 - In Docker: `docker-compose run --rm app1 pnpm oxlint`
@@ -690,6 +722,7 @@ pnpm add -D oxlint-tsgolint@latest
 **VS Code Extension**: [oxlint extension](https://marketplace.visualstudio.com/items?itemName=oxc-project.oxc-vscode) - Also works in Cursor
 
 **Integration with lint-staged**:
+
 ```json
 {
   "lint-staged": {
@@ -701,6 +734,7 @@ pnpm add -D oxlint-tsgolint@latest
 ### Deployment Scripts
 
 **Self-Hosted Deployment Script** (`scripts/deploy.sh`):
+
 ```bash
 #!/bin/bash
 set -e
@@ -726,6 +760,7 @@ echo "Deployment successful!"
 ```
 
 **Rollback Script** (`scripts/rollback.sh`):
+
 ```bash
 #!/bin/bash
 set -e
@@ -747,6 +782,7 @@ echo "Rollback completed!"
 **Version Strategy**: Semantic Versioning (semver) - MAJOR.MINOR.PATCH
 
 **Release Script** (`scripts/release.sh`):
+
 ```bash
 #!/bin/bash
 set -e
@@ -775,6 +811,7 @@ echo "Version bumped to $NEW_VERSION and released!"
 ```
 
 **Conventional Commits Format**:
+
 - `feat:` - New feature (triggers minor version bump)
 - `fix:` - Bug fix (triggers patch version bump)
 - `docs:` - Documentation changes
@@ -786,12 +823,14 @@ echo "Version bumped to $NEW_VERSION and released!"
 - `BREAKING CHANGE:` - Major version bump
 
 **Changelog Generation**: Use `standard-version` which automatically:
+
 - Bumps version based on conventional commits
 - Generates CHANGELOG.md
 - Creates git tags
 - Commits all changes
 
 **Release Best Practices**:
+
 1. Use conventional commits in all commits
 2. Run `./scripts/release.sh patch|minor|major` for releases
 3. Releases automatically generate changelog and tags
@@ -802,9 +841,11 @@ echo "Version bumped to $NEW_VERSION and released!"
 ---
 
 ### Microservices vs Monolith
+
 **Recommendation**: Start with Monolith, extract services later if needed
 
-**Rationale**: 
+**Rationale**:
+
 - Faster development
 - Easier debugging
 - Lower operational complexity
@@ -814,9 +855,11 @@ echo "Version bumped to $NEW_VERSION and released!"
 ---
 
 ### API Design
+
 **Recommendation**: REST API first (monolith with DDD)
 
 **Rationale**:
+
 - REST is simpler to implement and understand
 - Better tooling and documentation (OpenAPI/Swagger)
 - DDD provides clear domain boundaries within monolith
@@ -826,9 +869,11 @@ echo "Version bumped to $NEW_VERSION and released!"
 ---
 
 ### Database Strategy
+
 **Recommendation**: Single PostgreSQL database with proper indexing
 
 **Rationale**:
+
 - Simpler operations
 - ACID transactions across related data
 - Can add read replicas for scale
@@ -861,6 +906,7 @@ Container Runtime:  Docker + Docker Compose
 ```
 
 **Monorepo Docker Compose Structure**:
+
 - Single `docker-compose.yml` defines all services
 - Services can be enabled/disabled per environment
 - Shared networks for inter-service communication
@@ -872,6 +918,7 @@ Container Runtime:  Docker + Docker Compose
 ## Cost Considerations
 
 ### Development Costs (Monthly estimates)
+
 - **SendGrid**: Free tier (100 emails/day), then $19.95/month
 - **Sentry**: Free tier (5K events/month), then $26/month
 - **OpenAI API**: Pay-per-use (~$0.002 per 1K tokens)
@@ -880,6 +927,7 @@ Container Runtime:  Docker + Docker Compose
 - **GitHub Actions**: Free tier (2000 minutes/month)
 
 ### Production Costs (Monthly estimates for 100 users)
+
 - **Cloud Hosting** (AWS/DigitalOcean): $50-200/month
 - **Database** (managed PostgreSQL): $15-50/month
 - **Redis** (managed): $10-30/month
@@ -893,6 +941,7 @@ Container Runtime:  Docker + Docker Compose
 ## Migration & Upgrade Paths
 
 ### Phase 1 (MVP)
+
 - Domain-Driven Design architecture (frontend and backend)
 - REST API first approach
 - PostgreSQL full-text search
@@ -904,6 +953,7 @@ Container Runtime:  Docker + Docker Compose
 - Poetry for Python dependency management
 
 ### Phase 2 (Enhanced)
+
 - Consider Elasticsearch for advanced search (if needed)
 - Add SSO (SAML/OAuth)
 - Implement Redis caching layer
@@ -911,6 +961,7 @@ Container Runtime:  Docker + Docker Compose
 - Enhanced real-time collaboration
 
 ### Phase 3 (Advanced)
+
 - AI features (OpenAI API)
 - Vector database (pgvector)
 - Scale with Kubernetes (if needed)
@@ -921,17 +972,18 @@ Container Runtime:  Docker + Docker Compose
 
 ## Technology Adoption Timeline
 
-| Phase | Technologies Added |
-|-------|-------------------|
+| Phase       | Technologies Added                                                                  |
+| ----------- | ----------------------------------------------------------------------------------- |
 | **Phase 1** | Angular, Python/FastAPI, PostgreSQL, Redis, Docker Compose, GitHub Actions, Lexical |
-| **Phase 2** | Celery, Native WebSockets, Advanced features, Elasticsearch (optional) |
-| **Phase 3** | OpenAI API, pgvector, AI features |
+| **Phase 2** | Celery, Native WebSockets, Advanced features, Elasticsearch (optional)              |
+| **Phase 3** | OpenAI API, pgvector, AI features                                                   |
 
 ---
 
 ## Technology Stack Summary
 
 **Selected Stack**:
+
 - **Repository**: Monorepo (all clients and services in single repo)
 - **Frontend**: Angular 21 + TypeScript 5.7 + Lexical editor 0.18+
 - **Backend**: Python 3.12+ + FastAPI 0.115+
@@ -980,4 +1032,3 @@ Container Runtime:  Docker + Docker Compose
 
 **Document Status**: Finalized  
 **Last Updated**: 2024
-
