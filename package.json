@@ -86,7 +86,7 @@
   "lint-staged": {
     "*.{ts,html,css,scss,json,md}": [
       "prettier --write",
-      "oxlint"
+      "oxlint --tsconfig tsconfig.json"
     ]
   }
 }
