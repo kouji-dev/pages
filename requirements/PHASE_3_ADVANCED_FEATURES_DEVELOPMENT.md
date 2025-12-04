@@ -1,4 +1,5 @@
 # Phase 3: Advanced Features Development Tasks
+
 **Timeline**: Months 12-18  
 **Goal**: Add AI features, enterprise capabilities, and advanced collaboration tools
 
@@ -15,12 +16,14 @@ This phase focuses on differentiating features including AI-powered capabilities
 ### Dependencies: Phase 1, Phase 2
 
 #### 3.1.1 CrewAI Infrastructure Setup
+
 **Priority**: High  
 **Estimated Time**: 7-10 days  
 **Dependencies**: Phase 1.1.4  
 **Assigned To**: BATATA1, HWIMDA1 (shared)
 
 **Tasks**:
+
 - [ ] Install CrewAI framework (`crewai`, `crewai-tools`)
 - [ ] Choose AI/LLM provider (OpenAI API)
 - [ ] Set up CrewAI configuration
@@ -36,6 +39,7 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Set up CrewAI observability/monitoring
 
 **Deliverables**:
+
 - CrewAI infrastructure
 - Base agent framework
 - Agent communication system
@@ -43,12 +47,14 @@ This phase focuses on differentiating features including AI-powered capabilities
 ---
 
 #### 3.1.2 Multi-Agent System: Triage Agent
+
 **Priority**: High  
 **Estimated Time**: 10-14 days  
 **Dependencies**: 3.1.1, Phase 1.3.2  
 **Assigned To**: BATATA1
 
 **Tasks**:
+
 - [ ] Design Triage Agent using CrewAI
 - [ ] Create agent role, goal, and backstory configuration
 - [ ] Implement automatic task classification
@@ -75,6 +81,7 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Write Triage Agent tests
 
 **Deliverables**:
+
 - Triage Agent implementation
 - Automatic task classification
 - Workflow automation
@@ -82,12 +89,14 @@ This phase focuses on differentiating features including AI-powered capabilities
 ---
 
 #### 3.1.3 Multi-Agent System: Resources Agent
+
 **Priority**: High  
 **Estimated Time**: 10-14 days  
 **Dependencies**: 3.1.1, Phase 1.3.2  
 **Assigned To**: HWIMDA1
 
 **Tasks**:
+
 - [ ] Design Resources Agent using CrewAI
 - [ ] Create skills matrix data model
   - [ ] Skills table (agent_id, skill_name, expertise_level, domain)
@@ -117,6 +126,7 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Write Resources Agent tests
 
 **Deliverables**:
+
 - Resources Agent implementation
 - Skills matrix system
 - Workload tracking
@@ -125,12 +135,14 @@ This phase focuses on differentiating features including AI-powered capabilities
 ---
 
 #### 3.1.4 Multi-Agent System: Estimation Agent
+
 **Priority**: High  
 **Estimated Time**: 14-21 days  
 **Dependencies**: 3.1.1, Phase 1.3.2, 3.1.3  
 **Assigned To**: BATATA1
 
 **Tasks**:
+
 - [ ] Design Estimation Agent using CrewAI
 - [ ] Create estimation data model
   - [ ] Task estimations table
@@ -166,6 +178,7 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Write Estimation Agent tests
 
 **Deliverables**:
+
 - Estimation Agent implementation
 - Dual estimation system
 - AI fit rate calculation
@@ -174,12 +187,14 @@ This phase focuses on differentiating features including AI-powered capabilities
 ---
 
 #### 3.1.5 Multi-Agent System: Documentation Agent
+
 **Priority**: High  
 **Estimated Time**: 10-14 days  
 **Dependencies**: 3.1.1, Phase 1.4.2  
 **Assigned To**: HWIMDA1
 
 **Tasks**:
+
 - [ ] Design Documentation Agent using CrewAI
 - [ ] Implement draft documentation generation
   - [ ] Monitor task status changes (Done)
@@ -211,6 +226,7 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Write Documentation Agent tests
 
 **Deliverables**:
+
 - Documentation Agent implementation
 - Automatic documentation generation
 - Knowledge base maintenance
@@ -218,12 +234,14 @@ This phase focuses on differentiating features including AI-powered capabilities
 ---
 
 #### 3.1.6 CrewAI Orchestration and Workflows
+
 **Priority**: High  
 **Estimated Time**: 14-21 days  
 **Dependencies**: 3.1.2, 3.1.3, 3.1.4, 3.1.5  
 **Assigned To**: BATATA1, HWIMDA1 (shared)
 
 **Tasks**:
+
 - [ ] Design crew structures
   - [ ] Task Triage Crew (Triage Agent + Resources Agent)
   - [ ] Estimation Crew (Estimation Agent)
@@ -254,6 +272,7 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Write orchestration tests
 
 **Deliverables**:
+
 - Crew orchestration system
 - Workflow management
 - State persistence
@@ -261,12 +280,14 @@ This phase focuses on differentiating features including AI-powered capabilities
 ---
 
 #### 3.1.7 Intelligent Search Backend (RAG for Knowledge Base)
+
 **Priority**: High  
 **Estimated Time**: 10-14 days  
 **Dependencies**: 3.1.1, Phase 1.5.1, 3.1.5  
 **Assigned To**: HWIMDA1
 
 **Tasks**:
+
 - [ ] Set up pgvector in PostgreSQL (already configured)
 - [ ] Implement semantic search embedding
   - [ ] Create embeddings for issues
@@ -289,6 +310,7 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Write semantic search API tests
 
 **Deliverables**:
+
 - Semantic search system with pgvector
 - Hybrid search (keyword + semantic)
 - RAG system for knowledge base
@@ -296,12 +318,14 @@ This phase focuses on differentiating features including AI-powered capabilities
 ---
 
 #### 3.1.8 Intelligent Search Frontend
+
 **Priority**: High  
 **Estimated Time**: 7-10 days  
 **Dependencies**: 3.1.7, Phase 1.5.2  
 **Assigned To**: BATATA2
 
 **Tasks**:
+
 - [ ] Enhance search UI with semantic search
   - [ ] Natural language query input
   - [ ] Search suggestions/autocomplete
@@ -315,18 +339,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Enhanced search UI
 - Semantic search interface
 
 ---
 
 #### 3.1.9 Automated Suggestions Backend
+
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
 **Dependencies**: 3.1.2, 3.1.3, 3.1.4 (integrated with agents)  
 **Assigned To**: BATATA1
 
 **Tasks**:
+
 - [ ] Create suggestion engine
   - [ ] Analyze issue patterns
   - [ ] Analyze user behavior
@@ -346,18 +373,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Write suggestion API tests
 
 **Deliverables**:
+
 - Suggestion engine
 - Suggestion APIs
 
 ---
 
 #### 3.1.10 Automated Suggestions Frontend
+
 **Priority**: Medium  
 **Estimated Time**: 5-7 days  
 **Dependencies**: 3.1.9, 3.1.12  
 **Assigned To**: HWIMDA2
 
 **Tasks**:
+
 - [ ] Create suggestion component
   - [ ] Display suggestions
   - [ ] Apply suggestion button
@@ -369,18 +399,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Suggestion UI
 - Suggestion management
 
 ---
 
 #### 3.1.11 Predictive Analytics Backend
+
 **Priority**: Medium  
 **Estimated Time**: 14-21 days  
 **Dependencies**: 3.1.1, Phase 2.1.1, Phase 2.2.9, 3.1.4  
 **Assigned To**: HWIMDA1
 
 **Tasks**:
+
 - [ ] Design analytics data model
   - [ ] Store historical metrics
   - [ ] Store prediction models
@@ -405,18 +438,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Write analytics API tests
 
 **Deliverables**:
+
 - Predictive analytics system
 - Analytics APIs
 
 ---
 
 #### 3.1.12 Predictive Analytics Frontend
+
 **Priority**: Medium  
 **Estimated Time**: 10-14 days  
 **Dependencies**: 3.1.11, Phase 2.2.14  
 **Assigned To**: BATATA2
 
 **Tasks**:
+
 - [ ] Create analytics dashboard
   - [ ] Sprint completion probability widget
   - [ ] Risk indicators widget
@@ -431,18 +467,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Analytics dashboard
 - Prediction visualizations
 
 ---
 
 #### 3.1.14 AI Assistant (Chatbot) Backend (Optional)
+
 **Priority**: Low  
 **Estimated Time**: 14-21 days  
 **Dependencies**: 3.1.10, 3.1.2, 3.1.3, 3.1.4  
 **Assigned To**: BATATA1
 
 **Tasks**:
+
 - [ ] Design chatbot architecture using CrewAI agents
 - [ ] Create chatbot context system
   - [ ] Project context
@@ -464,18 +503,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Write chatbot API tests
 
 **Deliverables**:
+
 - AI chatbot system (optional)
 - Chatbot commands via agents
 
 ---
 
 #### 3.1.13 Multi-Agent System Frontend
+
 **Priority**: High  
 **Estimated Time**: 10-14 days  
 **Dependencies**: 3.1.10, Phase 1.3.6  
 **Assigned To**: HWIMDA2
 
 **Tasks**:
+
 - [ ] Create agent status dashboard
   - [ ] Show active agents and crews
   - [ ] Display agent decisions and actions
@@ -504,6 +546,7 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Implement real-time updates via WebSocket
 
 **Deliverables**:
+
 - Agent dashboard UI
 - Smart task creation with agents
 - Agent activity monitoring
@@ -511,12 +554,14 @@ This phase focuses on differentiating features including AI-powered capabilities
 ---
 
 #### 3.1.15 AI Assistant (Chatbot) Frontend (Optional)
+
 **Priority**: Medium  
 **Estimated Time**: 10-14 days  
 **Dependencies**: 3.1.10, Phase 1.1.5  
 **Assigned To**: BATATA2
 
 **Tasks**:
+
 - [ ] Create chatbot UI component
   - [ ] Chat interface
   - [ ] Message bubbles
@@ -529,6 +574,7 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Chatbot UI
 - Chat interface
 
@@ -539,12 +585,14 @@ This phase focuses on differentiating features including AI-powered capabilities
 ### Dependencies: Phase 1, Phase 2
 
 #### 3.2.1 SSO Implementation Backend
+
 **Priority**: High  
 **Estimated Time**: 10-14 days  
 **Dependencies**: Phase 1.1.3  
 **Assigned To**: HWIMDA1
 
 **Tasks**:
+
 - [ ] Choose SSO library/framework
 - [ ] Implement SAML 2.0 support
   - [ ] SAML authentication flow
@@ -571,18 +619,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Write SSO API tests
 
 **Deliverables**:
+
 - SSO system
 - Multiple SSO protocol support
 
 ---
 
 #### 3.2.2 SSO Implementation Frontend
+
 **Priority**: High  
 **Estimated Time**: 7-10 days  
 **Dependencies**: 3.2.1, Phase 1.1.5  
 **Assigned To**: HWIMDA2
 
 **Tasks**:
+
 - [ ] Create SSO login button on login page
 - [ ] Create SSO configuration UI
   - [ ] SSO provider list
@@ -595,18 +646,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - SSO configuration UI
 - SSO login UI
 
 ---
 
 #### 3.2.3 Advanced Security Features Backend
+
 **Priority**: High  
 **Estimated Time**: 10-14 days  
 **Dependencies**: Phase 1.1.3  
 **Assigned To**: BATATA1
 
 **Tasks**:
+
 - [ ] Implement password policy enforcement
   - [ ] Minimum length
   - [ ] Complexity requirements
@@ -629,18 +683,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Write security API tests
 
 **Deliverables**:
+
 - Advanced security features
 - Security APIs
 
 ---
 
 #### 3.2.4 Advanced Security Features Frontend
+
 **Priority**: High  
 **Estimated Time**: 7-10 days  
 **Dependencies**: 3.2.3, Phase 1.1.5  
 **Assigned To**: BATATA2
 
 **Tasks**:
+
 - [ ] Create MFA setup UI
   - [ ] QR code display
   - [ ] TOTP code input
@@ -655,18 +712,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Security settings UI
 - MFA setup and login UI
 
 ---
 
 #### 3.2.5 Audit Logs Backend
+
 **Priority**: High  
 **Estimated Time**: 10-14 days  
 **Dependencies**: Phase 1.1.4  
 **Assigned To**: HWIMDA1
 
 **Tasks**:
+
 - [ ] Design audit log data model
   - [ ] AuditLogs table (id, user_id, action, resource_type, resource_id, details, ip_address, user_agent, created_at)
 - [ ] Implement audit logging middleware
@@ -684,18 +744,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Write audit log API tests
 
 **Deliverables**:
+
 - Audit log system
 - Audit log APIs
 
 ---
 
 #### 3.2.6 Audit Logs Frontend
+
 **Priority**: High  
 **Estimated Time**: 7-10 days  
 **Dependencies**: 3.2.5, Phase 1.1.5  
 **Assigned To**: HWIMDA2
 
 **Tasks**:
+
 - [ ] Create audit log viewer
   - [ ] Audit log table
   - [ ] Filter UI
@@ -706,18 +769,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Audit log UI
 - Audit log viewer
 
 ---
 
 #### 3.2.7 Data Export/Import Backend
+
 **Priority**: Medium  
 **Estimated Time**: 10-14 days  
 **Dependencies**: Phase 1.3.2, Phase 1.4.2  
 **Assigned To**: BATATA1
 
 **Tasks**:
+
 - [ ] Design export format (JSON, CSV, XML)
 - [ ] Create organization export endpoint (GET /api/organizations/:id/export)
   - [ ] Export all data (issues, pages, users, etc.)
@@ -735,18 +801,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Write export/import API tests
 
 **Deliverables**:
+
 - Data export/import system
 - Export/import APIs
 
 ---
 
 #### 3.2.8 Data Export/Import Frontend
+
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
 **Dependencies**: 3.2.7, Phase 1.1.5  
 **Assigned To**: BATATA2
 
 **Tasks**:
+
 - [ ] Create export UI
   - [ ] Export button
   - [ ] Format selector
@@ -761,18 +830,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Export/import UI
 - Data migration interface
 
 ---
 
 #### 3.2.9 Custom Branding Backend
+
 **Priority**: Medium  
 **Estimated Time**: 5-7 days  
 **Dependencies**: Phase 1.2.2  
 **Assigned To**: HWIMDA1
 
 **Tasks**:
+
 - [ ] Create branding data model
   - [ ] BrandingSettings table (organization_id, logo_url, favicon_url, primary_color, secondary_color, custom_css)
 - [ ] Create branding endpoints
@@ -784,18 +856,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Write branding API tests
 
 **Deliverables**:
+
 - Branding system
 - Branding APIs
 
 ---
 
 #### 3.2.10 Custom Branding Frontend
+
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
 **Dependencies**: 3.2.9, Phase 1.1.5  
 **Assigned To**: HWIMDA2
 
 **Tasks**:
+
 - [ ] Create branding settings UI
   - [ ] Logo upload
   - [ ] Favicon upload
@@ -808,18 +883,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Branding UI
 - Theming system
 
 ---
 
 #### 3.2.11 Portfolio Management Backend
+
 **Priority**: Medium  
 **Estimated Time**: 14-21 days  
 **Dependencies**: Phase 1.3.1, Phase 2.1.1  
 **Assigned To**: BATATA1
 
 **Tasks**:
+
 - [ ] Design portfolio data model
   - [ ] Portfolios table (id, organization_id, name, description)
   - [ ] PortfolioProjects table (portfolio_id, project_id)
@@ -836,18 +914,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Write portfolio API tests
 
 **Deliverables**:
+
 - Portfolio management system
 - Portfolio APIs
 
 ---
 
 #### 3.2.12 Portfolio Management Frontend
+
 **Priority**: Medium  
 **Estimated Time**: 10-14 days  
 **Dependencies**: 3.2.11, Phase 2.2.14  
 **Assigned To**: BATATA2
 
 **Tasks**:
+
 - [ ] Create portfolio list page
 - [ ] Create portfolio detail page
   - [ ] Portfolio overview
@@ -861,6 +942,7 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Portfolio management UI
 - Portfolio dashboard
 
@@ -871,12 +953,14 @@ This phase focuses on differentiating features including AI-powered capabilities
 ### Dependencies: Phase 1, Phase 2
 
 #### 3.3.1 Live Collaboration Enhancements
+
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
 **Dependencies**: Phase 2.3.1  
 **Assigned To**: HWIMDA1, HWIMDA2 (shared)
 
 **Tasks**:
+
 - [ ] Enhance real-time collaboration
   - [ ] Improved conflict resolution
   - [ ] Better performance for large documents
@@ -889,18 +973,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Write collaboration enhancement tests
 
 **Deliverables**:
+
 - Enhanced collaboration features
 - Voice/video integration
 
 ---
 
 #### 3.3.2 Team Chat Backend
+
 **Priority**: Medium  
 **Estimated Time**: 10-14 days  
 **Dependencies**: Phase 1.1.4  
 **Assigned To**: BATATA1
 
 **Tasks**:
+
 - [ ] Design chat data model
   - [ ] Channels table (id, organization_id, name, type, created_by)
   - [ ] Messages table (id, channel_id, user_id, content, created_at)
@@ -918,18 +1005,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Write chat API tests
 
 **Deliverables**:
+
 - Team chat system
 - Chat APIs
 
 ---
 
 #### 3.3.3 Team Chat Frontend
+
 **Priority**: Medium  
 **Estimated Time**: 10-14 days  
 **Dependencies**: 3.3.2, Phase 1.1.5  
 **Assigned To**: BATATA2
 
 **Tasks**:
+
 - [ ] Create chat sidebar component
   - [ ] Channel list
   - [ ] Direct messages list
@@ -945,18 +1035,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Team chat UI
 - Chat interface
 
 ---
 
 #### 3.3.4 Client Portals Backend
+
 **Priority**: Medium  
 **Estimated Time**: 10-14 days  
 **Dependencies**: Phase 1.3.2, Phase 1.4.2  
 **Assigned To**: HWIMDA1
 
 **Tasks**:
+
 - [ ] Design client portal data model
   - [ ] ClientPortals table (id, organization_id, name, domain, settings)
   - [ ] PortalAccess table (portal_id, client_email, permissions)
@@ -972,18 +1065,21 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Write portal API tests
 
 **Deliverables**:
+
 - Client portal system
 - Portal APIs
 
 ---
 
 #### 3.3.5 Client Portals Frontend
+
 **Priority**: Medium  
 **Estimated Time**: 10-14 days  
 **Dependencies**: 3.3.4, Phase 1.1.5  
 **Assigned To**: HWIMDA2
 
 **Tasks**:
+
 - [ ] Create portal login page (separate from main app)
 - [ ] Create portal dashboard
   - [ ] Client-specific view
@@ -997,6 +1093,7 @@ This phase focuses on differentiating features including AI-powered capabilities
 - [ ] Add loading states and error handling
 
 **Deliverables**:
+
 - Client portal UI
 - Portal management interface
 
@@ -1007,6 +1104,7 @@ This phase focuses on differentiating features including AI-powered capabilities
 **Total Estimated Timeline**: 22 weeks (5.5 months)
 
 **Key Milestones**:
+
 - Week 2: CrewAI infrastructure complete
 - Week 8: Core agents (Triage, Resources, Estimation, Documentation) complete
 - Week 12: Multi-agent orchestration complete
@@ -1014,6 +1112,7 @@ This phase focuses on differentiating features including AI-powered capabilities
 - Week 22: Advanced collaboration complete
 
 **Multi-Agent System Timeline**:
+
 - **Weeks 1-2**: CrewAI infrastructure setup
 - **Weeks 3-4**: Triage Agent and Resources Agent
 - **Weeks 5-7**: Estimation Agent
@@ -1022,6 +1121,7 @@ This phase focuses on differentiating features including AI-powered capabilities
 - **Weeks 13-14**: Frontend integration and testing
 
 **Team Size Recommendations**:
+
 - 2-3 Backend developers
 - 2-3 Frontend developers
 - 1 AI/ML engineer
@@ -1030,7 +1130,7 @@ This phase focuses on differentiating features including AI-powered capabilities
 - 1 Security engineer
 
 **Critical Path**:
+
 1. AI Infrastructure → AI Features
 2. SSO & Security → Enterprise Features
 3. Collaboration Enhancements → Advanced Collaboration
-
