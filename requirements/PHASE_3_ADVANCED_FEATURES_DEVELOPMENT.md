@@ -9,40 +9,207 @@
 
 This phase focuses on differentiating features including AI-powered capabilities, enterprise-grade security and compliance, and advanced collaboration tools. Tasks are organized by dependency order and feature areas.
 
+### Task Organization Principles
+
+**Each task is designed to be:**
+
+- **Concise**: Focused on a single, clear deliverable
+- **Isolated**: Contains separated logic that doesn't overlap with other tasks
+- **Independent**: Can be worked on independently by assigned developers
+- **Testable**: Includes its own testing requirements
+- **Parallelizable**: Multiple tasks can be worked on simultaneously when dependencies allow
+
+**Task Structure:**
+
+- Each task has a unique ID (e.g., `3.1.1`, `3.2.5`)
+- Clear dependencies listed (minimal and specific)
+- Single developer assignment (or shared for collaborative tasks)
+- Estimated time for completion
+- Deliverables clearly defined
+
 ---
 
 ## Phase 3.1: AI-Powered Features - Multi-Agent System (Weeks 1-12)
 
 ### Dependencies: Phase 1, Phase 2
 
-#### 3.1.1 CrewAI Infrastructure Setup
+**Note**: Tasks in this phase are split into independent infrastructure and agent tasks. Infrastructure tasks (3.1.1-3.1.6) can be started once Phase 1.1.4 (API Infrastructure) is complete. Agent tasks (3.1.2-3.1.5) depend on infrastructure but can be developed in parallel once base infrastructure is ready.
+
+#### 3.1.1 CrewAI Framework Installation and Configuration
 
 **Priority**: High  
-**Estimated Time**: 7-10 days  
+**Estimated Time**: 1-2 days  
 **Dependencies**: Phase 1.1.4  
-**Assigned To**: BATATA1, HWIMDA1 (shared)
+**Assigned To**: BATATA1
 
-**Tasks**:
+**Backend Tasks**:
 
 - [ ] Install CrewAI framework (`crewai`, `crewai-tools`)
-- [ ] Choose AI/LLM provider (OpenAI API)
-- [ ] Set up CrewAI configuration
-- [ ] Create base agent class structure
-- [ ] Set up agent communication layer (async messaging)
-- [ ] Configure agent memory storage (PostgreSQL)
-- [ ] Create AI configuration management
-- [ ] Set up rate limiting for AI requests
-- [ ] Implement cost tracking for AI usage
-- [ ] Create AI error handling and fallbacks
-- [ ] Set up AI request logging
-- [ ] Create AI feature flags/toggles
-- [ ] Set up CrewAI observability/monitoring
+- [ ] Install OpenAI API client library
+- [ ] Set up CrewAI configuration file
+  - [ ] LLM provider configuration (OpenAI API key, model selection)
+  - [ ] Base agent configuration
+  - [ ] Crew configuration
+- [ ] Create AI configuration management service (`ai-config.service.ts`)
+  - [ ] Load configuration from environment variables
+  - [ ] Configuration validation
+- [ ] Write configuration tests
 
 **Deliverables**:
 
-- CrewAI infrastructure
-- Base agent framework
-- Agent communication system
+- CrewAI framework installed and configured
+- AI configuration management
+- Configuration tests
+
+---
+
+#### 3.1.2 Base Agent Framework
+
+**Priority**: High  
+**Estimated Time**: 2-3 days  
+**Dependencies**: 3.1.1  
+**Assigned To**: BATATA1
+
+**Backend Tasks**:
+
+- [ ] Create base agent class structure (`base-agent.py` or `base-agent.ts`)
+  - [ ] Abstract agent class with common methods
+  - [ ] Agent role, goal, backstory configuration
+  - [ ] Tool registration system
+- [ ] Create agent factory/service (`agent-factory.service.ts`)
+  - [ ] Agent instantiation
+  - [ ] Agent configuration loading
+- [ ] Create agent communication interface
+  - [ ] Agent input/output format
+  - [ ] Agent response structure
+- [ ] Write base agent tests
+
+**Deliverables**:
+
+- Base agent class structure
+- Agent factory service
+- Agent communication interface
+- Tests
+
+---
+
+#### 3.1.3 Agent Communication Layer
+
+**Priority**: High  
+**Estimated Time**: 2-3 days  
+**Dependencies**: 3.1.2  
+**Assigned To**: HWIMDA1
+
+**Backend Tasks**:
+
+- [ ] Set up agent communication layer (async messaging)
+  - [ ] Message queue system (Redis or in-memory)
+  - [ ] Agent-to-agent messaging interface
+  - [ ] Message routing logic
+- [ ] Implement agent task queue
+  - [ ] Queue agent tasks
+  - [ ] Process tasks asynchronously
+  - [ ] Handle task priorities
+- [ ] Create agent communication service (`agent-communication.service.ts`)
+- [ ] Write communication layer tests
+
+**Deliverables**:
+
+- Agent communication layer
+- Async messaging system
+- Agent task queue
+- Tests
+
+---
+
+#### 3.1.4 Agent Memory Storage
+
+**Priority**: High  
+**Estimated Time**: 2-3 days  
+**Dependencies**: 3.1.2, Phase 1.1.2  
+**Assigned To**: HWIMDA1
+
+**Backend Tasks**:
+
+- [ ] Design agent memory data model
+  - [ ] AgentMemory table (id, agent_id, conversation_id, message, timestamp)
+  - [ ] AgentContext table (id, agent_id, context_data, updated_at)
+- [ ] Configure agent memory storage (PostgreSQL)
+  - [ ] Create memory repository
+  - [ ] Store/retrieve agent conversations
+  - [ ] Store/retrieve agent context
+- [ ] Integrate with CrewAI memory system
+- [ ] Write memory storage tests
+
+**Deliverables**:
+
+- Agent memory data model
+- Memory storage integration
+- Tests
+
+---
+
+#### 3.1.5 AI Request Management
+
+**Priority**: High  
+**Estimated Time**: 2-3 days  
+**Dependencies**: 3.1.1  
+**Assigned To**: BATATA1
+
+**Backend Tasks**:
+
+- [ ] Set up rate limiting for AI requests
+  - [ ] Configure rate limits per user/organization
+  - [ ] Implement rate limiting middleware
+  - [ ] Handle rate limit exceeded errors
+- [ ] Implement cost tracking for AI usage
+  - [ ] Track tokens used per request
+  - [ ] Calculate cost per request
+  - [ ] Store usage in database (AIUsage table)
+- [ ] Create AI error handling and fallbacks
+  - [ ] Handle API errors gracefully
+  - [ ] Implement retry logic
+  - [ ] Fallback responses
+- [ ] Set up AI request logging
+  - [ ] Log all AI requests/responses
+  - [ ] Store logs in database
+- [ ] Write request management tests
+
+**Deliverables**:
+
+- Rate limiting for AI requests
+- Cost tracking system
+- Error handling and fallbacks
+- Request logging
+- Tests
+
+---
+
+#### 3.1.6 AI Feature Flags and Monitoring
+
+**Priority**: Medium  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 3.1.1  
+**Assigned To**: HWIMDA1
+
+**Backend Tasks**:
+
+- [ ] Create AI feature flags/toggles
+  - [ ] Enable/disable AI features per organization
+  - [ ] Feature flag management service
+  - [ ] Check feature flags before AI operations
+- [ ] Set up CrewAI observability/monitoring
+  - [ ] Agent execution metrics
+  - [ ] Performance monitoring
+  - [ ] Error tracking
+- [ ] Create monitoring dashboard endpoints (optional)
+- [ ] Write feature flag tests
+
+**Deliverables**:
+
+- AI feature flags system
+- Observability/monitoring setup
+- Tests
 
 ---
 

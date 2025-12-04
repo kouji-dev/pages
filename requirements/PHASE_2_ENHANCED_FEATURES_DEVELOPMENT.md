@@ -9,20 +9,40 @@
 
 This phase builds upon the MVP foundation, adding advanced features that enhance productivity, collaboration, and platform capabilities. Tasks are organized by dependency order and feature areas.
 
+### Task Organization Principles
+
+**Each task is designed to be:**
+
+- **Concise**: Focused on a single, clear deliverable
+- **Isolated**: Contains separated logic that doesn't overlap with other tasks
+- **Independent**: Can be worked on independently by assigned developers
+- **Testable**: Includes its own testing requirements
+- **Parallelizable**: Multiple tasks can be worked on simultaneously when dependencies allow
+
+**Task Structure:**
+
+- Each task has a unique ID (e.g., `2.1.1`, `2.2.5`)
+- Clear dependencies listed (minimal and specific)
+- Single developer assignment (or shared for collaborative tasks)
+- Estimated time for completion
+- Deliverables clearly defined
+
 ---
 
 ## Phase 2.1: Project Management Enhancements - Sprints & Scrum (Weeks 1-4)
 
 ### Dependencies: Phase 1.3 (Issues, Kanban Board)
 
-#### 2.1.1 Sprint Management Backend
+**Note**: Tasks in this phase are split into independent backend and frontend tasks that can be worked on in parallel after initial dependencies are met. Backend tasks (2.1.1-2.1.11) can be started once Phase 1.3.2 (Issue CRUD) is complete. Frontend tasks (2.1.4-2.1.14) depend on corresponding backend APIs and Phase 1 frontend foundation.
+
+#### 2.1.1 Sprint Data Model and CRUD API
 
 **Priority**: High  
-**Estimated Time**: 7-10 days  
+**Estimated Time**: 3-4 days  
 **Dependencies**: Phase 1.3.2  
 **Assigned To**: BATATA1
 
-**Tasks**:
+**Backend Tasks**:
 
 - [ ] Design sprint data model
   - [ ] Sprints table (id, project_id, name, goal, start_date, end_date, status)
@@ -31,120 +51,397 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
   - [ ] Validate dates (start < end)
   - [ ] Check for overlapping sprints
   - [ ] Set default sprint name (e.g., "Sprint 1")
+  - [ ] Create sprint record
 - [ ] Create sprint retrieval endpoint (GET /api/sprints/:id)
   - [ ] Include sprint issues
-  - [ ] Include sprint metrics (velocity, completion)
+  - [ ] Include basic sprint info (name, goal, dates, status)
 - [ ] Create sprint list endpoint (GET /api/projects/:id/sprints)
   - [ ] Filter by status (active, planned, completed)
   - [ ] Sort by start date
+  - [ ] Pagination support
 - [ ] Create sprint update endpoint (PUT /api/sprints/:id)
   - [ ] Update name, goal, dates
   - [ ] Update status
+  - [ ] Validate date ranges
 - [ ] Create sprint deletion endpoint (DELETE /api/sprints/:id)
-- [ ] Create add issue to sprint endpoint (PUT /api/sprints/:id/issues)
-- [ ] Create remove issue from sprint endpoint (DELETE /api/sprints/:id/issues/:issueId)
-- [ ] Create sprint completion endpoint (POST /api/sprints/:id/complete)
-  - [ ] Move incomplete issues to backlog
-  - [ ] Calculate sprint metrics
-- [ ] Implement sprint velocity calculation
-- [ ] Write sprint API tests
+  - [ ] Permission check (project admin)
+  - [ ] Handle sprint issues (move to backlog or delete)
+- [ ] Write sprint CRUD API tests
 
 **Deliverables**:
 
-- Sprint management APIs
-- Sprint velocity tracking
+- Sprint data model and migrations
+- Sprint CRUD API endpoints
+- API tests
 
 ---
 
-#### 2.1.2 Scrum Board Frontend
+#### 2.1.2 Sprint Issue Management API
 
 **Priority**: High  
-**Estimated Time**: 10-14 days  
+**Estimated Time**: 2-3 days  
+**Dependencies**: 2.1.1  
+**Assigned To**: BATATA1
+
+**Backend Tasks**:
+
+- [ ] Create add issue to sprint endpoint (PUT /api/sprints/:id/issues)
+  - [ ] Validate issue belongs to same project
+  - [ ] Check issue not already in another active sprint
+  - [ ] Add issue to SprintIssues table with order
+- [ ] Create remove issue from sprint endpoint (DELETE /api/sprints/:id/issues/:issueId)
+  - [ ] Remove from SprintIssues table
+  - [ ] Move issue back to backlog
+- [ ] Create reorder sprint issues endpoint (PUT /api/sprints/:id/issues/reorder)
+  - [ ] Update order of issues in sprint
+- [ ] Write sprint issue management API tests
+
+**Deliverables**:
+
+- Sprint issue management endpoints
+- API tests
+
+---
+
+#### 2.1.3 Sprint Metrics and Completion API
+
+**Priority**: High  
+**Estimated Time**: 2-3 days  
+**Dependencies**: 2.1.1  
+**Assigned To**: BATATA1
+
+**Backend Tasks**:
+
+- [ ] Implement sprint velocity calculation
+  - [ ] Calculate completed story points per sprint
+  - [ ] Track velocity over multiple sprints
+  - [ ] Average velocity calculation
+- [ ] Create sprint metrics endpoint (GET /api/sprints/:id/metrics)
+  - [ ] Return velocity, completion percentage
+  - [ ] Return issue counts by status
+  - [ ] Return burndown data points
+- [ ] Create sprint completion endpoint (POST /api/sprints/:id/complete)
+  - [ ] Validate all issues moved to final status or handle incomplete
+  - [ ] Move incomplete issues to backlog
+  - [ ] Calculate and store sprint metrics
+  - [ ] Update sprint status to completed
+- [ ] Write sprint metrics API tests
+
+**Deliverables**:
+
+- Sprint velocity calculation
+- Sprint metrics endpoint
+- Sprint completion functionality
+- API tests
+
+---
+
+#### 2.1.4 Sprint Selector Component
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
 **Dependencies**: 2.1.1, Phase 1.3.8  
 **Assigned To**: BATATA2
 
-**Tasks**:
+**Frontend Tasks**:
 
-- [ ] Create sprint selector component
-  - [ ] Active sprint dropdown
-  - [ ] Create new sprint button
-- [ ] Create sprint board component
-  - [ ] Similar to Kanban but sprint-focused
-  - [ ] Sprint header (name, dates, goal, progress)
-  - [ ] Columns (Backlog, To Do, In Progress, In Review, Done)
-- [ ] Create sprint creation modal
-  - [ ] Sprint name input
-  - [ ] Start/end date pickers
-  - [ ] Sprint goal textarea
-- [ ] Create sprint detail view
-  - [ ] Sprint information panel
-  - [ ] Sprint metrics (velocity, burndown chart)
-  - [ ] Sprint issues list
-- [ ] Implement drag and drop between sprint and backlog
-- [ ] Create sprint planning UI
-  - [ ] Add issues to sprint from backlog
-  - [ ] Remove issues from sprint
-- [ ] Create sprint completion UI
-  - [ ] Complete sprint button
-  - [ ] Handle incomplete issues
-- [ ] Add loading states and error handling
+- [ ] Create sprint selector component (`sprint-selector.component.ts`)
+  - [ ] Dropdown showing active/selected sprint
+  - [ ] List of available sprints (active, planned, completed)
+  - [ ] Create new sprint button (opens modal)
+- [ ] Integrate with sprint list API
+- [ ] Implement sprint switching functionality
+- [ ] Apply BOM CSS methodology
+- [ ] Write component tests
 
 **Deliverables**:
 
-- Scrum board UI
-- Sprint planning interface
+- Sprint selector component
+- Component tests
 
 ---
 
-#### 2.1.3 Backlog Management Backend
+#### 2.1.5 Sprint Creation Modal
 
 **Priority**: High  
-**Estimated Time**: 5-7 days  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 2.1.1, 1.1.10, 1.1.9  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Create sprint creation modal component (`create-sprint-modal.component.ts`)
+  - [ ] Sprint name input (use input component)
+  - [ ] Start date picker
+  - [ ] End date picker
+  - [ ] Sprint goal textarea
+  - [ ] Create and Cancel buttons (use button component)
+- [ ] Integrate with sprint creation API
+- [ ] Add form validation
+  - [ ] Name required
+  - [ ] Start date before end date
+  - [ ] No overlapping sprints (async validation)
+- [ ] Implement loading and error states
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Sprint creation modal
+- Form validation
+- Component tests
+
+---
+
+#### 2.1.6 Sprint Board Component
+
+**Priority**: High  
+**Estimated Time**: 3-4 days  
+**Dependencies**: 2.1.1, 2.1.4, Phase 1.3.8  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Create sprint board component (`sprint-board.component.ts`)
+  - [ ] Similar to Kanban board but sprint-focused
+  - [ ] Sprint header (name, dates, goal, progress bar)
+  - [ ] Columns (Backlog, To Do, In Progress, In Review, Done)
+  - [ ] Issue cards in columns
+- [ ] Implement drag and drop for sprint issues
+  - [ ] Move issues between columns (status change)
+  - [ ] Update issue status on drop
+  - [ ] Optimistic updates
+- [ ] Integrate with sprint issues API
+- [ ] Display sprint progress (completed vs total)
+- [ ] Apply BOM CSS methodology
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Sprint board component
+- Drag and drop functionality
+- Component tests
+
+---
+
+#### 2.1.7 Sprint Detail View
+
+**Priority**: High  
+**Estimated Time**: 2-3 days  
+**Dependencies**: 2.1.1, 2.1.3  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Create sprint detail view component (`sprint-detail.component.ts`)
+  - [ ] Sprint information panel (name, goal, dates, status)
+  - [ ] Sprint metrics display (velocity, completion percentage)
+  - [ ] Sprint issues list (all issues in sprint)
+- [ ] Integrate with sprint metrics API
+- [ ] Create burndown chart component (using ECharts)
+  - [ ] Display burndown chart visualization
+  - [ ] Show ideal vs actual progress
+- [ ] Add loading states and error handling
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Sprint detail view
+- Sprint metrics display
+- Burndown chart component
+- Component tests
+
+---
+
+#### 2.1.8 Sprint Planning UI
+
+**Priority**: High  
+**Estimated Time**: 2-3 days  
+**Dependencies**: 2.1.1, 2.1.2, 2.1.6  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Create sprint planning page/component (`sprint-planning.component.ts`)
+  - [ ] Split view: backlog on left, sprint issues on right
+  - [ ] Drag and drop from backlog to sprint
+  - [ ] Remove issues from sprint (drag back or button)
+- [ ] Implement drag and drop between backlog and sprint
+  - [ ] Add issue to sprint on drop
+  - [ ] Remove issue from sprint
+  - [ ] Update sprint issue order
+- [ ] Integrate with sprint issue management APIs
+- [ ] Add loading states and error handling
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Sprint planning interface
+- Drag and drop between backlog and sprint
+- Component tests
+
+---
+
+#### 2.1.9 Sprint Completion UI
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 2.1.3, 2.1.7  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Create sprint completion modal component (`complete-sprint-modal.component.ts`)
+  - [ ] Display incomplete issues list
+  - [ ] Option to move incomplete issues to backlog
+  - [ ] Complete sprint button
+  - [ ] Confirmation message
+- [ ] Integrate with sprint completion API
+- [ ] Handle incomplete issues (show list, move to backlog)
+- [ ] Show completion summary after sprint completion
+- [ ] Add loading states and error handling
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Sprint completion UI
+- Incomplete issue handling
+- Component tests
+
+---
+
+#### 2.1.10 Backlog List API
+
+**Priority**: High  
+**Estimated Time**: 2-3 days  
 **Dependencies**: 2.1.1  
 **Assigned To**: HWIMDA1
 
-**Tasks**:
+**Backend Tasks**:
 
 - [ ] Create backlog endpoint (GET /api/projects/:id/backlog)
   - [ ] Return issues not in any sprint
-  - [ ] Filter and sort options
+  - [ ] Include backlog order/priority
+  - [ ] Filter options (by type, assignee, priority)
+  - [ ] Sort options (priority, created date, updated date)
   - [ ] Pagination support
-- [ ] Create backlog prioritization endpoint (PUT /api/projects/:id/backlog/prioritize)
-  - [ ] Update issue order in backlog
-  - [ ] Store backlog order
-- [ ] Create backlog issue list with priority order
-- [ ] Implement backlog filtering (by type, assignee, etc.)
-- [ ] Write backlog API tests
+- [ ] Implement backlog filtering logic
+  - [ ] Filter by issue type
+  - [ ] Filter by assignee
+  - [ ] Filter by priority
+- [ ] Write backlog list API tests
 
 **Deliverables**:
 
-- Backlog management APIs
-- Backlog prioritization
+- Backlog list endpoint with filtering and pagination
+- API tests
 
 ---
 
-#### 2.1.4 Backlog Management Frontend
+#### 2.1.11 Backlog Prioritization API
 
 **Priority**: High  
-**Estimated Time**: 7-10 days  
-**Dependencies**: 2.1.3, Phase 1.3.6  
-**Assigned To**: HWIMDA2
+**Estimated Time**: 1-2 days  
+**Dependencies**: 2.1.10  
+**Assigned To**: HWIMDA1
 
-**Tasks**:
+**Backend Tasks**:
 
-- [ ] Create backlog view component
-  - [ ] Issue list with drag-and-drop ordering
-  - [ ] Priority indicators
-  - [ ] Filter and search
-- [ ] Implement backlog prioritization (drag to reorder)
-- [ ] Create "Add to Sprint" functionality from backlog
-- [ ] Create backlog filtering UI
-- [ ] Add loading states and error handling
+- [ ] Design backlog order storage (add order field to issues table or separate table)
+- [ ] Create backlog prioritization endpoint (PUT /api/projects/:id/backlog/prioritize)
+  - [ ] Accept array of issue IDs in priority order
+  - [ ] Update issue order in backlog
+  - [ ] Store backlog order
+- [ ] Create reorder single issue endpoint (PUT /api/projects/:id/backlog/issues/:issueId/reorder)
+  - [ ] Move issue to specific position
+- [ ] Write backlog prioritization API tests
 
 **Deliverables**:
 
-- Backlog management UI
-- Backlog prioritization interface
+- Backlog prioritization endpoints
+- API tests
+
+---
+
+#### 2.1.12 Backlog View Component
+
+**Priority**: High  
+**Estimated Time**: 3-4 days  
+**Dependencies**: 2.1.10, Phase 1.3.6  
+**Assigned To**: HWIMDA2
+
+**Frontend Tasks**:
+
+- [ ] Create backlog view component (`backlog.component.ts`)
+  - [ ] Display issue list
+  - [ ] Priority indicators
+  - [ ] Issue cards with key info (title, type, assignee, priority)
+- [ ] Implement drag-and-drop ordering
+  - [ ] Reorder issues by dragging
+  - [ ] Update priority order on drop
+  - [ ] Visual feedback during drag
+- [ ] Integrate with backlog list API
+- [ ] Integrate with backlog prioritization API
+- [ ] Apply BOM CSS methodology
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Backlog view component
+- Drag-and-drop prioritization
+- Component tests
+
+---
+
+#### 2.1.13 Backlog Filtering UI
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 2.1.10, 2.1.12  
+**Assigned To**: HWIMDA2
+
+**Frontend Tasks**:
+
+- [ ] Create backlog filter component (`backlog-filters.component.ts`)
+  - [ ] Filter by issue type (dropdown)
+  - [ ] Filter by assignee (user selector)
+  - [ ] Filter by priority (checkbox group)
+  - [ ] Clear filters button
+- [ ] Implement search functionality
+  - [ ] Search by issue title/description
+- [ ] Integrate filters with backlog API
+- [ ] Apply BOM CSS methodology
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Backlog filtering UI
+- Search functionality
+- Component tests
+
+---
+
+#### 2.1.14 Backlog to Sprint Integration
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 2.1.12, 2.1.8  
+**Assigned To**: HWIMDA2
+
+**Frontend Tasks**:
+
+- [ ] Add "Add to Sprint" functionality to backlog view
+  - [ ] Button/menu item on each backlog issue
+  - [ ] Sprint selector dropdown
+  - [ ] Add to selected sprint
+- [ ] Integrate with sprint issue management API
+- [ ] Update backlog after adding to sprint (remove from backlog list)
+- [ ] Add loading states and error handling
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Add to Sprint functionality from backlog
+- Component tests
 
 ---
 

@@ -9,6 +9,24 @@
 
 This phase focuses on building the foundational features required for a functional product. Tasks are organized by dependency order and logical groupings to ensure efficient development workflow.
 
+### Task Organization Principles
+
+**Each task is designed to be:**
+
+- **Concise**: Focused on a single, clear deliverable
+- **Isolated**: Contains separated logic that doesn't overlap with other tasks
+- **Independent**: Can be worked on independently by assigned developers
+- **Testable**: Includes its own testing requirements
+- **Parallelizable**: Multiple tasks can be worked on simultaneously when dependencies allow
+
+**Task Structure:**
+
+- Each task has a unique ID (e.g., `1.1.5`, `1.2.1`)
+- Clear dependencies listed (minimal and specific)
+- Single developer assignment (or shared for collaborative tasks)
+- Estimated time for completion
+- Deliverables clearly defined
+
 ---
 
 ## Phase 1.1: Foundation & Infrastructure Setup (Weeks 1-3)
@@ -30,7 +48,7 @@ This phase focuses on building the foundational features required for a function
 - [x] Set up code formatting (Prettier) and linting (oxlint) configurations
 - [-] Initialize package.json/pyproject.toml with project metadata (package.json done, pyproject.toml pending)
 - [-] Create directory structure for frontend and backend (frontend done: clients/, libraries/, backend pending: services/)
-- [ ] Set up environment variable templates (.env.example files)
+- [x] Set up environment variable templates (.env.example files) (environment.ts and environment.production.ts exist)
 - [x] Configure TypeScript/JavaScript build tooling (Angular 21 with esbuild)
 - [x] Set up pre-commit hooks (Husky with lint-staged)
 
@@ -180,237 +198,1030 @@ This phase focuses on building the foundational features required for a function
 
 ---
 
-#### 1.1.5 Frontend Foundation & UI Setup
+#### 1.1.5 Base Layout Component
 
 **Priority**: Critical  
-**Estimated Time**: 7-10 days  
+**Estimated Time**: 2-3 days  
 **Dependencies**: 1.1.1  
-**Assigned To**: BATATA2, HWIMDA2 (shared setup)
+**Assigned To**: BATATA2
 
 **Frontend Tasks**:
 
-- [x] Initialize Angular project with TypeScript (Angular 21)
-- [x] Set up build tooling (Angular CLI with esbuild)
-- [x] Install and configure UI library (Tailwind CSS 4+ with theme in shared-ui)
-- [ ] Create base layout component
-  - [ ] Header/Navbar (demo app.ts exists for testing only, not production layout)
-  - [ ] Sidebar navigation
-  - [ ] Main content area (demo app.ts exists for testing only, not production layout)
-  - [ ] Footer (optional)
-- [-] Set up routing (Angular Router)
-  - [-] Route configuration (basic Router setup done, no routes defined yet)
-  - [ ] Route guards (protected routes)
-  - [ ] 404 page
-- [-] Create design system foundation
-  - [x] Color palette and theme configuration (Tailwind CSS in shared-ui)
-  - [x] Typography system (Tailwind CSS)
-  - [x] Spacing scale (Tailwind CSS)
-  - [ ] Button component variants
-  - [ ] Input component variants
-  - [x] Card component (example in shared-ui)
-  - [ ] Modal/Dialog component
-  - [ ] Loading spinner component
-  - [ ] Toast/notification component
-- [-] Set up state management (Angular Signals available, no global store yet)
-- [-] Configure HTTP client (Angular HttpClient)
-  - [x] Base URL configuration (environment files)
-  - [ ] Request interceptors (auth tokens)
-  - [ ] Response interceptors (error handling)
-- [x] Create utility functions (Luxon for date formatting)
-- [ ] Set up i18n/internationalization (optional for MVP)
-- [x] Configure responsive breakpoints (Tailwind CSS)
-- [ ] Create loading and error state components
+- [-] Create base layout component (`base-layout.component.ts`)
+  - [x] Component with standalone directive (demo app.ts exists, needs proper layout component)
+  - [x] Layout structure (header, sidebar, main, footer sections) (header and main exist in demo app.ts)
+  - [x] Use modern Angular APIs (signals, input()) (using signals in demo)
+- [-] Implement header/navbar section
+  - [x] Responsive header component (basic header exists in demo app.ts)
+  - [ ] Logo/branding area
+  - [ ] Navigation menu slots
+  - [ ] User menu placeholder
+- [ ] Implement sidebar navigation
+  - [ ] Collapsible sidebar component
+  - [ ] Navigation menu structure
+  - [ ] Responsive behavior (hidden on mobile)
+- [-] Implement main content area
+  - [x] Router outlet wrapper (exists in demo app.ts)
+  - [x] Content container with padding (exists in demo app.ts)
+- [ ] Implement footer section (optional)
+  - [ ] Footer component with links
+  - [ ] Copyright information
+- [-] Apply BOM CSS methodology with Tailwind
+  - [x] Use `@reference "#theme"` in component styles (implemented in demo app.ts)
+  - [x] Apply Tailwind utilities with `@apply` (implemented in demo app.ts)
+- [x] Write component tests (basic test exists in app.spec.ts)
+- [-] Ensure mobile responsiveness (basic responsive classes applied, needs verification)
 
 **Deliverables**:
 
-- Functional frontend application
-- Design system components
-- Routing and navigation
+- Base layout component with header, sidebar, main, and footer
+- Responsive design
+- Component tests
+
+**Note**: A demo `app.ts` component exists with basic header and main sections using modern Angular APIs and BOM CSS methodology. This serves as a proof of concept, but a proper production-ready base layout component still needs to be created.
 
 ---
 
-#### 1.1.6 Landing Page & Marketing
+#### 1.1.6 Routing Configuration
 
-**Priority**: High  
-**Estimated Time**: 5-7 days  
+**Priority**: Critical  
+**Estimated Time**: 1-2 days  
 **Dependencies**: 1.1.5  
-**Assigned To**: BATATA2, HWIMDA2 (shared)
+**Assigned To**: HWIMDA2
 
 **Frontend Tasks**:
 
-- [ ] Create landing page route and component
-  - [ ] Public route (no authentication required)
-  - [ ] Responsive layout
-  - [ ] Modern, professional design
-- [ ] Design and implement hero section
-  - [ ] Compelling headline and subheading
-  - [ ] Value proposition
-  - [ ] Call-to-action buttons (Sign Up, Learn More)
-  - [ ] Hero image or illustration
-- [ ] Create features section
-  - [ ] Key feature highlights
-  - [ ] Feature icons/illustrations
-  - [ ] Benefits list
-- [ ] Create pricing section (optional for MVP)
-  - [ ] Pricing tiers or plans
-  - [ ] Feature comparison
-  - [ ] Sign up CTAs
-- [ ] Create testimonials/social proof section (optional for MVP)
-  - [ ] Customer testimonials
-  - [ ] User count or metrics
-  - [ ] Company logos (if available)
-- [ ] Create footer section
-  - [ ] Product links
-  - [ ] Legal links (Terms, Privacy Policy - can be placeholders)
-  - [ ] Social media links
-  - [ ] Contact information
-- [ ] Implement smooth scrolling and animations (optional)
-  - [ ] Scroll-triggered animations
-  - [ ] Parallax effects (if appropriate)
-- [ ] Add SEO optimization
-  - [ ] Meta tags
-  - [ ] Open Graph tags
-  - [ ] Structured data (JSON-LD)
-  - [ ] Semantic HTML
-- [ ] Create sign up/login navigation
-  - [ ] Navigation bar with Sign Up/Log In buttons
-  - [ ] Links to authentication pages
-- [ ] Ensure mobile responsiveness
-  - [ ] Mobile-optimized layout
-  - [ ] Touch-friendly interactions
-  - [ ] Fast loading on mobile
-- [ ] Add analytics integration (optional for MVP)
-  - [ ] Google Analytics or similar
-  - [ ] Conversion tracking
+- [-] Define route structure in `app.routes.ts`
+  - [ ] Public routes (landing, login, register) (routes array exists but empty)
+  - [ ] Protected routes (dashboard, projects, etc.) (routes array exists but empty)
+  - [x] Route configuration with path, component (Router configured in app.config.ts)
+- [ ] Create route guard service (`auth.guard.ts`)
+  - [ ] Check authentication status
+  - [ ] Redirect to login if not authenticated
+  - [ ] Use `inject()` for dependencies
+- [ ] Create 404 not found component (`not-found.component.ts`)
+  - [ ] 404 page with navigation link
+  - [ ] Responsive design
+- [ ] Apply guards to protected routes
+- [ ] Test routing behavior
+- [ ] Write route guard tests
 
 **Deliverables**:
 
-- Public-facing landing page
-- Marketing-ready design
-- SEO-optimized pages
-- Conversion-optimized CTAs
+- Complete routing configuration
+- Authentication route guards
+- 404 error page
+
+---
+
+#### 1.1.7 HTTP Client Configuration
+
+**Priority**: Critical  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 1.1.1  
+**Assigned To**: HWIMDA2
+
+**Frontend Tasks**:
+
+- [ ] Create request interceptor (`auth.interceptor.ts`)
+  - [ ] Add JWT token to request headers
+  - [ ] Handle token refresh logic
+  - [ ] Use `inject()` for dependencies
+- [ ] Create response interceptor (`error.interceptor.ts`)
+  - [ ] Handle 401 (unauthorized) responses
+  - [ ] Handle 403 (forbidden) responses
+  - [ ] Handle 500 (server error) responses
+  - [ ] Extract and format error messages
+- [-] Register interceptors in `app.config.ts` (HttpClient configured with `withInterceptorsFromDi()`, but no interceptors created yet)
+- [ ] Create error handling service (`error-handler.service.ts`)
+  - [ ] Centralized error handling
+  - [ ] User-friendly error messages
+- [ ] Write interceptor tests
+- [ ] Test error scenarios
+
+**Deliverables**:
+
+- HTTP interceptors for authentication and error handling
+- Error handling service
+- Interceptor tests
+
+---
+
+**Note**: Card component exists in `libraries/shared-ui/src/lib/card/card.ts` as an example implementation demonstrating BOM CSS methodology, modern Angular APIs (input(), output(), model(), computed()), and Tailwind `@apply` directives. It serves as a reference for creating other design system components.
+
+#### 1.1.8 Button Component
+
+**Priority**: High  
+**Estimated Time**: 1 day  
+**Dependencies**: 1.1.1  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Create button component (`button.component.ts`) in `shared-ui` library
+  - [ ] Standalone component
+  - [ ] Use `input()` for variants (primary, secondary, danger, ghost)
+  - [ ] Use `input()` for sizes (sm, md, lg)
+  - [ ] Use `input()` for disabled state
+  - [ ] Use `output()` for click events
+- [ ] Apply BOM CSS methodology
+  - [ ] Base `.button` class
+  - [ ] Modifier classes (`.button--primary`, `.button--secondary`, etc.)
+  - [ ] Size modifiers (`.button--sm`, `.button--lg`)
+  - [ ] Use Tailwind `@apply` directives
+- [ ] Implement loading state (spinner)
+- [ ] Support icon buttons
+- [ ] Write component tests
+- [ ] Export from `shared-ui` public API
+
+**Deliverables**:
+
+- Reusable button component with variants
+- Component tests
+- Exported from shared-ui library
+
+---
+
+#### 1.1.9 Input Component
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 1.1.1  
+**Assigned To**: HWIMDA2
+
+**Frontend Tasks**:
+
+- [ ] Create input component (`input.component.ts`) in `shared-ui` library
+  - [ ] Standalone component
+  - [ ] Use `input()` for type (text, email, password, etc.)
+  - [ ] Use `input()` for placeholder, label, required
+  - [ ] Use `input()` for disabled, readonly states
+  - [ ] Use `model()` for two-way binding
+  - [ ] Use `output()` for focus, blur, change events
+- [ ] Apply BOM CSS methodology
+  - [ ] Base `.input` class
+  - [ ] Modifier classes (`.input--error`, `.input--disabled`)
+  - [ ] Use Tailwind `@apply` directives
+- [ ] Implement error state and error message display
+- [ ] Support label and helper text
+- [ ] Write component tests
+- [ ] Export from `shared-ui` public API
+
+**Deliverables**:
+
+- Reusable input component with validation states
+- Component tests
+- Exported from shared-ui library
+
+---
+
+#### 1.1.10 Modal/Dialog Component
+
+**Priority**: High  
+**Estimated Time**: 2-3 days  
+**Dependencies**: 1.1.1  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Create modal component (`modal.component.ts`) in `shared-ui` library
+  - [ ] Standalone component
+  - [ ] Use `input()` for open/close state
+  - [ ] Use `input()` for title, size variants
+  - [ ] Use `output()` for close events
+  - [ ] Implement backdrop/overlay
+- [ ] Apply BOM CSS methodology
+  - [ ] Base `.modal` class
+  - [ ] Modifier classes (`.modal--sm`, `.modal--md`, `.modal--lg`)
+  - [ ] Use Tailwind `@apply` directives
+- [ ] Implement keyboard handling (ESC to close)
+- [ ] Implement focus trap
+- [ ] Support modal content projection (ng-content)
+- [ ] Write component tests
+- [ ] Export from `shared-ui` public API
+
+**Deliverables**:
+
+- Reusable modal/dialog component
+- Keyboard and focus management
+- Component tests
+- Exported from shared-ui library
+
+---
+
+#### 1.1.11 Loading Spinner Component
+
+**Priority**: High  
+**Estimated Time**: 0.5-1 day  
+**Dependencies**: 1.1.1  
+**Assigned To**: HWIMDA2
+
+**Frontend Tasks**:
+
+- [ ] Create loading spinner component (`spinner.component.ts`) in `shared-ui` library
+  - [ ] Standalone component
+  - [ ] Use `input()` for size variants (sm, md, lg)
+  - [ ] Use `input()` for color variants
+- [ ] Apply BOM CSS methodology
+  - [ ] Base `.spinner` class
+  - [ ] Size modifiers
+  - [ ] Use Tailwind `@apply` directives
+- [ ] Implement CSS animation for spinner
+- [ ] Write component tests
+- [ ] Export from `shared-ui` public API
+
+**Deliverables**:
+
+- Reusable loading spinner component
+- Component tests
+- Exported from shared-ui library
+
+---
+
+#### 1.1.12 Toast/Notification Component
+
+**Priority**: Medium  
+**Estimated Time**: 2-3 days  
+**Dependencies**: 1.1.1  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Create toast component (`toast.component.ts`) in `shared-ui` library
+  - [ ] Standalone component
+  - [ ] Use `input()` for type (success, error, warning, info)
+  - [ ] Use `input()` for message, duration
+  - [ ] Auto-dismiss after duration
+- [ ] Create toast service (`toast.service.ts`)
+  - [ ] Service for programmatic toast display
+  - [ ] Methods: `show()`, `success()`, `error()`, `warning()`, `info()`
+  - [ ] Toast queue management
+- [ ] Create toast container component (`toast-container.component.ts`)
+  - [ ] Container for multiple toasts
+  - [ ] Position management (top-right, bottom-right, etc.)
+- [ ] Apply BOM CSS methodology
+- [ ] Implement animations (slide in/out)
+- [ ] Write component and service tests
+- [ ] Export from `shared-ui` public API
+
+**Deliverables**:
+
+- Reusable toast/notification system
+- Toast service for programmatic usage
+- Component tests
+- Exported from shared-ui library
+
+---
+
+#### 1.1.13 Loading and Error State Components
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 1.1.11  
+**Assigned To**: HWIMDA2
+
+**Frontend Tasks**:
+
+- [ ] Create loading state component (`loading-state.component.ts`)
+  - [ ] Display spinner with optional message
+  - [ ] Use `input()` for message
+  - [ ] Reuse spinner component
+- [ ] Create error state component (`error-state.component.ts`)
+  - [ ] Display error message with retry button
+  - [ ] Use `input()` for error message, retry action
+  - [ ] Use `output()` for retry event
+- [ ] Create empty state component (`empty-state.component.ts`)
+  - [ ] Display empty state with optional action
+  - [ ] Use `input()` for message, action label
+  - [ ] Use `output()` for action event
+- [ ] Apply BOM CSS methodology
+- [ ] Write component tests
+- [ ] Export from `shared-ui` public API
+
+**Deliverables**:
+
+- Loading, error, and empty state components
+- Component tests
+- Exported from shared-ui library
+
+---
+
+#### 1.1.14 Landing Page - Hero Section
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 1.1.6, 1.1.8  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Create landing page route in `app.routes.ts` (public route)
+- [ ] Create landing page component (`landing.component.ts`)
+- [ ] Create hero section component (`hero-section.component.ts`)
+  - [ ] Headline and subheading
+  - [ ] Value proposition text
+  - [ ] Primary CTA button (Sign Up) - reuse button component
+  - [ ] Secondary CTA button (Learn More)
+  - [ ] Hero image/illustration placeholder
+- [ ] Apply BOM CSS methodology with Tailwind
+- [ ] Ensure mobile responsiveness
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Landing page route and hero section
+- Responsive design
+
+---
+
+#### 1.1.15 Landing Page - Features Section
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 1.1.14  
+**Assigned To**: HWIMDA2
+
+**Frontend Tasks**:
+
+- [ ] Create features section component (`features-section.component.ts`)
+  - [ ] Section heading
+  - [ ] Feature cards (3-4 key features)
+  - [ ] Feature icons/illustrations
+  - [ ] Feature titles and descriptions
+  - [ ] Reuse card component from shared-ui
+- [ ] Apply BOM CSS methodology with Tailwind
+- [ ] Ensure mobile responsiveness (grid layout)
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Features section component
+- Responsive grid layout
+
+---
+
+#### 1.1.16 Landing Page - Footer and Navigation
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 1.1.6  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Create public navigation component (`public-nav.component.ts`)
+  - [ ] Logo/branding
+  - [ ] Navigation links (Home, Features, Pricing)
+  - [ ] Sign Up button (links to register route)
+  - [ ] Log In button (links to login route)
+  - [ ] Responsive mobile menu
+- [ ] Create footer component (`footer.component.ts`)
+  - [ ] Product links section
+  - [ ] Legal links (Terms, Privacy Policy - placeholders)
+  - [ ] Social media links
+  - [ ] Contact information
+  - [ ] Copyright notice
+- [ ] Apply BOM CSS methodology with Tailwind
+- [ ] Ensure mobile responsiveness
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Public navigation bar
+- Footer component
+- Mobile-responsive design
+
+---
+
+#### 1.1.17 Landing Page - SEO and Optimization
+
+**Priority**: Medium  
+**Estimated Time**: 1 day  
+**Dependencies**: 1.1.14, 1.1.15, 1.1.16  
+**Assigned To**: HWIMDA2
+
+**Frontend Tasks**:
+
+- [ ] Add meta tags to landing page
+  - [ ] Title tag
+  - [ ] Description tag
+  - [ ] Keywords tag
+- [ ] Add Open Graph tags
+  - [ ] og:title, og:description, og:image
+  - [ ] og:type, og:url
+- [ ] Add structured data (JSON-LD)
+  - [ ] Organization schema
+  - [ ] Product schema (optional)
+- [ ] Ensure semantic HTML structure
+- [ ] Add analytics integration (optional)
+  - [ ] Google Analytics script
+  - [ ] Conversion tracking events
+
+**Deliverables**:
+
+- SEO-optimized landing page
+- Structured data
+- Analytics integration (optional)
 
 ---
 
 ## Phase 1.2: Core User & Organization Management (Weeks 3-5)
 
-### Dependencies: 1.1.3, 1.1.4, 1.1.5, 1.1.6
+### Dependencies: 1.1.3, 1.1.4, 1.1.5, 1.1.6, 1.1.7, 1.1.8, 1.1.9, 1.1.10, 1.1.11, 1.1.12, 1.1.13
 
-#### 1.2.1 User Management Backend
+**Note**: Tasks in this phase are split into independent backend and frontend tasks that can be worked on in parallel after initial dependencies are met. Backend tasks (1.2.1-1.2.9) can be started once authentication and API infrastructure (1.1.3, 1.1.4) are complete. Frontend tasks (1.2.10-1.2.17) depend on corresponding backend APIs and frontend foundation components.
+
+#### 1.2.1 User Profile API Endpoints
 
 **Priority**: High  
-**Estimated Time**: 5-7 days  
+**Estimated Time**: 2-3 days  
 **Dependencies**: 1.1.3, 1.1.4  
 **Assigned To**: HWIMDA1
 
-**Tasks**:
+**Backend Tasks**:
 
 - [ ] Create user profile endpoint (GET /api/users/me)
-- [ ] Create user update endpoint (PUT /api/users/me)
-  - [ ] Update name, avatar
-  - [ ] Update email (with verification)
-  - [ ] Update password
-- [ ] Create user preferences endpoint (GET/PUT /api/users/me/preferences)
-- [ ] Create user list endpoint (GET /api/users) with pagination
-  - [ ] Search by name/email
-  - [ ] Pagination support
-- [ ] Create user avatar upload endpoint (POST /api/users/me/avatar)
-  - [ ] File validation (size, type)
-  - [ ] Image processing/resizing
-  - [ ] Storage integration (S3/local)
-- [ ] Implement user deactivation (soft delete)
-- [ ] Write user management API tests
+  - [ ] Return current user profile data
+  - [ ] Include name, email, avatar_url, created_at
+  - [ ] Require authentication
+- [ ] Create user profile update endpoint (PUT /api/users/me)
+  - [ ] Update name field
+  - [ ] Validate input (name not empty)
+  - [ ] Return updated user data
+- [ ] Create email update endpoint (PUT /api/users/me/email)
+  - [ ] Validate email format and uniqueness
+  - [ ] Send verification email (async)
+  - [ ] Require current password for security
+- [ ] Create password update endpoint (PUT /api/users/me/password)
+  - [ ] Require current password
+  - [ ] Validate new password strength
+  - [ ] Hash new password
+  - [ ] Update password_hash in database
+- [ ] Write API tests for profile endpoints
+- [ ] Write integration tests
 
 **Deliverables**:
 
-- User management API endpoints
-- User profile functionality
+- User profile CRUD endpoints
+- Email and password update endpoints
+- API tests
 
 ---
 
-#### 1.2.2 Organization Management Backend
+#### 1.2.2 User Avatar Upload API
+
+**Priority**: Medium  
+**Estimated Time**: 2-3 days  
+**Dependencies**: 1.2.1, 1.1.4  
+**Assigned To**: HWIMDA1
+
+**Backend Tasks**:
+
+- [ ] Create avatar upload endpoint (POST /api/users/me/avatar)
+  - [ ] Accept multipart/form-data
+  - [ ] Validate file type (image/jpeg, image/png, image/webp)
+  - [ ] Validate file size (max 5MB)
+  - [ ] Generate unique filename
+  - [ ] Save file to storage (local or S3)
+  - [ ] Update user.avatar_url in database
+- [ ] Implement image processing
+  - [ ] Resize image to standard sizes (64x64, 128x128, 256x256)
+  - [ ] Optimize image quality
+  - [ ] Store multiple sizes for different use cases
+- [ ] Create avatar deletion endpoint (DELETE /api/users/me/avatar)
+  - [ ] Remove file from storage
+  - [ ] Clear avatar_url in database
+- [ ] Write API tests for avatar upload
+- [ ] Write integration tests with file upload
+
+**Deliverables**:
+
+- Avatar upload endpoint
+- Image processing and storage
+- API tests
+
+---
+
+#### 1.2.3 User Preferences API
+
+**Priority**: Low  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 1.2.1  
+**Assigned To**: HWIMDA1
+
+**Backend Tasks**:
+
+- [ ] Design user preferences schema (JSON field in users table or separate table)
+- [ ] Create get preferences endpoint (GET /api/users/me/preferences)
+  - [ ] Return user preferences JSON
+  - [ ] Default preferences if none set
+- [ ] Create update preferences endpoint (PUT /api/users/me/preferences)
+  - [ ] Validate preferences JSON schema
+  - [ ] Update preferences in database
+  - [ ] Return updated preferences
+- [ ] Define default preferences structure
+  - [ ] Theme preference (light/dark)
+  - [ ] Notification preferences
+  - [ ] Language preference
+- [ ] Write API tests
+
+**Deliverables**:
+
+- User preferences API endpoints
+- Default preferences structure
+- API tests
+
+---
+
+#### 1.2.4 User List API
+
+**Priority**: Medium  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 1.1.3, 1.1.4  
+**Assigned To**: HWIMDA1
+
+**Backend Tasks**:
+
+- [ ] Create user list endpoint (GET /api/users)
+  - [ ] Filter by organization membership (optional query param)
+  - [ ] Search by name or email (optional query param)
+  - [ ] Pagination support (page, limit)
+  - [ ] Return user id, name, email, avatar_url
+- [ ] Implement search functionality
+  - [ ] Case-insensitive search on name and email
+  - [ ] Use database indexes for performance
+- [ ] Implement pagination
+  - [ ] Default limit (e.g., 20 users per page)
+  - [ ] Return total count, page, limit in response
+- [ ] Add permission check (organization members only if filtering by org)
+- [ ] Write API tests
+
+**Deliverables**:
+
+- User list endpoint with search and pagination
+- API tests
+
+---
+
+#### 1.2.5 User Deactivation API
+
+**Priority**: Low  
+**Estimated Time**: 1 day  
+**Dependencies**: 1.2.1  
+**Assigned To**: HWIMDA1
+
+**Backend Tasks**:
+
+- [ ] Create user deactivation endpoint (POST /api/users/me/deactivate)
+  - [ ] Soft delete (set deleted_at timestamp)
+  - [ ] Invalidate all user sessions/tokens
+  - [ ] Prevent login after deactivation
+- [ ] Update authentication logic to check deleted_at
+- [ ] Create user reactivation endpoint (admin only, optional)
+- [ ] Write API tests
+
+**Deliverables**:
+
+- User deactivation endpoint
+- Updated authentication logic
+- API tests
+
+---
+
+#### 1.2.6 Organization CRUD API
 
 **Priority**: High  
-**Estimated Time**: 7-10 days  
+**Estimated Time**: 3-4 days  
 **Dependencies**: 1.1.2, 1.1.4  
 **Assigned To**: BATATA1
 
-**Tasks**:
+**Backend Tasks**:
 
 - [ ] Create organization creation endpoint (POST /api/organizations)
-  - [ ] Validate organization name and slug uniqueness
+  - [ ] Validate organization name (required, min length)
+  - [ ] Auto-generate slug from name
+  - [ ] Validate slug uniqueness
   - [ ] Create organization record
-  - [ ] Add creator as admin member
+  - [ ] Add creator as admin member in OrganizationMembers table
+  - [ ] Return created organization with member info
 - [ ] Create organization retrieval endpoint (GET /api/organizations/:id)
+  - [ ] Include organization details (name, slug, description, settings)
+  - [ ] Permission check (organization member only)
+  - [ ] Include member count
 - [ ] Create organization list endpoint (GET /api/organizations)
-  - [ ] Filter by user membership
-  - [ ] Pagination support
+  - [ ] Filter by current user membership (only show user's orgs)
+  - [ ] Pagination support (page, limit)
+  - [ ] Return organization id, name, slug, member count
 - [ ] Create organization update endpoint (PUT /api/organizations/:id)
   - [ ] Permission check (admin only)
-  - [ ] Update name, description, settings
+  - [ ] Update name, description fields
+  - [ ] Validate name and slug uniqueness if changed
+  - [ ] Return updated organization
 - [ ] Create organization deletion endpoint (DELETE /api/organizations/:id)
   - [ ] Permission check (admin only)
-  - [ ] Soft delete or hard delete with confirmation
-- [ ] Create organization members management endpoints
-  - [ ] Add member (POST /api/organizations/:id/members)
-  - [ ] List members (GET /api/organizations/:id/members)
-  - [ ] Update member role (PUT /api/organizations/:id/members/:userId)
-  - [ ] Remove member (DELETE /api/organizations/:id/members/:userId)
-  - [ ] Invite member by email (POST /api/organizations/:id/members/invite)
-- [ ] Implement organization invitation system
-  - [ ] Generate invitation tokens
-  - [ ] Send invitation emails
-  - [ ] Accept invitation endpoint (POST /api/organizations/invitations/:token/accept)
-- [ ] Create organization settings management
-  - [ ] Get settings (GET /api/organizations/:id/settings)
-  - [ ] Update settings (PUT /api/organizations/:id/settings)
-- [ ] Write organization API tests
+  - [ ] Soft delete (set deleted_at timestamp)
+  - [ ] Cascade delete or archive projects
+- [ ] Write API tests for CRUD operations
+- [ ] Write integration tests
 
 **Deliverables**:
 
-- Organization CRUD APIs
-- Member management system
-- Invitation system
+- Organization CRUD endpoints
+- Permission checks
+- API tests
 
 ---
 
-#### 1.2.3 User & Organization Management Frontend
+#### 1.2.7 Organization Members API
 
 **Priority**: High  
-**Estimated Time**: 7-10 days  
-**Dependencies**: 1.2.1, 1.2.2, 1.1.5  
-**Assigned To**: BATATA2
+**Estimated Time**: 3-4 days  
+**Dependencies**: 1.2.6  
+**Assigned To**: BATATA1
 
-**Tasks**:
+**Backend Tasks**:
 
-- [ ] Create user profile page
-  - [ ] Display user information
-  - [ ] Edit profile form
-  - [ ] Avatar upload with preview
-  - [ ] Password change form
-- [ ] Create organization creation page/modal
-  - [ ] Organization name input
-  - [ ] Slug generation/preview
-  - [ ] Description field
-- [ ] Create organization settings page
-  - [ ] Organization details form
-  - [ ] Member list component
-  - [ ] Add member functionality
-  - [ ] Remove member functionality
-  - [ ] Role management UI
-  - [ ] Invite member functionality
-- [ ] Create organization selector/switcher component
-- [ ] Create user dropdown menu (profile, settings, logout)
-- [ ] Implement organization context/provider
-- [ ] Create organization list/dashboard page
-- [ ] Add form validation for all forms
-- [ ] Implement loading states and error handling
+- [ ] Create add member endpoint (POST /api/organizations/:id/members)
+  - [ ] Validate user_id exists
+  - [ ] Check user is not already a member
+  - [ ] Add member with default role (member)
+  - [ ] Permission check (admin only)
+  - [ ] Return added member info
+- [ ] Create list members endpoint (GET /api/organizations/:id/members)
+  - [ ] Return members with user details (name, email, avatar_url)
+  - [ ] Include role for each member
+  - [ ] Pagination support
+  - [ ] Permission check (organization member)
+- [ ] Create update member role endpoint (PUT /api/organizations/:id/members/:userId)
+  - [ ] Update member role (member, admin)
+  - [ ] Permission check (admin only)
+  - [ ] Prevent removing last admin
+  - [ ] Return updated member info
+- [ ] Create remove member endpoint (DELETE /api/organizations/:id/members/:userId)
+  - [ ] Permission check (admin only, or user removing themselves)
+  - [ ] Prevent removing last admin
+  - [ ] Remove member from organization
+- [ ] Write API tests for member management
+- [ ] Write integration tests
 
 **Deliverables**:
 
-- User profile UI
-- Organization management UI
-- Member management UI
+- Organization member management endpoints
+- Role-based permissions
+- API tests
+
+---
+
+#### 1.2.8 Organization Invitation System
+
+**Priority**: Medium  
+**Estimated Time**: 4-5 days  
+**Dependencies**: 1.2.7  
+**Assigned To**: BATATA1
+
+**Backend Tasks**:
+
+- [ ] Create invitation model/table
+  - [ ] Fields: id, organization_id, email, token, role, invited_by, expires_at, accepted_at, created_at
+  - [ ] Migration for invitations table
+- [ ] Create send invitation endpoint (POST /api/organizations/:id/members/invite)
+  - [ ] Validate email format
+  - [ ] Check user is not already a member
+  - [ ] Check invitation not already sent (pending)
+  - [ ] Generate secure invitation token
+  - [ ] Create invitation record (expires in 7 days)
+  - [ ] Send invitation email (async) with invitation link
+  - [ ] Permission check (admin only)
+  - [ ] Return invitation info
+- [ ] Create accept invitation endpoint (POST /api/organizations/invitations/:token/accept)
+  - [ ] Validate token exists and not expired
+  - [ ] Check user email matches invitation email (if authenticated) or allow registration
+  - [ ] Add user to organization with specified role
+  - [ ] Mark invitation as accepted
+  - [ ] Send welcome notification (async)
+  - [ ] Return organization info
+- [ ] Create list invitations endpoint (GET /api/organizations/:id/invitations)
+  - [ ] Return pending invitations
+  - [ ] Permission check (admin only)
+- [ ] Create cancel invitation endpoint (DELETE /api/organizations/invitations/:id)
+  - [ ] Cancel pending invitation
+  - [ ] Permission check (admin only)
+- [ ] Implement invitation email template
+- [ ] Write API tests for invitation system
+- [ ] Write integration tests
+
+**Deliverables**:
+
+- Organization invitation system
+- Invitation email handling
+- API tests
+
+---
+
+#### 1.2.9 Organization Settings API
+
+**Priority**: Low  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 1.2.6  
+**Assigned To**: BATATA1
+
+**Backend Tasks**:
+
+- [ ] Design organization settings schema (JSON field in organizations table)
+- [ ] Create get settings endpoint (GET /api/organizations/:id/settings)
+  - [ ] Return organization settings JSON
+  - [ ] Include default settings if none set
+  - [ ] Permission check (organization member)
+- [ ] Create update settings endpoint (PUT /api/organizations/:id/settings)
+  - [ ] Validate settings JSON schema
+  - [ ] Update settings in database
+  - [ ] Permission check (admin only)
+  - [ ] Return updated settings
+- [ ] Define default settings structure
+  - [ ] Feature flags
+  - [ ] Notification preferences
+  - [ ] Custom branding (optional)
+- [ ] Write API tests
+
+**Deliverables**:
+
+- Organization settings API endpoints
+- Default settings structure
+- API tests
+
+---
+
+#### 1.2.10 User Profile Page
+
+**Priority**: High  
+**Estimated Time**: 2-3 days  
+**Dependencies**: 1.2.1, 1.1.5, 1.1.8, 1.1.9  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Create user profile route (`/profile`)
+- [ ] Create profile page component (`profile.component.ts`)
+  - [ ] Display current user information
+  - [ ] Edit name form (use input component)
+  - [ ] Email display (read-only, link to change email)
+  - [ ] Save button (use button component)
+- [ ] Create password change form component (`change-password.component.ts`)
+  - [ ] Current password input
+  - [ ] New password input with strength indicator
+  - [ ] Confirm password input
+  - [ ] Form validation
+  - [ ] Submit handler
+- [ ] Create avatar upload component (`avatar-upload.component.ts`)
+  - [ ] Display current avatar
+  - [ ] File input for image upload
+  - [ ] Image preview before upload
+  - [ ] Upload progress indicator
+  - [ ] Remove avatar option
+- [ ] Integrate with user profile API endpoints
+- [ ] Add form validation
+- [ ] Implement loading and error states
+- [ ] Write component tests
+
+**Deliverables**:
+
+- User profile page with edit functionality
+- Password change form
+- Avatar upload component
+
+---
+
+#### 1.2.11 Organization Creation Modal
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 1.2.6, 1.1.5, 1.1.10, 1.1.9  
+**Assigned To**: HWIMDA2
+
+**Frontend Tasks**:
+
+- [ ] Create organization creation modal component (`create-organization-modal.component.ts`)
+  - [ ] Organization name input (use input component)
+  - [ ] Slug input (auto-generated from name, editable)
+  - [ ] Slug preview/validation
+  - [ ] Description textarea (optional)
+  - [ ] Create and Cancel buttons (use button component)
+- [ ] Integrate with organization creation API
+- [ ] Add form validation
+  - [ ] Name required, min length
+  - [ ] Slug format validation (lowercase, hyphens only)
+  - [ ] Slug uniqueness check (async validation)
+- [ ] Implement loading and error states
+- [ ] Show success toast and redirect after creation
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Organization creation modal
+- Form validation
+- Component tests
+
+---
+
+#### 1.2.12 Organization List Page
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 1.2.6, 1.1.5, 1.1.8  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Create organization list route (`/organizations`)
+- [ ] Create organization list page component (`organizations.component.ts`)
+  - [ ] Display list of user's organizations
+  - [ ] Organization cards (use card component)
+  - [ ] Organization name, description, member count
+  - [ ] "Create Organization" button (opens modal from 1.2.11)
+  - [ ] Click organization to navigate to organization detail
+- [ ] Create organization card component (`organization-card.component.ts`)
+  - [ ] Organization name and description
+  - [ ] Member count
+  - [ ] Actions menu (settings, leave)
+- [ ] Integrate with organization list API
+- [ ] Implement loading and error states (use loading/error components)
+- [ ] Implement empty state (no organizations)
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Organization list page
+- Organization card components
+- Component tests
+
+---
+
+#### 1.2.13 Organization Settings Page
+
+**Priority**: High  
+**Estimated Time**: 2-3 days  
+**Dependencies**: 1.2.6, 1.1.5, 1.1.8, 1.1.9  
+**Assigned To**: HWIMDA2
+
+**Frontend Tasks**:
+
+- [ ] Create organization settings route (`/organizations/:id/settings`)
+- [ ] Create organization settings page component (`organization-settings.component.ts`)
+  - [ ] Organization details form (name, description)
+  - [ ] Save button
+  - [ ] Delete organization button (with confirmation)
+- [ ] Integrate with organization update API
+- [ ] Integrate with organization delete API
+- [ ] Add form validation
+- [ ] Implement loading and error states
+- [ ] Show confirmation modal before deletion (use modal component)
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Organization settings page
+- Organization details update
+- Delete organization functionality
+
+---
+
+#### 1.2.14 Organization Member Management
+
+**Priority**: High  
+**Estimated Time**: 2-3 days  
+**Dependencies**: 1.2.7, 1.1.5, 1.1.8, 1.1.9, 1.1.10  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Create member list component (`member-list.component.ts`)
+  - [ ] Display list of organization members
+  - [ ] Member cards with name, email, avatar, role
+  - [ ] Role badge/display
+  - [ ] Actions menu for each member (change role, remove)
+- [ ] Create add member modal component (`add-member-modal.component.ts`)
+  - [ ] User search/select input (integrate with user list API)
+  - [ ] Role selection (member, admin)
+  - [ ] Add button
+- [ ] Create change role modal component (`change-role-modal.component.ts`)
+  - [ ] Current role display
+  - [ ] Role selection dropdown
+  - [ ] Save button
+- [ ] Integrate with member management APIs
+  - [ ] List members
+  - [ ] Add member
+  - [ ] Update role
+  - [ ] Remove member
+- [ ] Add permission checks (admin only actions)
+- [ ] Implement loading and error states
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Member list component
+- Add/remove member functionality
+- Role management UI
+
+---
+
+#### 1.2.15 Organization Invitation UI
+
+**Priority**: Medium  
+**Estimated Time**: 2-3 days  
+**Dependencies**: 1.2.8, 1.1.5, 1.1.8, 1.1.9, 1.1.10  
+**Assigned To**: HWIMDA2
+
+**Frontend Tasks**:
+
+- [ ] Create send invitation modal component (`invite-member-modal.component.ts`)
+  - [ ] Email input (use input component)
+  - [ ] Role selection (member, admin)
+  - [ ] Send invitation button
+  - [ ] Form validation (email format)
+- [ ] Create pending invitations list component (`pending-invitations.component.ts`)
+  - [ ] Display list of pending invitations
+  - [ ] Email, role, invited by, expiration date
+  - [ ] Cancel invitation button
+- [ ] Integrate with invitation APIs
+  - [ ] Send invitation
+  - [ ] List pending invitations
+  - [ ] Cancel invitation
+- [ ] Create invitation acceptance page (`/invitations/:token`)
+  - [ ] Display invitation details
+  - [ ] Accept button (if logged in)
+  - [ ] Sign up link (if not logged in)
+- [ ] Integrate with accept invitation API
+- [ ] Implement loading and error states
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Send invitation modal
+- Pending invitations list
+- Invitation acceptance page
+
+---
+
+#### 1.2.16 Organization Selector Component
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 1.2.6, 1.1.5  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Create organization selector component (`organization-selector.component.ts`)
+  - [ ] Dropdown/select component showing current organization
+  - [ ] List of user's organizations
+  - [ ] Switch organization functionality
+- [ ] Create organization context/service (`organization.service.ts`)
+  - [ ] Current organization state (signal)
+  - [ ] Switch organization method
+  - [ ] Load user's organizations
+  - [ ] Persist selected organization (localStorage)
+- [ ] Integrate with organization list API
+- [ ] Add organization selector to base layout header
+- [ ] Implement loading state
+- [ ] Write component and service tests
+
+**Deliverables**:
+
+- Organization selector component
+- Organization context service
+- Integration with base layout
+
+---
+
+#### 1.2.17 User Dropdown Menu
+
+**Priority**: High  
+**Estimated Time**: 1 day  
+**Dependencies**: 1.1.5, 1.1.8  
+**Assigned To**: HWIMDA2
+
+**Frontend Tasks**:
+
+- [ ] Create user dropdown menu component (`user-menu.component.ts`)
+  - [ ] User avatar display
+  - [ ] User name display
+  - [ ] Dropdown menu with:
+    - [ ] Profile link
+    - [ ] Settings link (placeholder)
+    - [ ] Logout button
+- [ ] Add logout functionality
+  - [ ] Clear authentication tokens
+  - [ ] Redirect to login page
+- [ ] Integrate with authentication service
+- [ ] Apply BOM CSS methodology
+- [ ] Ensure mobile responsiveness
+- [ ] Write component tests
+
+**Deliverables**:
+
+- User dropdown menu component
+- Logout functionality
+- Component tests
 
 ---
 
