@@ -113,7 +113,7 @@ export class Icon {
     // Convert kebab-case to PascalCase for Lucide Angular icons
     const pascalCaseName = iconName
       .split('-')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
       .join('');
 
     return (icons as any)[pascalCaseName];

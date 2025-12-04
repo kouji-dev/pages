@@ -1,9 +1,9 @@
-import { Component, signal } from '@angular/core';
-import { Button } from 'shared-ui';
+import { Component, signal, inject, ViewChild, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Button, Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter } from 'shared-ui';
 
 @Component({
   selector: 'app-demo',
-  imports: [Button],
+  imports: [Button, ModalContainer, ModalHeader, ModalContent, ModalFooter],
   template: `
     <div class="demo">
       <h1 class="demo_title">Component Library Demo</h1>
@@ -44,6 +44,75 @@ import { Button } from 'shared-ui';
           </div>
         </div>
       </section>
+
+      <!-- Modal Component Showcase -->
+      <section class="demo_section">
+        <h2 class="demo_section-title">Modal Component</h2>
+
+        <div class="demo_grid">
+          <div class="demo_item">
+            <h3 class="demo_item-title">Basic Modal</h3>
+            <div class="demo_item-content">
+              <lib-button (clicked)="openBasicModal()">Open Basic Modal</lib-button>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">Size Variants</h3>
+            <div class="demo_item-content">
+              <lib-button (clicked)="openModal('sm')">Small</lib-button>
+              <lib-button (clicked)="openModal('md')">Medium</lib-button>
+              <lib-button (clicked)="openModal('lg')">Large</lib-button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Modal Templates -->
+      <ng-template #basicModalTemplate>
+        <lib-modal-container>
+          <lib-modal-header>Basic Modal</lib-modal-header>
+          <lib-modal-content>
+            <p>This is a basic modal dialog with a title and close button.</p>
+            <p>
+              You can close it by clicking the X button, pressing ESC, or clicking the backdrop.
+            </p>
+          </lib-modal-content>
+        </lib-modal-container>
+      </ng-template>
+
+      <ng-template #smallModalTemplate>
+        <lib-modal-container>
+          <lib-modal-header>Small Modal</lib-modal-header>
+          <lib-modal-content>
+            <p>This is a small modal (max-width: 384px).</p>
+          </lib-modal-content>
+        </lib-modal-container>
+      </ng-template>
+
+      <ng-template #mediumModalTemplate>
+        <lib-modal-container>
+          <lib-modal-header>Medium Modal</lib-modal-header>
+          <lib-modal-content>
+            <p>This is a medium modal (max-width: 512px).</p>
+            <p>This is the default size.</p>
+          </lib-modal-content>
+        </lib-modal-container>
+      </ng-template>
+
+      <ng-template #largeModalTemplate>
+        <lib-modal-container>
+          <lib-modal-header>Large Modal</lib-modal-header>
+          <lib-modal-content>
+            <p>This is a large modal (max-width: 768px).</p>
+            <p>It can contain more content and is useful for forms or detailed information.</p>
+          </lib-modal-content>
+          <lib-modal-footer>
+            <lib-button variant="secondary" (clicked)="modal.close()">Cancel</lib-button>
+            <lib-button variant="primary" (clicked)="modal.close()">Confirm</lib-button>
+          </lib-modal-footer>
+        </lib-modal-container>
+      </ng-template>
     </div>
   `,
   styles: [
@@ -92,10 +161,16 @@ import { Button } from 'shared-ui';
       }
     `,
   ],
-  standalone: true,
 })
 export class Demo {
+  readonly modal = inject(Modal);
+  readonly viewContainerRef = inject(ViewContainerRef);
   readonly loadingButton = signal(false);
+
+  @ViewChild('basicModalTemplate') basicModalTemplate!: TemplateRef<any>;
+  @ViewChild('smallModalTemplate') smallModalTemplate!: TemplateRef<any>;
+  @ViewChild('mediumModalTemplate') mediumModalTemplate!: TemplateRef<any>;
+  @ViewChild('largeModalTemplate') largeModalTemplate!: TemplateRef<any>;
 
   toggleLoading(): void {
     this.loadingButton.update((loading) => !loading);
@@ -104,5 +179,25 @@ export class Demo {
         this.loadingButton.set(false);
       }, 2000);
     }
+  }
+
+  openBasicModal(): void {
+    this.modal.open(this.basicModalTemplate, this.viewContainerRef, {
+      size: 'md',
+      closable: true,
+    });
+  }
+
+  openModal(size: 'sm' | 'md' | 'lg'): void {
+    const templateMap = {
+      sm: this.smallModalTemplate,
+      md: this.mediumModalTemplate,
+      lg: this.largeModalTemplate,
+    };
+
+    this.modal.open(templateMap[size], this.viewContainerRef, {
+      size,
+      closable: true,
+    });
   }
 }
