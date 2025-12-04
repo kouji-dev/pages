@@ -192,13 +192,13 @@ This phase focuses on building the foundational features required for a function
 - [x] Initialize Angular project with TypeScript (Angular 21)
 - [x] Set up build tooling (Angular CLI with esbuild)
 - [x] Install and configure UI library (Tailwind CSS 4+ with theme in shared-ui)
-- [-] Create base layout component
-  - [x] Header/Navbar
+- [ ] Create base layout component
+  - [ ] Header/Navbar (demo app.ts exists for testing only, not production layout)
   - [ ] Sidebar navigation
-  - [x] Main content area
+  - [ ] Main content area (demo app.ts exists for testing only, not production layout)
   - [ ] Footer (optional)
 - [-] Set up routing (Angular Router)
-  - [x] Route configuration
+  - [-] Route configuration (basic Router setup done, no routes defined yet)
   - [ ] Route guards (protected routes)
   - [ ] 404 page
 - [-] Create design system foundation
@@ -229,9 +229,72 @@ This phase focuses on building the foundational features required for a function
 
 ---
 
+#### 1.1.6 Landing Page & Marketing
+
+**Priority**: High  
+**Estimated Time**: 5-7 days  
+**Dependencies**: 1.1.5  
+**Assigned To**: BATATA2, HWIMDA2 (shared)
+
+**Frontend Tasks**:
+
+- [ ] Create landing page route and component
+  - [ ] Public route (no authentication required)
+  - [ ] Responsive layout
+  - [ ] Modern, professional design
+- [ ] Design and implement hero section
+  - [ ] Compelling headline and subheading
+  - [ ] Value proposition
+  - [ ] Call-to-action buttons (Sign Up, Learn More)
+  - [ ] Hero image or illustration
+- [ ] Create features section
+  - [ ] Key feature highlights
+  - [ ] Feature icons/illustrations
+  - [ ] Benefits list
+- [ ] Create pricing section (optional for MVP)
+  - [ ] Pricing tiers or plans
+  - [ ] Feature comparison
+  - [ ] Sign up CTAs
+- [ ] Create testimonials/social proof section (optional for MVP)
+  - [ ] Customer testimonials
+  - [ ] User count or metrics
+  - [ ] Company logos (if available)
+- [ ] Create footer section
+  - [ ] Product links
+  - [ ] Legal links (Terms, Privacy Policy - can be placeholders)
+  - [ ] Social media links
+  - [ ] Contact information
+- [ ] Implement smooth scrolling and animations (optional)
+  - [ ] Scroll-triggered animations
+  - [ ] Parallax effects (if appropriate)
+- [ ] Add SEO optimization
+  - [ ] Meta tags
+  - [ ] Open Graph tags
+  - [ ] Structured data (JSON-LD)
+  - [ ] Semantic HTML
+- [ ] Create sign up/login navigation
+  - [ ] Navigation bar with Sign Up/Log In buttons
+  - [ ] Links to authentication pages
+- [ ] Ensure mobile responsiveness
+  - [ ] Mobile-optimized layout
+  - [ ] Touch-friendly interactions
+  - [ ] Fast loading on mobile
+- [ ] Add analytics integration (optional for MVP)
+  - [ ] Google Analytics or similar
+  - [ ] Conversion tracking
+
+**Deliverables**:
+
+- Public-facing landing page
+- Marketing-ready design
+- SEO-optimized pages
+- Conversion-optimized CTAs
+
+---
+
 ## Phase 1.2: Core User & Organization Management (Weeks 3-5)
 
-### Dependencies: 1.1.3, 1.1.4, 1.1.5
+### Dependencies: 1.1.3, 1.1.4, 1.1.5, 1.1.6
 
 #### 1.2.1 User Management Backend
 
