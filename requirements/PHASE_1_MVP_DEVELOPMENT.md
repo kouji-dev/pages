@@ -327,21 +327,22 @@ This phase focuses on building the foundational features required for a function
 
 **Frontend Tasks**:
 
-- [ ] Create button component (`button.component.ts`) in `shared-ui` library
-  - [ ] Standalone component
-  - [ ] Use `input()` for variants (primary, secondary, danger, ghost)
-  - [ ] Use `input()` for sizes (sm, md, lg)
-  - [ ] Use `input()` for disabled state
-  - [ ] Use `output()` for click events
-- [ ] Apply BOM CSS methodology
-  - [ ] Base `.button` class
-  - [ ] Modifier classes (`.button--primary`, `.button--secondary`, etc.)
-  - [ ] Size modifiers (`.button--sm`, `.button--lg`)
-  - [ ] Use Tailwind `@apply` directives
-- [ ] Implement loading state (spinner)
-- [ ] Support icon buttons
-- [ ] Write component tests
-- [ ] Export from `shared-ui` public API
+- [x] Create button component (`button.ts`) in `shared-ui` library
+  - [x] Standalone component
+  - [x] Use `input()` for variants (primary, secondary, danger, ghost)
+  - [x] Use `input()` for sizes (sm, md, lg)
+  - [x] Use `input()` for disabled state
+  - [x] Use `output()` for click events
+- [x] Apply BOM CSS methodology
+  - [x] Base `.button` class
+  - [x] Modifier classes (`.button--primary`, `.button--secondary`, etc.)
+  - [x] Size modifiers (`.button--sm`, `.button--md`, `.button--lg`)
+  - [x] Use Tailwind `@apply` directives
+  - [x] Use Pages design tokens via CSS custom properties
+- [x] Implement loading state (spinner)
+- [x] Support icon buttons
+- [x] Write component tests
+- [x] Export from `shared-ui` public API
 
 **Deliverables**:
 
@@ -351,7 +352,45 @@ This phase focuses on building the foundational features required for a function
 
 ---
 
-#### 1.1.9 Input Component
+#### 1.1.9 Icon Component
+
+**Priority**: High  
+**Estimated Time**: 1 day  
+**Dependencies**: 1.1.1  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Install lucide-angular package
+- [ ] Create icon component (`icon.ts`) in `shared-ui` library
+  - [ ] Standalone component wrapper for Lucide icons
+  - [ ] Use `input()` for icon name (string type)
+  - [ ] Use `input()` for size (sm, md, lg, or custom number)
+  - [ ] Use `input()` for color (string or CSS custom property)
+  - [ ] Use `input()` for strokeWidth (number)
+  - [ ] Support dynamic icon loading from Lucide library
+- [ ] Apply BOM CSS methodology
+  - [ ] Base `.icon` class
+  - [ ] Size modifiers (`.icon--sm`, `.icon--md`, `.icon--lg`)
+  - [ ] Use Tailwind `@apply` directives
+  - [ ] Use Pages design tokens for default colors
+- [ ] Implement icon registry/selector logic
+  - [ ] Map icon names to Lucide icon components
+  - [ ] Support all common Lucide icons
+- [ ] Write component tests
+- [ ] Export from `shared-ui` public API
+- [ ] Document available icon names in component
+
+**Deliverables**:
+
+- Reusable icon component using Lucide Angular
+- Support for common icons (menu, user, search, settings, etc.)
+- Component tests
+- Exported from shared-ui library
+
+---
+
+#### 1.1.10 Input Component
 
 **Priority**: High  
 **Estimated Time**: 1-2 days  
@@ -384,7 +423,7 @@ This phase focuses on building the foundational features required for a function
 
 ---
 
-#### 1.1.10 Modal/Dialog Component
+#### 1.1.11 Modal/Dialog Component
 
 **Priority**: High  
 **Estimated Time**: 2-3 days  
@@ -418,7 +457,7 @@ This phase focuses on building the foundational features required for a function
 
 ---
 
-#### 1.1.11 Loading Spinner Component
+#### 1.1.12 Loading Spinner Component
 
 **Priority**: High  
 **Estimated Time**: 0.5-1 day  
@@ -447,7 +486,7 @@ This phase focuses on building the foundational features required for a function
 
 ---
 
-#### 1.1.12 Toast/Notification Component
+#### 1.1.13 Toast/Notification Component
 
 **Priority**: Medium  
 **Estimated Time**: 2-3 days  
@@ -482,11 +521,11 @@ This phase focuses on building the foundational features required for a function
 
 ---
 
-#### 1.1.13 Loading and Error State Components
+#### 1.1.14 Loading and Error State Components
 
 **Priority**: High  
 **Estimated Time**: 1-2 days  
-**Dependencies**: 1.1.11  
+**Dependencies**: 1.1.12  
 **Assigned To**: HWIMDA2
 
 **Frontend Tasks**:
@@ -515,11 +554,11 @@ This phase focuses on building the foundational features required for a function
 
 ---
 
-#### 1.1.14 Landing Page - Hero Section
+#### 1.1.15 Landing Page - Hero Section
 
 **Priority**: High  
 **Estimated Time**: 1-2 days  
-**Dependencies**: 1.1.6, 1.1.8  
+**Dependencies**: 1.1.6, 1.1.8, 1.1.9  
 **Assigned To**: BATATA2
 
 **Frontend Tasks**:
@@ -543,11 +582,11 @@ This phase focuses on building the foundational features required for a function
 
 ---
 
-#### 1.1.15 Landing Page - Features Section
+#### 1.1.16 Landing Page - Features Section
 
 **Priority**: High  
 **Estimated Time**: 1-2 days  
-**Dependencies**: 1.1.14  
+**Dependencies**: 1.1.15  
 **Assigned To**: HWIMDA2
 
 **Frontend Tasks**:
@@ -569,7 +608,7 @@ This phase focuses on building the foundational features required for a function
 
 ---
 
-#### 1.1.16 Landing Page - Footer and Navigation
+#### 1.1.17 Landing Page - Footer and Navigation
 
 **Priority**: High  
 **Estimated Time**: 1-2 days  
@@ -602,11 +641,11 @@ This phase focuses on building the foundational features required for a function
 
 ---
 
-#### 1.1.17 Landing Page - SEO and Optimization
+#### 1.1.18 Landing Page - SEO and Optimization
 
 **Priority**: Medium  
 **Estimated Time**: 1 day  
-**Dependencies**: 1.1.14, 1.1.15, 1.1.16  
+**Dependencies**: 1.1.15, 1.1.16, 1.1.17  
 **Assigned To**: HWIMDA2
 
 **Frontend Tasks**:
@@ -636,7 +675,7 @@ This phase focuses on building the foundational features required for a function
 
 ## Phase 1.2: Core User & Organization Management (Weeks 3-5)
 
-### Dependencies: 1.1.3, 1.1.4, 1.1.5, 1.1.6, 1.1.7, 1.1.8, 1.1.9, 1.1.10, 1.1.11, 1.1.12, 1.1.13
+### Dependencies: 1.1.3, 1.1.4, 1.1.5, 1.1.6, 1.1.7, 1.1.8, 1.1.9, 1.1.10, 1.1.11, 1.1.12, 1.1.13, 1.1.14
 
 **Note**: Tasks in this phase are split into independent backend and frontend tasks that can be worked on in parallel after initial dependencies are met. Backend tasks (1.2.1-1.2.9) can be started once authentication and API infrastructure (1.1.3, 1.1.4) are complete. Frontend tasks (1.2.10-1.2.17) depend on corresponding backend APIs and frontend foundation components.
 
@@ -1004,7 +1043,7 @@ This phase focuses on building the foundational features required for a function
 
 **Priority**: High  
 **Estimated Time**: 1-2 days  
-**Dependencies**: 1.2.6, 1.1.5, 1.1.10, 1.1.9  
+**Dependencies**: 1.2.6, 1.1.5, 1.1.11, 1.1.9  
 **Assigned To**: HWIMDA2
 
 **Frontend Tasks**:
@@ -1098,7 +1137,7 @@ This phase focuses on building the foundational features required for a function
 
 **Priority**: High  
 **Estimated Time**: 2-3 days  
-**Dependencies**: 1.2.7, 1.1.5, 1.1.8, 1.1.9, 1.1.10  
+**Dependencies**: 1.2.7, 1.1.5, 1.1.8, 1.1.9, 1.1.11  
 **Assigned To**: BATATA2
 
 **Frontend Tasks**:
@@ -1137,7 +1176,7 @@ This phase focuses on building the foundational features required for a function
 
 **Priority**: Medium  
 **Estimated Time**: 2-3 days  
-**Dependencies**: 1.2.8, 1.1.5, 1.1.8, 1.1.9, 1.1.10  
+**Dependencies**: 1.2.8, 1.1.5, 1.1.8, 1.1.9, 1.1.11  
 **Assigned To**: HWIMDA2
 
 **Frontend Tasks**:
