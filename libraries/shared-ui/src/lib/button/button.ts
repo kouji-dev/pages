@@ -1,8 +1,9 @@
 import { Component, input, output, computed } from '@angular/core';
+import { Icon, IconName } from '../icon/icon';
 
 @Component({
   selector: 'lib-button',
-  imports: [],
+  imports: [Icon],
   template: `
     <button
       class="button"
@@ -20,43 +21,32 @@ import { Component, input, output, computed } from '@angular/core';
       (click)="onClick($event)"
     >
       @if (loading()) {
-        <span class="button_spinner" aria-hidden="true">
-          <svg
-            class="button_spinner-icon"
-            fill="none"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle
-              class="button_spinner-circle"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="4"
-              stroke-linecap="round"
-              stroke-dasharray="32"
-              stroke-dashoffset="32"
-            >
-              <animate
-                attributeName="stroke-dasharray"
-                dur="2s"
-                values="0 32;16 16;0 32;0 32"
-                repeatCount="indefinite"
-              />
-              <animate
-                attributeName="stroke-dashoffset"
-                dur="2s"
-                values="0;-16;-32;-32"
-                repeatCount="indefinite"
-              />
-            </circle>
-          </svg>
+        <lib-icon
+          name="loader"
+          [size]="spinnerSize()"
+          animation="spin"
+          [ariaHidden]="true"
+          class="button_spinner"
+        ></lib-icon>
+      } @else {
+        <span class="button_content">
+          @if (leftIcon()) {
+            <lib-icon
+              [name]="leftIcon()!"
+              [size]="iconSize()"
+              class="button_icon button_icon--left"
+            ></lib-icon>
+          }
+          <ng-content></ng-content>
+          @if (rightIcon()) {
+            <lib-icon
+              [name]="rightIcon()!"
+              [size]="iconSize()"
+              class="button_icon button_icon--right"
+            ></lib-icon>
+          }
         </span>
       }
-      <span class="button_content" [class.button_content--hidden]="loading()">
-        <ng-content></ng-content>
-      </span>
     </button>
   `,
   styles: [
@@ -168,24 +158,26 @@ import { Component, input, output, computed } from '@angular/core';
         @apply flex items-center gap-2;
       }
 
-      .button_content--hidden {
-        @apply opacity-0;
+      /* Icons */
+      .button_icon {
+        flex-shrink: 0;
+      }
+
+      .button_icon--left {
+        @apply mr-1;
+      }
+
+      .button_icon--right {
+        @apply ml-1;
+      }
+
+      .button--icon-only .button_icon {
+        @apply m-0;
       }
 
       /* Spinner */
       .button_spinner {
         @apply absolute flex items-center justify-center;
-      }
-
-      .button_spinner-icon {
-        @apply animate-spin;
-        width: 1em;
-        height: 1em;
-        color: currentColor;
-      }
-
-      .button_spinner-circle {
-        opacity: 0.25;
       }
 
       /* Ensure spinner is visible when loading */
@@ -204,9 +196,32 @@ export class Button {
   loading = input(false);
   iconOnly = input(false);
   type = input<'button' | 'submit' | 'reset'>('button');
+  leftIcon = input<IconName | null>(null);
+  rightIcon = input<IconName | null>(null);
 
   // Output
   clicked = output<MouseEvent>();
+
+  // Computed
+  readonly spinnerSize = computed(() => {
+    const size = this.size();
+    const sizeMap: Record<string, 'xs' | 'sm' | 'md'> = {
+      sm: 'xs',
+      md: 'sm',
+      lg: 'md',
+    };
+    return sizeMap[size] || 'sm';
+  });
+
+  readonly iconSize = computed(() => {
+    const size = this.size();
+    const sizeMap: Record<string, 'xs' | 'sm' | 'md'> = {
+      sm: 'xs',
+      md: 'sm',
+      lg: 'md',
+    };
+    return sizeMap[size] || 'sm';
+  });
 
   // Methods
   onClick(event: MouseEvent): void {
