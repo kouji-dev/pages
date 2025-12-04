@@ -22,7 +22,7 @@ export type IconName = PascalCaseToKebabCase<keyof typeof icons>;
 
 @Component({
   selector: 'lib-icon',
-  imports: [CommonModule, LucideAngularModule],
+<  imports: [CommonModule, LucideAngularModule],
   template: `
     <span [class]="iconClasses()">
       <lucide-icon
@@ -113,7 +113,7 @@ export class Icon {
     // Convert kebab-case to PascalCase for Lucide Angular icons
     const pascalCaseName = iconName
       .split('-')
-      .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join('');
 
     return (icons as any)[pascalCaseName];

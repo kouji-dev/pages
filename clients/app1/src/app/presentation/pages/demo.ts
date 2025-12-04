@@ -1,13 +1,62 @@
 import { Component, signal, inject, ViewChild, TemplateRef, ViewContainerRef } from '@angular/core';
-import { Button, Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter } from 'shared-ui';
+import { Button, Icon, Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter } from 'shared-ui';
 
 @Component({
   selector: 'app-demo',
-  imports: [Button, ModalContainer, ModalHeader, ModalContent, ModalFooter],
+  imports: [Button, Icon, ModalContainer, ModalHeader, ModalContent, ModalFooter],
   template: `
     <div class="demo">
       <h1 class="demo_title">Component Library Demo</h1>
       <p class="demo_subtitle">Showcasing shared-ui components</p>
+
+      <!-- Icon Component Showcase -->
+      <section class="demo_section">
+        <h2 class="demo_section-title">Icon Component</h2>
+
+        <div class="demo_grid">
+          <div class="demo_item">
+            <h3 class="demo_item-title">Sizes</h3>
+            <div class="demo_item-content">
+              <lib-icon name="menu" size="xs"></lib-icon>
+              <lib-icon name="menu" size="sm"></lib-icon>
+              <lib-icon name="menu" size="md"></lib-icon>
+              <lib-icon name="menu" size="lg"></lib-icon>
+              <lib-icon name="menu" size="xl"></lib-icon>
+              <lib-icon name="menu" size="2xl"></lib-icon>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">Common Icons</h3>
+            <div class="demo_item-content">
+              <lib-icon name="menu"></lib-icon>
+              <lib-icon name="user"></lib-icon>
+              <lib-icon name="search"></lib-icon>
+              <lib-icon name="plus"></lib-icon>
+              <lib-icon name="x"></lib-icon>
+              <lib-icon name="check"></lib-icon>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">Animations</h3>
+            <div class="demo_item-content">
+              <lib-icon name="loader" animation="spin"></lib-icon>
+              <lib-icon name="heart" animation="pulse"></lib-icon>
+              <lib-icon name="bell" animation="bounce"></lib-icon>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">With Custom Color</h3>
+            <div class="demo_item-content">
+              <lib-icon name="star" color="#fbbf24"></lib-icon>
+              <lib-icon name="heart" color="#ef4444"></lib-icon>
+              <lib-icon name="check" color="#10b981"></lib-icon>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <!-- Button Component Showcase -->
       <section class="demo_section">
@@ -40,6 +89,41 @@ import { Button, Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter }
               <lib-button [loading]="loadingButton()" (clicked)="toggleLoading()">
                 {{ loadingButton() ? 'Loading...' : 'Loading State' }}
               </lib-button>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">With Left Icon</h3>
+            <div class="demo_item-content">
+              <lib-button variant="primary" leftIcon="plus">Add Item</lib-button>
+              <lib-button variant="secondary" leftIcon="pencil">Edit</lib-button>
+              <lib-button variant="danger" leftIcon="trash">Delete</lib-button>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">With Right Icon</h3>
+            <div class="demo_item-content">
+              <lib-button variant="primary" rightIcon="arrow-right">Next</lib-button>
+              <lib-button variant="secondary" rightIcon="chevron-down">Options</lib-button>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">With Both Icons</h3>
+            <div class="demo_item-content">
+              <lib-button variant="primary" leftIcon="download" rightIcon="arrow-right"
+                >Download & Go</lib-button
+              >
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">Icon Only</h3>
+            <div class="demo_item-content">
+              <lib-button variant="ghost" [iconOnly]="true" leftIcon="settings"></lib-button>
+              <lib-button variant="ghost" [iconOnly]="true" leftIcon="bell"></lib-button>
+              <lib-button variant="primary" [iconOnly]="true" leftIcon="plus"></lib-button>
             </div>
           </div>
         </div>
@@ -177,7 +261,7 @@ export class Demo {
     if (this.loadingButton()) {
       setTimeout(() => {
         this.loadingButton.set(false);
-      }, 2000);
+      }, 1000);
     }
   }
 
