@@ -178,7 +178,16 @@ Repeat steps 4-6 until:
    git add <specific-files>
    ```
 
-2. **Write a concise commit message:**
+2. **Request permission before committing:**
+   - **Ask for approval** from the team lead or project manager before committing
+   - Share a summary of what you're committing:
+     - List of changed files
+     - Brief description of changes
+     - Confirm that tests pass and linting is clean
+   - Wait for approval before proceeding to commit
+   - If working solo, still document what you're committing for review
+
+3. **Write a concise commit message:**
 
    **Commit message format:**
 
@@ -211,15 +220,17 @@ Repeat steps 4-6 until:
    git commit -m "feat(frontend): implement base layout component"
    ```
 
-3. **Multiple commits per subtask are acceptable:**
+4. **Multiple commits per subtask are acceptable:**
    - You can commit after completing each subtask
    - This creates a clear history of progress
    - Example: Commit after writing tests, commit after implementing feature, commit after fixing bugs
+   - **Note**: Each commit still requires permission as per step 2
 
-4. **Commit frequently:**
+5. **Commit frequently (with permission):**
    - Don't wait until everything is done
    - Make commits logical and self-contained
    - Each commit should represent a working state
+   - Remember to request permission for each commit
 
 ---
 
@@ -279,6 +290,7 @@ Repeat steps 4-6 until:
 
 ### Commits
 
+- **Request permission**: Always ask for approval before committing changes
 - **Atomic commits**: Each commit should be a logical unit of work
 - **Clear messages**: Write commit messages that explain "what" and "why"
 - **Avoid large commits**: Break down work into smaller, manageable commits
