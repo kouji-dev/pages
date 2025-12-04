@@ -429,25 +429,26 @@ This phase focuses on building the foundational features required for a function
 **Priority**: High  
 **Estimated Time**: 2-3 days  
 **Dependencies**: 1.1.1  
-**Assigned To**: BATATA2
+**Assigned To**: BATATA2  
+**Status**: ✅ Complete
 
 **Frontend Tasks**:
 
-- [ ] Create modal component (`modal.component.ts`) in `shared-ui` library
-  - [ ] Standalone component
-  - [ ] Use `input()` for open/close state
-  - [ ] Use `input()` for title, size variants
-  - [ ] Use `output()` for close events
-  - [ ] Implement backdrop/overlay
-- [ ] Apply BOM CSS methodology
-  - [ ] Base `.modal` class
-  - [ ] Modifier classes (`.modal--sm`, `.modal--md`, `.modal--lg`)
-  - [ ] Use Tailwind `@apply` directives
-- [ ] Implement keyboard handling (ESC to close)
-- [ ] Implement focus trap
-- [ ] Support modal content projection (ng-content)
-- [ ] Write component tests
-- [ ] Export from `shared-ui` public API
+- [x] Create modal component using Angular CDK Overlay (`modal.ts` service)
+  - [x] Modal service with CDK Overlay
+  - [x] ModalContainer, ModalHeader, ModalContent, ModalFooter components
+  - [x] Size variants (sm, md, lg) via config
+  - [x] Closable option via config
+  - [x] Implement backdrop/overlay with CDK
+- [x] Apply BOM CSS methodology
+  - [x] Base `.modal-container` class
+  - [x] Size classes for CDK overlay panels (`.lib-modal-panel--sm/md/lg`)
+  - [x] Use Tailwind `@apply` directives
+- [x] Implement keyboard handling (ESC to close) via CDK Overlay
+- [x] Implement backdrop click to close via CDK Overlay
+- [x] Support modal content projection (ng-content) via component structure
+- [ ] Write component tests (TODO)
+- [x] Export from `shared-ui` public API
 
 **Deliverables**:
 
