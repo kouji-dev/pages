@@ -1,0 +1,108 @@
+import { Component, signal } from '@angular/core';
+import { Button } from 'shared-ui';
+
+@Component({
+  selector: 'app-demo',
+  imports: [Button],
+  template: `
+    <div class="demo">
+      <h1 class="demo_title">Component Library Demo</h1>
+      <p class="demo_subtitle">Showcasing shared-ui components</p>
+
+      <!-- Button Component Showcase -->
+      <section class="demo_section">
+        <h2 class="demo_section-title">Button Component</h2>
+
+        <div class="demo_grid">
+          <div class="demo_item">
+            <h3 class="demo_item-title">Variants</h3>
+            <div class="demo_item-content">
+              <lib-button variant="primary">Primary</lib-button>
+              <lib-button variant="secondary">Secondary</lib-button>
+              <lib-button variant="danger">Danger</lib-button>
+              <lib-button variant="ghost">Ghost</lib-button>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">Sizes</h3>
+            <div class="demo_item-content">
+              <lib-button size="sm">Small</lib-button>
+              <lib-button size="md">Medium</lib-button>
+              <lib-button size="lg">Large</lib-button>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">States</h3>
+            <div class="demo_item-content">
+              <lib-button [disabled]="true">Disabled</lib-button>
+              <lib-button [loading]="loadingButton()" (clicked)="toggleLoading()">
+                {{ loadingButton() ? 'Loading...' : 'Loading State' }}
+              </lib-button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  `,
+  styles: [
+    `
+      @reference "#mainstyles";
+
+      .demo {
+        @apply max-w-7xl mx-auto;
+        padding: 2rem;
+      }
+
+      .demo_title {
+        @apply text-4xl font-bold mb-2;
+        color: var(--color-text-primary);
+      }
+
+      .demo_subtitle {
+        @apply text-lg mb-8;
+        color: var(--color-text-secondary);
+      }
+
+      .demo_section {
+        @apply mb-12;
+      }
+
+      .demo_section-title {
+        @apply text-2xl font-semibold mb-6;
+        color: var(--color-text-primary);
+      }
+
+      .demo_grid {
+        @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+      }
+
+      .demo_item {
+        @apply flex flex-col;
+      }
+
+      .demo_item-title {
+        @apply text-lg font-medium mb-3;
+        color: var(--color-text-primary);
+      }
+
+      .demo_item-content {
+        @apply flex flex-wrap gap-3 items-start;
+      }
+    `,
+  ],
+  standalone: true,
+})
+export class Demo {
+  readonly loadingButton = signal(false);
+
+  toggleLoading(): void {
+    this.loadingButton.update((loading) => !loading);
+    if (this.loadingButton()) {
+      setTimeout(() => {
+        this.loadingButton.set(false);
+      }, 2000);
+    }
+  }
+}

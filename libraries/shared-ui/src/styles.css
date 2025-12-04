@@ -14,149 +14,150 @@
    * Color Palette - Pages Brand Colors
    * ======================================== */
 
-  /* Pages Text Colors */
-  --color-pages-default: #37352f;
-  --color-pages-gray: #9b9a97;
-  --color-pages-brown: #64473a;
-  --color-pages-orange: #d9730d;
-  --color-pages-yellow: #dfab01;
-  --color-pages-green: #0f7b6c;
-  --color-pages-blue: #0b6e99;
-  --color-pages-purple: #6940a5;
-  --color-pages-pink: #ad1a72;
-  --color-pages-red: #e03e3e;
+  /* Pages Text Colors - Notion's Exact Palette */
+  --color-pages-default: #000000; /* Notion's primary text - pure black */
+  --color-pages-gray: #9b9a97; /* Notion's gray - muted warm gray */
+  --color-pages-brown: #64473a; /* Notion's brown - warm brown */
+  --color-pages-orange: #d9730d; /* Notion's orange - warm orange */
+  --color-pages-yellow: #dfab01; /* Notion's yellow - warm yellow */
+  --color-pages-green: #0f7b6c; /* Notion's green - teal green */
+  --color-pages-blue: #0b6e99; /* Notion's blue - muted blue */
+  --color-pages-purple: #6940a5; /* Notion's purple - deep purple */
+  --color-pages-pink: #ad1a72; /* Notion's pink - deep pink */
+  --color-pages-red: #e03e3e; /* Notion's red - warm red */
 
-  /* Pages Background Colors (Lighter Shades) */
-  --color-pages-default-bg: #ffffff;
-  --color-pages-gray-bg: #ebeced;
-  --color-pages-brown-bg: #e9e5e3;
-  --color-pages-orange-bg: #faf3f0;
-  --color-pages-yellow-bg: #fbf3db;
-  --color-pages-green-bg: #ddedea;
-  --color-pages-blue-bg: #ddebf1;
-  --color-pages-purple-bg: #eae4f2;
-  --color-pages-pink-bg: #f4dfeb;
-  --color-pages-red-bg: #fbe4e4;
+  /* Pages Background Colors - Notion's Subtle Backgrounds */
+  --color-pages-default-bg: #ffffff; /* Pure white */
+  --color-pages-gray-bg: #ebeced; /* Notion's gray bg - subtle warm gray */
+  --color-pages-brown-bg: #f4f1ed; /* Notion's brown bg - warm beige */
+  --color-pages-orange-bg: #faebdd; /* Notion's orange bg - warm peachy */
+  --color-pages-yellow-bg: #faf3dd; /* Notion's yellow bg - warm cream */
+  --color-pages-green-bg: #ddedea; /* Notion's green bg - soft mint */
+  --color-pages-blue-bg: #ddedf0; /* Notion's blue bg - soft sky blue */
+  --color-pages-purple-bg: #eae4f2; /* Notion's purple bg - soft lavender */
+  --color-pages-pink-bg: #f4dfeb; /* Notion's pink bg - soft rose */
+  --color-pages-red-bg: #fbe4e4; /* Notion's red bg - soft pink */
 
   /* ========================================
    * Semantic Colors - Pages Brand Colors
    * ======================================== */
 
-  /* Primary - Pages Blue (for primary actions, links) */
-  --color-primary-50: #e6f4f8;
-  --color-primary-100: #b3dee8;
-  --color-primary-200: #80c8d8;
-  --color-primary-300: #4db2c8;
-  --color-primary-400: #1a9cb8;
-  --color-primary-500: #0b6e99; /* Pages Blue */
-  --color-primary-600: #09587a;
-  --color-primary-700: #07425b;
-  --color-primary-800: #052c3d;
-  --color-primary-900: #03161e;
+  /* Primary - Notion Blue (for primary actions, links) */
+  --color-primary-50: #ddedf0; /* Notion blue bg */
+  --color-primary-100: #b3d4e0;
+  --color-primary-200: #89bbd0;
+  --color-primary-300: #5fa2c0;
+  --color-primary-400: #3589b0;
+  --color-primary-500: #0b6e99; /* Notion Blue - primary */
+  --color-primary-600: #0a5d7d;
+  --color-primary-700: #084c61;
+  --color-primary-800: #063b45;
+  --color-primary-900: #042a29;
 
-  /* Secondary - Pages Purple */
-  --color-secondary-50: #f0e8f7;
+  /* Secondary - Notion Purple */
+  --color-secondary-50: #eae4f2; /* Notion purple bg */
   --color-secondary-100: #d4bce8;
-  --color-secondary-200: #b890d9;
-  --color-secondary-300: #9c64ca;
-  --color-secondary-400: #8038bb;
-  --color-secondary-500: #6940a5; /* Pages Purple */
-  --color-secondary-600: #543384;
-  --color-secondary-700: #3f2663;
-  --color-secondary-800: #2a1942;
-  --color-secondary-900: #150c21;
+  --color-secondary-200: #be94de;
+  --color-secondary-300: #a86cd4;
+  --color-secondary-400: #9244ca;
+  --color-secondary-500: #6940a5; /* Notion Purple - primary */
+  --color-secondary-600: #563384;
+  --color-secondary-700: #432663;
+  --color-secondary-800: #301942;
+  --color-secondary-900: #1d0c21;
 
-  /* Success - Pages Green */
-  --color-success-50: #ddedea;
+  /* Success - Notion Green */
+  --color-success-50: #ddedea; /* Notion green bg */
   --color-success-100: #b3d8d0;
   --color-success-200: #89c3b6;
   --color-success-300: #5fae9c;
   --color-success-400: #359982;
-  --color-success-500: #0f7b6c; /* Pages Green */
+  --color-success-500: #0f7b6c; /* Notion Green - primary */
   --color-success-600: #0c6256;
   --color-success-700: #094a40;
   --color-success-800: #06312a;
   --color-success-900: #031915;
 
-  /* Warning - Pages Orange */
-  --color-warning-50: #faf3f0;
+  /* Warning - Notion Orange */
+  --color-warning-50: #faebdd; /* Notion orange bg */
   --color-warning-100: #f2d9c4;
-  --color-warning-200: #eabf98;
-  --color-warning-300: #e2a56c;
-  --color-warning-400: #da8b40;
-  --color-warning-500: #d9730d; /* Pages Orange */
+  --color-warning-200: #eac7ab;
+  --color-warning-300: #e2b592;
+  --color-warning-400: #daa379;
+  --color-warning-500: #d9730d; /* Notion Orange - primary */
   --color-warning-600: #ae5c0a;
   --color-warning-700: #834508;
   --color-warning-800: #582e05;
   --color-warning-900: #2d1703;
 
-  /* Error - Pages Red */
-  --color-error-50: #fbe4e4;
+  /* Error - Notion Red */
+  --color-error-50: #fbe4e4; /* Notion red bg */
   --color-error-100: #f5b3b3;
   --color-error-200: #ef8282;
   --color-error-300: #e95151;
   --color-error-400: #e32020;
-  --color-error-500: #e03e3e; /* Pages Red */
+  --color-error-500: #e03e3e; /* Notion Red - primary */
   --color-error-600: #b33232;
   --color-error-700: #862626;
   --color-error-800: #591919;
   --color-error-900: #2c0d0d;
 
-  /* Info - Pages Blue (lighter) */
-  --color-info-50: #ddebf1;
-  --color-info-100: #b3d1e0;
-  --color-info-200: #89b7cf;
-  --color-info-300: #5f9dbe;
-  --color-info-400: #3583ad;
-  --color-info-500: #0b6e99; /* Pages Blue */
-  --color-info-600: #09587a;
-  --color-info-700: #07425b;
-  --color-info-800: #052c3d;
-  --color-info-900: #03161e;
+  /* Info - Notion Blue (lighter, same as primary) */
+  --color-info-50: #ddedf0; /* Notion blue bg */
+  --color-info-100: #b3d4e0;
+  --color-info-200: #89bbd0;
+  --color-info-300: #5fa2c0;
+  --color-info-400: #3589b0;
+  --color-info-500: #0b6e99; /* Notion Blue */
+  --color-info-600: #0a5d7d;
+  --color-info-700: #084c61;
+  --color-info-800: #063b45;
+  --color-info-900: #042a29;
 
   /* ========================================
-   * Neutral Grays - Pages Gray Scale
+   * Neutral Grays - Notion's Monochromatic Palette
    * ======================================== */
-  --color-gray-50: #ffffff;
-  --color-gray-100: #f7f6f3; /* Pages light background */
-  --color-gray-200: #ebeced; /* Pages gray bg */
-  --color-gray-300: #e9e9e7;
-  --color-gray-400: #d3d3d1;
-  --color-gray-500: #9b9a97; /* Pages gray */
-  --color-gray-600: #787774;
-  --color-gray-700: #5e5d59;
-  --color-gray-800: #37352f; /* Pages default text */
-  --color-gray-900: #2e2d29;
+  --color-gray-50: #ffffff; /* Pure white */
+  --color-gray-100: #f7f6f3; /* Notion's sidebar background - warm beige */
+  --color-gray-200: #f1f1ef; /* Notion's gray background - subtle warm gray */
+  --color-gray-300: #e9e9e7; /* Light warm gray - hover states */
+  --color-gray-400: #d3d3d1; /* Medium warm gray - borders */
+  --color-gray-500: #9b9a97; /* Notion gray - secondary text */
+  --color-gray-600: #787774; /* Darker gray - tertiary text */
+  --color-gray-700: #64605c; /* Dark gray - muted text */
+  --color-gray-800: #37352f; /* Notion secondary text - warm dark brown-gray */
+  --color-gray-900: #000000; /* Notion primary text - pure black for headings and important text */
 
   /* ========================================
-   * Text Colors - Pages Text Palette
+   * Text Colors - Notion Text Palette (Black & White Base)
    * ======================================== */
-  --color-text-primary: #37352f; /* Pages default */
-  --color-text-secondary: #9b9a97; /* Pages gray */
-  --color-text-tertiary: #787774;
-  --color-text-disabled: #c9c9c7;
-  --color-text-inverse: #ffffff;
-  --color-text-link: #0b6e99; /* Pages blue */
+  --color-text-primary: #000000; /* Notion's primary text - pure black */
+  --color-text-secondary: #37352f; /* Notion's secondary text - warm dark brown-gray */
+  --color-text-tertiary: #9b9a97; /* Notion gray - muted warm gray for less important text */
+  --color-text-muted: #787774; /* Muted gray - tertiary text */
+  --color-text-disabled: #c9c9c7; /* Disabled text - light warm gray */
+  --color-text-inverse: #ffffff; /* White text for dark backgrounds */
+  --color-text-link: #0b6e99; /* Notion blue - links */
 
   /* ========================================
-   * Background Colors - Pages Style
+   * Background Colors - Notion Style
    * ======================================== */
-  --color-bg-primary: #ffffff;
-  --color-bg-secondary: #f7f6f3; /* Pages light beige */
-  --color-bg-tertiary: #ebeced;
-  --color-bg-hover: #f1f1ef;
-  --color-bg-active: #e9e9e7;
-  --color-bg-selected: #ddebf1; /* Pages blue bg */
+  --color-bg-primary: #ffffff; /* Pure white - main content */
+  --color-bg-secondary: #f7f6f3; /* Notion's sidebar background - warm beige */
+  --color-bg-tertiary: #f1f1ef; /* Notion's gray background - subtle warm gray */
+  --color-bg-hover: #f1f1ef; /* Hover state - subtle warm gray */
+  --color-bg-active: #e9e9e7; /* Active state - light warm gray */
+  --color-bg-selected: #ddedf0; /* Notion blue background - selected state */
   --color-bg-overlay: rgba(55, 53, 47, 0.4); /* Semi-transparent overlay */
 
   /* ========================================
-   * Border Colors
+   * Border Colors - Notion Style
    * ======================================== */
-  --color-border-default: #ebeced;
-  --color-border-hover: #d3d3d1;
-  --color-border-focus: #0b6e99; /* Pages blue */
-  --color-border-error: #e03e3e; /* Pages red */
-  --color-border-divider: #e9e9e7;
+  --color-border-default: #e9e9e7; /* Notion's default border - light warm gray */
+  --color-border-hover: #d3d3d1; /* Hover border - medium warm gray */
+  --color-border-focus: #0b6e99; /* Notion blue - focus ring */
+  --color-border-error: #e03e3e; /* Notion red - error states */
+  --color-border-divider: #e9e9e7; /* Divider - light warm gray */
 
   /* ========================================
    * Spacing Scale - Jira/Confluence Inspired
@@ -218,12 +219,15 @@
   --radius-full: 9999px;
 
   /* ========================================
-   * Shadows - Subtle (Pages Style)
+   * Shadows - Subtle (Notion Style)
    * ======================================== */
-  --shadow-sm: 0 1px 2px 0 rgba(55, 53, 47, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(55, 53, 47, 0.1), 0 2px 4px -1px rgba(55, 53, 47, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(55, 53, 47, 0.1), 0 4px 6px -2px rgba(55, 53, 47, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(55, 53, 47, 0.1), 0 10px 10px -5px rgba(55, 53, 47, 0.04);
+  --shadow-sm: 0 1px 2px 0 rgba(55, 53, 47, 0.05); /* Very subtle - Notion style */
+  --shadow-md:
+    0 4px 6px -1px rgba(55, 53, 47, 0.08), 0 2px 4px -1px rgba(55, 53, 47, 0.04); /* Subtle elevation */
+  --shadow-lg:
+    0 10px 15px -3px rgba(55, 53, 47, 0.08), 0 4px 6px -2px rgba(55, 53, 47, 0.04); /* Modal/card elevation */
+  --shadow-xl:
+    0 20px 25px -5px rgba(55, 53, 47, 0.08), 0 10px 10px -5px rgba(55, 53, 47, 0.03); /* Dropdown elevation */
 
   /* ========================================
    * Transitions - Smooth, Subtle
