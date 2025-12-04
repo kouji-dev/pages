@@ -22,8 +22,7 @@ export type IconName = PascalCaseToKebabCase<keyof typeof icons>;
 
 @Component({
   selector: 'lib-icon',
-  standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+<  imports: [CommonModule, LucideAngularModule],
   template: `
     <span [class]="iconClasses()">
       <lucide-icon
