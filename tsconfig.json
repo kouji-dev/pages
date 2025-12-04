@@ -13,7 +13,7 @@
     "experimentalDecorators": true,
     "moduleResolution": "bundler",
     "paths": {
-      "shared-ui": ["./dist/shared-ui"]
+      "shared-ui": ["./libraries/shared-ui/src/public-api.ts"]
     },
     "importHelpers": true,
     "target": "ES2022",

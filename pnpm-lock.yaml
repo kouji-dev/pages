@@ -105,6 +105,9 @@ importers:
       '@angular/core':
         specifier: ^21.0.0
         version: 21.0.3(@angular/compiler@21.0.3)(rxjs@7.8.2)(zone.js@0.15.1)
+      tailwindcss:
+        specifier: ^4.0.0
+        version: 4.1.17
       tslib:
         specifier: ^2.3.0
         version: 2.8.1

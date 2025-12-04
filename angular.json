@@ -24,7 +24,7 @@
                 "input": "clients/app1/public"
               }
             ],
-            "styles": ["clients/app1/src/styles.css"]
+            "styles": ["clients/app1/src/styles.css", "libraries/shared-ui/src/styles.css"]
           },
           "configurations": {
             "production": {

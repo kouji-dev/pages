@@ -69,7 +69,7 @@ import { Component, input, output, model, computed } from '@angular/core';
   ],
   standalone: true,
 })
-export class CardComponent {
+export class Card {
   // Required input with modern input() API
   title = input.required<string>();
 

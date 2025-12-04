@@ -1,4 +1,350 @@
 @import 'tailwindcss';
 
+/* ========================================
+ * Design Tokens - Pages Brand Colors
+ * Mixed design approach: Notion layout + Jira/Confluence header toolbar
+ * Using Tailwind CSS 4 CSS custom properties approach
+ * Supports light and dark themes
+ * ======================================== */
+
+:root {
+  /* Theme toggle - use [data-theme="dark"] for dark mode */
+  color-scheme: light dark;
+  /* ========================================
+   * Color Palette - Pages Brand Colors
+   * ======================================== */
+
+  /* Pages Text Colors */
+  --color-pages-default: #37352f;
+  --color-pages-gray: #9b9a97;
+  --color-pages-brown: #64473a;
+  --color-pages-orange: #d9730d;
+  --color-pages-yellow: #dfab01;
+  --color-pages-green: #0f7b6c;
+  --color-pages-blue: #0b6e99;
+  --color-pages-purple: #6940a5;
+  --color-pages-pink: #ad1a72;
+  --color-pages-red: #e03e3e;
+
+  /* Pages Background Colors (Lighter Shades) */
+  --color-pages-default-bg: #ffffff;
+  --color-pages-gray-bg: #ebeced;
+  --color-pages-brown-bg: #e9e5e3;
+  --color-pages-orange-bg: #faf3f0;
+  --color-pages-yellow-bg: #fbf3db;
+  --color-pages-green-bg: #ddedea;
+  --color-pages-blue-bg: #ddebf1;
+  --color-pages-purple-bg: #eae4f2;
+  --color-pages-pink-bg: #f4dfeb;
+  --color-pages-red-bg: #fbe4e4;
+
+  /* ========================================
+   * Semantic Colors - Pages Brand Colors
+   * ======================================== */
+
+  /* Primary - Pages Blue (for primary actions, links) */
+  --color-primary-50: #e6f4f8;
+  --color-primary-100: #b3dee8;
+  --color-primary-200: #80c8d8;
+  --color-primary-300: #4db2c8;
+  --color-primary-400: #1a9cb8;
+  --color-primary-500: #0b6e99; /* Pages Blue */
+  --color-primary-600: #09587a;
+  --color-primary-700: #07425b;
+  --color-primary-800: #052c3d;
+  --color-primary-900: #03161e;
+
+  /* Secondary - Pages Purple */
+  --color-secondary-50: #f0e8f7;
+  --color-secondary-100: #d4bce8;
+  --color-secondary-200: #b890d9;
+  --color-secondary-300: #9c64ca;
+  --color-secondary-400: #8038bb;
+  --color-secondary-500: #6940a5; /* Pages Purple */
+  --color-secondary-600: #543384;
+  --color-secondary-700: #3f2663;
+  --color-secondary-800: #2a1942;
+  --color-secondary-900: #150c21;
+
+  /* Success - Pages Green */
+  --color-success-50: #ddedea;
+  --color-success-100: #b3d8d0;
+  --color-success-200: #89c3b6;
+  --color-success-300: #5fae9c;
+  --color-success-400: #359982;
+  --color-success-500: #0f7b6c; /* Pages Green */
+  --color-success-600: #0c6256;
+  --color-success-700: #094a40;
+  --color-success-800: #06312a;
+  --color-success-900: #031915;
+
+  /* Warning - Pages Orange */
+  --color-warning-50: #faf3f0;
+  --color-warning-100: #f2d9c4;
+  --color-warning-200: #eabf98;
+  --color-warning-300: #e2a56c;
+  --color-warning-400: #da8b40;
+  --color-warning-500: #d9730d; /* Pages Orange */
+  --color-warning-600: #ae5c0a;
+  --color-warning-700: #834508;
+  --color-warning-800: #582e05;
+  --color-warning-900: #2d1703;
+
+  /* Error - Pages Red */
+  --color-error-50: #fbe4e4;
+  --color-error-100: #f5b3b3;
+  --color-error-200: #ef8282;
+  --color-error-300: #e95151;
+  --color-error-400: #e32020;
+  --color-error-500: #e03e3e; /* Pages Red */
+  --color-error-600: #b33232;
+  --color-error-700: #862626;
+  --color-error-800: #591919;
+  --color-error-900: #2c0d0d;
+
+  /* Info - Pages Blue (lighter) */
+  --color-info-50: #ddebf1;
+  --color-info-100: #b3d1e0;
+  --color-info-200: #89b7cf;
+  --color-info-300: #5f9dbe;
+  --color-info-400: #3583ad;
+  --color-info-500: #0b6e99; /* Pages Blue */
+  --color-info-600: #09587a;
+  --color-info-700: #07425b;
+  --color-info-800: #052c3d;
+  --color-info-900: #03161e;
+
+  /* ========================================
+   * Neutral Grays - Pages Gray Scale
+   * ======================================== */
+  --color-gray-50: #ffffff;
+  --color-gray-100: #f7f6f3; /* Pages light background */
+  --color-gray-200: #ebeced; /* Pages gray bg */
+  --color-gray-300: #e9e9e7;
+  --color-gray-400: #d3d3d1;
+  --color-gray-500: #9b9a97; /* Pages gray */
+  --color-gray-600: #787774;
+  --color-gray-700: #5e5d59;
+  --color-gray-800: #37352f; /* Pages default text */
+  --color-gray-900: #2e2d29;
+
+  /* ========================================
+   * Text Colors - Pages Text Palette
+   * ======================================== */
+  --color-text-primary: #37352f; /* Pages default */
+  --color-text-secondary: #9b9a97; /* Pages gray */
+  --color-text-tertiary: #787774;
+  --color-text-disabled: #c9c9c7;
+  --color-text-inverse: #ffffff;
+  --color-text-link: #0b6e99; /* Pages blue */
+
+  /* ========================================
+   * Background Colors - Pages Style
+   * ======================================== */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f7f6f3; /* Pages light beige */
+  --color-bg-tertiary: #ebeced;
+  --color-bg-hover: #f1f1ef;
+  --color-bg-active: #e9e9e7;
+  --color-bg-selected: #ddebf1; /* Pages blue bg */
+  --color-bg-overlay: rgba(55, 53, 47, 0.4); /* Semi-transparent overlay */
+
+  /* ========================================
+   * Border Colors
+   * ======================================== */
+  --color-border-default: #ebeced;
+  --color-border-hover: #d3d3d1;
+  --color-border-focus: #0b6e99; /* Pages blue */
+  --color-border-error: #e03e3e; /* Pages red */
+  --color-border-divider: #e9e9e7;
+
+  /* ========================================
+   * Spacing Scale - Jira/Confluence Inspired
+   * More generous spacing for text-based app
+   * ======================================== */
+  --spacing-0: 0;
+  --spacing-1: 0.25rem; /* 4px */
+  --spacing-2: 0.5rem; /* 8px */
+  --spacing-3: 0.75rem; /* 12px */
+  --spacing-4: 1rem; /* 16px */
+  --spacing-5: 1.25rem; /* 20px */
+  --spacing-6: 1.5rem; /* 24px */
+  --spacing-8: 2rem; /* 32px */
+  --spacing-10: 2.5rem; /* 40px */
+  --spacing-12: 3rem; /* 48px */
+  --spacing-16: 4rem; /* 64px */
+  --spacing-20: 5rem; /* 80px */
+  --spacing-24: 6rem; /* 96px */
+
+  /* ========================================
+   * Typography Scale - Text-based App Focus
+   * ======================================== */
+  --font-family-sans:
+    ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, 'Apple Color Emoji',
+    Arial, sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol';
+  --font-family-mono:
+    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+
+  /* Font Sizes - Optimized for readability */
+  --font-size-xs: 0.75rem; /* 12px */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-base: 1rem; /* 16px - Base text */
+  --font-size-lg: 1.125rem; /* 18px */
+  --font-size-xl: 1.25rem; /* 20px */
+  --font-size-2xl: 1.5rem; /* 24px */
+  --font-size-3xl: 1.875rem; /* 30px */
+  --font-size-4xl: 2.25rem; /* 36px */
+
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Line Heights - More generous for text readability */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  --line-height-loose: 2;
+
+  /* ========================================
+   * Border Radius - Subtle, Modern
+   * ======================================== */
+  --radius-sm: 0.25rem; /* 4px */
+  --radius-md: 0.375rem; /* 6px */
+  --radius-lg: 0.5rem; /* 8px */
+  --radius-xl: 0.75rem; /* 12px */
+  --radius-2xl: 1rem; /* 16px */
+  --radius-full: 9999px;
+
+  /* ========================================
+   * Shadows - Subtle (Pages Style)
+   * ======================================== */
+  --shadow-sm: 0 1px 2px 0 rgba(55, 53, 47, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(55, 53, 47, 0.1), 0 2px 4px -1px rgba(55, 53, 47, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(55, 53, 47, 0.1), 0 4px 6px -2px rgba(55, 53, 47, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(55, 53, 47, 0.1), 0 10px 10px -5px rgba(55, 53, 47, 0.04);
+
+  /* ========================================
+   * Transitions - Smooth, Subtle
+   * ======================================== */
+  --transition-fast: 150ms ease-in-out;
+  --transition-base: 200ms ease-in-out;
+  --transition-slow: 300ms ease-in-out;
+
+  /* ========================================
+   * Semantic Color Aliases - For easier access
+   * ======================================== */
+  --color-primary: var(--color-primary-500);
+  --color-secondary: var(--color-secondary-500);
+  --color-success: var(--color-success-500);
+  --color-warning: var(--color-warning-500);
+  --color-error: var(--color-error-500);
+  --color-info: var(--color-info-500);
+}
+
+/* ========================================
+ * Dark Theme Overrides
+ * ======================================== */
+
+[data-theme='dark'],
+.dark {
+  /* ========================================
+   * Dark Theme - Neutral Grays
+   * ======================================== */
+  --color-gray-50: #1a1a1a;
+  --color-gray-100: #2e2e2e; /* Dark background */
+  --color-gray-200: #3a3a3a;
+  --color-gray-300: #454545;
+  --color-gray-400: #606060;
+  --color-gray-500: #9b9a97; /* Pages gray - same in both themes */
+  --color-gray-600: #b3b3b3;
+  --color-gray-700: #cccccc;
+  --color-gray-800: #e5e5e5; /* Light text on dark */
+  --color-gray-900: #ffffff;
+
+  /* ========================================
+   * Dark Theme - Text Colors
+   * ======================================== */
+  --color-text-primary: #e5e5e5; /* Light text */
+  --color-text-secondary: #b3b3b3;
+  --color-text-tertiary: #9b9a97;
+  --color-text-disabled: #606060;
+  --color-text-inverse: #1a1a1a; /* Dark text on light bg */
+  --color-text-link: #4db2c8; /* Lighter blue for dark theme */
+
+  /* ========================================
+   * Dark Theme - Background Colors
+   * ======================================== */
+  --color-bg-primary: #1a1a1a; /* Dark background */
+  --color-bg-secondary: #2e2e2e; /* Slightly lighter dark */
+  --color-bg-tertiary: #3a3a3a;
+  --color-bg-hover: #3a3a3a;
+  --color-bg-active: #454545;
+  --color-bg-selected: rgba(77, 178, 200, 0.2); /* Lighter blue bg with opacity */
+  --color-bg-overlay: rgba(0, 0, 0, 0.7); /* Darker overlay */
+
+  /* ========================================
+   * Dark Theme - Border Colors
+   * ======================================== */
+  --color-border-default: #3a3a3a;
+  --color-border-hover: #454545;
+  --color-border-focus: #4db2c8; /* Lighter blue for visibility */
+  --color-border-error: #ef8282; /* Lighter red for visibility */
+  --color-border-divider: #454545;
+
+  /* ========================================
+   * Dark Theme - Pages Background Colors
+   * ======================================== */
+  --color-pages-default-bg: #1a1a1a;
+  --color-pages-gray-bg: #3a3a3a;
+  --color-pages-brown-bg: #3a3a3a;
+  --color-pages-orange-bg: #3a3a3a;
+  --color-pages-yellow-bg: #3a3a3a;
+  --color-pages-green-bg: rgba(15, 123, 108, 0.2);
+  --color-pages-blue-bg: rgba(11, 110, 153, 0.2);
+  --color-pages-purple-bg: rgba(105, 64, 165, 0.2);
+  --color-pages-pink-bg: rgba(173, 26, 114, 0.2);
+  --color-pages-red-bg: rgba(224, 62, 62, 0.2);
+
+  /* ========================================
+   * Dark Theme - Shadows
+   * ======================================== */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+}
+
+/* ========================================
+ * Global Styles - Text-based App Optimizations
+ * ======================================== */
+
+/* Base text styles - Pages design */
+body {
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition:
+    background-color var(--transition-base),
+    color var(--transition-base);
+}
+
+/* Selection color */
+::selection {
+  background-color: var(--color-bg-selected);
+  color: var(--color-text-primary);
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
 /* Shared UI theme and global styles */
 /* This is the centralized theme managed by the shared-ui library */

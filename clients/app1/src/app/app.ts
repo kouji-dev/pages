@@ -1,41 +1,52 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { BaseLayout } from './presentation/layout/base-layout';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [BaseLayout],
   template: `
-    <div class="app">
-      <header class="app_header">
-        <h1 class="app_title">{{ title() }}</h1>
-      </header>
-      <main class="app_main">
-        <router-outlet></router-outlet>
-      </main>
-    </div>
+    <app-base-layout>
+      <!-- Breadcrumbs slot (Jira/Confluence style) -->
+      <div slot="breadcrumbs">
+        <!-- Breadcrumb navigation will be added here -->
+      </div>
+
+      <!-- Global search slot (Jira/Confluence style) -->
+      <div slot="search">
+        <!-- Global search will be added here -->
+      </div>
+
+      <!-- Navigation menu slot -->
+      <div slot="nav">
+        <!-- Navigation links will be added here -->
+      </div>
+
+      <!-- Quick actions slot -->
+      <div slot="quick-actions">
+        <!-- Quick actions will be added here -->
+      </div>
+
+      <!-- Notifications slot -->
+      <div slot="notifications">
+        <!-- Notifications will be added here -->
+      </div>
+
+      <!-- User menu slot -->
+      <div slot="user-menu">
+        <!-- User menu will be added here -->
+      </div>
+
+      <!-- Sidebar navigation slot (Notion style) -->
+      <div slot="sidebar-nav">
+        <!-- Sidebar navigation links will be added here -->
+      </div>
+
+      <!-- Footer links slot -->
+      <div slot="footer-links">
+        <!-- Footer links will be added here -->
+      </div>
+    </app-base-layout>
   `,
-  styles: [
-    `
-      @reference "#theme";
-
-      .app {
-        @apply min-h-screen bg-gray-50;
-      }
-
-      .app_header {
-        @apply bg-white shadow-sm border-b border-gray-200;
-      }
-
-      .app_title {
-        @apply text-2xl font-bold text-gray-900 px-6 py-4;
-      }
-
-      .app_main {
-        @apply container mx-auto px-6 py-8;
-      }
-    `,
-  ],
+  styles: [],
 })
-export class App {
-  protected readonly title = signal('Pages - Jira and Confluence Alternative');
-}
+export class App {}

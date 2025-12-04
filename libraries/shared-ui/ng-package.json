@@ -3,5 +3,6 @@
   "dest": "../../dist/shared-ui",
   "lib": {
     "entryFile": "src/public-api.ts"
-  }
+  },
+  "assets": ["src/styles.css"]
 }
