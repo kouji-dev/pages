@@ -1,0 +1,11 @@
+{
+  "rules": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "perf": "warn",
+    "style": "warn",
+    "pedantic": "off",
+    "nursery": "off"
+  },
+  "ignore": ["**/node_modules/**", "**/*.spec.ts", "**/*.d.ts", "**/dist/**"]
+}

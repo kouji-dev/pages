@@ -1,0 +1,62 @@
+# Dependencies
+**/node_modules
+node_modules
+**/.pnpm-store
+.pnpm-store
+
+# Build outputs
+dist
+**/dist
+.angular
+**/.angular
+coverage
+**/coverage
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Documentation
+*.md
+README*
+CHANGELOG*
+LICENSE*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+*.log
+
+# Testing
+.nyc_output
+coverage
+
+# Husky
+.husky
+
+# Docker
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+
+
