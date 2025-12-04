@@ -194,7 +194,6 @@ import { Component, input, output, computed } from '@angular/core';
       }
     `,
   ],
-  standalone: true,
 })
 export class Button {
   // Inputs
