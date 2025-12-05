@@ -11,6 +11,7 @@ from src.application.dtos.auth import (
     TokenResponse,
 )
 from src.application.dtos.user import (
+    EmailUpdateRequest,
     PasswordUpdateRequest,
     UserResponse,
     UserUpdateRequest,
@@ -29,5 +30,6 @@ __all__ = [
     # User DTOs
     "UserResponse",
     "UserUpdateRequest",
+    "EmailUpdateRequest",
     "PasswordUpdateRequest",
 ]

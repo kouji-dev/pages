@@ -81,6 +81,18 @@ class User:
         self.avatar_url = avatar_url
         self._touch()
 
+    def update_email(self, email: Email) -> None:
+        """Update user email address.
+
+        Args:
+            email: New email value object
+
+        Raises:
+            ValueError: If email is invalid (handled by Email value object creation)
+        """
+        self.email = email
+        self._touch()
+
     def update_password(self, password_hash: HashedPassword) -> None:
         """Update user password hash."""
         self.password_hash = password_hash
