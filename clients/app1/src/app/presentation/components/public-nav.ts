@@ -33,10 +33,8 @@ import { Button, Icon } from 'shared-ui';
             >
           </div>
           <div class="public-nav_actions">
-            <lib-button variant="ghost" size="md" [routerLink]="['/login']">Log In</lib-button>
-            <lib-button variant="primary" size="md" [routerLink]="['/register']"
-              >Sign Up</lib-button
-            >
+            <lib-button variant="ghost" size="md" [link]="['/login']">Log In</lib-button>
+            <lib-button variant="primary" size="md" [link]="['/register']">Sign Up</lib-button>
           </div>
         </div>
 
@@ -79,17 +77,13 @@ import { Button, Icon } from 'shared-ui';
             >
           </div>
           <div class="public-nav_mobile-actions">
-            <lib-button
-              variant="ghost"
-              size="md"
-              [routerLink]="['/login']"
-              (click)="closeMobileMenu()"
+            <lib-button variant="ghost" size="md" [link]="['/login']" (click)="closeMobileMenu()"
               >Log In</lib-button
             >
             <lib-button
               variant="primary"
               size="md"
-              [routerLink]="['/register']"
+              [link]="['/register']"
               (click)="closeMobileMenu()"
               >Sign Up</lib-button
             >

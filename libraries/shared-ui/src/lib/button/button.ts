@@ -1,53 +1,101 @@
 import { Component, input, output, computed } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Icon, IconName } from '../icon/icon';
 
 @Component({
   selector: 'lib-button',
-  imports: [Icon],
+  imports: [Icon, RouterLink],
   template: `
-    <button
-      class="button"
-      [class.button--primary]="variant() === 'primary'"
-      [class.button--secondary]="variant() === 'secondary'"
-      [class.button--danger]="variant() === 'danger'"
-      [class.button--ghost]="variant() === 'ghost'"
-      [class.button--sm]="size() === 'sm'"
-      [class.button--md]="size() === 'md'"
-      [class.button--lg]="size() === 'lg'"
-      [class.button--disabled]="disabled() || loading()"
-      [class.button--icon-only]="iconOnly()"
-      [disabled]="disabled() || loading()"
-      [type]="type()"
-      (click)="onClick($event)"
-    >
-      @if (loading()) {
-        <lib-icon
-          name="loader"
-          [size]="spinnerSize()"
-          animation="spin"
-          [ariaHidden]="true"
-          class="button_spinner"
-        ></lib-icon>
-      } @else {
-        <span class="button_content">
-          @if (leftIcon()) {
-            <lib-icon
-              [name]="leftIcon()!"
-              [size]="iconSize()"
-              class="button_icon button_icon--left"
-            ></lib-icon>
-          }
-          <ng-content></ng-content>
-          @if (rightIcon()) {
-            <lib-icon
-              [name]="rightIcon()!"
-              [size]="iconSize()"
-              class="button_icon button_icon--right"
-            ></lib-icon>
-          }
-        </span>
-      }
-    </button>
+    @if (link()) {
+      <a
+        class="button"
+        [class.button--primary]="variant() === 'primary'"
+        [class.button--secondary]="variant() === 'secondary'"
+        [class.button--danger]="variant() === 'danger'"
+        [class.button--ghost]="variant() === 'ghost'"
+        [class.button--sm]="size() === 'sm'"
+        [class.button--md]="size() === 'md'"
+        [class.button--lg]="size() === 'lg'"
+        [class.button--disabled]="disabled() || loading()"
+        [class.button--icon-only]="iconOnly()"
+        [routerLink]="link()!"
+        [attr.aria-disabled]="disabled() || loading() ? 'true' : null"
+        [tabindex]="disabled() || loading() ? -1 : 0"
+        (click)="onClick($event)"
+      >
+        @if (loading()) {
+          <lib-icon
+            name="loader"
+            [size]="spinnerSize()"
+            animation="spin"
+            [ariaHidden]="true"
+            class="button_spinner"
+          ></lib-icon>
+        } @else {
+          <span class="button_content">
+            @if (leftIcon()) {
+              <lib-icon
+                [name]="leftIcon()!"
+                [size]="iconSize()"
+                class="button_icon button_icon--left"
+              ></lib-icon>
+            }
+            <ng-content></ng-content>
+            @if (rightIcon()) {
+              <lib-icon
+                [name]="rightIcon()!"
+                [size]="iconSize()"
+                class="button_icon button_icon--right"
+              ></lib-icon>
+            }
+          </span>
+        }
+      </a>
+    } @else {
+      <button
+        class="button"
+        [class.button--primary]="variant() === 'primary'"
+        [class.button--secondary]="variant() === 'secondary'"
+        [class.button--danger]="variant() === 'danger'"
+        [class.button--ghost]="variant() === 'ghost'"
+        [class.button--sm]="size() === 'sm'"
+        [class.button--md]="size() === 'md'"
+        [class.button--lg]="size() === 'lg'"
+        [class.button--disabled]="disabled() || loading()"
+        [class.button--icon-only]="iconOnly()"
+        [disabled]="disabled() || loading()"
+        [type]="type()"
+        (click)="onClick($event)"
+      >
+        @if (loading()) {
+          <lib-icon
+            name="loader"
+            [size]="spinnerSize()"
+            animation="spin"
+            [ariaHidden]="true"
+            class="button_spinner"
+          ></lib-icon>
+        } @else {
+          <span class="button_content">
+            @if (leftIcon()) {
+              <lib-icon
+                [name]="leftIcon()!"
+                [size]="iconSize()"
+                class="button_icon button_icon--left"
+              ></lib-icon>
+            }
+            <ng-content></ng-content>
+            @if (rightIcon()) {
+              <lib-icon
+                [name]="rightIcon()!"
+                [size]="iconSize()"
+                class="button_icon button_icon--right"
+              ></lib-icon>
+            }
+          </span>
+        }
+      </button>
+    }
   `,
   styles: [
     `
@@ -60,6 +108,7 @@ import { Icon, IconName } from '../icon/icon';
         @apply cursor-pointer;
         @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
         @apply rounded-md; /* Notion-style rounded corners */
+        text-decoration: none; /* Remove underline for links */
         /* Default styles will be overridden by variant classes */
       }
 
@@ -197,6 +246,7 @@ export class Button {
   type = input<'button' | 'submit' | 'reset'>('button');
   leftIcon = input<IconName | null>(null);
   rightIcon = input<IconName | null>(null);
+  link = input<string | string[] | null>(null); // RouterLink - if provided, renders <a> instead of <button>
 
   // Output
   clicked = output<MouseEvent>();

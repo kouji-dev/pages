@@ -1,10 +1,9 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { Button, Icon } from 'shared-ui';
 
 @Component({
   selector: 'app-hero-section',
-  imports: [Button, Icon, RouterLink],
+  imports: [Button, Icon],
   template: `
     <section class="hero-section">
       <div class="hero-section_container">
@@ -13,10 +12,10 @@ import { Button, Icon } from 'shared-ui';
           <p class="hero-section_subheading">{{ subheading }}</p>
           <p class="hero-section_description">{{ valueProposition }}</p>
           <div class="hero-section_actions">
-            <lib-button variant="primary" size="lg" [routerLink]="['/register']">
+            <lib-button variant="primary" size="lg" [link]="['/register']">
               {{ primaryCtaLabel }}
             </lib-button>
-            <lib-button variant="secondary" size="lg" [routerLink]="['/login']">
+            <lib-button variant="secondary" size="lg" [link]="['/login']">
               {{ secondaryCtaLabel }}
             </lib-button>
           </div>

@@ -1,10 +1,9 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import { BaseLayout } from './base-layout';
 
 @Component({
   selector: 'app-authenticated-layout',
-  imports: [BaseLayout, RouterOutlet],
+  imports: [BaseLayout],
   template: `
     <app-base-layout>
       <!-- Breadcrumbs slot (Jira/Confluence style) -->
