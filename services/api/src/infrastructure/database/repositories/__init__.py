@@ -1,5 +1,8 @@
 """Database repository implementations."""
 
+from src.infrastructure.database.repositories.invitation_repository import (
+    SQLAlchemyInvitationRepository,
+)
 from src.infrastructure.database.repositories.organization_repository import (
     SQLAlchemyOrganizationRepository,
 )
@@ -10,4 +13,5 @@ from src.infrastructure.database.repositories.user_repository import (
 __all__ = [
     "SQLAlchemyUserRepository",
     "SQLAlchemyOrganizationRepository",
+    "SQLAlchemyInvitationRepository",
 ]
