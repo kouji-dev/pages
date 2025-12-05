@@ -3,6 +3,7 @@ import {
   Button,
   Icon,
   Input,
+  Spinner,
   Modal,
   ModalContainer,
   ModalHeader,
@@ -13,7 +14,7 @@ import {
 
 @Component({
   selector: 'app-demo',
-  imports: [Button, Icon, Input, ModalContainer, ModalHeader, ModalContent, ModalFooter],
+  imports: [Button, Icon, Input, Spinner, ModalContainer, ModalHeader, ModalContent, ModalFooter],
   template: `
     <div class="demo">
       <h1 class="demo_title">Component Library Demo</h1>
@@ -284,6 +285,47 @@ import {
                 [rows]="6"
                 [(model)]="textareaValue2"
               ></lib-input>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Spinner Component Showcase -->
+      <section class="demo_section">
+        <h2 class="demo_section-title">Loading Spinner Component</h2>
+
+        <div class="demo_grid">
+          <div class="demo_item">
+            <h3 class="demo_item-title">Sizes</h3>
+            <div class="demo_item-content">
+              <lib-spinner size="sm"></lib-spinner>
+              <lib-spinner size="md"></lib-spinner>
+              <lib-spinner size="lg"></lib-spinner>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">Colors</h3>
+            <div class="demo_item-content">
+              <lib-spinner color="default"></lib-spinner>
+              <lib-spinner color="primary"></lib-spinner>
+              <lib-spinner color="secondary"></lib-spinner>
+              <div
+                style="background: #000; padding: 0.5rem; border-radius: 0.375rem; display: inline-flex; align-items: center;"
+              >
+                <lib-spinner color="white"></lib-spinner>
+              </div>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">In Context</h3>
+            <div class="demo_item-content">
+              <lib-button [loading]="true">Loading Button</lib-button>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <lib-spinner size="sm"></lib-spinner>
+                <span>Loading...</span>
+              </div>
             </div>
           </div>
         </div>
