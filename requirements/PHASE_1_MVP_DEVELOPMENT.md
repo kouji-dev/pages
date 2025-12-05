@@ -1077,31 +1077,41 @@ This phase focuses on building the foundational features required for a function
 **Priority**: Low  
 **Estimated Time**: 1-2 days  
 **Dependencies**: 1.2.6  
-**Assigned To**: BATATA1
+**Assigned To**: BATATA1  
+**Status**: ✅ Complete
 
 **Backend Tasks**:
 
-- [ ] Design organization settings schema (JSON field in organizations table)
-- [ ] Create get settings endpoint (GET /api/organizations/:id/settings)
-  - [ ] Return organization settings JSON
-  - [ ] Include default settings if none set
-  - [ ] Permission check (organization member)
-- [ ] Create update settings endpoint (PUT /api/organizations/:id/settings)
-  - [ ] Validate settings JSON schema
-  - [ ] Update settings in database
-  - [ ] Permission check (admin only)
-  - [ ] Return updated settings
-- [ ] Define default settings structure
-  - [ ] Feature flags
-  - [ ] Notification preferences
-  - [ ] Custom branding (optional)
-- [ ] Write API tests
+- [x] Design organization settings schema (JSON field in organizations table)
+- [x] Create get settings endpoint (GET /api/organizations/:id/settings)
+  - [x] Return organization settings JSON
+  - [x] Include default settings if none set
+  - [x] Permission check (organization member)
+- [x] Create update settings endpoint (PUT /api/organizations/:id/settings)
+  - [x] Validate settings JSON schema
+  - [x] Update settings in database
+  - [x] Permission check (admin only)
+  - [x] Return updated settings
+- [x] Define default settings structure
+  - [x] Feature flags
+  - [x] Notification preferences
+  - [x] Custom branding (optional)
+- [x] Write API tests
 
 **Deliverables**:
 
-- Organization settings API endpoints
-- Default settings structure
-- API tests
+- [x] Organization settings API endpoints
+- [x] Default settings structure
+- [x] API tests
+
+**Note**: ✅ **COMPLETED** - Full organization settings API implemented:
+- Value object: `OrganizationSettings` with default schema and validation in `src/domain/value_objects/organization_settings.py`
+- Use cases: `GetOrganizationSettingsUseCase`, `UpdateOrganizationSettingsUseCase`
+- Endpoints: GET/PUT `/api/v1/organizations/{id}/settings`
+- Permissions: Member check for GET, admin check for PUT
+- Settings structure: Feature flags, notification preferences (email digest, project/space updates), and branding (logo, colors)
+- Settings merging: Update merges with existing settings (not replaced)
+- Unit and integration tests (8 unit + 9 integration tests)
 
 ---
 
