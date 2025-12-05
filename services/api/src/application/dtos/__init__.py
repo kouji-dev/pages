@@ -17,6 +17,12 @@ from src.application.dtos.organization import (
     OrganizationResponse,
     UpdateOrganizationRequest,
 )
+from src.application.dtos.organization_member import (
+    AddMemberRequest,
+    OrganizationMemberListResponse,
+    OrganizationMemberResponse,
+    UpdateMemberRoleRequest,
+)
 from src.application.dtos.user import (
     EmailUpdateRequest,
     PasswordUpdateRequest,
@@ -45,4 +51,9 @@ __all__ = [
     "OrganizationListResponse",
     "CreateOrganizationRequest",
     "UpdateOrganizationRequest",
+    # Organization Member DTOs
+    "OrganizationMemberResponse",
+    "OrganizationMemberListResponse",
+    "AddMemberRequest",
+    "UpdateMemberRoleRequest",
 ]

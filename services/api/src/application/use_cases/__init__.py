@@ -19,6 +19,12 @@ from src.application.use_cases.organization import (
     ListOrganizationsUseCase,
     UpdateOrganizationUseCase,
 )
+from src.application.use_cases.organization_member import (
+    AddOrganizationMemberUseCase,
+    ListOrganizationMembersUseCase,
+    RemoveOrganizationMemberUseCase,
+    UpdateOrganizationMemberRoleUseCase,
+)
 from src.application.use_cases.reactivate_user import ReactivateUserUseCase
 from src.application.use_cases.list_users import ListUsersUseCase
 from src.application.use_cases.preferences import (
@@ -62,4 +68,9 @@ __all__ = [
     "ListOrganizationsUseCase",
     "UpdateOrganizationUseCase",
     "DeleteOrganizationUseCase",
+    # Organization member use cases
+    "AddOrganizationMemberUseCase",
+    "ListOrganizationMembersUseCase",
+    "UpdateOrganizationMemberRoleUseCase",
+    "RemoveOrganizationMemberUseCase",
 ]

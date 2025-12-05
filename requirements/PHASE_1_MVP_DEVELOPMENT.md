@@ -985,34 +985,44 @@ This phase focuses on building the foundational features required for a function
 
 **Backend Tasks**:
 
-- [ ] Create add member endpoint (POST /api/organizations/:id/members)
-  - [ ] Validate user_id exists
-  - [ ] Check user is not already a member
-  - [ ] Add member with default role (member)
-  - [ ] Permission check (admin only)
-  - [ ] Return added member info
-- [ ] Create list members endpoint (GET /api/organizations/:id/members)
-  - [ ] Return members with user details (name, email, avatar_url)
-  - [ ] Include role for each member
-  - [ ] Pagination support
-  - [ ] Permission check (organization member)
-- [ ] Create update member role endpoint (PUT /api/organizations/:id/members/:userId)
-  - [ ] Update member role (member, admin)
-  - [ ] Permission check (admin only)
-  - [ ] Prevent removing last admin
-  - [ ] Return updated member info
-- [ ] Create remove member endpoint (DELETE /api/organizations/:id/members/:userId)
-  - [ ] Permission check (admin only, or user removing themselves)
-  - [ ] Prevent removing last admin
-  - [ ] Remove member from organization
-- [ ] Write API tests for member management
-- [ ] Write integration tests
+- [x] Create add member endpoint (POST /api/organizations/:id/members)
+  - [x] Validate user_id exists
+  - [x] Check user is not already a member
+  - [x] Add member with default role (member)
+  - [x] Permission check (admin only)
+  - [x] Return added member info
+- [x] Create list members endpoint (GET /api/organizations/:id/members)
+  - [x] Return members with user details (name, email, avatar_url)
+  - [x] Include role for each member
+  - [x] Pagination support
+  - [x] Permission check (organization member)
+- [x] Create update member role endpoint (PUT /api/organizations/:id/members/:userId)
+  - [x] Update member role (member, admin)
+  - [x] Permission check (admin only)
+  - [x] Prevent removing last admin
+  - [x] Return updated member info
+- [x] Create remove member endpoint (DELETE /api/organizations/:id/members/:userId)
+  - [x] Permission check (admin only, or user removing themselves)
+  - [x] Prevent removing last admin
+  - [x] Remove member from organization
+- [x] Write API tests for member management
+- [x] Write integration tests
 
 **Deliverables**:
 
-- Organization member management endpoints
-- Role-based permissions
-- API tests
+- [x] Organization member management endpoints
+- [x] Role-based permissions
+- [x] API tests
+
+**Note**: ✅ **COMPLETED** - Organization Members API implemented:
+- Use cases: Add, List, Update role, Remove organization members
+- Endpoints: Full member management at `/api/v1/organizations/{id}/members/`
+- Permissions: Member check for GET, admin check for POST/PUT/DELETE
+- Self-removal: Users can remove themselves without admin role
+- Last admin protection: Prevents removing/changing role of last admin
+- Role validation: Validates roles (admin, member, viewer)
+- Pagination: List members supports pagination
+- Tests: 11 unit tests + 10 integration tests (all passing)
 
 ---
 

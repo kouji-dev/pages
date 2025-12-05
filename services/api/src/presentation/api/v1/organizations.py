@@ -12,12 +12,24 @@ from src.application.dtos.organization import (
     OrganizationResponse,
     UpdateOrganizationRequest,
 )
+from src.application.dtos.organization_member import (
+    AddMemberRequest,
+    OrganizationMemberListResponse,
+    OrganizationMemberResponse,
+    UpdateMemberRoleRequest,
+)
 from src.application.use_cases.organization import (
     CreateOrganizationUseCase,
     DeleteOrganizationUseCase,
     GetOrganizationUseCase,
     ListOrganizationsUseCase,
     UpdateOrganizationUseCase,
+)
+from src.application.use_cases.organization_member import (
+    AddOrganizationMemberUseCase,
+    ListOrganizationMembersUseCase,
+    RemoveOrganizationMemberUseCase,
+    UpdateOrganizationMemberRoleUseCase,
 )
 from src.domain.entities import User
 from src.domain.repositories import OrganizationRepository, UserRepository
@@ -85,6 +97,51 @@ def get_delete_organization_use_case(
 ) -> DeleteOrganizationUseCase:
     """Get delete organization use case with dependencies."""
     return DeleteOrganizationUseCase(organization_repository)
+
+
+# Member management use case dependencies
+def get_add_member_use_case(
+    organization_repository: Annotated[
+        OrganizationRepository, Depends(get_organization_repository)
+    ],
+    user_repository: Annotated[UserRepository, Depends(get_user_repository)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> AddOrganizationMemberUseCase:
+    """Get add member use case with dependencies."""
+    return AddOrganizationMemberUseCase(organization_repository, user_repository, session)
+
+
+def get_list_members_use_case(
+    organization_repository: Annotated[
+        OrganizationRepository, Depends(get_organization_repository)
+    ],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> ListOrganizationMembersUseCase:
+    """Get list members use case with dependencies."""
+    return ListOrganizationMembersUseCase(organization_repository, session)
+
+
+def get_update_member_role_use_case(
+    organization_repository: Annotated[
+        OrganizationRepository, Depends(get_organization_repository)
+    ],
+    user_repository: Annotated[UserRepository, Depends(get_user_repository)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> UpdateOrganizationMemberRoleUseCase:
+    """Get update member role use case with dependencies."""
+    return UpdateOrganizationMemberRoleUseCase(
+        organization_repository, user_repository, session
+    )
+
+
+def get_remove_member_use_case(
+    organization_repository: Annotated[
+        OrganizationRepository, Depends(get_organization_repository)
+    ],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> RemoveOrganizationMemberUseCase:
+    """Get remove member use case with dependencies."""
+    return RemoveOrganizationMemberUseCase(organization_repository, session)
 
 
 
@@ -274,3 +331,182 @@ async def delete_organization(
     )
 
     await use_case.execute(str(organization_id))
+
+
+# Member management endpoints
+@router.post(
+    "/{organization_id}/members",
+    response_model=OrganizationMemberResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def add_organization_member(
+    organization_id: UUID,
+    request: AddMemberRequest,
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[
+        AddOrganizationMemberUseCase, Depends(get_add_member_use_case)
+    ],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+) -> OrganizationMemberResponse:
+    """Add a member to an organization.
+
+    Requires admin role in the organization.
+
+    Args:
+        organization_id: Organization UUID (from path)
+        request: Add member request
+        current_user: Current authenticated user (must be admin)
+        use_case: Add member use case
+        permission_service: Permission service
+
+    Returns:
+        Added member response with user details
+
+    Raises:
+        HTTPException: If organization/user not found, user already member, or not admin
+    """
+    # Verify user is admin
+    await require_organization_admin(
+        organization_id=organization_id,
+        current_user=current_user,
+        permission_service=permission_service,
+    )
+
+    return await use_case.execute(str(organization_id), request)
+
+
+@router.get(
+    "/{organization_id}/members",
+    response_model=OrganizationMemberListResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def list_organization_members(
+    organization_id: UUID,
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[
+        ListOrganizationMembersUseCase, Depends(get_list_members_use_case)
+    ],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+    page: Annotated[int, Query(ge=1, description="Page number (1-based)")] = 1,
+    limit: Annotated[
+        int, Query(ge=1, le=100, description="Number of members per page")
+    ] = 20,
+) -> OrganizationMemberListResponse:
+    """List members of an organization.
+
+    Requires user to be a member of the organization.
+
+    Args:
+        organization_id: Organization UUID (from path)
+        current_user: Current authenticated user (must be member)
+        use_case: List members use case
+        permission_service: Permission service
+        page: Page number (1-based)
+        limit: Number of members per page
+
+    Returns:
+        Paginated list of members with user details
+
+    Raises:
+        HTTPException: If organization not found or user is not a member
+    """
+    # Verify user is a member
+    await require_organization_member(
+        organization_id=organization_id,
+        current_user=current_user,
+        permission_service=permission_service,
+    )
+
+    return await use_case.execute(str(organization_id), page=page, limit=limit)
+
+
+@router.put(
+    "/{organization_id}/members/{user_id}",
+    response_model=OrganizationMemberResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def update_organization_member_role(
+    organization_id: UUID,
+    user_id: UUID,
+    request: UpdateMemberRoleRequest,
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[
+        UpdateOrganizationMemberRoleUseCase, Depends(get_update_member_role_use_case)
+    ],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+) -> OrganizationMemberResponse:
+    """Update a member's role in an organization.
+
+    Requires admin role in the organization.
+    Prevents removing the last admin.
+
+    Args:
+        organization_id: Organization UUID (from path)
+        user_id: User ID of the member to update (from path)
+        request: Update role request
+        current_user: Current authenticated user (must be admin)
+        use_case: Update member role use case
+        permission_service: Permission service
+
+    Returns:
+        Updated member response with user details
+
+    Raises:
+        HTTPException: If organization/member not found, not admin, or trying to remove last admin
+    """
+    # Verify user is admin
+    await require_organization_admin(
+        organization_id=organization_id,
+        current_user=current_user,
+        permission_service=permission_service,
+    )
+
+    return await use_case.execute(
+        str(organization_id), str(user_id), request, str(current_user.id)
+    )
+
+
+@router.delete(
+    "/{organization_id}/members/{user_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def remove_organization_member(
+    organization_id: UUID,
+    user_id: UUID,
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[
+        RemoveOrganizationMemberUseCase, Depends(get_remove_member_use_case)
+    ],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+) -> None:
+    """Remove a member from an organization.
+
+    Requires admin role in the organization (or user removing themselves).
+    Prevents removing the last admin.
+
+    Args:
+        organization_id: Organization UUID (from path)
+        user_id: User ID of the member to remove (from path)
+        current_user: Current authenticated user
+        use_case: Remove member use case
+        permission_service: Permission service
+
+    Returns:
+        No content (204) on success
+
+    Raises:
+        HTTPException: If organization/member not found, not authorized, or trying to remove last admin
+    """
+    # Allow if admin OR user removing themselves
+    requester_uuid = UUID(str(current_user.id))
+    target_uuid = user_id
+
+    if requester_uuid != target_uuid:
+        # User removing someone else - requires admin
+        await require_organization_admin(
+            organization_id=organization_id,
+            current_user=current_user,
+            permission_service=permission_service,
+        )
+
+    await use_case.execute(str(organization_id), str(user_id), str(current_user.id))
