@@ -107,7 +107,9 @@ import { Button, Icon } from 'shared-ui';
         @apply border-b;
         border-color: var(--color-border-default);
         background: var(--color-bg-primary);
-        @apply sticky top-0 z-50;
+        @apply sticky top-0;
+        z-index: 50;
+        position: sticky;
       }
 
       .public-nav_container {
