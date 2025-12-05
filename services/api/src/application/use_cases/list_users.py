@@ -23,9 +23,7 @@ class ListUsersUseCase:
     DEFAULT_LIMIT = 20
     MAX_LIMIT = 100
 
-    def __init__(
-        self, user_repository: UserRepository, session: AsyncSession
-    ) -> None:
+    def __init__(self, user_repository: UserRepository, session: AsyncSession) -> None:
         """Initialize use case with dependencies.
 
         Args:
