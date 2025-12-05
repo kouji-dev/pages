@@ -604,26 +604,27 @@ This phase focuses on building the foundational features required for a function
 **Priority**: High  
 **Estimated Time**: 1-2 days  
 **Dependencies**: 1.1.6, 1.1.8, 1.1.9  
-**Assigned To**: BATATA2
+**Assigned To**: BATATA2  
+**Status**: ✅ Complete
 
 **Frontend Tasks**:
 
-- [ ] Create landing page route in `app.routes.ts` (public route)
-- [ ] Create landing page component (`landing.component.ts`)
-- [ ] Create hero section component (`hero-section.component.ts`)
-  - [ ] Headline and subheading
-  - [ ] Value proposition text
-  - [ ] Primary CTA button (Sign Up) - reuse button component
-  - [ ] Secondary CTA button (Learn More)
-  - [ ] Hero image/illustration placeholder
-- [ ] Apply BOM CSS methodology with Tailwind
-- [ ] Ensure mobile responsiveness
-- [ ] Write component tests
+- [x] Create landing page route in `app.routes.ts` (public route)
+- [x] Create landing page component (`landing.component.ts`)
+- [x] Create hero section component (`hero-section.component.ts`)
+  - [x] Headline and subheading
+  - [x] Value proposition text
+  - [x] Primary CTA button (Sign Up) - reuse button component
+  - [x] Secondary CTA button (Learn More)
+  - [x] Hero image/illustration placeholder
+- [x] Apply BOM CSS methodology with Tailwind
+- [x] Ensure mobile responsiveness
+- [x] Write component tests
 
 **Deliverables**:
 
-- Landing page route and hero section
-- Responsive design
+- ✅ Landing page route and hero section
+- ✅ Responsive design
 
 ---
 
@@ -632,24 +633,25 @@ This phase focuses on building the foundational features required for a function
 **Priority**: High  
 **Estimated Time**: 1-2 days  
 **Dependencies**: 1.1.15  
-**Assigned To**: HWIMDA2
+**Assigned To**: HWIMDA2  
+**Status**: ✅ Complete
 
 **Frontend Tasks**:
 
-- [ ] Create features section component (`features-section.component.ts`)
-  - [ ] Section heading
-  - [ ] Feature cards (3-4 key features)
-  - [ ] Feature icons/illustrations
-  - [ ] Feature titles and descriptions
-  - [ ] Reuse card component from shared-ui
-- [ ] Apply BOM CSS methodology with Tailwind
-- [ ] Ensure mobile responsiveness (grid layout)
-- [ ] Write component tests
+- [x] Create features section component (`features-section.component.ts`)
+  - [x] Section heading
+  - [x] Feature cards (3-4 key features)
+  - [x] Feature icons/illustrations
+  - [x] Feature titles and descriptions
+  - [x] Card styling with BOM CSS methodology
+- [x] Apply BOM CSS methodology with Tailwind
+- [x] Ensure mobile responsiveness (grid layout)
+- [x] Write component tests
 
 **Deliverables**:
 
-- Features section component
-- Responsive grid layout
+- ✅ Features section component
+- ✅ Responsive grid layout
 
 ---
 
@@ -658,31 +660,32 @@ This phase focuses on building the foundational features required for a function
 **Priority**: High  
 **Estimated Time**: 1-2 days  
 **Dependencies**: 1.1.6  
-**Assigned To**: BATATA2
+**Assigned To**: BATATA2  
+**Status**: ✅ Complete
 
 **Frontend Tasks**:
 
-- [ ] Create public navigation component (`public-nav.component.ts`)
-  - [ ] Logo/branding
-  - [ ] Navigation links (Home, Features, Pricing)
-  - [ ] Sign Up button (links to register route)
-  - [ ] Log In button (links to login route)
-  - [ ] Responsive mobile menu
-- [ ] Create footer component (`footer.component.ts`)
-  - [ ] Product links section
-  - [ ] Legal links (Terms, Privacy Policy - placeholders)
-  - [ ] Social media links
-  - [ ] Contact information
-  - [ ] Copyright notice
-- [ ] Apply BOM CSS methodology with Tailwind
-- [ ] Ensure mobile responsiveness
-- [ ] Write component tests
+- [x] Create public navigation component (`public-nav.component.ts`)
+  - [x] Logo/branding
+  - [x] Navigation links (Home, Features, Pricing)
+  - [x] Sign Up button (links to register route)
+  - [x] Log In button (links to login route)
+  - [x] Responsive mobile menu
+- [x] Create footer component (`footer.component.ts`)
+  - [x] Product links section
+  - [x] Legal links (Terms, Privacy Policy - placeholders)
+  - [x] Social media links
+  - [x] Contact information
+  - [x] Copyright notice
+- [x] Apply BOM CSS methodology with Tailwind
+- [x] Ensure mobile responsiveness
+- [x] Write component tests
 
 **Deliverables**:
 
-- Public navigation bar
-- Footer component
-- Mobile-responsive design
+- ✅ Public navigation bar
+- ✅ Footer component
+- ✅ Mobile-responsive design
 
 ---
 
@@ -715,6 +718,64 @@ This phase focuses on building the foundational features required for a function
 - SEO-optimized landing page
 - Structured data
 - Analytics integration (optional)
+
+---
+
+#### 1.1.19 Features Page
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 1.1.6, 1.1.15  
+**Assigned To**: HWIMDA2  
+**Status**: ✅ Complete
+
+**Frontend Tasks**:
+
+- [x] Create features page route in `app.routes.ts` (public route)
+- [x] Create features page component (`features-page.component.ts`)
+  - [x] Page header with title and description
+  - [x] Detailed feature sections (reuse features-section component)
+  - [x] Feature comparison table or detailed cards
+  - [x] Screenshots/illustration placeholders
+  - [x] CTA section (Sign Up button)
+- [x] Apply BOM CSS methodology with Tailwind
+- [x] Ensure mobile responsiveness
+- [x] Write component tests
+
+**Deliverables**:
+
+- ✅ Features page route and component
+- ✅ Responsive design
+- ✅ Component tests
+
+---
+
+#### 1.1.20 Pricing Page
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 1.1.6, 1.1.15, 1.1.8  
+**Assigned To**: BATATA2  
+**Status**: ✅ Complete
+
+**Frontend Tasks**:
+
+- [x] Create pricing page route in `app.routes.ts` (public route)
+- [x] Create pricing page component (`pricing-page.component.ts`)
+  - [x] Page header with title and description
+  - [x] Pricing tiers (Free, Starter, Professional, Business, Enterprise)
+  - [x] Feature comparison table
+  - [x] CTA buttons for each tier (Sign Up, Contact Sales)
+  - [x] FAQ section
+- [x] Apply BOM CSS methodology with Tailwind
+- [x] Ensure mobile responsiveness
+- [x] Write component tests
+
+**Deliverables**:
+
+- ✅ Pricing page route and component
+- ✅ Responsive design
+- ✅ Component tests
 
 ---
 

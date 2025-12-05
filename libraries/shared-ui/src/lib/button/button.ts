@@ -1,9 +1,10 @@
 import { Component, input, output, computed } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Icon, IconName } from '../icon/icon';
 
 @Component({
   selector: 'lib-button',
-  imports: [Icon],
+  imports: [Icon, RouterLink],
   template: `
     <button
       class="button"
@@ -16,10 +17,20 @@ import { Icon, IconName } from '../icon/icon';
       [class.button--lg]="size() === 'lg'"
       [class.button--disabled]="disabled() || loading()"
       [class.button--icon-only]="iconOnly()"
-      [disabled]="disabled() || loading()"
-      [type]="type()"
+      [disabled]="!link() && (disabled() || loading())"
+      [type]="link() ? 'button' : type()"
       (click)="onClick($event)"
     >
+      @if (link()) {
+        <a
+          class="button_link"
+          [routerLink]="link()!"
+          [attr.aria-disabled]="disabled() || loading() ? 'true' : null"
+          [tabindex]="disabled() || loading() ? -1 : 0"
+          (click)="onLinkClick($event)"
+        >
+        </a>
+      }
       @if (loading()) {
         <lib-icon
           name="loader"
@@ -60,6 +71,7 @@ import { Icon, IconName } from '../icon/icon';
         @apply cursor-pointer;
         @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
         @apply rounded-md; /* Notion-style rounded corners */
+        position: relative; /* For absolute positioned link */
         /* Default styles will be overridden by variant classes */
       }
 
@@ -184,6 +196,18 @@ import { Icon, IconName } from '../icon/icon';
       .button:has(.button_spinner) {
         position: relative;
       }
+
+      /* Link inside button */
+      .button_link {
+        @apply absolute inset-0;
+        @apply z-10;
+        text-decoration: none;
+        @apply cursor-pointer;
+      }
+
+      .button--disabled .button_link {
+        pointer-events: none;
+      }
     `,
   ],
 })
@@ -197,6 +221,7 @@ export class Button {
   type = input<'button' | 'submit' | 'reset'>('button');
   leftIcon = input<IconName | null>(null);
   rightIcon = input<IconName | null>(null);
+  link = input<string | string[] | null>(null); // RouterLink - if provided, renders <a> instead of <button>
 
   // Output
   clicked = output<MouseEvent>();
@@ -229,6 +254,20 @@ export class Button {
       event.stopPropagation();
       return;
     }
+    // If link is provided, let the link handle navigation
+    if (this.link()) {
+      return;
+    }
+    this.clicked.emit(event);
+  }
+
+  onLinkClick(event: MouseEvent): void {
+    if (this.disabled() || this.loading()) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    // Link handles navigation via RouterLink
     this.clicked.emit(event);
   }
 }

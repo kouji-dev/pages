@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { Button } from './button';
 
 describe('Button', () => {
@@ -7,7 +8,7 @@ describe('Button', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Button],
+      imports: [Button, RouterTestingModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Button);
@@ -19,10 +20,24 @@ describe('Button', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render button element', () => {
+  it('should render button element when link is not provided', () => {
+    fixture.componentRef.setInput('link', null);
+    fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     const button = compiled.querySelector('button');
+    const anchor = compiled.querySelector('a');
     expect(button).toBeTruthy();
+    expect(anchor).toBeFalsy();
+  });
+
+  it('should render anchor element when link is provided', () => {
+    fixture.componentRef.setInput('link', '/test');
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const button = compiled.querySelector('button');
+    const anchor = compiled.querySelector('a');
+    expect(button).toBeFalsy();
+    expect(anchor).toBeTruthy();
   });
 
   it('should have default variant of primary', () => {
