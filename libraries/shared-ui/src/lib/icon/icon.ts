@@ -24,16 +24,18 @@ export type IconName = PascalCaseToKebabCase<keyof typeof icons>;
   selector: 'lib-icon',
   imports: [CommonModule, LucideAngularModule],
   template: `
-    <span [class]="iconClasses()">
-      <lucide-icon
-        [img]="src()"
-        [size]="computedSize()"
-        [color]="color() || undefined"
-        [strokeWidth]="strokeWidth()"
-        [attr.aria-label]="ariaLabel()"
-        [attr.aria-hidden]="ariaHidden()"
-      />
-    </span>
+    @if (src()) {
+      <span [class]="iconClasses()">
+        <lucide-icon
+          [img]="src()!"
+          [size]="computedSize()"
+          [color]="color() || undefined"
+          [strokeWidth]="strokeWidth()"
+          [attr.aria-label]="ariaLabel()"
+          [attr.aria-hidden]="ariaHidden()"
+        />
+      </span>
+    }
   `,
   styles: [
     `
@@ -110,13 +112,17 @@ export class Icon {
   // Computed
   src = computed(() => {
     const iconName = this.name();
+    if (!iconName || !iconName.trim()) {
+      return null;
+    }
     // Convert kebab-case to PascalCase for Lucide Angular icons
     const pascalCaseName = iconName
       .split('-')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join('');
 
-    return (icons as any)[pascalCaseName];
+    const icon = (icons as any)[pascalCaseName];
+    return icon || null;
   });
 
   iconClasses = computed(() => {
