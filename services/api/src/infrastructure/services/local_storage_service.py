@@ -136,6 +136,31 @@ class LocalStorageService(StorageService):
         """
         return self._get_url(file_path)
 
+    async def get_file(self, file_path: str) -> bytes:
+        """Retrieve file content from local filesystem.
+
+        Args:
+            file_path: Relative path to the file
+
+        Returns:
+            File content as bytes
+
+        Raises:
+            StorageException: If file does not exist or read fails
+        """
+        try:
+            full_path = self._storage_path / file_path
+
+            if not full_path.exists():
+                raise StorageException(f"File not found: {file_path}")
+
+            with open(full_path, "rb") as f:
+                return f.read()
+
+        except OSError as e:
+            logger.error("Failed to read file", file_path=file_path, error=str(e))
+            raise StorageException(f"Failed to read file: {str(e)}") from e
+
     def _get_url(self, file_path: str) -> str:
         """Generate URL for a file path.
 

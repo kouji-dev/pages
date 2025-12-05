@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.application.interfaces import TokenService
 from src.application.services.permission_service import DatabasePermissionService
 from src.domain.repositories import (
+    AttachmentRepository,
     CommentRepository,
     InvitationRepository,
     IssueActivityRepository,
@@ -20,6 +21,7 @@ from src.domain.repositories import (
 from src.domain.services import PasswordService, PermissionService, StorageService
 from src.infrastructure.database import get_session
 from src.infrastructure.database.repositories import (
+    SQLAlchemyAttachmentRepository,
     SQLAlchemyCommentRepository,
     SQLAlchemyInvitationRepository,
     SQLAlchemyIssueActivityRepository,
@@ -140,6 +142,20 @@ async def get_comment_repository(
         SQLAlchemy implementation of CommentRepository
     """
     return SQLAlchemyCommentRepository(session)
+
+
+async def get_attachment_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> AttachmentRepository:
+    """Get attachment repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of AttachmentRepository
+    """
+    return SQLAlchemyAttachmentRepository(session)
 
 
 async def get_permission_service(

@@ -41,6 +41,12 @@ from src.application.dtos.issue import (
     IssueResponse,
     UpdateIssueRequest,
 )
+from src.application.dtos.attachment import (
+    AttachmentListResponse,
+    AttachmentListItemResponse,
+    AttachmentResponse,
+    UploadAttachmentResponse,
+)
 from src.application.dtos.comment import (
     CommentListResponse,
     CommentListItemResponse,
@@ -133,4 +139,9 @@ __all__ = [
     "CommentListResponse",
     "CreateCommentRequest",
     "UpdateCommentRequest",
+    # Attachment DTOs
+    "AttachmentResponse",
+    "AttachmentListItemResponse",
+    "AttachmentListResponse",
+    "UploadAttachmentResponse",
 ]

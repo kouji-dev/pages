@@ -1,5 +1,6 @@
 """Domain repository interfaces (ports)."""
 
+from src.domain.repositories.attachment_repository import AttachmentRepository
 from src.domain.repositories.comment_repository import CommentRepository
 from src.domain.repositories.invitation_repository import InvitationRepository
 from src.domain.repositories.issue_activity_repository import IssueActivityRepository
@@ -16,4 +17,5 @@ __all__ = [
     "IssueRepository",
     "IssueActivityRepository",
     "CommentRepository",
+    "AttachmentRepository",
 ]

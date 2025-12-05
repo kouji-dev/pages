@@ -2,6 +2,7 @@
 
 from fastapi import APIRouter
 
+from src.presentation.api.v1.attachments import router as attachments_router
 from src.presentation.api.v1.auth import router as auth_router
 from src.presentation.api.v1.comments import router as comments_router
 from src.presentation.api.v1.health import router as health_router
@@ -20,3 +21,4 @@ router.include_router(organizations_router, prefix="/organizations", tags=["Orga
 router.include_router(projects_router, prefix="/projects", tags=["Projects"])
 router.include_router(issues_router, prefix="/issues", tags=["Issues"])
 router.include_router(comments_router, tags=["Comments"])
+router.include_router(attachments_router, tags=["Attachments"])

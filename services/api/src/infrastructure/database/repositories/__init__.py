@@ -1,5 +1,8 @@
 """Database repository implementations."""
 
+from src.infrastructure.database.repositories.attachment_repository import (
+    SQLAlchemyAttachmentRepository,
+)
 from src.infrastructure.database.repositories.comment_repository import (
     SQLAlchemyCommentRepository,
 )
@@ -30,4 +33,5 @@ __all__ = [
     "SQLAlchemyIssueRepository",
     "SQLAlchemyIssueActivityRepository",
     "SQLAlchemyCommentRepository",
+    "SQLAlchemyAttachmentRepository",
 ]
