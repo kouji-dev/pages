@@ -10,11 +10,26 @@ import {
   ModalContent,
   ModalFooter,
   ToastService,
+  LoadingState,
+  ErrorState,
+  EmptyState,
 } from 'shared-ui';
 
 @Component({
   selector: 'app-demo',
-  imports: [Button, Icon, Input, Spinner, ModalContainer, ModalHeader, ModalContent, ModalFooter],
+  imports: [
+    Button,
+    Icon,
+    Input,
+    Spinner,
+    ModalContainer,
+    ModalHeader,
+    ModalContent,
+    ModalFooter,
+    LoadingState,
+    ErrorState,
+    EmptyState,
+  ],
   template: `
     <div class="demo">
       <h1 class="demo_title">Component Library Demo</h1>
@@ -457,6 +472,168 @@ import {
         </div>
       </section>
 
+      <!-- Loading State Component Showcase -->
+      <section class="demo_section">
+        <h2 class="demo_section-title">Loading State Component</h2>
+
+        <div class="demo_grid">
+          <div class="demo_item">
+            <h3 class="demo_item-title">Basic Loading</h3>
+            <div
+              class="demo_item-content"
+              style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+            >
+              <lib-loading-state />
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">With Message</h3>
+            <div
+              class="demo_item-content"
+              style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+            >
+              <lib-loading-state message="Loading data..." />
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">Different Sizes</h3>
+            <div
+              class="demo_item-content"
+              style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+            >
+              <lib-loading-state size="sm" message="Small spinner" />
+              <lib-loading-state size="md" message="Medium spinner" />
+              <lib-loading-state size="lg" message="Large spinner" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Error State Component Showcase -->
+      <section class="demo_section">
+        <h2 class="demo_section-title">Error State Component</h2>
+
+        <div class="demo_grid">
+          <div class="demo_item">
+            <h3 class="demo_item-title">Basic Error</h3>
+            <div
+              class="demo_item-content"
+              style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+            >
+              <lib-error-state />
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">With Custom Message</h3>
+            <div
+              class="demo_item-content"
+              style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+            >
+              <lib-error-state
+                title="Connection Error"
+                message="Unable to connect to the server. Please check your internet connection."
+              />
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">With Retry Action</h3>
+            <div
+              class="demo_item-content"
+              style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+            >
+              <lib-error-state
+                title="Failed to Load"
+                message="Something went wrong while loading the data."
+                [retryLabel]="'Retry'"
+                (onRetry)="handleRetry()"
+              />
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">Without Retry Button</h3>
+            <div
+              class="demo_item-content"
+              style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+            >
+              <lib-error-state
+                title="Access Denied"
+                message="You don't have permission to view this content."
+                [showRetry]="false"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Empty State Component Showcase -->
+      <section class="demo_section">
+        <h2 class="demo_section-title">Empty State Component</h2>
+
+        <div class="demo_grid">
+          <div class="demo_item">
+            <h3 class="demo_item-title">Basic Empty State</h3>
+            <div
+              class="demo_item-content"
+              style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+            >
+              <lib-empty-state />
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">With Icon and Message</h3>
+            <div
+              class="demo_item-content"
+              style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+            >
+              <lib-empty-state
+                title="No projects found"
+                message="Get started by creating your first project."
+                icon="folder"
+              />
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">With Action Button</h3>
+            <div
+              class="demo_item-content"
+              style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+            >
+              <lib-empty-state
+                title="No items yet"
+                message="Create your first item to get started."
+                icon="file-plus"
+                actionLabel="Create Item"
+                actionIcon="plus"
+                (onAction)="handleEmptyStateAction()"
+              />
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">Different Variants</h3>
+            <div
+              class="demo_item-content"
+              style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+            >
+              <lib-empty-state title="No tasks" actionLabel="Add Task" actionVariant="primary" />
+              <lib-empty-state
+                title="No tasks"
+                actionLabel="Add Task"
+                actionVariant="secondary"
+                style="margin-top: 1rem;"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Modal Component Showcase -->
       <section class="demo_section">
         <h2 class="demo_section-title">Modal Component</h2>
@@ -673,6 +850,14 @@ export class Demo {
       size: 'md',
       closable: true,
     });
+  }
+
+  handleRetry(): void {
+    this.toast.success('Retry action triggered!');
+  }
+
+  handleEmptyStateAction(): void {
+    this.toast.info('Action button clicked!');
   }
 
   openModal(size: 'sm' | 'md' | 'lg'): void {
