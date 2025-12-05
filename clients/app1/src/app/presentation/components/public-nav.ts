@@ -146,16 +146,26 @@ import { Button, Icon } from 'shared-ui';
         color: var(--color-primary-500);
       }
 
+      .public-nav_link::after {
+        content: '';
+        @apply absolute bottom-0 left-0;
+        @apply h-0.5;
+        width: 0;
+        background: var(--color-primary-500);
+        @apply transform -translate-y-1;
+        @apply transition-all duration-300 ease-in-out;
+      }
+
+      .public-nav_link:hover::after {
+        width: 100%;
+      }
+
       .public-nav_link--active {
         color: var(--color-text-primary);
       }
 
       .public-nav_link--active::after {
-        content: '';
-        @apply absolute bottom-0 left-0 right-0;
-        @apply h-0.5;
-        background: var(--color-primary-500);
-        @apply transform -translate-y-1;
+        width: 100%;
       }
 
       .public-nav_actions {
