@@ -115,9 +115,7 @@ class OrganizationRepository(ABC):
         ...
 
     @abstractmethod
-    async def count(
-        self, include_deleted: bool = False, user_id: UUID | None = None
-    ) -> int:
+    async def count(self, include_deleted: bool = False, user_id: UUID | None = None) -> int:
         """Count total organizations.
 
         Args:
@@ -149,4 +147,3 @@ class OrganizationRepository(ABC):
             List of matching organizations
         """
         ...
-

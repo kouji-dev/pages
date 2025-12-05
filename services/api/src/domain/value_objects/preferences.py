@@ -96,7 +96,9 @@ def validate_preferences(preferences: dict[str, Any]) -> dict[str, Any]:
             if notification_type in notifications:
                 notification_config = notifications[notification_type]
                 if not isinstance(notification_config, dict):
-                    raise ValueError(f"Notification config for '{notification_type}' must be a dictionary")
+                    raise ValueError(
+                        f"Notification config for '{notification_type}' must be a dictionary"
+                    )
 
                 # Merge notification config
                 if notification_type not in validated["notifications"]:
@@ -121,4 +123,3 @@ def validate_preferences(preferences: dict[str, Any]) -> dict[str, Any]:
                         validated["notifications"][notification_type][field] = value
 
     return validated
-

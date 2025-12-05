@@ -93,7 +93,9 @@ async def test_deactivate_user_requires_auth(client: AsyncClient) -> None:
 
 
 @pytest.mark.asyncio
-async def test_deactivate_user_cannot_reactivate_via_login(client: AsyncClient, test_user: User) -> None:
+async def test_deactivate_user_cannot_reactivate_via_login(
+    client: AsyncClient, test_user: User
+) -> None:
     """Test that deactivated user cannot login to reactivate."""
     # Login first
     login_response = await client.post(
@@ -123,4 +125,3 @@ async def test_deactivate_user_cannot_reactivate_via_login(client: AsyncClient, 
     )
 
     assert login_after_response.status_code == 401
-

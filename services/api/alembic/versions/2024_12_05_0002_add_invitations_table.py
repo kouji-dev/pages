@@ -55,4 +55,3 @@ def downgrade() -> None:
     op.drop_index("ix_invitations_email", table_name="invitations")
     op.drop_index("ix_invitations_organization_id", table_name="invitations")
     op.drop_table("invitations")
-

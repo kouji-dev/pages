@@ -9,7 +9,8 @@ class OrganizationSettingsResponse(BaseModel):
     """Response DTO for organization settings."""
 
     settings: dict[str, Any] = Field(
-        ..., description="Organization settings dictionary with feature flags, notifications, and branding"
+        ...,
+        description="Organization settings dictionary with feature flags, notifications, and branding",
     )
 
 
@@ -23,4 +24,3 @@ class UpdateOrganizationSettingsRequest(BaseModel):
     settings: dict[str, Any] = Field(
         ..., description="Settings dictionary to update (will be merged with existing settings)"
     )
-

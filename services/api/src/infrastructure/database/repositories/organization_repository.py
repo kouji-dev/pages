@@ -214,9 +214,7 @@ class SQLAlchemyOrganizationRepository(OrganizationRepository):
 
         return [self._to_entity(model) for model in models]
 
-    async def count(
-        self, include_deleted: bool = False, user_id: UUID | None = None
-    ) -> int:
+    async def count(self, include_deleted: bool = False, user_id: UUID | None = None) -> int:
         """Count total organizations.
 
         Args:
@@ -301,4 +299,3 @@ class SQLAlchemyOrganizationRepository(OrganizationRepository):
             updated_at=model.updated_at,
             deleted_at=model.deleted_at,
         )
-

@@ -4,6 +4,7 @@ import pytest
 from httpx import AsyncClient
 
 from src.domain.entities import User
+from tests.constants import USERS_LIST
 
 
 @pytest.mark.asyncio
@@ -22,7 +23,7 @@ async def test_list_users_success(client: AsyncClient, test_user: User) -> None:
 
     # List users
     response = await client.get(
-        "/api/v1/users",
+        USERS_LIST,
         headers={"Authorization": f"Bearer {access_token}"},
         params={"page": 1, "limit": 20},
     )
@@ -55,7 +56,7 @@ async def test_list_users_pagination(client: AsyncClient, test_user: User) -> No
 
     # List users with pagination
     response = await client.get(
-        "/api/v1/users",
+        USERS_LIST,
         headers={"Authorization": f"Bearer {access_token}"},
         params={"page": 2, "limit": 5},
     )
@@ -82,7 +83,7 @@ async def test_list_users_with_search(client: AsyncClient, test_user: User) -> N
 
     # Search for current user by email
     response = await client.get(
-        "/api/v1/users",
+        USERS_LIST,
         headers={"Authorization": f"Bearer {access_token}"},
         params={"search": test_user.email.value.split("@")[0]},
     )
@@ -95,9 +96,7 @@ async def test_list_users_with_search(client: AsyncClient, test_user: User) -> N
 
 
 @pytest.mark.asyncio
-async def test_list_users_search_case_insensitive(
-    client: AsyncClient, test_user: User
-) -> None:
+async def test_list_users_search_case_insensitive(client: AsyncClient, test_user: User) -> None:
     """Test that search is case-insensitive."""
     # Login to get token
     login_response = await client.post(
@@ -112,7 +111,7 @@ async def test_list_users_search_case_insensitive(
 
     # Search with uppercase
     response = await client.get(
-        "/api/v1/users",
+        USERS_LIST,
         headers={"Authorization": f"Bearer {access_token}"},
         params={"search": test_user.name.upper()},
     )
@@ -126,7 +125,7 @@ async def test_list_users_search_case_insensitive(
 @pytest.mark.asyncio
 async def test_list_users_requires_auth(client: AsyncClient) -> None:
     """Test that listing users requires authentication."""
-    response = await client.get("/api/v1/users")
+    response = await client.get(USERS_LIST)
 
     assert response.status_code == 401
 
@@ -147,7 +146,7 @@ async def test_list_users_invalid_page(client: AsyncClient, test_user: User) -> 
 
     # Try with invalid page
     response = await client.get(
-        "/api/v1/users",
+        USERS_LIST,
         headers={"Authorization": f"Bearer {access_token}"},
         params={"page": 0},
     )
@@ -171,7 +170,7 @@ async def test_list_users_invalid_limit(client: AsyncClient, test_user: User) ->
 
     # Try with invalid limit
     response = await client.get(
-        "/api/v1/users",
+        USERS_LIST,
         headers={"Authorization": f"Bearer {access_token}"},
         params={"limit": 0},
     )
@@ -195,7 +194,7 @@ async def test_list_users_limit_exceeds_max(client: AsyncClient, test_user: User
 
     # Try with limit > 100
     response = await client.get(
-        "/api/v1/users",
+        USERS_LIST,
         headers={"Authorization": f"Bearer {access_token}"},
         params={"limit": 200},
     )
@@ -219,7 +218,7 @@ async def test_list_users_empty_search(client: AsyncClient, test_user: User) -> 
 
     # List with empty search (should return all users)
     response = await client.get(
-        "/api/v1/users",
+        USERS_LIST,
         headers={"Authorization": f"Bearer {access_token}"},
         params={"search": ""},
     )
@@ -227,4 +226,3 @@ async def test_list_users_empty_search(client: AsyncClient, test_user: User) -> 
     assert response.status_code == 200
     data = response.json()
     assert "users" in data
-

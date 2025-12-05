@@ -1,8 +1,7 @@
 """Unit tests for organization use cases."""
 
-import json
 from unittest.mock import AsyncMock, Mock
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 import pytest
 
@@ -91,7 +90,7 @@ class TestCreateOrganizationUseCase:
         # Mock OrganizationMemberModel add
         from unittest.mock import MagicMock
 
-        mock_member = MagicMock()
+        MagicMock()
         mock_session.add = Mock()
 
         use_case = CreateOrganizationUseCase(
@@ -180,9 +179,7 @@ class TestGetOrganizationUseCase:
         assert result.member_count == 5
 
     @pytest.mark.asyncio
-    async def test_get_organization_not_found(
-        self, mock_organization_repository, mock_session
-    ):
+    async def test_get_organization_not_found(self, mock_organization_repository, mock_session):
         """Test get organization fails when not found."""
         mock_organization_repository.get_by_id.return_value = None
 
@@ -196,9 +193,7 @@ class TestListOrganizationsUseCase:
     """Tests for ListOrganizationsUseCase."""
 
     @pytest.mark.asyncio
-    async def test_list_organizations_success(
-        self, mock_organization_repository, mock_session
-    ):
+    async def test_list_organizations_success(self, mock_organization_repository, mock_session):
         """Test successful organization listing."""
         org1 = Organization.create(name="Org 1", slug="org-1")
         org2 = Organization.create(name="Org 2", slug="org-2")
@@ -226,9 +221,7 @@ class TestListOrganizationsUseCase:
         assert result.pages == 1
 
     @pytest.mark.asyncio
-    async def test_list_organizations_with_search(
-        self, mock_organization_repository, mock_session
-    ):
+    async def test_list_organizations_with_search(self, mock_organization_repository, mock_session):
         """Test organization listing with search."""
         org = Organization.create(name="Test Org", slug="test-org")
         mock_organization_repository.search.return_value = [org]
@@ -285,9 +278,7 @@ class TestUpdateOrganizationUseCase:
         mock_organization_repository.update.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_update_organization_not_found(
-        self, mock_organization_repository, mock_session
-    ):
+    async def test_update_organization_not_found(self, mock_organization_repository, mock_session):
         """Test update fails when organization not found."""
         mock_organization_repository.get_by_id.return_value = None
 
@@ -326,4 +317,3 @@ class TestDeleteOrganizationUseCase:
 
         with pytest.raises(EntityNotFoundException):
             await use_case.execute(str(uuid4()))
-

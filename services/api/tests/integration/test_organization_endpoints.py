@@ -1,8 +1,9 @@
 """Integration tests for organization endpoints."""
 
+from uuid import uuid4
+
 import pytest
 from httpx import AsyncClient
-from uuid import uuid4
 
 from src.infrastructure.database.models import OrganizationMemberModel, OrganizationModel
 
@@ -527,4 +528,3 @@ async def test_delete_organization_not_admin(client: AsyncClient, test_user, db_
     )
 
     assert delete_response.status_code == 403
-

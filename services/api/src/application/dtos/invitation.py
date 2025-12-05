@@ -25,7 +25,9 @@ class InvitationResponse(BaseModel):
     role: str = Field(..., description="Assigned role: admin, member, or viewer")
     invited_by: UUID = Field(..., description="ID of user who sent the invitation")
     expires_at: datetime = Field(..., description="Invitation expiration date")
-    accepted_at: datetime | None = Field(None, description="When invitation was accepted (if accepted)")
+    accepted_at: datetime | None = Field(
+        None, description="When invitation was accepted (if accepted)"
+    )
     created_at: datetime = Field(..., description="When invitation was created")
 
     class Config:
@@ -64,4 +66,3 @@ class CancelInvitationResponse(BaseModel):
         default="Invitation canceled successfully",
         description="Success message",
     )
-

@@ -1,9 +1,8 @@
 """SQLAlchemy implementation of InvitationRepository."""
 
-from datetime import UTC, datetime
 from uuid import UUID
 
-from sqlalchemy import and_, func, or_, select
+from sqlalchemy import and_, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.domain.entities import Invitation
@@ -150,9 +149,7 @@ class SQLAlchemyInvitationRepository(InvitationRepository):
         Returns:
             List of invitations
         """
-        query = select(InvitationModel).where(
-            InvitationModel.organization_id == organization_id
-        )
+        query = select(InvitationModel).where(InvitationModel.organization_id == organization_id)
 
         if pending_only:
             query = query.where(
@@ -259,4 +256,3 @@ class SQLAlchemyInvitationRepository(InvitationRepository):
             created_at=model.created_at,
             updated_at=model.updated_at,
         )
-

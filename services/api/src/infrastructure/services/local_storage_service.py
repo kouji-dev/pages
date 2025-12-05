@@ -1,6 +1,5 @@
 """Local filesystem storage service implementation."""
 
-import os
 from pathlib import Path
 
 import structlog
@@ -25,10 +24,10 @@ class LocalStorageService(StorageService):
         settings = get_settings()
         self._storage_path = Path(storage_path or settings.storage_path)
         self._base_url = base_url or settings.storage_base_url
-        
+
         # Create storage directory if it doesn't exist
         self._storage_path.mkdir(parents=True, exist_ok=True)
-        
+
         logger.info("LocalStorageService initialized", storage_path=str(self._storage_path))
 
     async def save(
@@ -53,19 +52,19 @@ class LocalStorageService(StorageService):
         try:
             # Create full path
             full_path = self._storage_path / file_path
-            
+
             # Create parent directories if needed
             full_path.parent.mkdir(parents=True, exist_ok=True)
-            
+
             # Write file
             with open(full_path, "wb") as f:
                 f.write(file_content)
-            
+
             logger.info("File saved", file_path=file_path, size=len(file_content))
-            
+
             # Return URL
             return self._get_url(file_path)
-            
+
         except OSError as e:
             logger.error("Failed to save file", file_path=file_path, error=str(e))
             raise StorageException(f"Failed to save file: {str(e)}") from e
@@ -102,14 +101,14 @@ class LocalStorageService(StorageService):
         """
         try:
             full_path = self._storage_path / file_path
-            
+
             if not full_path.exists():
                 logger.warning("File not found for deletion", file_path=file_path)
                 return
-            
+
             full_path.unlink()
             logger.info("File deleted", file_path=file_path)
-            
+
         except OSError as e:
             logger.error("Failed to delete file", file_path=file_path, error=str(e))
             raise StorageException(f"Failed to delete file: {str(e)}") from e
@@ -150,4 +149,3 @@ class LocalStorageService(StorageService):
         normalized_path = file_path.lstrip("/").replace("\\", "/")
         base_url = self._base_url.rstrip("/")
         return f"{base_url}/{normalized_path}"
-

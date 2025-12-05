@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock, Mock
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 import pytest
 
@@ -96,7 +96,7 @@ class TestAddOrganizationMemberUseCase:
         # Mock no existing member
         mock_result = MagicMock()
         mock_result.scalar_one_or_none.return_value = None
-        
+
         # Mock user model for response
         user_model = Mock()
         user_model.name = "Test User"
@@ -104,9 +104,10 @@ class TestAddOrganizationMemberUseCase:
         user_model.avatar_url = None
         user_result = MagicMock()
         user_result.scalar_one.return_value = user_model
-        
+
         # Set up session.execute to return different results based on query
         execute_calls = []
+
         async def mock_execute(query):
             query_str = str(query).upper()
             execute_calls.append(query_str)
@@ -118,14 +119,14 @@ class TestAddOrganizationMemberUseCase:
                 return user_result
             else:
                 return mock_result
-        
+
         mock_session.execute = AsyncMock(side_effect=mock_execute)
-        
+
         # Mock refresh to set created_at after flush
         async def mock_refresh(obj):
-            if hasattr(obj, 'user_id'):
+            if hasattr(obj, "user_id"):
                 obj.created_at = datetime.utcnow()
-        
+
         mock_session.refresh = AsyncMock(side_effect=mock_refresh)
 
         use_case = AddOrganizationMemberUseCase(
@@ -334,10 +335,8 @@ class TestUpdateOrganizationMemberRoleUseCase:
         # Note: When updating FROM member TO admin, admin_count check is skipped
         # because old_role != Role.ADMIN.value, so only 2 execute calls:
         # 1. Get member, 2. Get user model
-        mock_session.execute = AsyncMock(
-            side_effect=[member_result, user_result]
-        )
-        
+        mock_session.execute = AsyncMock(side_effect=[member_result, user_result])
+
         # Mock refresh
         mock_session.refresh = AsyncMock()
 
@@ -422,9 +421,7 @@ class TestRemoveOrganizationMemberUseCase:
 
         use_case = RemoveOrganizationMemberUseCase(mock_organization_repository, mock_session)
 
-        await use_case.execute(
-            str(test_organization.id), str(uuid4()), str(uuid4())
-        )
+        await use_case.execute(str(test_organization.id), str(uuid4()), str(uuid4()))
 
         mock_session.delete.assert_called_once_with(org_member)
 
@@ -453,10 +450,7 @@ class TestRemoveOrganizationMemberUseCase:
         use_case = RemoveOrganizationMemberUseCase(mock_organization_repository, mock_session)
 
         with pytest.raises(ValidationException) as exc_info:
-            await use_case.execute(
-                str(test_organization.id), str(uuid4()), str(uuid4())
-            )
+            await use_case.execute(str(test_organization.id), str(uuid4()), str(uuid4()))
 
         assert "last admin" in str(exc_info.value).lower()
         mock_session.delete.assert_not_called()
-

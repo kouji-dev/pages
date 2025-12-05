@@ -127,4 +127,3 @@ class InvitationRepository(ABC):
             True if invitation exists, False otherwise
         """
         ...
-

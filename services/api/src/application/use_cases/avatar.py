@@ -1,12 +1,12 @@
 """Avatar upload and deletion use cases."""
 
-import structlog
 from pathlib import Path
 from uuid import uuid4
 
+import structlog
+
 from src.application.dtos.user import UserResponse
-from src.domain.entities import User
-from src.domain.exceptions import EntityNotFoundException, StorageException, ValidationException
+from src.domain.exceptions import EntityNotFoundException, ValidationException
 from src.domain.repositories import UserRepository
 from src.domain.services import StorageService
 from src.infrastructure.services.image_service import ImageProcessingService
@@ -58,7 +58,9 @@ class UploadAvatarUseCase:
         """
         from uuid import UUID
 
-        logger.info("Uploading avatar", user_id=user_id, file_name=file_name, content_type=content_type)
+        logger.info(
+            "Uploading avatar", user_id=user_id, file_name=file_name, content_type=content_type
+        )
 
         user_uuid = UUID(user_id)
         user = await self._user_repository.get_by_id(user_uuid)
@@ -90,12 +92,14 @@ class UploadAvatarUseCase:
 
         # Process image and create multiple sizes
         output_format = ImageProcessingService.get_output_format(content_type)
-        processed_images = ImageProcessingService.process_avatar(file_content, output_format=output_format)
+        processed_images = ImageProcessingService.process_avatar(
+            file_content, output_format=output_format
+        )
 
         # Save all sizes to storage
         file_extension = Path(file_name).suffix or ".png"
         base_filename = f"avatars/{user_id}/{uuid4().hex}"
-        
+
         saved_urls = {}
         for size_name, processed_content in processed_images.items():
             file_path = f"{base_filename}_{size_name}{file_extension}"
@@ -138,14 +142,14 @@ class UploadAvatarUseCase:
 
         settings = get_settings()
         base_url = settings.storage_base_url.rstrip("/")
-        
+
         if url.startswith(base_url):
             return url[len(base_url) + 1 :]  # +1 to skip the leading /
-        
+
         # If URL doesn't match base, try to extract from common patterns
         if "/storage/" in url:
             return url.split("/storage/", 1)[1]
-        
+
         # Fallback: return as-is (assuming it's already a path)
         return url
 
@@ -209,17 +213,17 @@ class DeleteAvatarUseCase:
         # Extract path from URL
         upload_use_case = UploadAvatarUseCase(self._user_repository, self._storage_service)
         file_path = upload_use_case._extract_path_from_url(user.avatar_url)
-        
+
         try:
             # Delete all sizes (assuming naming pattern)
             # Delete main file
             await self._storage_service.delete(file_path)
-            
+
             # Try to delete other sizes (they might have _64x64, _128x128, _256x256 suffixes)
             path_obj = Path(file_path)
             base_name = path_obj.stem.rsplit("_", 1)[0]  # Remove size suffix if present
             extension = path_obj.suffix
-            
+
             for size_config in ImageProcessingService.AVATAR_SIZES:
                 size_file_path = f"{path_obj.parent}/{base_name}_{size_config.name}{extension}"
                 try:
@@ -227,9 +231,11 @@ class DeleteAvatarUseCase:
                 except Exception:
                     # Ignore errors for individual size deletions
                     pass
-                    
+
         except Exception as e:
-            logger.warning("Failed to delete avatar file from storage", path=file_path, error=str(e))
+            logger.warning(
+                "Failed to delete avatar file from storage", path=file_path, error=str(e)
+            )
             # Continue with clearing avatar_url even if file deletion fails
 
         # Clear avatar URL in database
@@ -248,4 +254,3 @@ class DeleteAvatarUseCase:
             created_at=updated_user.created_at,
             updated_at=updated_user.updated_at,
         )
-

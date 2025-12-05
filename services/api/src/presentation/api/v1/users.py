@@ -1,10 +1,8 @@
 """User management API endpoints."""
 
-from uuid import UUID
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, File, Query, UploadFile, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from typing_extensions import Annotated
 
 from src.application.dtos.preferences import (
     UserPreferencesResponse,
@@ -35,7 +33,7 @@ from src.domain.entities import User
 from src.domain.repositories import UserRepository
 from src.domain.services import PasswordService, PermissionService, StorageService
 from src.infrastructure.config import get_settings
-from src.presentation.dependencies.auth import get_current_active_user, get_current_user
+from src.presentation.dependencies.auth import get_current_active_user
 from src.presentation.dependencies.services import (
     get_password_service,
     get_permission_service,
@@ -44,6 +42,7 @@ from src.presentation.dependencies.services import (
 )
 
 router = APIRouter()
+
 
 # Dependency injection for use cases
 def get_user_profile_use_case(
@@ -81,11 +80,7 @@ def get_upload_avatar_use_case(
     storage_service: Annotated[StorageService, Depends(get_storage_service)],
 ) -> UploadAvatarUseCase:
     """Get upload avatar use case with dependencies."""
-    from src.domain.services import ImageProcessingService
-    from src.infrastructure.services import PillowImageProcessingService
-
-    image_service: ImageProcessingService = PillowImageProcessingService()
-    return UploadAvatarUseCase(user_repository, storage_service, image_service)
+    return UploadAvatarUseCase(user_repository, storage_service)
 
 
 def get_delete_avatar_use_case(
@@ -137,15 +132,9 @@ async def list_users(
     current_user: Annotated[User, Depends(get_current_active_user)],
     use_case: Annotated[ListUsersUseCase, Depends(get_list_users_use_case)],
     page: Annotated[int, Query(ge=1, description="Page number (1-based)")] = 1,
-    limit: Annotated[
-        int, Query(ge=1, le=100, description="Number of users per page")
-    ] = 20,
-    search: Annotated[
-        str | None, Query(description="Search query (name or email)")
-    ] = None,
-    organization_id: Annotated[
-        str | None, Query(description="Filter by organization ID")
-    ] = None,
+    limit: Annotated[int, Query(ge=1, le=100, description="Number of users per page")] = 20,
+    search: Annotated[str | None, Query(description="Search query (name or email)")] = None,
+    organization_id: Annotated[str | None, Query(description="Filter by organization ID")] = None,
 ) -> UserListResponse:
     """List users with optional search and filters."""
     return await use_case.execute(
@@ -182,9 +171,7 @@ async def get_current_user_profile(
 async def update_current_user_profile(
     request: UserUpdateRequest,
     current_user: Annotated[User, Depends(get_current_active_user)],
-    use_case: Annotated[
-        UpdateUserProfileUseCase, Depends(get_update_user_profile_use_case)
-    ],
+    use_case: Annotated[UpdateUserProfileUseCase, Depends(get_update_user_profile_use_case)],
 ) -> UserResponse:
     """Update current user profile.
 
@@ -213,9 +200,7 @@ async def update_current_user_profile(
 async def update_current_user_email(
     request: EmailUpdateRequest,
     current_user: Annotated[User, Depends(get_current_active_user)],
-    use_case: Annotated[
-        UpdateUserEmailUseCase, Depends(get_update_user_email_use_case)
-    ],
+    use_case: Annotated[UpdateUserEmailUseCase, Depends(get_update_user_email_use_case)],
 ) -> UserResponse:
     """Update current user email address.
 
@@ -243,9 +228,7 @@ async def update_current_user_email(
 async def update_current_user_password(
     request: PasswordUpdateRequest,
     current_user: Annotated[User, Depends(get_current_active_user)],
-    use_case: Annotated[
-        UpdateUserPasswordUseCase, Depends(get_update_user_password_use_case)
-    ],
+    use_case: Annotated[UpdateUserPasswordUseCase, Depends(get_update_user_password_use_case)],
 ) -> None:
     """Update current user password.
 
@@ -338,9 +321,7 @@ async def delete_avatar(
 )
 async def get_user_preferences(
     current_user: Annotated[User, Depends(get_current_active_user)],
-    use_case: Annotated[
-        GetUserPreferencesUseCase, Depends(get_user_preferences_use_case)
-    ],
+    use_case: Annotated[GetUserPreferencesUseCase, Depends(get_user_preferences_use_case)],
 ) -> UserPreferencesResponse:
     """Get current user preferences.
 
@@ -396,9 +377,7 @@ async def update_current_user_preferences(
 )
 async def deactivate_current_user(
     current_user: Annotated[User, Depends(get_current_active_user)],
-    use_case: Annotated[
-        DeactivateUserUseCase, Depends(get_deactivate_user_use_case)
-    ],
+    use_case: Annotated[DeactivateUserUseCase, Depends(get_deactivate_user_use_case)],
 ) -> None:
     """Deactivate current user account.
 
@@ -431,9 +410,7 @@ async def deactivate_current_user(
 async def reactivate_user(
     user_id: str,
     current_user: Annotated[User, Depends(get_current_active_user)],
-    use_case: Annotated[
-        ReactivateUserUseCase, Depends(get_reactivate_user_use_case)
-    ],
+    use_case: Annotated[ReactivateUserUseCase, Depends(get_reactivate_user_use_case)],
 ) -> None:
     """Reactivate a deactivated user account (admin only).
 

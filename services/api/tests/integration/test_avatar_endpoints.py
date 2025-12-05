@@ -1,6 +1,7 @@
 """Integration tests for avatar upload and deletion endpoints."""
 
 import io
+
 import pytest
 from httpx import AsyncClient
 from PIL import Image
@@ -20,17 +21,16 @@ def create_test_image(format: str = "PNG", size: tuple[int, int] = (200, 200)) -
     """
     # Create a simple colored image
     img = Image.new("RGB", size, color=(73, 109, 137))
-    
+
     # Save to bytes
     output = io.BytesIO()
-    save_kwargs = {}
     if format == "JPEG":
         img.save(output, format="JPEG", quality=95)
     elif format == "WEBP":
         img.save(output, format="WEBP", quality=95)
     else:  # PNG
         img.save(output, format="PNG")
-    
+
     output.seek(0)
     return output.read()
 
@@ -51,7 +51,7 @@ async def test_upload_avatar_success(client: AsyncClient, test_user: User) -> No
 
     # Create test image
     image_bytes = create_test_image("PNG")
-    
+
     # Upload avatar
     files = {"file": ("avatar.png", image_bytes, "image/png")}
     response = await client.post(
@@ -83,7 +83,7 @@ async def test_upload_avatar_jpeg(client: AsyncClient, test_user: User) -> None:
 
     # Create test JPEG image
     image_bytes = create_test_image("JPEG")
-    
+
     # Upload avatar
     files = {"file": ("avatar.jpg", image_bytes, "image/jpeg")}
     response = await client.post(
@@ -101,7 +101,7 @@ async def test_upload_avatar_jpeg(client: AsyncClient, test_user: User) -> None:
 async def test_upload_avatar_requires_auth(client: AsyncClient) -> None:
     """Test that uploading avatar requires authentication."""
     image_bytes = create_test_image()
-    
+
     files = {"file": ("avatar.png", image_bytes, "image/png")}
     response = await client.post(
         "/api/v1/users/me/avatar",
@@ -127,7 +127,7 @@ async def test_upload_avatar_invalid_file_type(client: AsyncClient, test_user: U
 
     # Try to upload PDF file
     pdf_content = b"%PDF-1.4\n1 0 obj\n<< /Type /Catalog >>\nendobj\nxref\n0 1\ntrailer\n<< /Size 1 >>\nstartxref\n9\n%%EOF"
-    
+
     files = {"file": ("document.pdf", pdf_content, "application/pdf")}
     response = await client.post(
         "/api/v1/users/me/avatar",
@@ -159,7 +159,7 @@ async def test_upload_avatar_file_too_large(client: AsyncClient, test_user: User
     # Create a large image by repeating a smaller one
     small_image = create_test_image("PNG", (100, 100))
     large_image = small_image * (6 * 1024 * 1024 // len(small_image) + 1)  # ~6MB
-    
+
     files = {"file": ("large_avatar.png", large_image, "image/png")}
     response = await client.post(
         "/api/v1/users/me/avatar",
@@ -289,4 +289,3 @@ async def test_upload_avatar_replaces_existing(client: AsyncClient, test_user: U
     )
     assert profile_response.status_code == 200
     assert profile_response.json()["avatar_url"] == second_avatar_url
-

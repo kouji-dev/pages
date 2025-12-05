@@ -1,23 +1,22 @@
 """Organization management API endpoints."""
 
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing_extensions import Annotated
 
+from src.application.dtos.invitation import (
+    AcceptInvitationResponse,
+    InvitationListResponse,
+    InvitationResponse,
+    SendInvitationRequest,
+)
 from src.application.dtos.organization import (
     CreateOrganizationRequest,
     OrganizationListResponse,
     OrganizationResponse,
     UpdateOrganizationRequest,
-)
-from src.application.dtos.invitation import (
-    AcceptInvitationResponse,
-    CancelInvitationResponse,
-    InvitationListResponse,
-    InvitationResponse,
-    SendInvitationRequest,
 )
 from src.application.dtos.organization_member import (
     AddMemberRequest,
@@ -73,6 +72,7 @@ from src.presentation.dependencies.services import (
 )
 
 router = APIRouter()
+
 
 # Dependency injection for use cases
 def get_create_organization_use_case(
@@ -155,9 +155,7 @@ def get_update_member_role_use_case(
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> UpdateOrganizationMemberRoleUseCase:
     """Get update member role use case with dependencies."""
-    return UpdateOrganizationMemberRoleUseCase(
-        organization_repository, user_repository, session
-    )
+    return UpdateOrganizationMemberRoleUseCase(organization_repository, user_repository, session)
 
 
 def get_remove_member_use_case(
@@ -172,9 +170,7 @@ def get_remove_member_use_case(
 
 # Invitation use case dependencies
 def get_send_invitation_use_case(
-    invitation_repository: Annotated[
-        InvitationRepository, Depends(get_invitation_repository)
-    ],
+    invitation_repository: Annotated[InvitationRepository, Depends(get_invitation_repository)],
     organization_repository: Annotated[
         OrganizationRepository, Depends(get_organization_repository)
     ],
@@ -188,9 +184,7 @@ def get_send_invitation_use_case(
 
 
 def get_accept_invitation_use_case(
-    invitation_repository: Annotated[
-        InvitationRepository, Depends(get_invitation_repository)
-    ],
+    invitation_repository: Annotated[InvitationRepository, Depends(get_invitation_repository)],
     organization_repository: Annotated[
         OrganizationRepository, Depends(get_organization_repository)
     ],
@@ -204,9 +198,7 @@ def get_accept_invitation_use_case(
 
 
 def get_list_invitations_use_case(
-    invitation_repository: Annotated[
-        InvitationRepository, Depends(get_invitation_repository)
-    ],
+    invitation_repository: Annotated[InvitationRepository, Depends(get_invitation_repository)],
     organization_repository: Annotated[
         OrganizationRepository, Depends(get_organization_repository)
     ],
@@ -216,9 +208,7 @@ def get_list_invitations_use_case(
 
 
 def get_cancel_invitation_use_case(
-    invitation_repository: Annotated[
-        InvitationRepository, Depends(get_invitation_repository)
-    ],
+    invitation_repository: Annotated[InvitationRepository, Depends(get_invitation_repository)],
     organization_repository: Annotated[
         OrganizationRepository, Depends(get_organization_repository)
     ],
@@ -246,8 +236,6 @@ def get_update_organization_settings_use_case(
     return UpdateOrganizationSettingsUseCase(organization_repository)
 
 
-
-
 @router.post(
     "/",
     response_model=OrganizationResponse,
@@ -256,9 +244,7 @@ def get_update_organization_settings_use_case(
 async def create_organization(
     request: CreateOrganizationRequest,
     current_user: Annotated[User, Depends(get_current_active_user)],
-    use_case: Annotated[
-        CreateOrganizationUseCase, Depends(get_create_organization_use_case)
-    ],
+    use_case: Annotated[CreateOrganizationUseCase, Depends(get_create_organization_use_case)],
 ) -> OrganizationResponse:
     """Create a new organization.
 
@@ -322,16 +308,10 @@ async def get_organization(
 )
 async def list_organizations(
     current_user: Annotated[User, Depends(get_current_active_user)],
-    use_case: Annotated[
-        ListOrganizationsUseCase, Depends(get_list_organizations_use_case)
-    ],
+    use_case: Annotated[ListOrganizationsUseCase, Depends(get_list_organizations_use_case)],
     page: Annotated[int, Query(ge=1, description="Page number (1-based)")] = 1,
-    limit: Annotated[
-        int, Query(ge=1, le=100, description="Number of organizations per page")
-    ] = 20,
-    search: Annotated[
-        str | None, Query(description="Search query (name or slug)")
-    ] = None,
+    limit: Annotated[int, Query(ge=1, le=100, description="Number of organizations per page")] = 20,
+    search: Annotated[str | None, Query(description="Search query (name or slug)")] = None,
 ) -> OrganizationListResponse:
     """List organizations for the current user.
 
@@ -364,9 +344,7 @@ async def update_organization(
     organization_id: UUID,
     request: UpdateOrganizationRequest,
     current_user: Annotated[User, Depends(get_current_active_user)],
-    use_case: Annotated[
-        UpdateOrganizationUseCase, Depends(get_update_organization_use_case)
-    ],
+    use_case: Annotated[UpdateOrganizationUseCase, Depends(get_update_organization_use_case)],
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
 ) -> OrganizationResponse:
     """Update an organization.
@@ -403,9 +381,7 @@ async def update_organization(
 async def delete_organization(
     organization_id: UUID,
     current_user: Annotated[User, Depends(get_current_active_user)],
-    use_case: Annotated[
-        DeleteOrganizationUseCase, Depends(get_delete_organization_use_case)
-    ],
+    use_case: Annotated[DeleteOrganizationUseCase, Depends(get_delete_organization_use_case)],
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
 ) -> None:
     """Delete an organization (soft delete).
@@ -445,9 +421,7 @@ async def add_organization_member(
     organization_id: UUID,
     request: AddMemberRequest,
     current_user: Annotated[User, Depends(get_current_active_user)],
-    use_case: Annotated[
-        AddOrganizationMemberUseCase, Depends(get_add_member_use_case)
-    ],
+    use_case: Annotated[AddOrganizationMemberUseCase, Depends(get_add_member_use_case)],
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
 ) -> OrganizationMemberResponse:
     """Add a member to an organization.
@@ -485,14 +459,10 @@ async def add_organization_member(
 async def list_organization_members(
     organization_id: UUID,
     current_user: Annotated[User, Depends(get_current_active_user)],
-    use_case: Annotated[
-        ListOrganizationMembersUseCase, Depends(get_list_members_use_case)
-    ],
+    use_case: Annotated[ListOrganizationMembersUseCase, Depends(get_list_members_use_case)],
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
     page: Annotated[int, Query(ge=1, description="Page number (1-based)")] = 1,
-    limit: Annotated[
-        int, Query(ge=1, le=100, description="Number of members per page")
-    ] = 20,
+    limit: Annotated[int, Query(ge=1, le=100, description="Number of members per page")] = 20,
 ) -> OrganizationMemberListResponse:
     """List members of an organization.
 
@@ -563,9 +533,7 @@ async def update_organization_member_role(
         permission_service=permission_service,
     )
 
-    return await use_case.execute(
-        str(organization_id), str(user_id), request, str(current_user.id)
-    )
+    return await use_case.execute(str(organization_id), str(user_id), request, str(current_user.id))
 
 
 @router.delete(
@@ -576,9 +544,7 @@ async def remove_organization_member(
     organization_id: UUID,
     user_id: UUID,
     current_user: Annotated[User, Depends(get_current_active_user)],
-    use_case: Annotated[
-        RemoveOrganizationMemberUseCase, Depends(get_remove_member_use_case)
-    ],
+    use_case: Annotated[RemoveOrganizationMemberUseCase, Depends(get_remove_member_use_case)],
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
 ) -> None:
     """Remove a member from an organization.
@@ -695,9 +661,7 @@ async def list_invitations(
     use_case: Annotated[ListInvitationsUseCase, Depends(get_list_invitations_use_case)],
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
     page: Annotated[int, Query(ge=1, description="Page number (1-based)")] = 1,
-    limit: Annotated[
-        int, Query(ge=1, le=100, description="Number of invitations per page")
-    ] = 20,
+    limit: Annotated[int, Query(ge=1, le=100, description="Number of invitations per page")] = 20,
     pending_only: Annotated[
         bool, Query(description="Only return pending (not accepted) invitations")
     ] = True,
@@ -741,9 +705,7 @@ async def cancel_invitation(
     invitation_id: UUID,
     current_user: Annotated[User, Depends(get_current_active_user)],
     use_case: Annotated[CancelInvitationUseCase, Depends(get_cancel_invitation_use_case)],
-    invitation_repository: Annotated[
-        InvitationRepository, Depends(get_invitation_repository)
-    ],
+    invitation_repository: Annotated[InvitationRepository, Depends(get_invitation_repository)],
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
 ) -> None:
     """Cancel a pending invitation.

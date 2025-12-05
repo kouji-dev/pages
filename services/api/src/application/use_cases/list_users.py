@@ -1,8 +1,9 @@
 """User list use case."""
 
 import math
-import structlog
 from uuid import UUID
+
+import structlog
 
 from src.application.dtos.user import UserListResponse, UserResponse
 from src.domain.repositories import UserRepository
@@ -48,10 +49,10 @@ class ListUsersUseCase:
         # Validate pagination
         if page < 1:
             raise ValueError("Page must be >= 1")
-        
+
         if limit < 1:
             raise ValueError("Limit must be >= 1")
-        
+
         if limit > self.MAX_LIMIT:
             limit = self.MAX_LIMIT
 
@@ -79,7 +80,9 @@ class ListUsersUseCase:
             total = await self._count_users_by_organization(org_uuid)
         else:
             # Get all users with pagination
-            users = await self._user_repository.get_all(skip=skip, limit=limit, include_deleted=False)
+            users = await self._user_repository.get_all(
+                skip=skip, limit=limit, include_deleted=False
+            )
             total = await self._user_repository.count(include_deleted=False)
 
         # Calculate total pages
@@ -126,10 +129,10 @@ class ListUsersUseCase:
         Returns:
             List of users in the organization
         """
-        from src.domain.entities import User
-        from src.infrastructure.database.models import OrganizationMemberModel, UserModel
         from sqlalchemy import select
         from sqlalchemy.orm import selectinload
+
+        from src.infrastructure.database.models import OrganizationMemberModel, UserModel
 
         # Access the session from repository (not ideal, but needed for custom query)
         # Better approach would be to add this method to the repository interface
@@ -162,8 +165,9 @@ class ListUsersUseCase:
         Returns:
             Total count of users in the organization
         """
-        from src.infrastructure.database.models import OrganizationMemberModel, UserModel
         from sqlalchemy import func, select
+
+        from src.infrastructure.database.models import OrganizationMemberModel, UserModel
 
         session = self._user_repository._session
 
@@ -190,8 +194,9 @@ class ListUsersUseCase:
         Returns:
             Total count of matching users
         """
-        from src.infrastructure.database.models import UserModel
         from sqlalchemy import func, or_, select
+
+        from src.infrastructure.database.models import UserModel
 
         session = self._user_repository._session
         search_pattern = f"%{query}%"
@@ -211,4 +216,3 @@ class ListUsersUseCase:
         result = await session.execute(stmt)
         count: int = result.scalar_one()
         return count
-

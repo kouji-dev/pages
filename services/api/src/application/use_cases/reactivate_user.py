@@ -2,7 +2,6 @@
 
 import structlog
 
-from src.domain.entities import User
 from src.domain.exceptions import AuthorizationException, EntityNotFoundException
 from src.domain.repositories import UserRepository
 from src.domain.services import PermissionService
@@ -64,9 +63,7 @@ class ReactivateUserUseCase:
                 "User is not authorized to reactivate users",
                 admin_user_id=admin_user_id,
             )
-            raise AuthorizationException(
-                "Only organization admins can reactivate users"
-            )
+            raise AuthorizationException("Only organization admins can reactivate users")
 
         # Get target user
         target_uuid = UUID(target_user_id)
@@ -90,4 +87,3 @@ class ReactivateUserUseCase:
             target_user_id=target_user_id,
             admin_user_id=admin_user_id,
         )
-

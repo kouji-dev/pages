@@ -1,12 +1,12 @@
 """Unit tests for list users use case."""
 
-import pytest
 from unittest.mock import AsyncMock
-from uuid import uuid4
+
+import pytest
 
 from src.application.use_cases.list_users import ListUsersUseCase
 from src.domain.entities import User
-from src.domain.value_objects import Email, HashedPassword
+from src.domain.value_objects import Email
 
 
 class TestListUsersUseCase:
@@ -16,16 +16,17 @@ class TestListUsersUseCase:
     def password_service(self):
         """Get password service for creating test users."""
         from src.infrastructure.security import BcryptPasswordService
+
         return BcryptPasswordService()
 
     @pytest.fixture
     def test_users(self, password_service):
         """Create test users."""
         from src.domain.value_objects import Password
-        
+
         password = Password("TestPassword123!")
         hashed_password = password_service.hash(password)
-        
+
         users = []
         for i in range(5):
             user = User.create(
@@ -43,12 +44,12 @@ class TestListUsersUseCase:
         user_repository = AsyncMock()
         user_repository.get_all.return_value = test_users[:3]
         user_repository.count.return_value = 5
-        
+
         use_case = ListUsersUseCase(user_repository)
-        
+
         # Execute
         result = await use_case.execute(page=1, limit=3)
-        
+
         # Assert
         assert len(result.users) == 3
         assert result.total == 5
@@ -64,12 +65,12 @@ class TestListUsersUseCase:
         user_repository = AsyncMock()
         user_repository.get_all.return_value = test_users[2:4]
         user_repository.count.return_value = 5
-        
+
         use_case = ListUsersUseCase(user_repository)
-        
+
         # Execute - page 2
         result = await use_case.execute(page=2, limit=2)
-        
+
         # Assert
         assert result.page == 2
         assert result.limit == 2
@@ -83,15 +84,15 @@ class TestListUsersUseCase:
         # Setup
         user_repository = AsyncMock()
         user_repository.search.return_value = [test_users[0]]
-        
+
         use_case = ListUsersUseCase(user_repository)
-        
+
         # Mock the _count_search_results method
         use_case._count_search_results = AsyncMock(return_value=1)
-        
+
         # Execute
         result = await use_case.execute(page=1, limit=20, search="User 0")
-        
+
         # Assert
         assert len(result.users) == 1
         assert result.total == 1
@@ -103,7 +104,7 @@ class TestListUsersUseCase:
         # Setup
         user_repository = AsyncMock()
         use_case = ListUsersUseCase(user_repository)
-        
+
         # Execute & Assert
         with pytest.raises(ValueError, match="Page must be >= 1"):
             await use_case.execute(page=0, limit=20)
@@ -114,7 +115,7 @@ class TestListUsersUseCase:
         # Setup
         user_repository = AsyncMock()
         use_case = ListUsersUseCase(user_repository)
-        
+
         # Execute & Assert
         with pytest.raises(ValueError, match="Limit must be >= 1"):
             await use_case.execute(page=1, limit=0)
@@ -126,12 +127,12 @@ class TestListUsersUseCase:
         user_repository = AsyncMock()
         user_repository.get_all.return_value = test_users
         user_repository.count.return_value = 5
-        
+
         use_case = ListUsersUseCase(user_repository)
-        
+
         # Execute with limit > MAX_LIMIT
         result = await use_case.execute(page=1, limit=200)
-        
+
         # Assert - limit should be capped at MAX_LIMIT
         assert result.limit == ListUsersUseCase.MAX_LIMIT
         user_repository.get_all.assert_called_once_with(
@@ -145,14 +146,13 @@ class TestListUsersUseCase:
         user_repository = AsyncMock()
         user_repository.get_all.return_value = []
         user_repository.count.return_value = 0
-        
+
         use_case = ListUsersUseCase(user_repository)
-        
+
         # Execute
         result = await use_case.execute(page=1, limit=20)
-        
+
         # Assert
         assert len(result.users) == 0
         assert result.total == 0
         assert result.pages == 0
-

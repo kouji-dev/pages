@@ -1,14 +1,15 @@
 """Unit tests for organization settings use cases."""
 
-import pytest
 from unittest.mock import AsyncMock
 from uuid import uuid4
 
+import pytest
+
+from src.application.dtos.organization_settings import UpdateOrganizationSettingsRequest
 from src.application.use_cases.organization_settings import (
     GetOrganizationSettingsUseCase,
     UpdateOrganizationSettingsUseCase,
 )
-from src.application.dtos.organization_settings import UpdateOrganizationSettingsRequest
 from src.domain.entities import Organization
 from src.domain.exceptions import EntityNotFoundException, ValidationException
 
@@ -201,9 +202,7 @@ class TestUpdateOrganizationSettingsUseCase:
             await use_case.execute(str(test_organization.id), request)
 
     @pytest.mark.asyncio
-    async def test_update_settings_invalid_email_digest_frequency(
-        self, test_organization
-    ) -> None:
+    async def test_update_settings_invalid_email_digest_frequency(self, test_organization) -> None:
         """Test updating settings with invalid email digest frequency fails."""
         # Setup
         organization_repository = AsyncMock()
@@ -305,4 +304,3 @@ class TestUpdateOrganizationSettingsUseCase:
         assert result.settings["branding"]["primary_color"] == "#FF5733"
         assert result.settings["branding"]["secondary_color"] == "#33FF57"
         organization_repository.update.assert_called_once()
-

@@ -1,10 +1,10 @@
 """Organization invitation use cases."""
 
 import secrets
-import structlog
 from math import ceil
 from uuid import UUID
 
+import structlog
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -91,7 +91,9 @@ class SendInvitationUseCase:
             email = Email(request.email)
         except Exception as e:
             logger.warning("Invalid email format", email=request.email, error=str(e))
-            raise ValidationException(f"Invalid email format: {request.email}", field="email") from e
+            raise ValidationException(
+                f"Invalid email format: {request.email}", field="email"
+            ) from e
 
         # Verify organization exists
         org_uuid = UUID(organization_id)
@@ -122,8 +124,8 @@ class SendInvitationUseCase:
                 )
 
         # Check if there's already a pending invitation for this email and organization
-        existing_invitation = await self._invitation_repository.get_pending_by_organization_and_email(
-            org_uuid, email
+        existing_invitation = (
+            await self._invitation_repository.get_pending_by_organization_and_email(org_uuid, email)
         )
         if existing_invitation is not None:
             logger.warning(
@@ -465,4 +467,3 @@ class CancelInvitationUseCase:
         await self._invitation_repository.delete(invitation_uuid)
 
         logger.info("Invitation canceled successfully", invitation_id=invitation_id)
-

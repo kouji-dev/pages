@@ -1,13 +1,13 @@
 """Organization settings management use cases."""
 
-import structlog
 from typing import Any
+
+import structlog
 
 from src.application.dtos.organization_settings import (
     OrganizationSettingsResponse,
     UpdateOrganizationSettingsRequest,
 )
-from src.domain.entities import Organization
 from src.domain.exceptions import EntityNotFoundException, ValidationException
 from src.domain.repositories import OrganizationRepository
 from src.domain.value_objects.organization_settings import (
@@ -120,7 +120,9 @@ class UpdateOrganizationSettingsUseCase:
         try:
             validated_settings = validate_organization_settings(merged_settings)
         except ValueError as e:
-            logger.warning("Invalid organization settings", organization_id=organization_id, error=str(e))
+            logger.warning(
+                "Invalid organization settings", organization_id=organization_id, error=str(e)
+            )
             raise ValidationException(str(e), field="settings") from e
 
         # Update organization settings
@@ -131,5 +133,6 @@ class UpdateOrganizationSettingsUseCase:
 
         logger.info("Organization settings updated", organization_id=organization_id)
 
-        return OrganizationSettingsResponse(settings=updated_org.settings or get_default_organization_settings())
-
+        return OrganizationSettingsResponse(
+            settings=updated_org.settings or get_default_organization_settings()
+        )

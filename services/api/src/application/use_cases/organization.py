@@ -1,18 +1,19 @@
 """Organization management use cases."""
 
-import structlog
 from math import ceil
 from uuid import UUID
 
+import structlog
+
 from src.application.dtos.organization import (
     CreateOrganizationRequest,
-    OrganizationListResponse,
     OrganizationListItemResponse,
+    OrganizationListResponse,
     OrganizationResponse,
     UpdateOrganizationRequest,
 )
 from src.domain.entities import Organization
-from src.domain.exceptions import ConflictException, EntityNotFoundException
+from src.domain.exceptions import EntityNotFoundException
 from src.domain.repositories import OrganizationRepository, UserRepository
 
 logger = structlog.get_logger()
@@ -139,6 +140,7 @@ class GetOrganizationUseCase:
             EntityNotFoundException: If organization not found
         """
         from sqlalchemy import func, select
+
         from src.infrastructure.database.models import OrganizationMemberModel
 
         logger.info("Getting organization", organization_id=organization_id)
@@ -206,6 +208,7 @@ class ListOrganizationsUseCase:
             Organization list response DTO with pagination metadata
         """
         from sqlalchemy import func, select
+
         from src.infrastructure.database.models import OrganizationMemberModel
 
         logger.info(
@@ -306,6 +309,7 @@ class UpdateOrganizationUseCase:
             ConflictException: If slug conflicts with another organization
         """
         from sqlalchemy import func, select
+
         from src.infrastructure.database.models import OrganizationMemberModel
 
         logger.info(
@@ -397,4 +401,3 @@ class DeleteOrganizationUseCase:
         await self._organization_repository.update(organization)
 
         logger.info("Organization deleted successfully", organization_id=organization_id)
-

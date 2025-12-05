@@ -1,8 +1,9 @@
 """Integration tests for organization settings endpoints."""
 
+from uuid import uuid4
+
 import pytest
 from httpx import AsyncClient
-from uuid import uuid4
 
 from src.infrastructure.database.models import OrganizationMemberModel, OrganizationModel
 
@@ -462,4 +463,3 @@ async def test_update_settings_requires_auth(client: AsyncClient, test_user, db_
     )
 
     assert response.status_code == 401
-

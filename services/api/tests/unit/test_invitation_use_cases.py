@@ -1,8 +1,8 @@
 """Unit tests for invitation use cases."""
 
 from datetime import UTC, datetime, timedelta
-from unittest.mock import AsyncMock, Mock, MagicMock
-from uuid import UUID, uuid4
+from unittest.mock import AsyncMock, Mock
+from uuid import uuid4
 
 import pytest
 
@@ -245,9 +245,7 @@ class TestSendInvitationUseCase:
         """Test sending invitation when pending invitation already exists."""
         # Arrange
         org_id = str(test_organization.id)
-        request = SendInvitationRequest(
-            email=test_invitation.email.value, role="member"
-        )
+        request = SendInvitationRequest(email=test_invitation.email.value, role="member")
 
         mock_organization_repository.get_by_id.return_value = test_organization
         mock_user_repository.get_by_email.return_value = None
@@ -600,4 +598,3 @@ class TestCancelInvitationUseCase:
             await use_case.execute(invitation_id)
 
         assert "already been accepted" in str(exc_info.value)
-

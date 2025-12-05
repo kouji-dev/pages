@@ -94,9 +94,7 @@ def validate_organization_settings(settings: dict[str, Any]) -> dict[str, Any]:
             if "frequency" in email_digest:
                 frequency = email_digest["frequency"]
                 if frequency not in ("daily", "weekly", "never"):
-                    raise ValueError(
-                        "Email digest frequency must be 'daily', 'weekly', or 'never'"
-                    )
+                    raise ValueError("Email digest frequency must be 'daily', 'weekly', or 'never'")
                 validated["notifications"]["email_digest"]["frequency"] = frequency
 
         # Validate project_updates
@@ -152,4 +150,3 @@ def validate_organization_settings(settings: dict[str, Any]) -> dict[str, Any]:
             validated["branding"]["secondary_color"] = secondary_color
 
     return validated
-

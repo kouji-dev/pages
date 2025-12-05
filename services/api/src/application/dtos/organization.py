@@ -55,18 +55,14 @@ class OrganizationListResponse(BaseModel):
 class CreateOrganizationRequest(BaseModel):
     """Request DTO for creating an organization."""
 
-    name: str = Field(
-        ..., min_length=1, max_length=100, description="Organization name"
-    )
+    name: str = Field(..., min_length=1, max_length=100, description="Organization name")
     slug: str | None = Field(
         None,
         min_length=1,
         max_length=100,
         description="Organization slug (auto-generated from name if not provided)",
     )
-    description: str | None = Field(
-        None, max_length=1000, description="Organization description"
-    )
+    description: str | None = Field(None, max_length=1000, description="Organization description")
 
     @field_validator("name")
     @classmethod
@@ -89,18 +85,14 @@ class CreateOrganizationRequest(BaseModel):
 class UpdateOrganizationRequest(BaseModel):
     """Request DTO for updating an organization."""
 
-    name: str | None = Field(
-        None, min_length=1, max_length=100, description="Organization name"
-    )
+    name: str | None = Field(None, min_length=1, max_length=100, description="Organization name")
     slug: str | None = Field(
         None,
         min_length=1,
         max_length=100,
         description="Organization slug",
     )
-    description: str | None = Field(
-        None, max_length=1000, description="Organization description"
-    )
+    description: str | None = Field(None, max_length=1000, description="Organization description")
 
     @field_validator("name")
     @classmethod
@@ -120,4 +112,3 @@ class UpdateOrganizationRequest(BaseModel):
         if not v:
             return None
         return v
-

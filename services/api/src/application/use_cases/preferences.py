@@ -1,9 +1,10 @@
 """User preferences management use cases."""
 
+from typing import Any
+
 import structlog
 
 from src.application.dtos.preferences import UserPreferencesResponse, UserPreferencesUpdateRequest
-from src.domain.entities import User
 from src.domain.exceptions import EntityNotFoundException, ValidationException
 from src.domain.repositories import UserRepository
 from src.domain.value_objects.preferences import get_default_preferences
@@ -49,7 +50,10 @@ class GetUserPreferencesUseCase:
         preferences = user.preferences or get_default_preferences()
 
         # Build response DTO
-        from src.application.dtos.preferences import AllNotificationPreferences, NotificationPreferences
+        from src.application.dtos.preferences import (
+            AllNotificationPreferences,
+            NotificationPreferences,
+        )
 
         notification_prefs = preferences.get("notifications", {})
 
@@ -129,7 +133,10 @@ class UpdateUserPreferencesUseCase:
         # Build response DTO
         preferences = updated_user.preferences or get_default_preferences()
 
-        from src.application.dtos.preferences import AllNotificationPreferences, NotificationPreferences
+        from src.application.dtos.preferences import (
+            AllNotificationPreferences,
+            NotificationPreferences,
+        )
 
         notification_prefs = preferences.get("notifications", {})
 
@@ -142,4 +149,3 @@ class UpdateUserPreferencesUseCase:
                 in_app=NotificationPreferences(**notification_prefs.get("in_app", {})),
             ),
         )
-

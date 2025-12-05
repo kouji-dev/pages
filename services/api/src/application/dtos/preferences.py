@@ -13,9 +13,7 @@ class NotificationPreferences(BaseModel):
     on_issue_mentioned: bool = Field(default=True, description="Notify when mentioned in issue")
     on_comment_added: bool = Field(default=True, description="Notify on comment added")
     on_comment_mentioned: bool = Field(default=True, description="Notify when mentioned in comment")
-    on_issue_status_changed: bool = Field(
-        default=True, description="Notify on issue status change"
-    )
+    on_issue_status_changed: bool = Field(default=True, description="Notify on issue status change")
     on_project_invitation: bool = Field(default=True, description="Notify on project invitation")
 
 
@@ -64,4 +62,3 @@ class UserPreferencesUpdateRequest(BaseModel):
         if v is not None:
             return v.lower()
         return v
-

@@ -1,9 +1,9 @@
 """Unit tests for ReactivateUserUseCase."""
 
-from unittest.mock import AsyncMock, Mock
+from unittest.mock import AsyncMock
+from uuid import uuid4
 
 import pytest
-from uuid import UUID, uuid4
 
 from src.application.use_cases.reactivate_user import ReactivateUserUseCase
 from src.domain.entities import User
@@ -75,7 +75,7 @@ async def test_reactivate_user_success(
     mock_user_repository.get_by_id.assert_any_call(deactivated_user.id)
     mock_permission_service.is_admin_of_any_organization.assert_called_once_with(admin_user)
     mock_user_repository.update.assert_called_once()
-    
+
     # Verify user was reactivated
     updated_user = mock_user_repository.update.call_args[0][0]
     assert updated_user.is_active is True
@@ -159,4 +159,3 @@ async def test_reactivate_user_already_active(
     mock_permission_service.is_admin_of_any_organization.assert_called_once()
     # Should not update if already active
     mock_user_repository.update.assert_not_called()
-

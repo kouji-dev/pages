@@ -4,16 +4,12 @@ import pytest
 from httpx import AsyncClient
 
 from src.domain.entities import User
-from src.domain.value_objects import Email, Password
-from src.infrastructure.security import BcryptPasswordService, JWTTokenService
 
 # Fixtures are defined in conftest.py
 
 
 @pytest.mark.asyncio
-async def test_get_current_user_profile(
-    client: AsyncClient, test_user: User
-) -> None:
+async def test_get_current_user_profile(client: AsyncClient, test_user: User) -> None:
     """Test getting current user profile."""
     # Login to get token
     login_response = await client.post(
@@ -55,9 +51,7 @@ async def test_get_current_user_profile_requires_auth(
 
 
 @pytest.mark.asyncio
-async def test_update_user_profile_name(
-    client: AsyncClient, test_user: User
-) -> None:
+async def test_update_user_profile_name(client: AsyncClient, test_user: User) -> None:
     """Test updating user profile name."""
     # Login to get token
     login_response = await client.post(
@@ -93,9 +87,7 @@ async def test_update_user_profile_name(
 
 
 @pytest.mark.asyncio
-async def test_update_user_profile_empty_name_fails(
-    client: AsyncClient, test_user: User
-) -> None:
+async def test_update_user_profile_empty_name_fails(client: AsyncClient, test_user: User) -> None:
     """Test that updating profile with empty name fails."""
     # Login to get token
     login_response = await client.post(
@@ -120,9 +112,7 @@ async def test_update_user_profile_empty_name_fails(
 
 
 @pytest.mark.asyncio
-async def test_update_user_email_success(
-    client: AsyncClient, test_user: User
-) -> None:
+async def test_update_user_email_success(client: AsyncClient, test_user: User) -> None:
     """Test successfully updating user email."""
     # Login to get token
     login_response = await client.post(
@@ -163,9 +153,7 @@ async def test_update_user_email_success(
 
 
 @pytest.mark.asyncio
-async def test_update_user_email_invalid_password(
-    client: AsyncClient, test_user: User
-) -> None:
+async def test_update_user_email_invalid_password(client: AsyncClient, test_user: User) -> None:
     """Test that updating email with wrong password fails."""
     # Login to get token
     login_response = await client.post(
@@ -195,9 +183,7 @@ async def test_update_user_email_invalid_password(
 
 
 @pytest.mark.asyncio
-async def test_update_user_email_duplicate_fails(
-    client: AsyncClient, test_user: User
-) -> None:
+async def test_update_user_email_duplicate_fails(client: AsyncClient, test_user: User) -> None:
     """Test that updating email to existing email fails."""
     # Login to get token
     login_response = await client.post(
@@ -238,9 +224,7 @@ async def test_update_user_email_duplicate_fails(
 
 
 @pytest.mark.asyncio
-async def test_update_user_password_success(
-    client: AsyncClient, test_user: User
-) -> None:
+async def test_update_user_password_success(client: AsyncClient, test_user: User) -> None:
     """Test successfully updating user password."""
     # Login to get token
     login_response = await client.post(
@@ -381,4 +365,3 @@ async def test_update_profile_requires_active_user(
 
     # Should fail because user is deactivated
     assert response.status_code == 401 or response.status_code == 403
-

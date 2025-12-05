@@ -103,14 +103,17 @@ class ImageProcessingService:
         try:
             # Open original image
             original_image = Image.open(io.BytesIO(file_content))
-            
+
             # Convert RGBA to RGB if necessary (for JPEG)
             if output_format == "JPEG" and original_image.mode in ("RGBA", "LA", "P"):
                 # Create white background
                 background = Image.new("RGB", original_image.size, (255, 255, 255))
                 if original_image.mode == "P":
                     original_image = original_image.convert("RGBA")
-                background.paste(original_image, mask=original_image.split()[-1] if original_image.mode == "RGBA" else None)
+                background.paste(
+                    original_image,
+                    mask=original_image.split()[-1] if original_image.mode == "RGBA" else None,
+                )
                 original_image = background
             elif original_image.mode not in ("RGB", "RGBA", "L"):
                 original_image = original_image.convert("RGB")
@@ -128,9 +131,8 @@ class ImageProcessingService:
 
                 # Save to bytes
                 output_buffer = io.BytesIO()
-                
+
                 # Optimize based on format
-                save_kwargs = {}
                 if output_format == "JPEG":
                     resized_image.save(output_buffer, format="JPEG", quality=85, optimize=True)
                 elif output_format == "WEBP":
@@ -215,4 +217,3 @@ class ImageProcessingService:
             "image/webp": "WEBP",
         }
         return mime_to_format.get(mime_type, "PNG")
-

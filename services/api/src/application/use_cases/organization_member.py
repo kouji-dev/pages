@@ -1,9 +1,9 @@
 """Organization member management use cases."""
 
-import structlog
 from math import ceil
 from uuid import UUID
 
+import structlog
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,7 +13,6 @@ from src.application.dtos.organization_member import (
     OrganizationMemberResponse,
     UpdateMemberRoleRequest,
 )
-from src.domain.entities import Organization
 from src.domain.exceptions import ConflictException, EntityNotFoundException, ValidationException
 from src.domain.repositories import OrganizationRepository, UserRepository
 from src.domain.value_objects import Role
@@ -324,9 +323,7 @@ class UpdateOrganizationMemberRoleUseCase:
                 organization_id=organization_id,
                 user_id=user_id,
             )
-            raise EntityNotFoundException(
-                "Organization member", f"{organization_id}/{user_id}"
-            )
+            raise EntityNotFoundException("Organization member", f"{organization_id}/{user_id}")
 
         old_role = org_member.role
 
@@ -400,9 +397,7 @@ class RemoveOrganizationMemberUseCase:
         self._organization_repository = organization_repository
         self._session = session
 
-    async def execute(
-        self, organization_id: str, user_id: str, requester_user_id: str
-    ) -> None:
+    async def execute(self, organization_id: str, user_id: str, requester_user_id: str) -> None:
         """Execute remove member from organization.
 
         Args:
@@ -447,9 +442,7 @@ class RemoveOrganizationMemberUseCase:
                 organization_id=organization_id,
                 user_id=user_id,
             )
-            raise EntityNotFoundException(
-                "Organization member", f"{organization_id}/{user_id}"
-            )
+            raise EntityNotFoundException("Organization member", f"{organization_id}/{user_id}")
 
         # Prevent removing last admin
         if org_member.role == Role.ADMIN.value:
@@ -483,4 +476,3 @@ class RemoveOrganizationMemberUseCase:
             organization_id=organization_id,
             user_id=user_id,
         )
-

@@ -8,18 +8,15 @@ from src.application.dtos.user import (
     UserResponse,
     UserUpdateRequest,
 )
-from src.application.interfaces import TokenService
-from src.domain.entities import User
 from src.domain.exceptions import (
     AuthenticationException,
     ConflictException,
     EntityNotFoundException,
-    StorageException,
     ValidationException,
 )
 from src.domain.repositories import UserRepository
 from src.domain.services import PasswordService
-from src.domain.value_objects import Email, HashedPassword, Password
+from src.domain.value_objects import Email, Password
 
 logger = structlog.get_logger()
 
@@ -280,4 +277,3 @@ class UpdateUserPasswordUseCase:
         await self._user_repository.update(user)
 
         logger.info("User password updated", user_id=user_id)
-

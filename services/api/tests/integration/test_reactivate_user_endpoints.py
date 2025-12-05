@@ -1,8 +1,9 @@
 """Integration tests for user reactivation endpoints."""
 
+from uuid import uuid4
+
 import pytest
 from httpx import AsyncClient
-from uuid import uuid4
 
 
 @pytest.mark.asyncio
@@ -90,9 +91,7 @@ async def test_reactivate_user_requires_auth(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_reactivate_user_requires_admin(
-    client: AsyncClient, test_user
-):
+async def test_reactivate_user_requires_admin(client: AsyncClient, test_user):
     """Test reactivation requires admin role."""
     # Login as regular user (non-admin)
     login_response = await client.post(
@@ -105,7 +104,7 @@ async def test_reactivate_user_requires_admin(
     assert login_response.status_code == 200
     token = login_response.json()["access_token"]
     auth_headers_regular = {"Authorization": f"Bearer {token}"}
-    
+
     user_id = str(uuid4())
     response = await client.post(
         f"/api/v1/users/{user_id}/reactivate",
@@ -116,9 +115,7 @@ async def test_reactivate_user_requires_admin(
 
 
 @pytest.mark.asyncio
-async def test_reactivate_user_not_found(
-    client: AsyncClient, admin_user
-):
+async def test_reactivate_user_not_found(client: AsyncClient, admin_user):
     """Test reactivation fails when user not found."""
     # Login as admin
     login_response = await client.post(
@@ -131,7 +128,7 @@ async def test_reactivate_user_not_found(
     assert login_response.status_code == 200
     admin_token = login_response.json()["access_token"]
     auth_headers_admin = {"Authorization": f"Bearer {admin_token}"}
-    
+
     fake_user_id = str(uuid4())
     response = await client.post(
         f"/api/v1/users/{fake_user_id}/reactivate",
@@ -141,9 +138,7 @@ async def test_reactivate_user_not_found(
 
 
 @pytest.mark.asyncio
-async def test_reactivate_user_already_active(
-    client: AsyncClient, admin_user, test_user
-):
+async def test_reactivate_user_already_active(client: AsyncClient, admin_user, test_user):
     """Test reactivating an already active user is idempotent."""
     # Login as admin
     login_response = await client.post(
@@ -156,13 +151,12 @@ async def test_reactivate_user_already_active(
     assert login_response.status_code == 200
     admin_token = login_response.json()["access_token"]
     auth_headers_admin = {"Authorization": f"Bearer {admin_token}"}
-    
+
     user_id = str(test_user.id)
-    
+
     # Reactivate an already active user (should succeed with 204)
     response = await client.post(
         f"/api/v1/users/{user_id}/reactivate",
         headers=auth_headers_admin,
     )
     assert response.status_code == 204
-

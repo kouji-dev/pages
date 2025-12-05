@@ -273,9 +273,9 @@ async def test_user(db_session) -> User:
 @pytest_asyncio.fixture
 async def admin_user(db_session) -> User:
     """Create an admin user in the database with organization admin role."""
+    from src.infrastructure.database.models import OrganizationMemberModel, OrganizationModel
     from src.infrastructure.database.repositories import SQLAlchemyUserRepository
     from src.infrastructure.security import BcryptPasswordService
-    from src.infrastructure.database.models import OrganizationModel, OrganizationMemberModel
 
     user_repo = SQLAlchemyUserRepository(db_session)
     password_service = BcryptPasswordService()

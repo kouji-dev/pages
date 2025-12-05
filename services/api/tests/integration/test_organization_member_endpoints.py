@@ -1,8 +1,9 @@
 """Integration tests for organization member endpoints."""
 
+from uuid import uuid4
+
 import pytest
 from httpx import AsyncClient
-from uuid import uuid4
 
 from src.infrastructure.database.models import OrganizationMemberModel, OrganizationModel
 
@@ -98,9 +99,7 @@ async def test_add_member_requires_admin(client: AsyncClient, test_user, db_sess
 
 
 @pytest.mark.asyncio
-async def test_add_member_already_member(
-    client: AsyncClient, admin_user, test_user, db_session
-):
+async def test_add_member_already_member(client: AsyncClient, admin_user, test_user, db_session):
     """Test adding member fails when user is already a member."""
     # Create organization with unique slug
     org = OrganizationModel(name="Test Organization", slug=f"test-org-{uuid4().hex[:8]}")
@@ -214,9 +213,7 @@ async def test_list_members_requires_member(client: AsyncClient, test_user, db_s
 
 
 @pytest.mark.asyncio
-async def test_update_member_role_success(
-    client: AsyncClient, admin_user, test_user, db_session
-):
+async def test_update_member_role_success(client: AsyncClient, admin_user, test_user, db_session):
     """Test successful member role update."""
     # Create organization with unique slug
     org = OrganizationModel(name="Test Organization", slug=f"test-org-{uuid4().hex[:8]}")
@@ -258,9 +255,7 @@ async def test_update_member_role_success(
 
 
 @pytest.mark.asyncio
-async def test_update_role_prevent_remove_last_admin(
-    client: AsyncClient, admin_user, db_session
-):
+async def test_update_role_prevent_remove_last_admin(client: AsyncClient, admin_user, db_session):
     """Test update role prevents removing last admin."""
     # Create organization with unique slug
     org = OrganizationModel(name="Test Organization", slug=f"test-org-{uuid4().hex[:8]}")
@@ -298,9 +293,7 @@ async def test_update_role_prevent_remove_last_admin(
 
 
 @pytest.mark.asyncio
-async def test_remove_member_success(
-    client: AsyncClient, admin_user, test_user, db_session
-):
+async def test_remove_member_success(client: AsyncClient, admin_user, test_user, db_session):
     """Test successful member removal."""
     # Create organization with unique slug
     org = OrganizationModel(name="Test Organization", slug=f"test-org-{uuid4().hex[:8]}")
@@ -385,9 +378,7 @@ async def test_remove_member_self(client: AsyncClient, test_user, db_session):
 
 
 @pytest.mark.asyncio
-async def test_remove_member_prevent_remove_last_admin(
-    client: AsyncClient, admin_user, db_session
-):
+async def test_remove_member_prevent_remove_last_admin(client: AsyncClient, admin_user, db_session):
     """Test remove member prevents removing last admin."""
     # Create organization with unique slug
     org = OrganizationModel(name="Test Organization", slug=f"test-org-{uuid4().hex[:8]}")
@@ -421,4 +412,3 @@ async def test_remove_member_prevent_remove_last_admin(
 
     assert remove_response.status_code == 400
     assert "last admin" in remove_response.json()["message"].lower()
-

@@ -1,8 +1,9 @@
 """Integration tests for invitation endpoints."""
 
+from uuid import uuid4
+
 import pytest
 from httpx import AsyncClient
-from uuid import uuid4
 
 from src.infrastructure.database.models import (
     InvitationModel,
@@ -12,9 +13,7 @@ from src.infrastructure.database.models import (
 
 
 @pytest.mark.asyncio
-async def test_send_invitation_success(
-    client: AsyncClient, admin_user, db_session
-):
+async def test_send_invitation_success(client: AsyncClient, admin_user, db_session):
     """Test successful invitation sending."""
     # Create organization with unique slug
     org = OrganizationModel(
@@ -155,9 +154,7 @@ async def test_send_invitation_already_member(
 
 
 @pytest.mark.asyncio
-async def test_send_invitation_pending_exists(
-    client: AsyncClient, admin_user, db_session
-):
+async def test_send_invitation_pending_exists(client: AsyncClient, admin_user, db_session):
     """Test sending invitation when pending invitation already exists."""
     # Create organization with unique slug
     org = OrganizationModel(name="Test Organization", slug=f"test-org-{uuid4().hex[:8]}")
@@ -211,9 +208,7 @@ async def test_send_invitation_pending_exists(
 
 
 @pytest.mark.asyncio
-async def test_accept_invitation_success(
-    client: AsyncClient, test_user, admin_user, db_session
-):
+async def test_accept_invitation_success(client: AsyncClient, test_user, admin_user, db_session):
     """Test successful invitation acceptance."""
     # Create organization with unique slug
     org = OrganizationModel(name="Test Organization", slug=f"test-org-{uuid4().hex[:8]}")
@@ -328,6 +323,7 @@ async def test_accept_invitation_expired(client: AsyncClient, test_user, admin_u
 
     # Create invitation with valid expiration first
     from datetime import UTC, datetime, timedelta
+
     from sqlalchemy import text
 
     invitation = InvitationModel(
@@ -438,9 +434,7 @@ async def test_list_invitations_success(client: AsyncClient, admin_user, db_sess
 
 
 @pytest.mark.asyncio
-async def test_list_invitations_requires_admin(
-    client: AsyncClient, test_user, db_session
-):
+async def test_list_invitations_requires_admin(client: AsyncClient, test_user, db_session):
     """Test listing invitations requires admin role."""
     # Create organization with unique slug
     org = OrganizationModel(name="Test Organization", slug=f"test-org-{uuid4().hex[:8]}")
@@ -478,9 +472,7 @@ async def test_list_invitations_requires_admin(
 
 
 @pytest.mark.asyncio
-async def test_cancel_invitation_success(
-    client: AsyncClient, admin_user, db_session
-):
+async def test_cancel_invitation_success(client: AsyncClient, admin_user, db_session):
     """Test successfully canceling an invitation."""
     # Create organization with unique slug
     org = OrganizationModel(name="Test Organization", slug=f"test-org-{uuid4().hex[:8]}")
@@ -593,4 +585,3 @@ async def test_cancel_invitation_requires_admin(
     )
 
     assert cancel_response.status_code == 403
-

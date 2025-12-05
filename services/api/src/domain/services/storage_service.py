@@ -85,4 +85,3 @@ class StorageService(ABC):
             URL to access the file (absolute URL or relative path)
         """
         ...
-

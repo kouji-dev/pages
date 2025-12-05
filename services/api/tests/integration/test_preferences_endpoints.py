@@ -229,4 +229,3 @@ async def test_update_preferences_notifications(client: AsyncClient, test_user: 
     assert data["notifications"]["email"]["on_issue_assigned"] is False
     assert data["notifications"]["push"]["enabled"] is True
     assert data["notifications"]["push"]["on_comment_added"] is False
-

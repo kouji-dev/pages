@@ -130,4 +130,3 @@ class Invitation:
 
         self.accepted_at = datetime.now(UTC)
         self.updated_at = datetime.now(UTC)
-

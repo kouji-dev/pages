@@ -10,19 +10,19 @@ from src.application.dtos.auth import (
     RegisterResponse,
     TokenResponse,
 )
-from src.application.dtos.organization import (
-    CreateOrganizationRequest,
-    OrganizationListItemResponse,
-    OrganizationListResponse,
-    OrganizationResponse,
-    UpdateOrganizationRequest,
-)
 from src.application.dtos.invitation import (
     AcceptInvitationResponse,
     CancelInvitationResponse,
     InvitationListResponse,
     InvitationResponse,
     SendInvitationRequest,
+)
+from src.application.dtos.organization import (
+    CreateOrganizationRequest,
+    OrganizationListItemResponse,
+    OrganizationListResponse,
+    OrganizationResponse,
+    UpdateOrganizationRequest,
 )
 from src.application.dtos.organization_member import (
     AddMemberRequest,

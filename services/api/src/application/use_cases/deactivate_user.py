@@ -2,7 +2,6 @@
 
 import structlog
 
-from src.domain.entities import User
 from src.domain.exceptions import EntityNotFoundException
 from src.domain.repositories import UserRepository
 
@@ -54,4 +53,3 @@ class DeactivateUserUseCase:
         await self._user_repository.update(user)
 
         logger.info("User deactivated successfully", user_id=user_id)
-
