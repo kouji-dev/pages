@@ -24,7 +24,7 @@ class TestGetCurrentUser:
         # Setup
         token_service = MagicMock()
         user_repository = AsyncMock()
-        
+
         # Use a valid bcrypt hash
         valid_hash = "$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4yKJeyeQUzK6M5em"
         test_user = User.create(
@@ -32,22 +32,22 @@ class TestGetCurrentUser:
             password_hash=HashedPassword(valid_hash),
             name="Test User",
         )
-        
+
         token_service.get_user_id_from_token.return_value = test_user.id
         user_repository.get_by_id.return_value = test_user
-        
+
         credentials = HTTPAuthorizationCredentials(
             scheme="Bearer",
             credentials="valid_token",
         )
-        
+
         # Execute
         result = await get_current_user(
             credentials=credentials,
             token_service=token_service,
             user_repository=user_repository,
         )
-        
+
         # Assert
         assert result == test_user
         token_service.get_user_id_from_token.assert_called_once_with("valid_token")
@@ -58,14 +58,14 @@ class TestGetCurrentUser:
         """Test authentication failure when no credentials provided."""
         token_service = MagicMock()
         user_repository = AsyncMock()
-        
+
         with pytest.raises(HTTPException) as exc_info:
             await get_current_user(
                 credentials=None,
                 token_service=token_service,
                 user_repository=user_repository,
             )
-        
+
         assert exc_info.value.status_code == status.HTTP_401_UNAUTHORIZED
         assert "Not authenticated" in exc_info.value.detail
         assert "WWW-Authenticate" in exc_info.value.headers
@@ -76,21 +76,21 @@ class TestGetCurrentUser:
         """Test authentication failure with invalid token."""
         token_service = MagicMock()
         user_repository = AsyncMock()
-        
+
         token_service.get_user_id_from_token.side_effect = AuthenticationException("Invalid token")
-        
+
         credentials = HTTPAuthorizationCredentials(
             scheme="Bearer",
             credentials="invalid_token",
         )
-        
+
         with pytest.raises(HTTPException) as exc_info:
             await get_current_user(
                 credentials=credentials,
                 token_service=token_service,
                 user_repository=user_repository,
             )
-        
+
         assert exc_info.value.status_code == status.HTTP_401_UNAUTHORIZED
         assert "Invalid token" in exc_info.value.detail
         assert "WWW-Authenticate" in exc_info.value.headers
@@ -100,26 +100,26 @@ class TestGetCurrentUser:
     async def test_get_current_user_not_found(self) -> None:
         """Test authentication failure when user not found."""
         from uuid import uuid4
-        
+
         token_service = MagicMock()
         user_repository = AsyncMock()
-        
+
         user_id = uuid4()
         token_service.get_user_id_from_token.return_value = user_id
         user_repository.get_by_id.return_value = None
-        
+
         credentials = HTTPAuthorizationCredentials(
             scheme="Bearer",
             credentials="valid_token",
         )
-        
+
         with pytest.raises(HTTPException) as exc_info:
             await get_current_user(
                 credentials=credentials,
                 token_service=token_service,
                 user_repository=user_repository,
             )
-        
+
         assert exc_info.value.status_code == status.HTTP_401_UNAUTHORIZED
         assert "User not found" in exc_info.value.detail
         assert "WWW-Authenticate" in exc_info.value.headers
@@ -137,9 +137,9 @@ class TestGetCurrentActiveUser:
             password_hash=HashedPassword(valid_hash),
             name="Test User",
         )
-        
+
         result = await get_current_active_user(current_user=user)
-        
+
         assert result == user
 
     @pytest.mark.asyncio
@@ -152,10 +152,10 @@ class TestGetCurrentActiveUser:
             name="Test User",
         )
         user.deactivate()
-        
+
         with pytest.raises(HTTPException) as exc_info:
             await get_current_active_user(current_user=user)
-        
+
         assert exc_info.value.status_code == status.HTTP_403_FORBIDDEN
         assert "deactivated" in exc_info.value.detail.lower()
 
@@ -170,12 +170,15 @@ class TestGetCurrentActiveUser:
         )
         # Use deactivate() which sets deleted_at (soft delete)
         user.deactivate()
-        
+
         with pytest.raises(HTTPException) as exc_info:
             await get_current_active_user(current_user=user)
-        
+
         assert exc_info.value.status_code == status.HTTP_403_FORBIDDEN
-        assert "deleted" in exc_info.value.detail.lower() or "deactivated" in exc_info.value.detail.lower()
+        assert (
+            "deleted" in exc_info.value.detail.lower()
+            or "deactivated" in exc_info.value.detail.lower()
+        )
 
 
 class TestGetOptionalUser:
@@ -186,28 +189,28 @@ class TestGetOptionalUser:
         """Test optional user retrieval with valid credentials."""
         token_service = MagicMock()
         user_repository = AsyncMock()
-        
+
         valid_hash = "$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4yKJeyeQUzK6M5em"
         test_user = User.create(
             email=Email("test@example.com"),
             password_hash=HashedPassword(valid_hash),
             name="Test User",
         )
-        
+
         token_service.get_user_id_from_token.return_value = test_user.id
         user_repository.get_by_id.return_value = test_user
-        
+
         credentials = HTTPAuthorizationCredentials(
             scheme="Bearer",
             credentials="valid_token",
         )
-        
+
         result = await get_optional_user(
             credentials=credentials,
             token_service=token_service,
             user_repository=user_repository,
         )
-        
+
         assert result == test_user
 
     @pytest.mark.asyncio
@@ -215,13 +218,13 @@ class TestGetOptionalUser:
         """Test optional user returns None when no credentials."""
         token_service = MagicMock()
         user_repository = AsyncMock()
-        
+
         result = await get_optional_user(
             credentials=None,
             token_service=token_service,
             user_repository=user_repository,
         )
-        
+
         assert result is None
         token_service.get_user_id_from_token.assert_not_called()
 
@@ -230,20 +233,20 @@ class TestGetOptionalUser:
         """Test optional user returns None with invalid token."""
         token_service = MagicMock()
         user_repository = AsyncMock()
-        
+
         token_service.get_user_id_from_token.side_effect = AuthenticationException("Invalid token")
-        
+
         credentials = HTTPAuthorizationCredentials(
             scheme="Bearer",
             credentials="invalid_token",
         )
-        
+
         result = await get_optional_user(
             credentials=credentials,
             token_service=token_service,
             user_repository=user_repository,
         )
-        
+
         assert result is None
         user_repository.get_by_id.assert_not_called()
 
@@ -251,24 +254,23 @@ class TestGetOptionalUser:
     async def test_get_optional_user_not_found(self) -> None:
         """Test optional user returns None when user not found."""
         from uuid import uuid4
-        
+
         token_service = MagicMock()
         user_repository = AsyncMock()
-        
+
         user_id = uuid4()
         token_service.get_user_id_from_token.return_value = user_id
         user_repository.get_by_id.return_value = None
-        
+
         credentials = HTTPAuthorizationCredentials(
             scheme="Bearer",
             credentials="valid_token",
         )
-        
+
         result = await get_optional_user(
             credentials=credentials,
             token_service=token_service,
             user_repository=user_repository,
         )
-        
-        assert result is None
 
+        assert result is None

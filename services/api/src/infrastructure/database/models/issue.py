@@ -17,7 +17,7 @@ from src.infrastructure.database.models.base import (
 
 class IssueModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
     """Issue database model.
-    
+
     Issues represent tasks, bugs, stories within a project.
     """
 
@@ -29,13 +29,13 @@ class IssueModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         nullable=False,
         index=True,
     )
-    
+
     # Issue identification
     issue_number: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
     )  # Auto-incremented per project, used for key like PROJ-123
-    
+
     # Content
     title: Mapped[str] = mapped_column(
         String(255),
@@ -45,7 +45,7 @@ class IssueModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         Text,
         nullable=True,
     )
-    
+
     # Type, Status, Priority
     type: Mapped[str] = mapped_column(
         String(50),
@@ -63,7 +63,7 @@ class IssueModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         nullable=False,
         default="medium",
     )  # low, medium, high, critical
-    
+
     # Assignment
     reporter_id: Mapped[UUID] = mapped_column(
         PGUUID(as_uuid=True),
@@ -77,13 +77,13 @@ class IssueModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         nullable=True,
         index=True,
     )
-    
+
     # Dates
     due_date: Mapped[datetime | None] = mapped_column(
         Date,
         nullable=True,
     )
-    
+
     # Estimation
     story_points: Mapped[int | None] = mapped_column(
         Integer,
@@ -114,11 +114,10 @@ class IssueModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
     attachments = relationship(
         "AttachmentModel",
         primaryjoin="and_(IssueModel.id==foreign(AttachmentModel.entity_id), "
-                    "AttachmentModel.entity_type=='issue')",
+        "AttachmentModel.entity_type=='issue')",
         lazy="selectin",
         viewonly=True,
     )
 
     def __repr__(self) -> str:
         return f"<Issue(id={self.id}, number={self.issue_number}, title={self.title[:30]})>"
-

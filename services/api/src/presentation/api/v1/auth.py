@@ -92,11 +92,11 @@ async def register(
     use_case: Annotated[RegisterUserUseCase, Depends(get_register_use_case)],
 ) -> RegisterResponse:
     """Register a new user.
-    
+
     Args:
         request: Registration request with email, password, and name
         use_case: Register use case
-        
+
     Returns:
         Registration response with user info and tokens
     """
@@ -116,11 +116,11 @@ async def login(
     use_case: Annotated[LoginUserUseCase, Depends(get_login_use_case)],
 ) -> LoginResponse:
     """Login user.
-    
+
     Args:
         request: Login request with email and password
         use_case: Login use case
-        
+
     Returns:
         Login response with user info and tokens
     """
@@ -138,11 +138,11 @@ async def refresh_token(
     use_case: Annotated[RefreshTokenUseCase, Depends(get_refresh_token_use_case)],
 ) -> TokenResponse:
     """Refresh access token.
-    
+
     Args:
         request: Refresh token request
         use_case: Refresh token use case
-        
+
     Returns:
         New access and refresh tokens
     """
@@ -162,11 +162,11 @@ async def request_password_reset(
     use_case: Annotated[RequestPasswordResetUseCase, Depends(get_request_password_reset_use_case)],
 ) -> dict[str, str]:
     """Request password reset.
-    
+
     Args:
         request: Password reset request with email
         use_case: Request password reset use case
-        
+
     Returns:
         Success message (always, to prevent email enumeration)
     """
@@ -185,14 +185,13 @@ async def reset_password(
     use_case: Annotated[ResetPasswordUseCase, Depends(get_reset_password_use_case)],
 ) -> dict[str, str]:
     """Reset password.
-    
+
     Args:
         request: Password reset confirmation with token and new password
         use_case: Reset password use case
-        
+
     Returns:
         Success message
     """
     await use_case.execute(request)
     return {"message": "Password has been reset successfully."}
-

@@ -36,4 +36,3 @@ def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> Response:
         headers={"Retry-After": str(exc.retry_after)},
     )
     return response
-

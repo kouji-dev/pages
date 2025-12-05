@@ -17,7 +17,7 @@ from src.infrastructure.database.models.base import (
 
 class OrganizationModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
     """Organization database model.
-    
+
     Organizations are the top-level containers for projects and spaces.
     """
 
@@ -68,14 +68,12 @@ class OrganizationModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMix
 
 class OrganizationMemberModel(Base, TimestampMixin):
     """Organization member association model.
-    
+
     Links users to organizations with roles.
     """
 
     __tablename__ = "organization_members"
-    __table_args__ = (
-        UniqueConstraint("organization_id", "user_id", name="uq_org_member"),
-    )
+    __table_args__ = (UniqueConstraint("organization_id", "user_id", name="uq_org_member"),)
 
     organization_id: Mapped[UUID] = mapped_column(
         PGUUID(as_uuid=True),
@@ -105,4 +103,3 @@ class OrganizationMemberModel(Base, TimestampMixin):
 
     def __repr__(self) -> str:
         return f"<OrganizationMember(org={self.organization_id}, user={self.user_id}, role={self.role})>"
-

@@ -17,7 +17,7 @@ from src.infrastructure.database.models.base import (
 
 class CommentModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
     """Comment database model.
-    
+
     Comments can be attached to issues or pages.
     Uses polymorphic association pattern.
     """
@@ -35,7 +35,7 @@ class CommentModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         nullable=False,
         index=True,
     )
-    
+
     # For direct foreign key to issue (optional, for performance)
     issue_id: Mapped[UUID | None] = mapped_column(
         PGUUID(as_uuid=True),
@@ -43,7 +43,7 @@ class CommentModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         nullable=True,
         index=True,
     )
-    
+
     # For direct foreign key to page (optional, for performance)
     page_id: Mapped[UUID | None] = mapped_column(
         PGUUID(as_uuid=True),
@@ -51,7 +51,7 @@ class CommentModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         nullable=True,
         index=True,
     )
-    
+
     # Author
     user_id: Mapped[UUID] = mapped_column(
         PGUUID(as_uuid=True),
@@ -59,13 +59,13 @@ class CommentModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         nullable=False,
         index=True,
     )
-    
+
     # Content
     content: Mapped[str] = mapped_column(
         Text,
         nullable=False,
     )
-    
+
     # Edit tracking
     is_edited: Mapped[bool] = mapped_column(
         Boolean,
@@ -91,4 +91,3 @@ class CommentModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
 
     def __repr__(self) -> str:
         return f"<Comment(id={self.id}, entity_type={self.entity_type}, user={self.user_id})>"
-

@@ -14,13 +14,13 @@ from src.infrastructure.database.models import UserModel
 
 class SQLAlchemyUserRepository(UserRepository):
     """SQLAlchemy implementation of UserRepository.
-    
+
     Adapts the domain UserRepository interface to SQLAlchemy.
     """
 
     def __init__(self, session: AsyncSession) -> None:
         """Initialize repository with database session.
-        
+
         Args:
             session: Async SQLAlchemy session
         """
@@ -28,13 +28,13 @@ class SQLAlchemyUserRepository(UserRepository):
 
     async def create(self, user: User) -> User:
         """Create a new user in the database.
-        
+
         Args:
             user: User domain entity
-            
+
         Returns:
             Created user with persisted data
-            
+
         Raises:
             ConflictException: If email already exists
         """
@@ -64,59 +64,53 @@ class SQLAlchemyUserRepository(UserRepository):
 
     async def get_by_id(self, user_id: UUID) -> User | None:
         """Get user by ID.
-        
+
         Args:
             user_id: User UUID
-            
+
         Returns:
             User if found, None otherwise
         """
-        result = await self._session.execute(
-            select(UserModel).where(UserModel.id == user_id)
-        )
+        result = await self._session.execute(select(UserModel).where(UserModel.id == user_id))
         model = result.scalar_one_or_none()
-        
+
         if model is None:
             return None
-        
+
         return self._to_entity(model)
 
     async def get_by_email(self, email: Email) -> User | None:
         """Get user by email.
-        
+
         Args:
             email: User email value object
-            
+
         Returns:
             User if found, None otherwise
         """
-        result = await self._session.execute(
-            select(UserModel).where(UserModel.email == str(email))
-        )
+        result = await self._session.execute(select(UserModel).where(UserModel.email == str(email)))
         model = result.scalar_one_or_none()
-        
+
         if model is None:
             return None
-        
+
         return self._to_entity(model)
 
     async def update(self, user: User) -> User:
         """Update an existing user.
-        
+
         Args:
             user: User entity with updated data
-            
+
         Returns:
             Updated user
-            
+
         Raises:
             EntityNotFoundException: If user not found
         """
-        result = await self._session.execute(
-            select(UserModel).where(UserModel.id == user.id)
-        )
+        result = await self._session.execute(select(UserModel).where(UserModel.id == user.id))
         model = result.scalar_one_or_none()
-        
+
         if model is None:
             raise EntityNotFoundException("User", str(user.id))
 
@@ -137,18 +131,16 @@ class SQLAlchemyUserRepository(UserRepository):
 
     async def delete(self, user_id: UUID) -> None:
         """Hard delete a user.
-        
+
         Args:
             user_id: User UUID
-            
+
         Raises:
             EntityNotFoundException: If user not found
         """
-        result = await self._session.execute(
-            select(UserModel).where(UserModel.id == user_id)
-        )
+        result = await self._session.execute(select(UserModel).where(UserModel.id == user_id))
         model = result.scalar_one_or_none()
-        
+
         if model is None:
             raise EntityNotFoundException("User", str(user_id))
 
@@ -157,17 +149,15 @@ class SQLAlchemyUserRepository(UserRepository):
 
     async def exists_by_email(self, email: Email) -> bool:
         """Check if user with email exists.
-        
+
         Args:
             email: Email to check
-            
+
         Returns:
             True if user exists, False otherwise
         """
         result = await self._session.execute(
-            select(func.count()).select_from(UserModel).where(
-                UserModel.email == str(email)
-            )
+            select(func.count()).select_from(UserModel).where(UserModel.email == str(email))
         )
         count = result.scalar_one()
         return count > 0
@@ -179,41 +169,41 @@ class SQLAlchemyUserRepository(UserRepository):
         include_deleted: bool = False,
     ) -> list[User]:
         """Get all users with pagination.
-        
+
         Args:
             skip: Number of records to skip
             limit: Maximum number of records to return
             include_deleted: Whether to include soft-deleted users
-            
+
         Returns:
             List of users
         """
         query = select(UserModel)
-        
+
         if not include_deleted:
             query = query.where(UserModel.deleted_at.is_(None))
-        
+
         query = query.offset(skip).limit(limit).order_by(UserModel.created_at.desc())
-        
+
         result = await self._session.execute(query)
         models = result.scalars().all()
-        
+
         return [self._to_entity(model) for model in models]
 
     async def count(self, include_deleted: bool = False) -> int:
         """Count total users.
-        
+
         Args:
             include_deleted: Whether to include soft-deleted users
-            
+
         Returns:
             Total count of users
         """
         query = select(func.count()).select_from(UserModel)
-        
+
         if not include_deleted:
             query = query.where(UserModel.deleted_at.is_(None))
-        
+
         result = await self._session.execute(query)
         return result.scalar_one()
 
@@ -224,17 +214,17 @@ class SQLAlchemyUserRepository(UserRepository):
         limit: int = 20,
     ) -> list[User]:
         """Search users by name or email.
-        
+
         Args:
             query: Search query
             skip: Number of records to skip
             limit: Maximum number of records to return
-            
+
         Returns:
             List of matching users
         """
         search_pattern = f"%{query}%"
-        
+
         stmt = (
             select(UserModel)
             .where(
@@ -248,18 +238,18 @@ class SQLAlchemyUserRepository(UserRepository):
             .limit(limit)
             .order_by(UserModel.name)
         )
-        
+
         result = await self._session.execute(stmt)
         models = result.scalars().all()
-        
+
         return [self._to_entity(model) for model in models]
 
     def _to_entity(self, model: UserModel) -> User:
         """Convert SQLAlchemy model to domain entity.
-        
+
         Args:
             model: UserModel instance
-            
+
         Returns:
             User domain entity
         """
@@ -275,4 +265,3 @@ class SQLAlchemyUserRepository(UserRepository):
             updated_at=model.updated_at,
             deleted_at=model.deleted_at,
         )
-

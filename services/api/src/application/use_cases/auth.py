@@ -42,13 +42,13 @@ class RegisterUserUseCase:
 
     async def execute(self, request: RegisterRequest) -> RegisterResponse:
         """Execute user registration.
-        
+
         Args:
             request: Registration request DTO
-            
+
         Returns:
             Registration response with tokens
-            
+
         Raises:
             ConflictException: If email already exists
             ValidationException: If validation fails
@@ -109,13 +109,13 @@ class LoginUserUseCase:
 
     async def execute(self, request: LoginRequest) -> LoginResponse:
         """Execute user login.
-        
+
         Args:
             request: Login request DTO
-            
+
         Returns:
             Login response with tokens and user info
-            
+
         Raises:
             AuthenticationException: If credentials are invalid
         """
@@ -172,13 +172,13 @@ class RefreshTokenUseCase:
 
     async def execute(self, request: RefreshTokenRequest) -> TokenResponse:
         """Execute token refresh.
-        
+
         Args:
             request: Refresh token request DTO
-            
+
         Returns:
             New tokens
-            
+
         Raises:
             AuthenticationException: If refresh token is invalid
         """
@@ -218,9 +218,9 @@ class RequestPasswordResetUseCase:
 
     async def execute(self, request: PasswordResetRequest) -> None:
         """Execute password reset request.
-        
+
         Always returns success to prevent email enumeration.
-        
+
         Args:
             request: Password reset request DTO
         """
@@ -263,10 +263,10 @@ class ResetPasswordUseCase:
 
     async def execute(self, request: PasswordResetConfirm) -> None:
         """Execute password reset.
-        
+
         Args:
             request: Password reset confirmation DTO
-            
+
         Raises:
             AuthenticationException: If token is invalid
             EntityNotFoundException: If user not found
@@ -289,4 +289,3 @@ class ResetPasswordUseCase:
         await self._user_repository.update(user)
 
         logger.info("Password reset successful", user_id=str(user_id))
-

@@ -29,57 +29,57 @@ class JWTTokenService(TokenService):
         additional_claims: dict[str, Any] | None = None,
     ) -> str:
         """Create an access token for a user.
-        
+
         Args:
             user_id: User UUID
             additional_claims: Additional claims to include
-            
+
         Returns:
             JWT access token string
         """
         expire = datetime.now(timezone.utc) + timedelta(minutes=self._access_token_expire_minutes)
-        
+
         payload = {
             "sub": str(user_id),
             "type": "access",
             "exp": expire,
             "iat": datetime.now(timezone.utc),
         }
-        
+
         if additional_claims:
             payload.update(additional_claims)
-        
+
         return jwt.encode(payload, self._secret_key, algorithm=self._algorithm)
 
     def create_refresh_token(self, user_id: UUID) -> str:
         """Create a refresh token for a user.
-        
+
         Args:
             user_id: User UUID
-            
+
         Returns:
             JWT refresh token string
         """
         expire = datetime.now(timezone.utc) + timedelta(days=self._refresh_token_expire_days)
-        
+
         payload = {
             "sub": str(user_id),
             "type": "refresh",
             "exp": expire,
             "iat": datetime.now(timezone.utc),
         }
-        
+
         return jwt.encode(payload, self._secret_key, algorithm=self._algorithm)
 
     def verify_token(self, token: str) -> dict[str, Any]:
         """Verify and decode a token.
-        
+
         Args:
             token: JWT token string
-            
+
         Returns:
             Token payload as dictionary
-            
+
         Raises:
             AuthenticationException: If token is invalid or expired
         """
@@ -91,22 +91,22 @@ class JWTTokenService(TokenService):
 
     def get_user_id_from_token(self, token: str) -> UUID:
         """Extract user ID from token.
-        
+
         Args:
             token: JWT token string
-            
+
         Returns:
             User UUID
-            
+
         Raises:
             AuthenticationException: If token is invalid
         """
         payload = self.verify_token(token)
-        
+
         user_id_str = payload.get("sub")
         if not user_id_str:
             raise AuthenticationException("Invalid token: missing subject")
-        
+
         try:
             return UUID(user_id_str)
         except ValueError:
@@ -114,46 +114,46 @@ class JWTTokenService(TokenService):
 
     def create_password_reset_token(self, user_id: UUID) -> str:
         """Create a password reset token.
-        
+
         Args:
             user_id: User UUID
-            
+
         Returns:
             Password reset token string
         """
         expire = datetime.now(timezone.utc) + timedelta(hours=self._password_reset_expire_hours)
-        
+
         payload = {
             "sub": str(user_id),
             "type": "password_reset",
             "exp": expire,
             "iat": datetime.now(timezone.utc),
         }
-        
+
         return jwt.encode(payload, self._secret_key, algorithm=self._algorithm)
 
     def verify_password_reset_token(self, token: str) -> UUID:
         """Verify password reset token and get user ID.
-        
+
         Args:
             token: Password reset token
-            
+
         Returns:
             User UUID
-            
+
         Raises:
             AuthenticationException: If token is invalid or expired
         """
         payload = self.verify_token(token)
-        
+
         token_type = payload.get("type")
         if token_type != "password_reset":
             raise AuthenticationException("Invalid password reset token")
-        
+
         user_id_str = payload.get("sub")
         if not user_id_str:
             raise AuthenticationException("Invalid token: missing subject")
-        
+
         try:
             return UUID(user_id_str)
         except ValueError:
@@ -163,4 +163,3 @@ class JWTTokenService(TokenService):
     def access_token_expire_minutes(self) -> int:
         """Get access token expiration in minutes."""
         return self._access_token_expire_minutes
-

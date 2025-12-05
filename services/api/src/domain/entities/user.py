@@ -11,7 +11,7 @@ from src.domain.value_objects import Email, HashedPassword
 @dataclass
 class User:
     """User domain entity.
-    
+
     Represents a user in the system with their core attributes.
     This is an aggregate root in DDD terms.
     """
@@ -31,9 +31,9 @@ class User:
         """Validate user entity."""
         if not self.name or not self.name.strip():
             raise ValueError("User name cannot be empty")
-        
+
         self.name = self.name.strip()
-        
+
         if len(self.name) > 100:
             raise ValueError("User name cannot exceed 100 characters")
 
@@ -46,7 +46,7 @@ class User:
         avatar_url: str | None = None,
     ) -> Self:
         """Create a new user.
-        
+
         Factory method for creating new users with proper defaults.
         """
         now = datetime.utcnow()
@@ -67,12 +67,12 @@ class User:
         """Update user name."""
         if not name or not name.strip():
             raise ValueError("User name cannot be empty")
-        
+
         name = name.strip()
-        
+
         if len(name) > 100:
             raise ValueError("User name cannot exceed 100 characters")
-        
+
         self.name = name
         self._touch()
 
@@ -95,7 +95,7 @@ class User:
         """Soft delete the user."""
         if self.deleted_at is not None:
             return  # Already deactivated
-        
+
         self.is_active = False
         self.deleted_at = datetime.utcnow()
         self._touch()
@@ -124,4 +124,3 @@ class User:
     def __hash__(self) -> int:
         """Hash user by ID."""
         return hash(self.id)
-

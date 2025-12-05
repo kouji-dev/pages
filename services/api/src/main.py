@@ -30,7 +30,11 @@ structlog.configure(
         structlog.processors.StackInfoRenderer(),
         structlog.processors.format_exc_info,
         structlog.processors.UnicodeDecoder(),
-        structlog.dev.ConsoleRenderer() if get_settings().debug else structlog.processors.JSONRenderer(),
+        (
+            structlog.dev.ConsoleRenderer()
+            if get_settings().debug
+            else structlog.processors.JSONRenderer()
+        ),
     ],
     wrapper_class=structlog.stdlib.BoundLogger,
     context_class=dict,
@@ -43,7 +47,7 @@ logger = structlog.get_logger()
 
 def create_app(enable_rate_limiting: bool = True) -> FastAPI:
     """Create and configure FastAPI application.
-    
+
     Args:
         enable_rate_limiting: Whether to enable rate limiting middleware (default: True).
                               Set to False for testing.
@@ -61,13 +65,13 @@ def create_app(enable_rate_limiting: bool = True) -> FastAPI:
 
     # Add request ID middleware (first to track all requests)
     app.add_middleware(RequestIDMiddleware)
-    
+
     # Add rate limiting middleware (disabled in tests)
     if enable_rate_limiting:
         app.state.limiter = limiter
         app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
         app.add_middleware(SlowAPIMiddleware)
-    
+
     # Configure CORS
     app.add_middleware(
         CORSMiddleware,
@@ -89,14 +93,14 @@ def create_app(enable_rate_limiting: bool = True) -> FastAPI:
     async def startup_event() -> None:
         """Application startup handler."""
         from src.infrastructure.database import init_db
-        
+
         logger.info(
             "Starting application",
             app_name=settings.app_name,
             version=settings.app_version,
             environment=settings.environment,
         )
-        
+
         # Initialize database tables (in development)
         # In production, use Alembic migrations instead
         if settings.debug:
@@ -110,7 +114,7 @@ def create_app(enable_rate_limiting: bool = True) -> FastAPI:
     async def shutdown_event() -> None:
         """Application shutdown handler."""
         from src.infrastructure.database import close_db
-        
+
         logger.info("Shutting down application")
         await close_db()
 
@@ -131,4 +135,3 @@ if __name__ == "__main__":
         port=settings.port,
         reload=settings.debug,
     )
-

@@ -28,7 +28,7 @@ class TestBcryptPasswordService:
     def test_hash_produces_different_hashes(self, service: BcryptPasswordService) -> None:
         """Test same password produces different hashes (due to salt)."""
         password = Password("SecurePass123!")
-        
+
         hash1 = service.hash(password)
         hash2 = service.hash(password)
 
@@ -112,7 +112,7 @@ class TestJWTTokenService:
         """Test verifying tampered token raises error."""
         user_id = uuid4()
         token = service.create_access_token(user_id)
-        
+
         # Tamper with token
         tampered_token = token[:-5] + "xxxxx"
 
@@ -134,7 +134,7 @@ class TestJWTTokenService:
         token = service.create_password_reset_token(user_id)
 
         assert token is not None
-        
+
         payload = service.verify_token(token)
         assert payload["type"] == "password_reset"
 
@@ -147,22 +147,17 @@ class TestJWTTokenService:
 
         assert extracted_id == user_id
 
-    def test_verify_password_reset_token_wrong_type(
-        self, service: JWTTokenService
-    ) -> None:
+    def test_verify_password_reset_token_wrong_type(self, service: JWTTokenService) -> None:
         """Test verifying access token as password reset token fails."""
         user_id = uuid4()
         access_token = service.create_access_token(user_id)
 
         with pytest.raises(AuthenticationException) as exc_info:
             service.verify_password_reset_token(access_token)
-        
+
         assert "password reset" in str(exc_info.value).lower()
 
-    def test_access_token_expire_minutes_property(
-        self, service: JWTTokenService
-    ) -> None:
+    def test_access_token_expire_minutes_property(self, service: JWTTokenService) -> None:
         """Test access_token_expire_minutes property."""
         assert service.access_token_expire_minutes > 0
         assert isinstance(service.access_token_expire_minutes, int)
-

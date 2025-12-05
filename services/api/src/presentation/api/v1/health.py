@@ -12,7 +12,7 @@ router = APIRouter()
 
 class HealthResponse(BaseModel):
     """Health check response."""
-    
+
     status: str
     version: str
     timestamp: datetime
@@ -22,12 +22,12 @@ class HealthResponse(BaseModel):
 @router.get("/health", response_model=HealthResponse)
 async def health_check() -> HealthResponse:
     """Check API health status.
-    
+
     Returns:
         Health status information
     """
     settings = get_settings()
-    
+
     return HealthResponse(
         status="healthy",
         version=settings.app_version,
@@ -39,9 +39,9 @@ async def health_check() -> HealthResponse:
 @router.get("/health/ready")
 async def readiness_check() -> dict[str, str]:
     """Check if API is ready to serve requests.
-    
+
     This endpoint can be extended to check database connectivity, etc.
-    
+
     Returns:
         Readiness status
     """
@@ -52,9 +52,8 @@ async def readiness_check() -> dict[str, str]:
 @router.get("/health/live")
 async def liveness_check() -> dict[str, str]:
     """Check if API is alive.
-    
+
     Returns:
         Liveness status
     """
     return {"status": "alive"}
-

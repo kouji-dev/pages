@@ -22,15 +22,15 @@ async def get_current_user(
     user_repository: Annotated[UserRepository, Depends(get_user_repository)],
 ) -> User:
     """Get current authenticated user from JWT token.
-    
+
     Args:
         credentials: HTTP Bearer credentials
         token_service: Token service for JWT verification
         user_repository: User repository for fetching user
-        
+
     Returns:
         Authenticated user
-        
+
     Raises:
         HTTPException: If authentication fails
     """
@@ -51,7 +51,7 @@ async def get_current_user(
         )
 
     user = await user_repository.get_by_id(user_id)
-    
+
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -66,15 +66,15 @@ async def get_current_active_user(
     current_user: Annotated[User, Depends(get_current_user)],
 ) -> User:
     """Get current active user.
-    
+
     Ensures user is active and not deleted.
-    
+
     Args:
         current_user: Current authenticated user
-        
+
     Returns:
         Active user
-        
+
     Raises:
         HTTPException: If user is inactive or deleted
     """
@@ -83,7 +83,7 @@ async def get_current_active_user(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Account is deactivated",
         )
-    
+
     if current_user.is_deleted:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -99,14 +99,14 @@ async def get_optional_user(
     user_repository: Annotated[UserRepository, Depends(get_user_repository)],
 ) -> User | None:
     """Get current user if authenticated, None otherwise.
-    
+
     Use this for endpoints that work for both authenticated and anonymous users.
-    
+
     Args:
         credentials: HTTP Bearer credentials (optional)
         token_service: Token service for JWT verification
         user_repository: User repository for fetching user
-        
+
     Returns:
         User if authenticated, None otherwise
     """
@@ -124,4 +124,3 @@ async def get_optional_user(
 CurrentUser = Annotated[User, Depends(get_current_user)]
 CurrentActiveUser = Annotated[User, Depends(get_current_active_user)]
 OptionalUser = Annotated[User | None, Depends(get_optional_user)]
-

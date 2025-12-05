@@ -16,7 +16,7 @@ from src.infrastructure.database.models.base import (
 
 class NotificationModel(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     """Notification database model.
-    
+
     Stores user notifications for various events.
     """
 
@@ -28,7 +28,7 @@ class NotificationModel(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         nullable=False,
         index=True,
     )
-    
+
     # Notification content
     type: Mapped[str] = mapped_column(
         String(50),
@@ -43,7 +43,7 @@ class NotificationModel(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         Text,
         nullable=True,
     )
-    
+
     # Link to related entity
     entity_type: Mapped[str | None] = mapped_column(
         String(50),
@@ -53,7 +53,7 @@ class NotificationModel(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         PGUUID(as_uuid=True),
         nullable=True,
     )
-    
+
     # Status
     read: Mapped[bool] = mapped_column(
         Boolean,
@@ -61,7 +61,7 @@ class NotificationModel(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         nullable=False,
         index=True,
     )
-    
+
     # Metadata
     data: Mapped[str | None] = mapped_column(
         Text,  # Store as JSON string for additional data
@@ -75,5 +75,6 @@ class NotificationModel(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     )
 
     def __repr__(self) -> str:
-        return f"<Notification(id={self.id}, type={self.type}, user={self.user_id}, read={self.read})>"
-
+        return (
+            f"<Notification(id={self.id}, type={self.type}, user={self.user_id}, read={self.read})>"
+        )

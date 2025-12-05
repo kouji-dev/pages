@@ -27,23 +27,24 @@ from src.infrastructure.security import BcryptPasswordService
 async def seed_database() -> None:
     """Seed the database with development data."""
     print("🌱 Starting database seed...")
-    
+
     password_service = BcryptPasswordService()
-    
+
     # Create default password for all test users
     default_password = Password("TestPass123!")
     hashed_password = password_service.hash(default_password)
-    
+
     async with get_session_context() as session:
         # Check if data already exists
         from sqlalchemy import select, func
+
         result = await session.execute(select(func.count()).select_from(UserModel))
         user_count = result.scalar_one()
-        
+
         if user_count > 0:
             print("⚠️ Database already has data. Skipping seed.")
             return
-        
+
         # Create Users
         print("👤 Creating users...")
         admin_user = UserModel(
@@ -54,7 +55,7 @@ async def seed_database() -> None:
             is_active=True,
             is_verified=True,
         )
-        
+
         dev_user = UserModel(
             id=uuid4(),
             email="dev@pages.dev",
@@ -63,7 +64,7 @@ async def seed_database() -> None:
             is_active=True,
             is_verified=True,
         )
-        
+
         test_user = UserModel(
             id=uuid4(),
             email="test@pages.dev",
@@ -72,10 +73,10 @@ async def seed_database() -> None:
             is_active=True,
             is_verified=False,
         )
-        
+
         session.add_all([admin_user, dev_user, test_user])
         await session.flush()
-        
+
         # Create Organization
         print("🏢 Creating organization...")
         org = OrganizationModel(
@@ -86,7 +87,7 @@ async def seed_database() -> None:
         )
         session.add(org)
         await session.flush()
-        
+
         # Add members to organization
         print("👥 Adding organization members...")
         org_members = [
@@ -108,7 +109,7 @@ async def seed_database() -> None:
         ]
         session.add_all(org_members)
         await session.flush()
-        
+
         # Create Project
         print("📁 Creating project...")
         project = ProjectModel(
@@ -120,7 +121,7 @@ async def seed_database() -> None:
         )
         session.add(project)
         await session.flush()
-        
+
         # Add members to project
         print("👥 Adding project members...")
         project_members = [
@@ -137,7 +138,7 @@ async def seed_database() -> None:
         ]
         session.add_all(project_members)
         await session.flush()
-        
+
         # Create Issues
         print("📋 Creating sample issues...")
         issues = [
@@ -202,7 +203,7 @@ async def seed_database() -> None:
         ]
         session.add_all(issues)
         await session.flush()
-        
+
         # Create Space
         print("📚 Creating documentation space...")
         space = SpaceModel(
@@ -214,7 +215,7 @@ async def seed_database() -> None:
         )
         session.add(space)
         await session.flush()
-        
+
         # Create Pages
         print("📄 Creating sample pages...")
         getting_started = PageModel(
@@ -228,7 +229,7 @@ async def seed_database() -> None:
         )
         session.add(getting_started)
         await session.flush()
-        
+
         pages = [
             PageModel(
                 id=uuid4(),
@@ -261,7 +262,7 @@ async def seed_database() -> None:
             ),
         ]
         session.add_all(pages)
-        
+
         print("✅ Database seed completed successfully!")
         print("\n📋 Created:")
         print(f"   - 3 users (password: TestPass123!)")
@@ -281,14 +282,13 @@ async def main() -> None:
     settings = get_settings()
     print(f"🔧 Environment: {settings.environment}")
     print(f"🗄️ Database: {settings.database_url}")
-    
+
     # Initialize database tables first
     await init_db()
-    
+
     # Seed data
     await seed_database()
 
 
 if __name__ == "__main__":
     asyncio.run(main())
-

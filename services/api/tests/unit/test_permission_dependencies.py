@@ -43,13 +43,13 @@ class TestRequireOrganizationMember:
         """Test successful organization member check."""
         organization_id = uuid4()
         permission_service.can_access_organization = AsyncMock(return_value=True)
-        
+
         result = await require_organization_member(
             organization_id=organization_id,
             current_user=test_user,
             permission_service=permission_service,
         )
-        
+
         assert result == test_user
         permission_service.can_access_organization.assert_called_once_with(
             test_user, organization_id
@@ -60,14 +60,14 @@ class TestRequireOrganizationMember:
         """Test organization member check failure."""
         organization_id = uuid4()
         permission_service.can_access_organization = AsyncMock(return_value=False)
-        
+
         with pytest.raises(HTTPException) as exc_info:
             await require_organization_member(
                 organization_id=organization_id,
                 current_user=test_user,
                 permission_service=permission_service,
             )
-        
+
         assert exc_info.value.status_code == status.HTTP_403_FORBIDDEN
         assert "not a member" in exc_info.value.detail.lower()
 
@@ -80,13 +80,13 @@ class TestRequireOrganizationAdmin:
         """Test successful organization admin check."""
         organization_id = uuid4()
         permission_service.can_manage_organization = AsyncMock(return_value=True)
-        
+
         result = await require_organization_admin(
             organization_id=organization_id,
             current_user=test_user,
             permission_service=permission_service,
         )
-        
+
         assert result == test_user
         permission_service.can_manage_organization.assert_called_once_with(
             test_user, organization_id
@@ -97,14 +97,14 @@ class TestRequireOrganizationAdmin:
         """Test organization admin check failure."""
         organization_id = uuid4()
         permission_service.can_manage_organization = AsyncMock(return_value=False)
-        
+
         with pytest.raises(HTTPException) as exc_info:
             await require_organization_admin(
                 organization_id=organization_id,
                 current_user=test_user,
                 permission_service=permission_service,
             )
-        
+
         assert exc_info.value.status_code == status.HTTP_403_FORBIDDEN
         assert "admin" in exc_info.value.detail.lower()
 
@@ -117,31 +117,29 @@ class TestRequireProjectAccess:
         """Test successful project access check."""
         project_id = uuid4()
         permission_service.can_access_project = AsyncMock(return_value=True)
-        
+
         result = await require_project_access(
             project_id=project_id,
             current_user=test_user,
             permission_service=permission_service,
         )
-        
+
         assert result == test_user
-        permission_service.can_access_project.assert_called_once_with(
-            test_user, project_id
-        )
+        permission_service.can_access_project.assert_called_once_with(test_user, project_id)
 
     @pytest.mark.asyncio
     async def test_require_project_access_denied(self, test_user, permission_service) -> None:
         """Test project access check failure."""
         project_id = uuid4()
         permission_service.can_access_project = AsyncMock(return_value=False)
-        
+
         with pytest.raises(HTTPException) as exc_info:
             await require_project_access(
                 project_id=project_id,
                 current_user=test_user,
                 permission_service=permission_service,
             )
-        
+
         assert exc_info.value.status_code == status.HTTP_403_FORBIDDEN
         assert "access" in exc_info.value.detail.lower()
 
@@ -156,14 +154,14 @@ class TestRequireEditPermission:
         """Test successful edit permission check without project."""
         organization_id = uuid4()
         permission_service.can_edit_content = AsyncMock(return_value=True)
-        
+
         result = await require_edit_permission(
             organization_id=organization_id,
             current_user=test_user,
             permission_service=permission_service,
             project_id=None,
         )
-        
+
         assert result == test_user
         permission_service.can_edit_content.assert_called_once_with(
             test_user, organization_id, None
@@ -177,14 +175,14 @@ class TestRequireEditPermission:
         organization_id = uuid4()
         project_id = uuid4()
         permission_service.can_edit_content = AsyncMock(return_value=True)
-        
+
         result = await require_edit_permission(
             organization_id=organization_id,
             current_user=test_user,
             permission_service=permission_service,
             project_id=project_id,
         )
-        
+
         assert result == test_user
         permission_service.can_edit_content.assert_called_once_with(
             test_user, organization_id, project_id
@@ -195,16 +193,18 @@ class TestRequireEditPermission:
         """Test edit permission check failure."""
         organization_id = uuid4()
         permission_service.can_edit_content = AsyncMock(return_value=False)
-        
+
         with pytest.raises(HTTPException) as exc_info:
             await require_edit_permission(
                 organization_id=organization_id,
                 current_user=test_user,
                 permission_service=permission_service,
             )
-        
+
         assert exc_info.value.status_code == status.HTTP_403_FORBIDDEN
-        assert "permission" in exc_info.value.detail.lower() or "edit" in exc_info.value.detail.lower()
+        assert (
+            "permission" in exc_info.value.detail.lower() or "edit" in exc_info.value.detail.lower()
+        )
 
 
 class TestGetOrganizationRole:
@@ -215,13 +215,13 @@ class TestGetOrganizationRole:
         """Test successful organization role retrieval."""
         organization_id = uuid4()
         permission_service.get_organization_role = AsyncMock(return_value=Role.ADMIN)
-        
+
         result = await get_organization_role(
             organization_id=organization_id,
             current_user=test_user,
             permission_service=permission_service,
         )
-        
+
         assert result == Role.ADMIN
         permission_service.get_organization_role.assert_called_once_with(
             test_user.id, organization_id
@@ -232,14 +232,14 @@ class TestGetOrganizationRole:
         """Test organization role retrieval when not a member."""
         organization_id = uuid4()
         permission_service.get_organization_role = AsyncMock(return_value=None)
-        
+
         with pytest.raises(HTTPException) as exc_info:
             await get_organization_role(
                 organization_id=organization_id,
                 current_user=test_user,
                 permission_service=permission_service,
             )
-        
+
         assert exc_info.value.status_code == status.HTTP_403_FORBIDDEN
         assert "not a member" in exc_info.value.detail.lower()
 
@@ -249,15 +249,14 @@ class TestGetOrganizationRole:
     ) -> None:
         """Test organization role retrieval returns all role types."""
         organization_id = uuid4()
-        
+
         for role in [Role.ADMIN, Role.MEMBER, Role.VIEWER]:
             permission_service.get_organization_role = AsyncMock(return_value=role)
-            
+
             result = await get_organization_role(
                 organization_id=organization_id,
                 current_user=test_user,
                 permission_service=permission_service,
             )
-            
-            assert result == role
 
+            assert result == role

@@ -17,14 +17,12 @@ from src.infrastructure.database.models.base import (
 
 class ProjectModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
     """Project database model.
-    
+
     Projects belong to organizations and contain issues.
     """
 
     __tablename__ = "projects"
-    __table_args__ = (
-        UniqueConstraint("organization_id", "key", name="uq_project_key"),
-    )
+    __table_args__ = (UniqueConstraint("organization_id", "key", name="uq_project_key"),)
 
     organization_id: Mapped[UUID] = mapped_column(
         PGUUID(as_uuid=True),
@@ -74,14 +72,12 @@ class ProjectModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
 
 class ProjectMemberModel(Base, TimestampMixin):
     """Project member association model.
-    
+
     Links users to projects with roles.
     """
 
     __tablename__ = "project_members"
-    __table_args__ = (
-        UniqueConstraint("project_id", "user_id", name="uq_project_member"),
-    )
+    __table_args__ = (UniqueConstraint("project_id", "user_id", name="uq_project_member"),)
 
     project_id: Mapped[UUID] = mapped_column(
         PGUUID(as_uuid=True),
@@ -111,4 +107,3 @@ class ProjectMemberModel(Base, TimestampMixin):
 
     def __repr__(self) -> str:
         return f"<ProjectMember(project={self.project_id}, user={self.user_id}, role={self.role})>"
-

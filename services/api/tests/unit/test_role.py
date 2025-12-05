@@ -73,4 +73,3 @@ class TestRole:
         """Test creating role from invalid string raises ValueError."""
         with pytest.raises(ValueError):
             Role("invalid")
-

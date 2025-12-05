@@ -28,7 +28,7 @@ _session_factory: async_sessionmaker[AsyncSession] | None = None
 def get_engine() -> AsyncEngine:
     """Get or create the async database engine."""
     global _engine
-    
+
     if _engine is None:
         settings = get_settings()
         _engine = create_async_engine(
@@ -38,14 +38,14 @@ def get_engine() -> AsyncEngine:
             max_overflow=settings.database_max_overflow,
             pool_pre_ping=True,
         )
-    
+
     return _engine
 
 
 def get_session_factory() -> async_sessionmaker[AsyncSession]:
     """Get or create the async session factory."""
     global _session_factory
-    
+
     if _session_factory is None:
         _session_factory = async_sessionmaker(
             bind=get_engine(),
@@ -54,13 +54,13 @@ def get_session_factory() -> async_sessionmaker[AsyncSession]:
             autocommit=False,
             autoflush=False,
         )
-    
+
     return _session_factory
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
     """Dependency for getting database sessions.
-    
+
     Usage in FastAPI:
         @router.get("/users")
         async def get_users(session: AsyncSession = Depends(get_session)):
@@ -79,7 +79,7 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
 @asynccontextmanager
 async def get_session_context() -> AsyncGenerator[AsyncSession, None]:
     """Context manager for database sessions.
-    
+
     Usage:
         async with get_session_context() as session:
             ...
@@ -96,7 +96,7 @@ async def get_session_context() -> AsyncGenerator[AsyncSession, None]:
 
 async def init_db() -> None:
     """Initialize database (create tables).
-    
+
     Note: In production, use Alembic migrations instead.
     """
     engine = get_engine()
@@ -107,9 +107,8 @@ async def init_db() -> None:
 async def close_db() -> None:
     """Close database connections."""
     global _engine, _session_factory
-    
+
     if _engine is not None:
         await _engine.dispose()
         _engine = None
         _session_factory = None
-

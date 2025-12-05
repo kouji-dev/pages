@@ -26,6 +26,7 @@ class TestUser:
     def hashed_password(self, password_service: BcryptPasswordService) -> HashedPassword:
         """Create hashed password."""
         from src.domain.value_objects import Password
+
         return password_service.hash(Password("SecurePass123!"))
 
     def test_create_user(self, valid_email: Email, hashed_password: HashedPassword) -> None:
@@ -106,9 +107,7 @@ class TestUser:
         )
         assert user.name == "Test User"
 
-    def test_update_name(
-        self, valid_email: Email, hashed_password: HashedPassword
-    ) -> None:
+    def test_update_name(self, valid_email: Email, hashed_password: HashedPassword) -> None:
         """Test updating user name."""
         user = User.create(
             email=valid_email,
@@ -135,9 +134,7 @@ class TestUser:
         with pytest.raises(ValueError):
             user.update_name("")
 
-    def test_update_avatar(
-        self, valid_email: Email, hashed_password: HashedPassword
-    ) -> None:
+    def test_update_avatar(self, valid_email: Email, hashed_password: HashedPassword) -> None:
         """Test updating user avatar."""
         user = User.create(
             email=valid_email,
@@ -164,9 +161,7 @@ class TestUser:
 
         assert user.avatar_url is None
 
-    def test_verify_user(
-        self, valid_email: Email, hashed_password: HashedPassword
-    ) -> None:
+    def test_verify_user(self, valid_email: Email, hashed_password: HashedPassword) -> None:
         """Test verifying user."""
         user = User.create(
             email=valid_email,
@@ -178,9 +173,7 @@ class TestUser:
         user.verify()
         assert user.is_verified is True
 
-    def test_deactivate_user(
-        self, valid_email: Email, hashed_password: HashedPassword
-    ) -> None:
+    def test_deactivate_user(self, valid_email: Email, hashed_password: HashedPassword) -> None:
         """Test deactivating user (soft delete)."""
         user = User.create(
             email=valid_email,
@@ -213,9 +206,7 @@ class TestUser:
 
         assert user.deleted_at == deleted_at
 
-    def test_reactivate_user(
-        self, valid_email: Email, hashed_password: HashedPassword
-    ) -> None:
+    def test_reactivate_user(self, valid_email: Email, hashed_password: HashedPassword) -> None:
         """Test reactivating user."""
         user = User.create(
             email=valid_email,
@@ -230,9 +221,7 @@ class TestUser:
         assert user.is_deleted is False
         assert user.deleted_at is None
 
-    def test_user_equality(
-        self, valid_email: Email, hashed_password: HashedPassword
-    ) -> None:
+    def test_user_equality(self, valid_email: Email, hashed_password: HashedPassword) -> None:
         """Test user equality based on ID."""
         user1 = User.create(
             email=valid_email,
@@ -248,9 +237,7 @@ class TestUser:
 
         assert user1 == user2  # Same ID
 
-    def test_user_hash(
-        self, valid_email: Email, hashed_password: HashedPassword
-    ) -> None:
+    def test_user_hash(self, valid_email: Email, hashed_password: HashedPassword) -> None:
         """Test user can be used in sets."""
         user = User.create(
             email=valid_email,
@@ -260,4 +247,3 @@ class TestUser:
 
         user_set = {user}
         assert len(user_set) == 1
-

@@ -16,7 +16,7 @@ from src.infrastructure.database.models.base import (
 
 class AttachmentModel(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     """Attachment database model.
-    
+
     Attachments can be linked to issues or pages using polymorphic association.
     """
 
@@ -33,7 +33,7 @@ class AttachmentModel(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         nullable=False,
         index=True,
     )
-    
+
     # File information
     file_name: Mapped[str] = mapped_column(
         String(255),
@@ -51,7 +51,7 @@ class AttachmentModel(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         String(100),
         nullable=False,
     )
-    
+
     # Storage location
     storage_path: Mapped[str] = mapped_column(
         Text,
@@ -62,13 +62,13 @@ class AttachmentModel(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         nullable=False,
         default="local",
     )  # 'local', 's3', 'pg_largeobject'
-    
+
     # Thumbnail for images
     thumbnail_path: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
     )
-    
+
     # Uploader
     uploaded_by: Mapped[UUID] = mapped_column(
         PGUUID(as_uuid=True),
@@ -79,4 +79,3 @@ class AttachmentModel(Base, UUIDPrimaryKeyMixin, TimestampMixin):
 
     def __repr__(self) -> str:
         return f"<Attachment(id={self.id}, name={self.file_name}, type={self.mime_type})>"
-

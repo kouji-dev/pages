@@ -21,7 +21,7 @@ async def test_register_endpoint(client: AsyncClient) -> None:
             "name": "New User",
         },
     )
-    
+
     assert response.status_code == 201
     data = response.json()
     assert "access_token" in data
@@ -42,7 +42,7 @@ async def test_register_duplicate_email(client, test_user) -> None:
             "name": "Another User",
         },
     )
-    
+
     # Should return 409 Conflict or 400 Bad Request for duplicate email
     assert response.status_code in (400, 409)
     error_data = response.json()
@@ -63,7 +63,7 @@ async def test_register_invalid_password(client) -> None:
             "name": "User",
         },
     )
-    
+
     assert response.status_code == 422  # Validation error
 
 
@@ -77,7 +77,7 @@ async def test_login_endpoint(client, test_user) -> None:
             "password": "TestPassword123!",
         },
     )
-    
+
     assert response.status_code == 200
     data = response.json()
     assert "access_token" in data
@@ -96,7 +96,7 @@ async def test_login_invalid_credentials(client, test_user) -> None:
             "password": "WrongPassword123!",
         },
     )
-    
+
     assert response.status_code == 401
     error_data = response.json()
     error_text = str(error_data).lower()
@@ -115,7 +115,7 @@ async def test_login_nonexistent_user(client) -> None:
             "password": "SomePassword123!",
         },
     )
-    
+
     assert response.status_code == 401
 
 
@@ -132,13 +132,13 @@ async def test_refresh_token_endpoint(client, test_user) -> None:
     )
     assert login_response.status_code == 200
     refresh_token = login_response.json()["refresh_token"]
-    
+
     # Use refresh token
     response = await client.post(
         "/api/v1/auth/refresh",
         json={"refresh_token": refresh_token},
     )
-    
+
     assert response.status_code == 200
     data = response.json()
     assert "access_token" in data
@@ -156,7 +156,7 @@ async def test_refresh_token_invalid(client) -> None:
         "/api/v1/auth/refresh",
         json={"refresh_token": "invalid.token.here"},
     )
-    
+
     assert response.status_code == 401
 
 
@@ -167,7 +167,7 @@ async def test_request_password_reset(client, test_user) -> None:
         "/api/v1/auth/password/reset-request",
         json={"email": test_user.email.value},
     )
-    
+
     assert response.status_code == 202
     assert "message" in response.json()
 
@@ -179,7 +179,7 @@ async def test_request_password_reset_nonexistent_user(client) -> None:
         "/api/v1/auth/password/reset-request",
         json={"email": "nonexistent@example.com"},
     )
-    
+
     # Should still return 202 to prevent email enumeration
     assert response.status_code == 202
 
@@ -188,11 +188,11 @@ async def test_request_password_reset_nonexistent_user(client) -> None:
 async def test_reset_password_endpoint(client, test_user) -> None:
     """Test password reset endpoint."""
     from src.infrastructure.security import JWTTokenService
-    
+
     # Generate reset token (requires user ID, not email)
     token_service = JWTTokenService()
     reset_token = token_service.create_password_reset_token(test_user.id)
-    
+
     # Reset password
     response = await client.post(
         "/api/v1/auth/password/reset",
@@ -201,10 +201,10 @@ async def test_reset_password_endpoint(client, test_user) -> None:
             "new_password": "NewSecurePassword123!",
         },
     )
-    
+
     assert response.status_code == 200
     assert "message" in response.json()
-    
+
     # Verify new password works
     login_response = await client.post(
         "/api/v1/auth/login",
@@ -226,7 +226,7 @@ async def test_reset_password_invalid_token(client) -> None:
             "new_password": "NewPassword123!",
         },
     )
-    
+
     assert response.status_code == 400 or response.status_code == 401
 
 
@@ -235,7 +235,7 @@ async def test_protected_endpoint_requires_auth(client) -> None:
     """Test that protected endpoints require authentication."""
     # Test a non-existent endpoint that would require auth if it existed
     response = await client.get("/api/v1/auth/me")
-    
+
     # Should return 404 since endpoint doesn't exist, or 401 if it does
     assert response.status_code in (401, 404, 405)
 
@@ -244,7 +244,7 @@ async def test_protected_endpoint_requires_auth(client) -> None:
 async def test_request_id_header(client) -> None:
     """Test that request ID is added to response headers."""
     response = await client.get("/api/v1/health")
-    
+
     assert "X-Request-ID" in response.headers
     assert response.headers["X-Request-ID"] is not None
     assert len(response.headers["X-Request-ID"]) > 0

@@ -19,4 +19,3 @@ __all__ = [
     "get_token_service",
     "get_user_repository",
 ]
-

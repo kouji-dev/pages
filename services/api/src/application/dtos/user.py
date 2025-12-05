@@ -70,4 +70,3 @@ class UserListResponse(BaseModel):
     page: int
     limit: int
     pages: int
-

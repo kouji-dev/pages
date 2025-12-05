@@ -32,10 +32,10 @@ async def get_user_repository(
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> UserRepository:
     """Get user repository instance with database session.
-    
+
     Args:
         session: Async database session from dependency injection
-        
+
     Returns:
         SQLAlchemy implementation of UserRepository
     """
@@ -46,12 +46,11 @@ async def get_permission_service(
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> PermissionService:
     """Get permission service instance with database session.
-    
+
     Args:
         session: Async database session from dependency injection
-        
+
     Returns:
         DatabasePermissionService instance
     """
     return DatabasePermissionService(session)
-

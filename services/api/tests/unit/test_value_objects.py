@@ -74,7 +74,7 @@ class TestEmail:
         """Test email can be used in sets and as dict keys."""
         email1 = Email("test@example.com")
         email2 = Email("test@example.com")
-        
+
         email_set = {email1, email2}
         assert len(email_set) == 1
 
@@ -184,4 +184,3 @@ class TestHashedPassword:
         hashed = HashedPassword(bcrypt_hash)
         assert "[HASHED]" in str(hashed)
         assert bcrypt_hash not in str(hashed)
-

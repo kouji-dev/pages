@@ -16,7 +16,7 @@ from src.infrastructure.database.models.base import (
 
 class UserModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
     """User database model.
-    
+
     Stores user account information including authentication data.
     """
 
@@ -98,4 +98,3 @@ class UserModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
 
     def __repr__(self) -> str:
         return f"<User(id={self.id}, email={self.email}, name={self.name})>"
-

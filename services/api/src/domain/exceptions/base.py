@@ -50,4 +50,3 @@ class ConflictException(DomainException):
     def __init__(self, message: str, field: str | None = None) -> None:
         details = {"field": field} if field else {}
         super().__init__(message=message, details=details)
-

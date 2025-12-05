@@ -104,4 +104,3 @@ class RefreshTokenRequest(BaseModel):
 
 # Update forward references
 LoginResponse.model_rebuild()
-

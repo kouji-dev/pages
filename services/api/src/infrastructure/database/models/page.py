@@ -17,15 +17,13 @@ from src.infrastructure.database.models.base import (
 
 class SpaceModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
     """Space database model.
-    
+
     Spaces are containers for documentation pages within an organization.
     Similar to Confluence spaces.
     """
 
     __tablename__ = "spaces"
-    __table_args__ = (
-        UniqueConstraint("organization_id", "key", name="uq_space_key"),
-    )
+    __table_args__ = (UniqueConstraint("organization_id", "key", name="uq_space_key"),)
 
     organization_id: Mapped[UUID] = mapped_column(
         PGUUID(as_uuid=True),
@@ -69,7 +67,7 @@ class SpaceModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
 
 class PageModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
     """Page database model.
-    
+
     Pages are documentation entries within a space.
     Supports hierarchical structure via parent_id.
     """
@@ -82,7 +80,7 @@ class PageModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         nullable=False,
         index=True,
     )
-    
+
     # Hierarchy
     parent_id: Mapped[UUID | None] = mapped_column(
         PGUUID(as_uuid=True),
@@ -90,7 +88,7 @@ class PageModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         nullable=True,
         index=True,
     )
-    
+
     # Content
     title: Mapped[str] = mapped_column(
         String(255),
@@ -105,7 +103,7 @@ class PageModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         Text,
         nullable=True,
     )  # Rich text content (HTML, Markdown, or JSON)
-    
+
     # Authorship
     created_by: Mapped[UUID] = mapped_column(
         PGUUID(as_uuid=True),
@@ -117,7 +115,7 @@ class PageModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,
     )
-    
+
     # Position in tree
     position: Mapped[int] = mapped_column(
         default=0,
@@ -149,11 +147,10 @@ class PageModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
     attachments = relationship(
         "AttachmentModel",
         primaryjoin="and_(PageModel.id==foreign(AttachmentModel.entity_id), "
-                    "AttachmentModel.entity_type=='page')",
+        "AttachmentModel.entity_type=='page')",
         lazy="selectin",
         viewonly=True,
     )
 
     def __repr__(self) -> str:
         return f"<Page(id={self.id}, title={self.title[:30]}, space={self.space_id})>"
-
