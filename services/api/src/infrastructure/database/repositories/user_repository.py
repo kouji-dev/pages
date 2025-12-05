@@ -159,7 +159,7 @@ class SQLAlchemyUserRepository(UserRepository):
         result = await self._session.execute(
             select(func.count()).select_from(UserModel).where(UserModel.email == str(email))
         )
-        count = result.scalar_one()
+        count: int = result.scalar_one()
         return count > 0
 
     async def get_all(
@@ -205,7 +205,8 @@ class SQLAlchemyUserRepository(UserRepository):
             query = query.where(UserModel.deleted_at.is_(None))
 
         result = await self._session.execute(query)
-        return result.scalar_one()
+        count: int = result.scalar_one()
+        return count
 
     async def search(
         self,

@@ -52,7 +52,7 @@ class BcryptPasswordService(PasswordService):
             hashed_bytes = hashed_password.value.encode("utf-8")
 
             # Use bcrypt.checkpw for constant-time comparison
-            return bcrypt.checkpw(plain_bytes, hashed_bytes)
+            return bool(bcrypt.checkpw(plain_bytes, hashed_bytes))
         except (ValueError, TypeError):
             # Invalid hash format or encoding issue
             return False

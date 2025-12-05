@@ -101,6 +101,9 @@ module = [
     "passlib.*",
     "celery.*",
     "redis.*",
+    "starlette.*",
+    "pydantic_settings.*",
+    "bcrypt.*",
 ]
 ignore_missing_imports = true
 
