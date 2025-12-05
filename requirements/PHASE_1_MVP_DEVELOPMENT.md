@@ -895,7 +895,10 @@ This phase focuses on building the foundational features required for a function
   - [x] Invalidate all user sessions/tokens
   - [x] Prevent login after deactivation
 - [x] Update authentication logic to check deleted_at
-- [ ] Create user reactivation endpoint (admin only, optional) - deferred
+- [x] Create user reactivation endpoint (admin only, optional)
+  - [x] Endpoint POST /api/users/{user_id}/reactivate
+  - [x] Admin permission check (admin of at least one organization)
+  - [x] Reactivate user (clear deleted_at, set is_active=True)
 - [x] Write API tests
 
 **Deliverables**:
@@ -904,12 +907,15 @@ This phase focuses on building the foundational features required for a function
 - [x] Updated authentication logic
 - [x] API tests
 
-**Note**: ✅ **COMPLETED** - User deactivation system implemented:
+**Note**: ✅ **COMPLETED** - User deactivation and reactivation system implemented:
 - Use case: DeactivateUserUseCase (soft delete via User.deactivate() method)
+- Use case: ReactivateUserUseCase (admin only, reactivates via User.reactivate() method)
 - Endpoint: POST /api/users/me/deactivate (204 No Content)
+- Endpoint: POST /api/users/{user_id}/reactivate (204 No Content, admin only)
+- Admin permission check: requires admin of at least one organization
 - Automatic token invalidation via get_current_user checks (is_active, is_deleted)
 - Login prevention already implemented in LoginUserUseCase
-- Unit and integration tests (3 unit + 4 integration tests)
+- Unit and integration tests (3 unit + 4 integration tests for deactivation)
 
 ---
 

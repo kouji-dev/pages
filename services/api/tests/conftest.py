@@ -268,3 +268,60 @@ async def test_user(db_session) -> User:
     await db_session.flush()  # Flush to get ID, but don't commit (test will rollback)
 
     return test_user
+
+
+@pytest_asyncio.fixture
+async def admin_user(db_session) -> User:
+    """Create an admin user in the database with organization admin role."""
+    from src.infrastructure.database.repositories import SQLAlchemyUserRepository
+    from src.infrastructure.security import BcryptPasswordService
+    from src.infrastructure.database.models import OrganizationModel, OrganizationMemberModel
+
+    user_repo = SQLAlchemyUserRepository(db_session)
+    password_service = BcryptPasswordService()
+
+    email = Email("admin@example.com")
+    password = Password("AdminPassword123!")
+    hashed_password = password_service.hash(password)
+
+    admin_user = User.create(
+        email=email,
+        password_hash=hashed_password,
+        name="Admin User",
+    )
+
+    await user_repo.create(admin_user)
+    await db_session.flush()
+
+    # Create an organization and make user admin
+    org = OrganizationModel(
+        name="Test Organization",
+        slug="test-org",
+        settings=None,
+    )
+    db_session.add(org)
+    await db_session.flush()
+
+    org_member = OrganizationMemberModel(
+        organization_id=org.id,
+        user_id=admin_user.id,
+        role="admin",
+    )
+    db_session.add(org_member)
+    await db_session.flush()
+
+    return admin_user
+
+
+@pytest_asyncio.fixture
+async def auth_headers_admin(admin_user, token_service) -> dict:
+    """Get authentication headers for admin user."""
+    token = token_service.create_access_token(str(admin_user.id), admin_user.email.value)
+    return {"Authorization": f"Bearer {token}"}
+
+
+@pytest_asyncio.fixture
+async def auth_headers_regular(test_user, token_service) -> dict:
+    """Get authentication headers for regular user (non-admin)."""
+    token = token_service.create_access_token(str(test_user.id), test_user.email.value)
+    return {"Authorization": f"Bearer {token}"}
