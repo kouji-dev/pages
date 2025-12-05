@@ -1,5 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Button, Icon } from 'shared-ui';
+import { PublicNav } from '../components/public-nav';
+import { Footer } from '../components/footer';
 
 interface PricingTier {
   name: string;
@@ -12,11 +14,21 @@ interface PricingTier {
   popular?: boolean;
 }
 
+interface ComparisonRow {
+  feature: string;
+  free: string | boolean;
+  starter: string | boolean;
+  professional: string | boolean;
+  business: string | boolean;
+  enterprise: string | boolean;
+}
+
 @Component({
   selector: 'app-pricing-page',
-  imports: [Button, Icon],
+  imports: [Button, Icon, PublicNav, Footer],
   template: `
     <div class="pricing-page">
+      <app-public-nav />
       <!-- Header Section -->
       <section class="pricing-page_header">
         <div class="pricing-page_header-container">
@@ -97,56 +109,46 @@ interface PricingTier {
                   <tr>
                     <td class="pricing-page_table-feature">{{ row.feature }}</td>
                     <td class="pricing-page_table-value">
-                      @if (row.free !== false && row.free !== '') {
-                        @if (typeof row.free === 'string') {
-                          {{ row.free }}
-                        } @else {
-                          <lib-icon name="check" size="sm" [color]="'var(--color-success)'" />
-                        }
+                      @if (isStringValue(row.free)) {
+                        {{ row.free }}
+                      } @else if (row.free === true) {
+                        <lib-icon name="check" size="sm" [color]="'var(--color-success)'" />
                       } @else {
                         <lib-icon name="x" size="sm" [color]="'var(--color-text-tertiary)'" />
                       }
                     </td>
                     <td class="pricing-page_table-value">
-                      @if (row.starter !== false && row.starter !== '') {
-                        @if (typeof row.starter === 'string') {
-                          {{ row.starter }}
-                        } @else {
-                          <lib-icon name="check" size="sm" [color]="'var(--color-success)'" />
-                        }
+                      @if (isStringValue(row.starter)) {
+                        {{ row.starter }}
+                      } @else if (row.starter === true) {
+                        <lib-icon name="check" size="sm" [color]="'var(--color-success)'" />
                       } @else {
                         <lib-icon name="x" size="sm" [color]="'var(--color-text-tertiary)'" />
                       }
                     </td>
                     <td class="pricing-page_table-value">
-                      @if (row.professional !== false && row.professional !== '') {
-                        @if (typeof row.professional === 'string') {
-                          {{ row.professional }}
-                        } @else {
-                          <lib-icon name="check" size="sm" [color]="'var(--color-success)'" />
-                        }
+                      @if (isStringValue(row.professional)) {
+                        {{ row.professional }}
+                      } @else if (row.professional === true) {
+                        <lib-icon name="check" size="sm" [color]="'var(--color-success)'" />
                       } @else {
                         <lib-icon name="x" size="sm" [color]="'var(--color-text-tertiary)'" />
                       }
                     </td>
                     <td class="pricing-page_table-value">
-                      @if (row.business !== false && row.business !== '') {
-                        @if (typeof row.business === 'string') {
-                          {{ row.business }}
-                        } @else {
-                          <lib-icon name="check" size="sm" [color]="'var(--color-success)'" />
-                        }
+                      @if (isStringValue(row.business)) {
+                        {{ row.business }}
+                      } @else if (row.business === true) {
+                        <lib-icon name="check" size="sm" [color]="'var(--color-success)'" />
                       } @else {
                         <lib-icon name="x" size="sm" [color]="'var(--color-text-tertiary)'" />
                       }
                     </td>
                     <td class="pricing-page_table-value">
-                      @if (row.enterprise !== false && row.enterprise !== '') {
-                        @if (typeof row.enterprise === 'string') {
-                          {{ row.enterprise }}
-                        } @else {
-                          <lib-icon name="check" size="sm" [color]="'var(--color-success)'" />
-                        }
+                      @if (isStringValue(row.enterprise)) {
+                        {{ row.enterprise }}
+                      } @else if (row.enterprise === true) {
+                        <lib-icon name="check" size="sm" [color]="'var(--color-success)'" />
                       } @else {
                         <lib-icon name="x" size="sm" [color]="'var(--color-text-tertiary)'" />
                       }
@@ -191,6 +193,7 @@ interface PricingTier {
           </div>
         </div>
       </section>
+      <app-footer />
     </div>
   `,
   styles: [
@@ -266,7 +269,7 @@ interface PricingTier {
       }
 
       .pricing-page_grid {
-        @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4;
+        @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5;
         @apply gap-6 md:gap-8;
       }
 
@@ -637,7 +640,7 @@ export class PricingPage {
     },
   ];
 
-  readonly comparisonRows = [
+  readonly comparisonRows: ComparisonRow[] = [
     {
       feature: 'Users',
       free: 'Up to 10',
@@ -736,4 +739,8 @@ export class PricingPage {
         "We'll notify you when you approach your limits. You can upgrade your plan at any time to continue using Pages without interruption.",
     },
   ];
+
+  isStringValue(value: string | boolean): value is string {
+    return typeof value === 'string' && value !== '';
+  }
 }

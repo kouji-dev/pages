@@ -16,7 +16,11 @@ import { Button, Icon } from 'shared-ui';
         <!-- Desktop Navigation -->
         <div class="public-nav_desktop">
           <div class="public-nav_links">
-            <a routerLink="/" routerLinkActive="public-nav_link--active" class="public-nav_link"
+            <a
+              routerLink="/"
+              routerLinkActive="public-nav_link--active"
+              class="public-nav_link"
+              [routerLinkActiveOptions]="{ exact: true }"
               >Home</a
             >
             <a
@@ -30,6 +34,12 @@ import { Button, Icon } from 'shared-ui';
               routerLinkActive="public-nav_link--active"
               class="public-nav_link"
               >Pricing</a
+            >
+            <a
+              routerLink="/demo"
+              routerLinkActive="public-nav_link--active"
+              class="public-nav_link public-nav_link--demo"
+              >Demo</a
             >
           </div>
           <div class="public-nav_actions">
@@ -74,6 +84,13 @@ import { Button, Icon } from 'shared-ui';
               class="public-nav_mobile-link"
               (click)="closeMobileMenu()"
               >Pricing</a
+            >
+            <a
+              routerLink="/demo"
+              routerLinkActive="public-nav_mobile-link--active"
+              class="public-nav_mobile-link public-nav_mobile-link--demo"
+              (click)="closeMobileMenu()"
+              >Demo</a
             >
           </div>
           <div class="public-nav_mobile-actions">
@@ -168,6 +185,19 @@ import { Button, Icon } from 'shared-ui';
         width: 100%;
       }
 
+      .public-nav_link--demo {
+        color: var(--color-primary-500);
+        font-weight: 600;
+      }
+
+      .public-nav_link--demo:hover {
+        color: var(--color-primary-600);
+      }
+
+      .public-nav_link--demo::after {
+        background: var(--color-primary-500);
+      }
+
       .public-nav_actions {
         @apply flex items-center gap-3;
       }
@@ -209,6 +239,15 @@ import { Button, Icon } from 'shared-ui';
 
       .public-nav_mobile-link--active {
         color: var(--color-text-primary);
+      }
+
+      .public-nav_mobile-link--demo {
+        color: var(--color-primary-500);
+        font-weight: 600;
+      }
+
+      .public-nav_mobile-link--demo:hover {
+        color: var(--color-primary-600);
       }
 
       .public-nav_mobile-actions {

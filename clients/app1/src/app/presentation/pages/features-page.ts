@@ -1,5 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Button, Icon, IconName } from 'shared-ui';
+import { PublicNav } from '../components/public-nav';
+import { Footer } from '../components/footer';
 
 interface Feature {
   icon: IconName;
@@ -16,9 +18,10 @@ interface FeatureCategory {
 
 @Component({
   selector: 'app-features-page',
-  imports: [Button, Icon],
+  imports: [Button, Icon, PublicNav, Footer],
   template: `
     <div class="features-page">
+      <app-public-nav />
       <!-- Header Section -->
       <section class="features-page_header">
         <div class="features-page_header-container">
@@ -85,6 +88,7 @@ interface FeatureCategory {
           >
         </div>
       </section>
+      <app-footer />
     </div>
   `,
   styles: [
@@ -266,7 +270,7 @@ export class FeaturesPage {
       description: 'Powerful tools to organize, track, and manage your projects.',
       features: [
         {
-          icon: 'check-square',
+          icon: 'square-check',
           title: 'Issue Tracking',
           description: 'Create, assign, and track issues with custom workflows.',
           details: [
@@ -277,7 +281,7 @@ export class FeaturesPage {
           ],
         },
         {
-          icon: 'layout',
+          icon: 'layout-grid',
           title: 'Agile Boards',
           description: 'Scrum and Kanban boards for flexible project management.',
           details: [
@@ -299,7 +303,7 @@ export class FeaturesPage {
           ],
         },
         {
-          icon: 'bar-chart',
+          icon: 'trending-up',
           title: 'Reporting & Analytics',
           description: "Real-time insights into your project's progress.",
           details: [

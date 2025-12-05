@@ -1,4 +1,5 @@
 import { Component, signal, inject, ViewChild, TemplateRef, ViewContainerRef } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import {
   Button,
   Icon,
@@ -29,11 +30,18 @@ import {
     LoadingState,
     ErrorState,
     EmptyState,
+    RouterLink,
   ],
   template: `
     <div class="demo">
-      <h1 class="demo_title">Component Library Demo</h1>
-      <p class="demo_subtitle">Showcasing shared-ui components</p>
+      <div class="demo_header">
+        <a routerLink="/" class="demo_back-link">
+          <lib-icon name="arrow-left" size="sm" />
+          <span>Back to Home</span>
+        </a>
+        <h1 class="demo_title">Component Library Demo</h1>
+        <p class="demo_subtitle">Showcasing shared-ui components</p>
+      </div>
 
       <!-- Icon Component Showcase -->
       <section class="demo_section">
@@ -711,6 +719,24 @@ import {
       .demo {
         @apply max-w-7xl mx-auto;
         padding: 2rem;
+      }
+
+      .demo_header {
+        @apply mb-8;
+      }
+
+      .demo_back-link {
+        @apply inline-flex items-center gap-2;
+        @apply text-sm font-medium;
+        @apply mb-4;
+        color: var(--color-primary-500);
+        text-decoration: none;
+        @apply transition-colors;
+        @apply hover:opacity-80;
+      }
+
+      .demo_back-link:hover {
+        color: var(--color-primary-600);
       }
 
       .demo_title {
