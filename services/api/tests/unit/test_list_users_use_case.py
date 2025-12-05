@@ -1,6 +1,6 @@
 """Unit tests for list users use case."""
 
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
@@ -11,6 +11,11 @@ from src.domain.value_objects import Email
 
 class TestListUsersUseCase:
     """Tests for ListUsersUseCase."""
+
+    @pytest.fixture
+    def mock_session(self):
+        """Get mock database session."""
+        return MagicMock()
 
     @pytest.fixture
     def password_service(self):
@@ -38,14 +43,14 @@ class TestListUsersUseCase:
         return users
 
     @pytest.mark.asyncio
-    async def test_list_users_success(self, test_users) -> None:
+    async def test_list_users_success(self, test_users, mock_session) -> None:
         """Test successfully listing users with pagination."""
         # Setup
         user_repository = AsyncMock()
         user_repository.get_all.return_value = test_users[:3]
         user_repository.count.return_value = 5
 
-        use_case = ListUsersUseCase(user_repository)
+        use_case = ListUsersUseCase(user_repository, mock_session)
 
         # Execute
         result = await use_case.execute(page=1, limit=3)
@@ -59,14 +64,14 @@ class TestListUsersUseCase:
         user_repository.get_all.assert_called_once_with(skip=0, limit=3, include_deleted=False)
 
     @pytest.mark.asyncio
-    async def test_list_users_pagination(self, test_users) -> None:
+    async def test_list_users_pagination(self, test_users, mock_session) -> None:
         """Test pagination works correctly."""
         # Setup
         user_repository = AsyncMock()
         user_repository.get_all.return_value = test_users[2:4]
         user_repository.count.return_value = 5
 
-        use_case = ListUsersUseCase(user_repository)
+        use_case = ListUsersUseCase(user_repository, mock_session)
 
         # Execute - page 2
         result = await use_case.execute(page=2, limit=2)
@@ -79,13 +84,13 @@ class TestListUsersUseCase:
         user_repository.get_all.assert_called_once_with(skip=2, limit=2, include_deleted=False)
 
     @pytest.mark.asyncio
-    async def test_list_users_with_search(self, test_users) -> None:
+    async def test_list_users_with_search(self, test_users, mock_session) -> None:
         """Test listing users with search query."""
         # Setup
         user_repository = AsyncMock()
         user_repository.search.return_value = [test_users[0]]
 
-        use_case = ListUsersUseCase(user_repository)
+        use_case = ListUsersUseCase(user_repository, mock_session)
 
         # Mock the _count_search_results method
         use_case._count_search_results = AsyncMock(return_value=1)
@@ -99,36 +104,36 @@ class TestListUsersUseCase:
         user_repository.search.assert_called_once_with(query="User 0", skip=0, limit=20)
 
     @pytest.mark.asyncio
-    async def test_list_users_invalid_page(self, test_users) -> None:
+    async def test_list_users_invalid_page(self, test_users, mock_session) -> None:
         """Test that invalid page number raises error."""
         # Setup
         user_repository = AsyncMock()
-        use_case = ListUsersUseCase(user_repository)
+        use_case = ListUsersUseCase(user_repository, mock_session)
 
         # Execute & Assert
         with pytest.raises(ValueError, match="Page must be >= 1"):
             await use_case.execute(page=0, limit=20)
 
     @pytest.mark.asyncio
-    async def test_list_users_invalid_limit(self, test_users) -> None:
+    async def test_list_users_invalid_limit(self, test_users, mock_session) -> None:
         """Test that invalid limit raises error."""
         # Setup
         user_repository = AsyncMock()
-        use_case = ListUsersUseCase(user_repository)
+        use_case = ListUsersUseCase(user_repository, mock_session)
 
         # Execute & Assert
         with pytest.raises(ValueError, match="Limit must be >= 1"):
             await use_case.execute(page=1, limit=0)
 
     @pytest.mark.asyncio
-    async def test_list_users_limit_exceeds_max(self, test_users) -> None:
+    async def test_list_users_limit_exceeds_max(self, test_users, mock_session) -> None:
         """Test that limit exceeding max is capped."""
         # Setup
         user_repository = AsyncMock()
         user_repository.get_all.return_value = test_users
         user_repository.count.return_value = 5
 
-        use_case = ListUsersUseCase(user_repository)
+        use_case = ListUsersUseCase(user_repository, mock_session)
 
         # Execute with limit > MAX_LIMIT
         result = await use_case.execute(page=1, limit=200)
@@ -140,14 +145,14 @@ class TestListUsersUseCase:
         )
 
     @pytest.mark.asyncio
-    async def test_list_users_empty_result(self) -> None:
+    async def test_list_users_empty_result(self, mock_session) -> None:
         """Test listing users when no users exist."""
         # Setup
         user_repository = AsyncMock()
         user_repository.get_all.return_value = []
         user_repository.count.return_value = 0
 
-        use_case = ListUsersUseCase(user_repository)
+        use_case = ListUsersUseCase(user_repository, mock_session)
 
         # Execute
         result = await use_case.execute(page=1, limit=20)
