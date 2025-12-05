@@ -168,7 +168,47 @@ Repeat steps 4-6 until:
 
 ---
 
-### 8. Update Backlog
+### 8. Verify Code Compilation (Required Before Backlog Update)
+
+**IMPORTANT: Before updating the backlog, ensure the code compiles without errors:**
+
+1. **Run the build command to check for compilation errors:**
+
+   ```bash
+   # Frontend
+   pnpm exec ng build
+
+   # Backend
+   # Follow backend build process (e.g., Poetry build, Docker build)
+   ```
+
+2. **Check for compilation errors:**
+   - Look for TypeScript/compilation errors in the output
+   - Check for missing imports, type errors, syntax errors
+   - Verify all files are valid and compile correctly
+
+3. **Fix compilation issues (if any):**
+   - **Loop until all errors are fixed:**
+     - Identify the compilation error
+     - Fix the error in your code
+     - Run the build command again
+     - Repeat until build succeeds with no errors
+   - Do not proceed to backlog update until code compiles successfully
+   - All compilation errors must be resolved before moving forward
+
+4. **Verify build succeeds:**
+   - Build should complete without errors
+   - No TypeScript compilation errors
+   - All dependencies resolved correctly
+   - Output confirms successful build
+
+**Once the code compiles successfully, proceed to Step 9 (Update Backlog).**
+
+**Note**: This step ensures that we never commit code that doesn't compile. If you encounter compilation errors, fix them in a loop until the build is successful before updating the backlog and committing.
+
+---
+
+### 9. Update Backlog
 
 **IMPORTANT: Update the backlog BEFORE committing** so backlog changes are included in your commit:
 
@@ -209,7 +249,7 @@ Repeat steps 4-6 until:
 
 ---
 
-### 9. Stage and Commit Changes
+### 10. Stage Changes
 
 1. **Stage your changes (including backlog updates):**
 
@@ -222,16 +262,34 @@ Repeat steps 4-6 until:
 
    **Note**: The backlog file (`requirements/PHASE_1_MVP_DEVELOPMENT.md`) should be staged along with your code changes so backlog updates are committed together.
 
-2. **Request permission before committing:**
-   - **Ask for approval** from the team lead or project manager before committing
-   - Share a summary of what you're committing:
+---
+
+### 11. Request Permission to Commit
+
+**IMPORTANT: Always ask for permission before committing:**
+
+1. **Ask for approval** before committing:
+   - Present a summary of what you're committing:
      - List of changed files
      - Brief description of changes
-     - Confirm that tests pass and linting is clean
-   - Wait for approval before proceeding to commit
-   - If working solo, still document what you're committing for review
+     - Confirm that code compiles successfully (from Step 8)
+     - Confirm that tests pass
+     - Confirm that linting is clean
+   - Wait for explicit approval before proceeding to commit
+   - Do not commit until permission is granted
 
-3. **Write a concise commit message:**
+2. **If permission is granted**, proceed to Step 12 (Commit Changes)
+3. **If permission is denied**, address any feedback and repeat from Step 8 (Verify Code Compilation)
+
+**Note**: Even if working solo, it's good practice to document what you're committing for review and maintain the habit of requesting permission.
+
+---
+
+### 12. Commit Changes
+
+**Only proceed if permission was granted in Step 11:**
+
+1. **Write a concise commit message:**
 
    **Commit message format:**
 
@@ -264,21 +322,21 @@ Repeat steps 4-6 until:
    git commit -m "feat(frontend): implement base layout component"
    ```
 
-4. **Multiple commits per subtask are acceptable:**
+2. **Multiple commits per subtask are acceptable:**
    - You can commit after completing each subtask
    - This creates a clear history of progress
    - Example: Commit after writing tests, commit after implementing feature, commit after fixing bugs
    - **Note**: Each commit still requires permission as per step 2
 
-5. **Commit frequently (with permission):**
+3. **Commit frequently (with permission):**
    - Don't wait until everything is done
    - Make commits logical and self-contained
    - Each commit should represent a working state
-   - Remember to request permission for each commit
+   - **Remember**: Each commit still requires permission as per Step 11
 
 ---
 
-### 10. Push to Remote
+### 13. Push to Remote
 
 1. **Push your branch:**
 
@@ -299,10 +357,10 @@ Repeat steps 4-6 until:
 
 ---
 
-### 11. Repeat Workflow
+### 14. Repeat Workflow
 
 1. **If task is fully complete:**
-   - All subtasks should already be marked as done in the backlog (updated in step 8)
+   - All subtasks should already be marked as done in the backlog (updated in step 9)
    - Prepare for code review (if applicable)
    - Create pull request/merge request if working with a team
 
@@ -311,7 +369,11 @@ Repeat steps 4-6 until:
    - Select the next priority task
    - Start a new branch for the new task
 
-**Note**: Backlog updates should be done in step 8 (before committing) so they are included in your commit. This keeps the backlog and code changes synchronized in the same commit.
+**Note**:
+
+- Backlog updates should be done in step 9 (after ensuring code compiles) so they are included in your commit
+- This keeps the backlog and code changes synchronized in the same commit
+- Code compilation is verified in step 8 before updating the backlog
 
 ---
 
@@ -394,10 +456,32 @@ Repeat steps 4-6 until:
          │ Yes         │
          ▼             │
 ┌─────────────────┐   │
-│ Update Backlog  │   │
-│ (Before Commit) │   │
+│ Verify Compile  │   │
+│ (Loop Fix Errors)│   │
 └────────┬────────┘   │
          │             │
+         ▼             │
+┌─────────────────┐   │
+│ Update Backlog  │   │
+│ (After Compile) │   │
+└────────┬────────┘   │
+         │             │
+         ▼             │
+┌─────────────────┐   │
+│ Stage Changes   │   │
+└────────┬────────┘   │
+         │             │
+         ▼             │
+┌─────────────────┐   │
+│ Request Commit  │   │
+│   Permission    │   │
+└────────┬────────┘   │
+         │             │
+         ▼             │
+    ┌────┴────┐        │
+    │Approved?│───No───┐
+    └────┬────┘        │
+         │ Yes         │
          ▼             │
 ┌─────────────────┐   │
 │  Commit Changes │   │
@@ -443,24 +527,40 @@ pnpm exec prettier --write .
 # Step 5: Run tests
 pnpm exec ng test --watch=false
 
-# Step 7: Update backlog (BEFORE committing)
+# Step 7: Iterate until complete (if needed)
+
+# Step 8: Verify code compilation (REQUIRED)
+pnpm exec ng build
+# If there are compilation errors, fix them and run again
+# Loop until build succeeds:
+#   - Fix error
+#   - Run: pnpm exec ng build
+#   - Repeat until no errors
+
+# Step 9: Update backlog (AFTER code compiles)
 # Edit requirements/PHASE_1_MVP_DEVELOPMENT.md
 # Mark base layout subtasks as complete
 # Save the file
 
-# Step 8: Commit (can be multiple commits, backlog included)
+# Step 10: Stage changes
 git add .
 git add requirements/PHASE_1_MVP_DEVELOPMENT.md  # Backlog updates included
+
+# Step 11: Request permission to commit
+# Ask: "Can I commit these changes? Summary: ..."
+# Wait for approval before proceeding
+
+# Step 12: Commit (only if permission granted)
 git commit -m "test(layout): add tests for base layout component"
 git commit -m "feat(layout): implement base layout with header and sidebar"
 git commit -m "style(layout): apply BOM CSS methodology to layout styles"
 # Backlog updates should be in one of the commits above, or in a separate commit:
 git commit -m "docs(backlog): mark base layout component as complete"
 
-# Step 9: Push
+# Step 13: Push
 git push -u origin task/1.1.5-base-layout
 
-# Step 9: Repeat with next task
+# Step 14: Repeat with next task
 ```
 
 ---

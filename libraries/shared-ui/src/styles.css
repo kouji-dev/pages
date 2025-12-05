@@ -461,3 +461,17 @@ body {
   background-color: var(--color-bg-overlay);
   backdrop-filter: blur(4px);
 }
+
+/* ========================================
+ * Dropdown Panel Styling
+ * ======================================== */
+.lib-dropdown-panel {
+  @apply rounded-lg;
+  @apply shadow-lg;
+  @apply border;
+  background: var(--color-bg-primary);
+  border-color: var(--color-border-default);
+  padding: 0.25rem;
+  min-width: 12rem;
+  max-width: 20rem;
+}
