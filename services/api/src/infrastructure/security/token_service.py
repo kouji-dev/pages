@@ -84,7 +84,9 @@ class JWTTokenService(TokenService):
             AuthenticationException: If token is invalid or expired
         """
         try:
-            payload: dict[str, Any] = jwt.decode(token, self._secret_key, algorithms=[self._algorithm])
+            payload: dict[str, Any] = jwt.decode(
+                token, self._secret_key, algorithms=[self._algorithm]
+            )
             return payload
         except JWTError as e:
             raise AuthenticationException(f"Invalid token: {str(e)}") from e

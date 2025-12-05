@@ -1,6 +1,5 @@
 """User database model."""
 
-
 from sqlalchemy import Boolean, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 

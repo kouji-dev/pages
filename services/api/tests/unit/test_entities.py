@@ -1,6 +1,5 @@
 """Tests for domain entities."""
 
-
 import pytest
 
 from src.domain.entities import User

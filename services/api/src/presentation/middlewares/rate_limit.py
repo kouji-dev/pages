@@ -1,6 +1,5 @@
 """Rate limiting middleware using slowapi."""
 
-
 from fastapi import Request, Response
 from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
