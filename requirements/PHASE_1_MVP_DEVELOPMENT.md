@@ -1653,37 +1653,41 @@ This phase focuses on building the foundational features required for a function
 **Priority**: High  
 **Estimated Time**: 5-7 days  
 **Dependencies**: 1.3.2  
-**Assigned To**: HWIMDA1
+**Assigned To**: HWIMDA1  
+**Status**: ✅ Complete
 
 **Tasks**:
 
-- [ ] Create comment creation endpoint (POST /api/issues/:id/comments)
-  - [ ] Validate content (not empty)
-  - [ ] Create comment record
-  - [ ] Link to issue
-  - [ ] Send notifications to issue watchers (async)
-- [ ] Create comment retrieval endpoint (GET /api/comments/:id)
-- [ ] Create comment list endpoint (GET /api/issues/:id/comments)
-  - [ ] Order by created_at
-  - [ ] Include user details
-- [ ] Create comment update endpoint (PUT /api/comments/:id)
-  - [ ] Permission check (comment author only)
-  - [ ] Update content
-  - [ ] Mark as edited
-- [ ] Create comment deletion endpoint (DELETE /api/comments/:id)
-  - [ ] Permission check (comment author or project admin)
-  - [ ] Soft delete
-- [ ] Implement @mentions in comments
-  - [ ] Parse @mentions from content
-  - [ ] Create mention records
-  - [ ] Send notifications to mentioned users (async)
+- [x] Create comment creation endpoint (POST /api/v1/issues/:id/comments)
+  - [x] Validate content (not empty)
+  - [x] Create comment record
+  - [x] Link to issue
+  - [ ] Send notifications to issue watchers (async) - Deferred to 1.6.1
+- [x] Create comment retrieval endpoint (GET /api/v1/comments/:id)
+- [x] Create comment list endpoint (GET /api/v1/issues/:id/comments)
+  - [x] Order by created_at
+  - [x] Include user details
+  - [x] Pagination support
+- [x] Create comment update endpoint (PUT /api/v1/comments/:id)
+  - [x] Permission check (comment author only)
+  - [x] Update content
+  - [x] Mark as edited
+- [x] Create comment deletion endpoint (DELETE /api/v1/comments/:id)
+  - [x] Permission check (comment author or project admin)
+  - [x] Soft delete
+- [x] Implement @mentions in comments
+  - [x] Parse @mentions from content
+  - [x] Create mention records (notifications in database)
+  - [ ] Send notifications to mentioned users (async) - Deferred to 1.6.1
 - [ ] Implement comment reactions (optional for MVP, can defer)
-- [ ] Write comment API tests
+- [x] Write comment API tests
+  - [x] 14 unit tests
+  - [x] 8 integration tests
 
 **Deliverables**:
 
-- Comment CRUD APIs
-- @mention functionality
+- [x] Comment CRUD APIs
+- [x] @mention functionality (parsing + notification records)
 
 ---
 
