@@ -689,6 +689,63 @@ This phase focuses on building the foundational features required for a function
 
 ---
 
+#### 1.1.19 Features Page
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 1.1.6, 1.1.15  
+**Assigned To**: HWIMDA2  
+**Status**: ✅ Complete
+
+**Frontend Tasks**:
+
+- [x] Create features page route in `app.routes.ts` (public route)
+- [x] Create features page component (`features-page.component.ts`)
+  - [x] Page header with title and description
+  - [x] Detailed feature sections (reuse features-section component)
+  - [x] Feature comparison table or detailed cards
+  - [x] Screenshots/illustration placeholders
+  - [x] CTA section (Sign Up button)
+- [x] Apply BOM CSS methodology with Tailwind
+- [x] Ensure mobile responsiveness
+- [x] Write component tests
+
+**Deliverables**:
+
+- ✅ Features page route and component
+- ✅ Responsive design
+- ✅ Component tests
+
+---
+
+#### 1.1.20 Pricing Page
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 1.1.6, 1.1.15, 1.1.8  
+**Assigned To**: BATATA2
+
+**Frontend Tasks**:
+
+- [ ] Create pricing page route in `app.routes.ts` (public route)
+- [ ] Create pricing page component (`pricing-page.component.ts`)
+  - [ ] Page header with title and description
+  - [ ] Pricing tiers (Free, Professional, Business, Enterprise)
+  - [ ] Feature comparison table
+  - [ ] CTA buttons for each tier (Sign Up, Contact Sales)
+  - [ ] FAQ section (optional)
+- [ ] Apply BOM CSS methodology with Tailwind
+- [ ] Ensure mobile responsiveness
+- [ ] Write component tests
+
+**Deliverables**:
+
+- Pricing page route and component
+- Responsive design
+- Component tests
+
+---
+
 ## Phase 1.2: Core User & Organization Management (Weeks 3-5)
 
 ### Dependencies: 1.1.3, 1.1.4, 1.1.5, 1.1.6, 1.1.7, 1.1.8, 1.1.9, 1.1.10, 1.1.11, 1.1.12, 1.1.13, 1.1.14
