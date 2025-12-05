@@ -1696,35 +1696,38 @@ This phase focuses on building the foundational features required for a function
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
 **Dependencies**: 1.3.2, 1.1.4  
-**Assigned To**: BATATA1
+**Assigned To**: BATATA1  
+**Status**: ✅ Complete
 
 **Tasks**:
 
-- [ ] Set up file storage (S3 or local filesystem)
-- [ ] Create file upload endpoint (POST /api/attachments)
-  - [ ] Validate file type (whitelist)
-  - [ ] Validate file size (max 10MB for MVP)
-  - [ ] Generate unique filename
-  - [ ] Upload to storage
-  - [ ] Create attachment record
-  - [ ] Return attachment metadata
-- [ ] Create file download endpoint (GET /api/attachments/:id/download)
-  - [ ] Permission check
-  - [ ] Stream file from storage
-  - [ ] Set proper content-type headers
-- [ ] Create attachment list endpoint (GET /api/issues/:id/attachments)
-- [ ] Create attachment deletion endpoint (DELETE /api/attachments/:id)
-  - [ ] Permission check
-  - [ ] Delete from storage
-  - [ ] Delete database record
-- [ ] Implement image preview/thumbnail generation (for images)
-- [ ] Add virus scanning (optional, can use cloud service)
-- [ ] Write attachment API tests
+- [x] Set up file storage (local filesystem, ready for S3 migration)
+- [x] Create file upload endpoint (POST /api/v1/issues/:id/attachments)
+  - [x] Validate file type (whitelist)
+  - [x] Validate file size (max 10MB for MVP)
+  - [x] Generate unique filename
+  - [x] Upload to storage
+  - [x] Create attachment record
+  - [x] Return attachment metadata
+- [x] Create file download endpoint (GET /api/v1/attachments/:id/download)
+  - [x] Permission check
+  - [x] Stream file from storage
+  - [x] Set proper content-type headers
+- [x] Create attachment list endpoint (GET /api/v1/issues/:id/attachments)
+- [x] Create attachment deletion endpoint (DELETE /api/v1/attachments/:id)
+  - [x] Permission check (uploader or project admin)
+  - [x] Delete from storage
+  - [x] Delete database record
+- [ ] Implement image preview/thumbnail generation (for images) - Deferred (optional for MVP)
+- [ ] Add virus scanning (optional, can use cloud service) - Deferred (optional for MVP)
+- [x] Write attachment API tests
+  - [x] 10 unit tests
+  - [x] 7 integration tests
 
 **Deliverables**:
 
-- File upload/download system
-- Attachment management APIs
+- [x] File upload/download system
+- [x] Attachment management APIs
 
 ---
 
