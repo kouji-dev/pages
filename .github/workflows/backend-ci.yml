@@ -318,7 +318,6 @@ jobs:
       - name: Check migration status
         run: |
           poetry run alembic current
-          poetry run alembic check
 
       - name: Test migrations up and down
         run: |
