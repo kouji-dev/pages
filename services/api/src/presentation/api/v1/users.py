@@ -16,6 +16,7 @@ from src.application.dtos.user import (
     UserUpdateRequest,
 )
 from src.application.use_cases.avatar import DeleteAvatarUseCase, UploadAvatarUseCase
+from src.application.use_cases.deactivate_user import DeactivateUserUseCase
 from src.application.use_cases.list_users import ListUsersUseCase
 from src.application.use_cases.preferences import (
     GetUserPreferencesUseCase,
@@ -109,6 +110,13 @@ def get_list_users_use_case(
     return ListUsersUseCase(user_repository)
 
 
+def get_deactivate_user_use_case(
+    user_repository: Annotated[UserRepository, Depends(get_user_repository)],
+) -> DeactivateUserUseCase:
+    """Get deactivate user use case with dependencies."""
+    return DeactivateUserUseCase(user_repository)
+
+
 @router.get("", response_model=UserListResponse, status_code=status.HTTP_200_OK)
 async def list_users(
     page: Annotated[int, Query(ge=1, description="Page number (1-based)")] = 1,
@@ -192,6 +200,40 @@ async def update_current_user_profile(
         HTTPException: If validation fails or user not found
     """
     return await use_case.execute(str(current_user.id), request)
+
+
+@router.post(
+    "/me/deactivate",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def deactivate_current_user(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[
+        DeactivateUserUseCase, Depends(get_deactivate_user_use_case)
+    ],
+) -> None:
+    """Deactivate current user account.
+
+    Soft deletes the user by setting deleted_at timestamp and is_active=False.
+    This will automatically invalidate all existing JWT tokens for this user
+    since authentication checks verify is_active and is_deleted status.
+
+    After deactivation, the user will not be able to:
+    - Login with their credentials
+    - Use any existing access or refresh tokens
+    - Access any protected endpoints
+
+    Args:
+        current_user: Current authenticated user (from dependency)
+        use_case: Deactivate user use case
+
+    Returns:
+        No content (204) on success
+
+    Raises:
+        HTTPException: If user not found (should not happen if authenticated)
+    """
+    await use_case.execute(str(current_user.id))
 
 
 @router.put(
@@ -377,4 +419,38 @@ async def update_current_user_preferences(
         HTTPException: If validation fails or user not found
     """
     return await use_case.execute(str(current_user.id), request)
+
+
+@router.post(
+    "/me/deactivate",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def deactivate_current_user(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[
+        DeactivateUserUseCase, Depends(get_deactivate_user_use_case)
+    ],
+) -> None:
+    """Deactivate current user account.
+
+    Soft deletes the user by setting deleted_at timestamp and is_active=False.
+    This will automatically invalidate all existing JWT tokens for this user
+    since authentication checks verify is_active and is_deleted status.
+
+    After deactivation, the user will not be able to:
+    - Login with their credentials
+    - Use any existing access or refresh tokens
+    - Access any protected endpoints
+
+    Args:
+        current_user: Current authenticated user (from dependency)
+        use_case: Deactivate user use case
+
+    Returns:
+        No content (204) on success
+
+    Raises:
+        HTTPException: If user not found (should not happen if authenticated)
+    """
+    await use_case.execute(str(current_user.id))
 
