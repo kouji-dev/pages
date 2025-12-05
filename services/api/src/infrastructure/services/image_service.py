@@ -102,12 +102,12 @@ class ImageProcessingService:
         """
         try:
             # Open original image
-            original_image = Image.open(io.BytesIO(file_content))
+            original_image: Image.Image = Image.open(io.BytesIO(file_content))
 
             # Convert RGBA to RGB if necessary (for JPEG)
             if output_format == "JPEG" and original_image.mode in ("RGBA", "LA", "P"):
                 # Create white background
-                background = Image.new("RGB", original_image.size, (255, 255, 255))
+                background: Image.Image = Image.new("RGB", original_image.size, (255, 255, 255))
                 if original_image.mode == "P":
                     original_image = original_image.convert("RGBA")
                 background.paste(

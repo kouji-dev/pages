@@ -1,12 +1,18 @@
 """User list use case."""
 
 import math
+from typing import cast
 from uuid import UUID
 
 import structlog
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dtos.user import UserListResponse, UserResponse
+from src.domain.entities import User
 from src.domain.repositories import UserRepository
+from src.infrastructure.database.repositories.user_repository import (
+    SQLAlchemyUserRepository,
+)
 
 logger = structlog.get_logger()
 
@@ -17,13 +23,17 @@ class ListUsersUseCase:
     DEFAULT_LIMIT = 20
     MAX_LIMIT = 100
 
-    def __init__(self, user_repository: UserRepository) -> None:
+    def __init__(
+        self, user_repository: UserRepository, session: AsyncSession
+    ) -> None:
         """Initialize use case with dependencies.
 
         Args:
             user_repository: User repository for data access
+            session: Database session for custom queries
         """
         self._user_repository = user_repository
+        self._session = session
 
     async def execute(
         self,
@@ -118,7 +128,7 @@ class ListUsersUseCase:
         organization_id: UUID,
         skip: int = 0,
         limit: int = 20,
-    ) -> list:
+    ) -> list[User]:
         """Get users by organization membership.
 
         Args:
@@ -134,10 +144,6 @@ class ListUsersUseCase:
 
         from src.infrastructure.database.models import OrganizationMemberModel, UserModel
 
-        # Access the session from repository (not ideal, but needed for custom query)
-        # Better approach would be to add this method to the repository interface
-        session = self._user_repository._session
-
         stmt = (
             select(UserModel)
             .join(OrganizationMemberModel, UserModel.id == OrganizationMemberModel.user_id)
@@ -151,10 +157,14 @@ class ListUsersUseCase:
             .order_by(UserModel.name)
         )
 
-        result = await session.execute(stmt)
+        result = await self._session.execute(stmt)
         models = result.scalars().all()
 
-        return [self._user_repository._to_entity(model) for model in models]
+        # Convert models to entities using repository's conversion method
+        # Type ignore because we know it's SQLAlchemyUserRepository in practice
+        # and it has the _to_entity method
+        repo = cast(SQLAlchemyUserRepository, self._user_repository)
+        return [repo._to_entity(model) for model in models]  # type: ignore[attr-defined]
 
     async def _count_users_by_organization(self, organization_id: UUID) -> int:
         """Count users in organization.
@@ -169,8 +179,6 @@ class ListUsersUseCase:
 
         from src.infrastructure.database.models import OrganizationMemberModel, UserModel
 
-        session = self._user_repository._session
-
         stmt = (
             select(func.count())
             .select_from(UserModel)
@@ -181,7 +189,7 @@ class ListUsersUseCase:
             )
         )
 
-        result = await session.execute(stmt)
+        result = await self._session.execute(stmt)
         count: int = result.scalar_one()
         return count
 
@@ -198,7 +206,6 @@ class ListUsersUseCase:
 
         from src.infrastructure.database.models import UserModel
 
-        session = self._user_repository._session
         search_pattern = f"%{query}%"
 
         stmt = (
@@ -213,6 +220,6 @@ class ListUsersUseCase:
             )
         )
 
-        result = await session.execute(stmt)
+        result = await self._session.execute(stmt)
         count: int = result.scalar_one()
         return count

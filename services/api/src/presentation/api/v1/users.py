@@ -3,6 +3,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, File, Query, UploadFile, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dtos.preferences import (
     UserPreferencesResponse,
@@ -33,6 +34,7 @@ from src.domain.entities import User
 from src.domain.repositories import UserRepository
 from src.domain.services import PasswordService, PermissionService, StorageService
 from src.infrastructure.config import get_settings
+from src.infrastructure.database import get_session
 from src.presentation.dependencies.auth import get_current_active_user
 from src.presentation.dependencies.services import (
     get_password_service,
@@ -107,9 +109,10 @@ def get_update_user_preferences_use_case(
 
 def get_list_users_use_case(
     user_repository: Annotated[UserRepository, Depends(get_user_repository)],
+    session: Annotated[AsyncSession, Depends(get_session)],
 ) -> ListUsersUseCase:
     """Get list users use case with dependencies."""
-    return ListUsersUseCase(user_repository)
+    return ListUsersUseCase(user_repository, session)
 
 
 def get_deactivate_user_use_case(

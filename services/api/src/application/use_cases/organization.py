@@ -4,6 +4,7 @@ from math import ceil
 from uuid import UUID
 
 import structlog
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dtos.organization import (
     CreateOrganizationRequest,
@@ -26,7 +27,7 @@ class CreateOrganizationUseCase:
         self,
         organization_repository: OrganizationRepository,
         user_repository: UserRepository,
-        session,  # AsyncSession from SQLAlchemy
+        session: AsyncSession,
     ) -> None:
         """Initialize use case with dependencies.
 
@@ -116,7 +117,7 @@ class GetOrganizationUseCase:
     def __init__(
         self,
         organization_repository: OrganizationRepository,
-        session,  # AsyncSession for counting members
+        session: AsyncSession,
     ) -> None:
         """Initialize use case with dependencies.
 
@@ -178,7 +179,7 @@ class ListOrganizationsUseCase:
     def __init__(
         self,
         organization_repository: OrganizationRepository,
-        session,  # AsyncSession for counting members
+        session: AsyncSession,
     ) -> None:
         """Initialize use case with dependencies.
 
@@ -281,7 +282,7 @@ class UpdateOrganizationUseCase:
     def __init__(
         self,
         organization_repository: OrganizationRepository,
-        session,  # AsyncSession for counting members
+        session: AsyncSession,
     ) -> None:
         """Initialize use case with dependencies.
 
