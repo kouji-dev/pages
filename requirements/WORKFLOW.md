@@ -170,13 +170,14 @@ Repeat steps 4-6 until:
 
 ### 8. Update Backlog
 
-**Before committing**, manually update the backlog to reflect your progress:
+**IMPORTANT: Update the backlog BEFORE committing** so backlog changes are included in your commit:
 
 1. **Open the backlog file**: `requirements/PHASE_1_MVP_DEVELOPMENT.md`
 2. **Find your task**: Locate the task section matching your current work (e.g., `#### 1.1.12 Loading Spinner Component`)
 3. **Mark completed subtasks**: Change `- [ ]` to `- [x]` for completed subtasks
 4. **Mark partially completed tasks**: Use `- [-]` for tasks that are partially done
-5. **Add notes if needed**: Add any relevant notes about progress or blockers
+5. **Update task status**: If task is complete, add `**Status**: ✅ Complete` to the task header
+6. **Add notes if needed**: Add any relevant notes about progress or blockers
 
 **Example:**
 
@@ -196,28 +197,30 @@ Repeat steps 4-6 until:
 - [ ] Write component tests  # Still in progress
 - [x] Export from `shared-ui` public API
 
-# Stage the updated backlog
-git add requirements/PHASE_1_MVP_DEVELOPMENT.md
+# Save the file - it will be staged with your code changes in the next step
 ```
 
 **Best Practices:**
 
-- Update the backlog **before each commit** to keep it current
+- **Always update backlog before committing** - this ensures backlog changes are part of your commit
 - Be accurate with your progress - don't mark tasks as complete until they're actually done
 - Use `- [-]` for partially completed tasks to indicate progress
-- Commit backlog updates along with your code changes in the same commit
+- Backlog updates should be staged and committed along with your code changes in the same commit
 
 ---
 
-### 9. Commit Changes
+### 9. Stage and Commit Changes
 
-1. **Stage your changes:**
+1. **Stage your changes (including backlog updates):**
 
    ```bash
    git add .
    # Or selectively:
    git add <specific-files>
+   git add requirements/PHASE_1_MVP_DEVELOPMENT.md  # Ensure backlog is included
    ```
+
+   **Note**: The backlog file (`requirements/PHASE_1_MVP_DEVELOPMENT.md`) should be staged along with your code changes so backlog updates are committed together.
 
 2. **Request permission before committing:**
    - **Ask for approval** from the team lead or project manager before committing
@@ -296,28 +299,19 @@ git add requirements/PHASE_1_MVP_DEVELOPMENT.md
 
 ---
 
-### 11. Update Backlog and Repeat
+### 11. Repeat Workflow
 
-1. **Update task status in backlog** (see step 8 for details):
-   - Mark completed subtasks with `[x]`
-   - Mark partially completed tasks with `[-]`
-   - Add notes about progress if needed
-   - Commit backlog updates along with your code changes, or in a separate commit:
-     ```bash
-     git add requirements/PHASE_1_MVP_DEVELOPMENT.md
-     git commit -m "docs(backlog): update task 1.1.12 status"
-     git push
-     ```
-
-2. **If task is fully complete:**
-   - Mark all subtasks as done
+1. **If task is fully complete:**
+   - All subtasks should already be marked as done in the backlog (updated in step 8)
    - Prepare for code review (if applicable)
    - Create pull request/merge request if working with a team
 
-3. **Repeat the workflow:**
+2. **Repeat the workflow:**
    - Return to step 1 (Find and Select a Task)
    - Select the next priority task
    - Start a new branch for the new task
+
+**Note**: Backlog updates should be done in step 8 (before committing) so they are included in your commit. This keeps the backlog and code changes synchronized in the same commit.
 
 ---
 
@@ -400,6 +394,12 @@ git add requirements/PHASE_1_MVP_DEVELOPMENT.md
          │ Yes         │
          ▼             │
 ┌─────────────────┐   │
+│ Update Backlog  │   │
+│ (Before Commit) │   │
+└────────┬────────┘   │
+         │             │
+         ▼             │
+┌─────────────────┐   │
 │  Commit Changes │   │
 │  (Concise MSG)  │   │
 └────────┬────────┘   │
@@ -407,11 +407,6 @@ git add requirements/PHASE_1_MVP_DEVELOPMENT.md
          ▼             │
 ┌─────────────────┐   │
 │  Push to Remote │   │
-└────────┬────────┘   │
-         │             │
-         ▼             │
-┌─────────────────┐   │
-│ Update Backlog  │   │
 └────────┬────────┘   │
          │             │
          ▼             │
@@ -448,21 +443,22 @@ pnpm exec prettier --write .
 # Step 5: Run tests
 pnpm exec ng test --watch=false
 
-# Step 6: Commit (can be multiple commits)
+# Step 7: Update backlog (BEFORE committing)
+# Edit requirements/PHASE_1_MVP_DEVELOPMENT.md
+# Mark base layout subtasks as complete
+# Save the file
+
+# Step 8: Commit (can be multiple commits, backlog included)
 git add .
+git add requirements/PHASE_1_MVP_DEVELOPMENT.md  # Backlog updates included
 git commit -m "test(layout): add tests for base layout component"
 git commit -m "feat(layout): implement base layout with header and sidebar"
 git commit -m "style(layout): apply BOM CSS methodology to layout styles"
-
-# Step 7: Push
-git push -u origin task/1.1.5-base-layout
-
-# Step 8: Update backlog
-# Edit requirements/PHASE_1_MVP_DEVELOPMENT.md
-# Mark base layout subtasks as complete
-git add requirements/PHASE_1_MVP_DEVELOPMENT.md
+# Backlog updates should be in one of the commits above, or in a separate commit:
 git commit -m "docs(backlog): mark base layout component as complete"
-git push
+
+# Step 9: Push
+git push -u origin task/1.1.5-base-layout
 
 # Step 9: Repeat with next task
 ```
