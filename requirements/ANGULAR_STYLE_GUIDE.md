@@ -202,6 +202,36 @@ handleSubmit(): void {}
 - `lib-card`
 - `lib-button`
 
+### Component Tags (Template Syntax)
+
+- **Self-closing tags**: Use self-closing syntax (`/>`) for Angular components with no children/transcluded content
+- **Full tags**: Use full opening/closing tags (`></component>`) only when the component has projected content (ng-content)
+
+**Examples**:
+
+```html
+<!-- ✅ Self-closing (no children) -->
+<lib-spinner color="white" size="md" />
+<lib-icon name="home" size="sm" />
+<lib-button [loading]="true">Loading</lib-button>
+
+<!-- ✅ Full tags (has projected content) -->
+<lib-card>
+  <p>Card content</p>
+</lib-card>
+
+<lib-modal>
+  <lib-modal-header>Title</lib-modal-header>
+  <lib-modal-content>Content</lib-modal-content>
+</lib-modal>
+
+<!-- ❌ Don't use full tags for components without children -->
+<lib-spinner color="white"></lib-spinner>
+<lib-icon name="home"></lib-icon>
+```
+
+**Note**: This applies only to Angular components, not HTML elements. HTML elements should always use full tags or valid self-closing syntax per HTML5 spec.
+
 ### CSS Classes (BOM Methodology)
 
 - **BOM naming**: `block`, `block_object`, `block--modifier`, `block_object--modifier`
@@ -259,7 +289,9 @@ export class FeatureComponent {}
 - ✅ `signal()` for reactive state
 - ✅ `computed()` for derived state
 - ✅ `effect()` for side effects
+- ✅ `afterRenderEffect()` for DOM manipulation after render (instead of `ngOnInit`)
 - ✅ `inject()` instead of constructor injection
+- ✅ `DestroyRef` instead of `OnDestroy` interface
 - ✅ `httpResource()` for HTTP requests
 - ✅ `resource()` for async resources
 - ✅ New template blocks: `@if`, `@for`, `@switch`, `@defer`
@@ -286,13 +318,27 @@ export class Card {
   // Computed
   displayTitle = computed(() => this.title().toUpperCase());
 
-  // Inject (not constructor)
+  // Inject dependencies (not constructor injection)
   private logger = inject(LoggerService);
+  private destroyRef = inject(DestroyRef);
 
-  // Effects
+  // Use afterRenderEffect for DOM manipulation (instead of ngOnInit)
+  // Runs after each render cycle - use for DOM access and manipulation
+  private readonly initializeDOM = afterRenderEffect(() => {
+    // DOM manipulation code here - runs after render
+    // This is better than ngOnInit for DOM access
+    // Can access DOM elements safely here
+  });
+
+  // Effects for reactive side effects
   constructor() {
     effect(() => {
       console.log('Title changed:', this.title());
+    });
+
+    // Register cleanup using DestroyRef
+    this.destroyRef.onDestroy(() => {
+      // Cleanup code here (e.g., unsubscribe, remove event listeners)
     });
   }
 }
@@ -358,15 +404,25 @@ shared-ui/src/lib/
 4. **Public inputs/outputs** (using `input()`, `output()`, `model()`)
 5. **Signals and computed** (reactive state)
 6. **Private properties** (using `inject()` or signals)
-7. **Constructor** (if needed)
-8. **Public methods**
-9. **Private methods**
-10. **Lifecycle hooks** (if needed)
+7. **Render hooks** (if needed) - `afterRenderEffect()` as class instance variables
+8. **Effects** (if needed) - `effect()` as class instance variables for reactive side effects
+9. **Constructor** (if needed) - only for `DestroyRef.onDestroy()` cleanup registration
+10. **Public methods**
+11. **Private methods**
 
 **Example**:
 
 ```typescript
-import { Component, signal, input, computed, inject } from '@angular/core';
+import {
+  Component,
+  signal,
+  input,
+  computed,
+  inject,
+  afterRenderEffect,
+  effect,
+  DestroyRef,
+} from '@angular/core';
 
 @Component({
   selector: 'app-feature',
@@ -506,6 +562,7 @@ describe('Feature', () => {
 ❌ Use `@Input()` or `@Output()` decorators (use `input()`, `output()`)  
 ❌ Use NgModules (use standalone components)  
 ❌ Use constructor injection (use `inject()`)  
+❌ Use `OnDestroy` interface (use `DestroyRef.onDestroy()` instead)  
 ❌ Use prefixes like `I` for interfaces  
 ❌ Mix naming conventions  
 ❌ Use unclear or abbreviated names

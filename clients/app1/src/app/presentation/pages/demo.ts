@@ -290,42 +290,133 @@ import {
         </div>
       </section>
 
-      <!-- Spinner Component Showcase -->
+      <!-- Spinner Directive Showcase -->
       <section class="demo_section">
-        <h2 class="demo_section-title">Loading Spinner Component</h2>
+        <h2 class="demo_section-title">Loading Spinner Directive</h2>
 
         <div class="demo_grid">
           <div class="demo_item">
-            <h3 class="demo_item-title">Sizes</h3>
+            <h3 class="demo_item-title">Basic Usage</h3>
             <div class="demo_item-content">
-              <lib-spinner size="sm"></lib-spinner>
-              <lib-spinner size="md"></lib-spinner>
-              <lib-spinner size="lg"></lib-spinner>
-            </div>
-          </div>
-
-          <div class="demo_item">
-            <h3 class="demo_item-title">Colors</h3>
-            <div class="demo_item-content">
-              <lib-spinner color="default"></lib-spinner>
-              <lib-spinner color="primary"></lib-spinner>
-              <lib-spinner color="secondary"></lib-spinner>
               <div
-                style="background: #000; padding: 0.5rem; border-radius: 0.375rem; display: inline-flex; align-items: center;"
+                *spinner="loadingBasic(); message: 'Loading...'"
+                style="position: relative; padding: 2rem; border: 1px solid var(--color-border-default); border-radius: 0.5rem; min-height: 150px;"
               >
-                <lib-spinner color="white"></lib-spinner>
+                <p>This content is wrapped with the spinner directive.</p>
+                <p>When loading is true, a backdrop and spinner will appear.</p>
               </div>
+              <lib-button (click)="loadingBasic.set(!loadingBasic())" style="margin-top: 1rem;">
+                {{ loadingBasic() ? 'Stop Loading' : 'Start Loading' }}
+              </lib-button>
             </div>
           </div>
 
           <div class="demo_item">
-            <h3 class="demo_item-title">In Context</h3>
+            <h3 class="demo_item-title">Different Sizes</h3>
             <div class="demo_item-content">
-              <lib-button [loading]="true">Loading Button</lib-button>
-              <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <lib-spinner size="sm"></lib-spinner>
-                <span>Loading...</span>
+              <div
+                *spinner="loadingSmall(); size: 'sm'; message: 'Loading (small)...'"
+                style="position: relative; padding: 2rem; border: 1px solid var(--color-border-default); border-radius: 0.5rem; min-height: 150px;"
+              >
+                <p>Small spinner (sm)</p>
               </div>
+              <lib-button (click)="loadingSmall.set(!loadingSmall())" style="margin-top: 1rem;">
+                Toggle Small
+              </lib-button>
+
+              <div
+                *spinner="loadingMedium(); size: 'md'; message: 'Loading (medium)...'"
+                style="position: relative; padding: 2rem; border: 1px solid var(--color-border-default); border-radius: 0.5rem; min-height: 150px; margin-top: 1rem;"
+              >
+                <p>Medium spinner (md)</p>
+              </div>
+              <lib-button (click)="loadingMedium.set(!loadingMedium())" style="margin-top: 1rem;">
+                Toggle Medium
+              </lib-button>
+
+              <div
+                *spinner="loadingLarge(); size: 'lg'; message: 'Loading (large)...'"
+                style="position: relative; padding: 2rem; border: 1px solid var(--color-border-default); border-radius: 0.5rem; min-height: 150px; margin-top: 1rem;"
+              >
+                <p>Large spinner (lg)</p>
+              </div>
+              <lib-button (click)="loadingLarge.set(!loadingLarge())" style="margin-top: 1rem;">
+                Toggle Large
+              </lib-button>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">Different Colors</h3>
+            <div class="demo_item-content">
+              <div
+                *spinner="
+                  loadingDefault();
+                  color: 'default';
+                  message: 'Loading with default color...'
+                "
+                style="position: relative; padding: 2rem; border: 1px solid var(--color-border-default); border-radius: 0.5rem; min-height: 150px;"
+              >
+                <p>Default color spinner</p>
+              </div>
+              <lib-button (click)="loadingDefault.set(!loadingDefault())" style="margin-top: 1rem;">
+                Toggle Default
+              </lib-button>
+
+              <div
+                *spinner="
+                  loadingPrimary();
+                  color: 'primary';
+                  message: 'Loading with primary color...'
+                "
+                style="position: relative; padding: 2rem; border: 1px solid var(--color-border-default); border-radius: 0.5rem; min-height: 150px; margin-top: 1rem;"
+              >
+                <p>Primary color spinner</p>
+              </div>
+              <lib-button (click)="loadingPrimary.set(!loadingPrimary())" style="margin-top: 1rem;">
+                Toggle Primary
+              </lib-button>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">With Message</h3>
+            <div class="demo_item-content">
+              <div
+                *spinner="loadingWithMessage(); message: 'Loading data...'"
+                style="position: relative; padding: 2rem; border: 1px solid var(--color-border-default); border-radius: 0.5rem; min-height: 150px;"
+              >
+                <p>This example shows a spinner with a custom message.</p>
+                <p>The message appears below the spinner.</p>
+              </div>
+              <lib-button
+                (click)="loadingWithMessage.set(!loadingWithMessage())"
+                style="margin-top: 1rem;"
+              >
+                {{ loadingWithMessage() ? 'Stop Loading' : 'Start Loading' }}
+              </lib-button>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">Card with Spinner</h3>
+            <div class="demo_item-content">
+              <div
+                *spinner="
+                  loadingCard();
+                  color: 'primary';
+                  size: 'lg';
+                  message: 'Loading card content...'
+                "
+                style="position: relative; padding: 2rem; background: var(--color-bg-secondary); border-radius: 0.5rem; min-height: 200px;"
+              >
+                <h4 style="margin-top: 0;">Card Title</h4>
+                <p>This is a card component that can show a loading state.</p>
+                <p>When loading, the entire card is covered with a backdrop.</p>
+              </div>
+              <lib-button (click)="loadingCard.set(!loadingCard())" style="margin-top: 1rem;">
+                {{ loadingCard() ? 'Hide Spinner' : 'Show Spinner' }}
+              </lib-button>
             </div>
           </div>
         </div>
@@ -489,6 +580,16 @@ export class Demo {
   readonly modal = inject(Modal);
   readonly viewContainerRef = inject(ViewContainerRef);
   readonly loadingButton = signal(false);
+
+  // Spinner directive demo states
+  readonly loadingBasic = signal(false);
+  readonly loadingSmall = signal(false);
+  readonly loadingMedium = signal(false);
+  readonly loadingLarge = signal(false);
+  readonly loadingDefault = signal(false);
+  readonly loadingPrimary = signal(false);
+  readonly loadingWithMessage = signal(false);
+  readonly loadingCard = signal(false);
 
   // Input demo values
   readonly inputValue = signal('');

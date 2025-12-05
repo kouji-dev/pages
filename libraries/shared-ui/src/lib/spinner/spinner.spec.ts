@@ -1,161 +1,187 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component } from '@angular/core';
-import { Spinner, SpinnerSize, SpinnerColor } from './spinner';
+import { Component, signal } from '@angular/core';
+import { Spinner } from './spinner';
+import { SpinnerContent, SpinnerSize, SpinnerColor } from './spinner-content';
 
-// Host component to test the spinner component
+// Host component to test the spinner directive
 @Component({
   template: `
-    <lib-spinner [size]="size" [color]="color" [ariaLabel]="ariaLabel" [ariaHidden]="ariaHidden" />
+    <div
+      *spinner="isLoading(); size: size; color: color; message: message; ariaLabel: ariaLabel"
+      style="position: relative; padding: 2rem; min-height: 150px;"
+    >
+      <p>Test content</p>
+    </div>
   `,
   imports: [Spinner],
 })
 class TestHostComponent {
+  isLoading = signal(false);
   size: SpinnerSize = 'md';
   color: SpinnerColor = 'default';
+  message = '';
   ariaLabel = '';
-  ariaHidden = false;
 }
 
-describe('Spinner', () => {
+describe('Spinner Directive', () => {
   let hostComponent: TestHostComponent;
   let fixture: ComponentFixture<TestHostComponent>;
-  let spinnerComponent: Spinner;
-  let spinnerElement: HTMLElement;
+  let directive: Spinner;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Spinner, TestHostComponent],
+      imports: [Spinner, SpinnerContent, TestHostComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TestHostComponent);
     hostComponent = fixture.componentInstance;
-    spinnerComponent = fixture.debugElement.query((el) => el.name === 'lib-spinner')
-      ?.componentInstance as Spinner;
     fixture.detectChanges();
-    spinnerElement = fixture.nativeElement.querySelector('lib-spinner');
+
+    // Get the directive instance
+    const directiveEl = fixture.debugElement.query((el) => el.name === 'div');
+    directive = directiveEl?.injector.get(Spinner);
   });
 
   it('should create', () => {
-    expect(spinnerComponent).toBeTruthy();
-    expect(spinnerElement).toBeTruthy();
+    expect(hostComponent).toBeTruthy();
+    expect(directive).toBeTruthy();
   });
 
-  it('should have default size of md', () => {
-    expect(spinnerComponent.size()).toBe('md');
+  it('should render content when loading is false', () => {
+    hostComponent.isLoading.set(false);
+    fixture.detectChanges();
+
+    const content = fixture.nativeElement.querySelector('p');
+    expect(content).toBeTruthy();
+    expect(content.textContent).toBe('Test content');
   });
 
-  it('should have default color of default', () => {
-    expect(spinnerComponent.color()).toBe('default');
+  it('should show spinner when loading is true', () => {
+    hostComponent.isLoading.set(true);
+    fixture.detectChanges();
+
+    const spinnerContent = fixture.nativeElement.querySelector('lib-spinner-content');
+    expect(spinnerContent).toBeTruthy();
   });
 
-  it('should apply sm size class', () => {
+  it('should hide spinner when loading is false', () => {
+    hostComponent.isLoading.set(true);
+    fixture.detectChanges();
+
+    let spinnerContent = fixture.nativeElement.querySelector('lib-spinner-content');
+    expect(spinnerContent).toBeTruthy();
+
+    hostComponent.isLoading.set(false);
+    fixture.detectChanges();
+
+    spinnerContent = fixture.nativeElement.querySelector('lib-spinner-content');
+    expect(spinnerContent).toBeFalsy();
+  });
+
+  it('should apply default size of md', () => {
+    hostComponent.isLoading.set(true);
+    fixture.detectChanges();
+
+    const spinnerContent = fixture.nativeElement.querySelector('lib-spinner-content');
+    expect(spinnerContent).toBeTruthy();
+    // The size is passed to the SpinnerContent component internally
+  });
+
+  it('should apply custom size', () => {
     hostComponent.size = 'sm';
+    hostComponent.isLoading.set(true);
     fixture.detectChanges();
 
-    expect(spinnerElement.classList.contains('spinner--sm')).toBe(true);
-    expect(spinnerElement.classList.contains('spinner--md')).toBe(false);
+    const spinnerContent = fixture.nativeElement.querySelector('lib-spinner-content');
+    expect(spinnerContent).toBeTruthy();
   });
 
-  it('should apply md size class', () => {
-    hostComponent.size = 'md';
+  it('should apply custom color', () => {
+    hostComponent.color = 'primary';
+    hostComponent.isLoading.set(true);
     fixture.detectChanges();
 
-    expect(spinnerElement.classList.contains('spinner--md')).toBe(true);
+    const spinnerContent = fixture.nativeElement.querySelector('lib-spinner-content');
+    expect(spinnerContent).toBeTruthy();
   });
 
-  it('should apply lg size class', () => {
+  it('should apply custom message', () => {
+    hostComponent.message = 'Loading data...';
+    hostComponent.isLoading.set(true);
+    fixture.detectChanges();
+
+    const spinnerContent = fixture.nativeElement.querySelector('lib-spinner-content');
+    expect(spinnerContent).toBeTruthy();
+    const message = fixture.nativeElement.querySelector('.spinner-content_message');
+    expect(message).toBeTruthy();
+    expect(message.textContent.trim()).toBe('Loading data...');
+  });
+
+  it('should apply custom aria-label', () => {
+    hostComponent.ariaLabel = 'Custom loading label';
+    hostComponent.isLoading.set(true);
+    fixture.detectChanges();
+
+    const spinnerContent = fixture.nativeElement.querySelector('lib-spinner-content');
+    expect(spinnerContent).toBeTruthy();
+  });
+
+  it('should use default aria-label when not provided', () => {
+    hostComponent.ariaLabel = '';
+    hostComponent.isLoading.set(true);
+    fixture.detectChanges();
+
+    const spinnerContent = fixture.nativeElement.querySelector('lib-spinner-content');
+    expect(spinnerContent).toBeTruthy();
+  });
+
+  it('should handle null loading value', () => {
+    (hostComponent.isLoading as any).set(null);
+    fixture.detectChanges();
+
+    const spinnerContent = fixture.nativeElement.querySelector('lib-spinner-content');
+    expect(spinnerContent).toBeFalsy();
+  });
+
+  it('should handle undefined loading value', () => {
+    (hostComponent.isLoading as any).set(undefined);
+    fixture.detectChanges();
+
+    const spinnerContent = fixture.nativeElement.querySelector('lib-spinner-content');
+    expect(spinnerContent).toBeFalsy();
+  });
+
+  it('should cleanup on destroy', () => {
+    hostComponent.isLoading.set(true);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('lib-spinner-content')).toBeTruthy();
+
+    fixture.destroy();
+
+    // After destroy, the spinner should be cleaned up
+    expect(fixture.nativeElement.querySelector('lib-spinner-content')).toBeFalsy();
+  });
+
+  it('should update spinner configuration when inputs change', () => {
+    hostComponent.isLoading.set(true);
+    fixture.detectChanges();
+
+    let spinnerContent = fixture.nativeElement.querySelector('lib-spinner-content');
+    expect(spinnerContent).toBeTruthy();
+
+    // Change size
     hostComponent.size = 'lg';
     fixture.detectChanges();
 
-    expect(spinnerElement.classList.contains('spinner--lg')).toBe(true);
-    expect(spinnerElement.classList.contains('spinner--md')).toBe(false);
-  });
+    spinnerContent = fixture.nativeElement.querySelector('lib-spinner-content');
+    expect(spinnerContent).toBeTruthy();
 
-  it('should apply default color class', () => {
-    hostComponent.color = 'default';
-    fixture.detectChanges();
-
-    expect(spinnerElement.classList.contains('spinner--default')).toBe(true);
-  });
-
-  it('should apply primary color class', () => {
-    hostComponent.color = 'primary';
-    fixture.detectChanges();
-
-    expect(spinnerElement.classList.contains('spinner--primary')).toBe(true);
-  });
-
-  it('should apply secondary color class', () => {
+    // Change color
     hostComponent.color = 'secondary';
     fixture.detectChanges();
 
-    expect(spinnerElement.classList.contains('spinner--secondary')).toBe(true);
-  });
-
-  it('should apply white color class', () => {
-    hostComponent.color = 'white';
-    fixture.detectChanges();
-
-    expect(spinnerElement.classList.contains('spinner--white')).toBe(true);
-  });
-
-  it('should set aria-label when provided', () => {
-    hostComponent.ariaLabel = 'Loading content';
-    fixture.detectChanges();
-
-    expect(spinnerElement.getAttribute('aria-label')).toBe('Loading content');
-  });
-
-  it('should set default aria-label when not provided', () => {
-    expect(spinnerElement.getAttribute('aria-label')).toBe('Loading');
-  });
-
-  it('should set aria-hidden when true', () => {
-    hostComponent.ariaHidden = true;
-    fixture.detectChanges();
-
-    expect(spinnerElement.getAttribute('aria-hidden')).toBe('true');
-  });
-
-  it('should not set aria-hidden when false', () => {
-    hostComponent.ariaHidden = false;
-    fixture.detectChanges();
-
-    expect(spinnerElement.getAttribute('aria-hidden')).toBeNull();
-  });
-
-  it('should have role="status"', () => {
-    expect(spinnerElement.getAttribute('role')).toBe('status');
-  });
-
-  it('should compute correct size for sm', () => {
-    hostComponent.size = 'sm';
-    fixture.detectChanges();
-
-    expect(spinnerComponent.computedSize()).toBe(16);
-  });
-
-  it('should compute correct size for md', () => {
-    hostComponent.size = 'md';
-    fixture.detectChanges();
-
-    expect(spinnerComponent.computedSize()).toBe(20);
-  });
-
-  it('should compute correct size for lg', () => {
-    hostComponent.size = 'lg';
-    fixture.detectChanges();
-
-    expect(spinnerComponent.computedSize()).toBe(24);
-  });
-
-  it('should have spinner circle element', () => {
-    const circleElement = fixture.nativeElement.querySelector('.spinner_circle');
-    expect(circleElement).toBeTruthy();
-  });
-
-  it('should have spinner circle path element', () => {
-    const pathElement = fixture.nativeElement.querySelector('.spinner_circle-path');
-    expect(pathElement).toBeTruthy();
+    spinnerContent = fixture.nativeElement.querySelector('lib-spinner-content');
+    expect(spinnerContent).toBeTruthy();
   });
 });

@@ -168,7 +168,48 @@ Repeat steps 4-6 until:
 
 ---
 
-### 8. Commit Changes
+### 8. Update Backlog
+
+**Before committing**, manually update the backlog to reflect your progress:
+
+1. **Open the backlog file**: `requirements/PHASE_1_MVP_DEVELOPMENT.md`
+2. **Find your task**: Locate the task section matching your current work (e.g., `#### 1.1.12 Loading Spinner Component`)
+3. **Mark completed subtasks**: Change `- [ ]` to `- [x]` for completed subtasks
+4. **Mark partially completed tasks**: Use `- [-]` for tasks that are partially done
+5. **Add notes if needed**: Add any relevant notes about progress or blockers
+
+**Example:**
+
+```bash
+# Edit requirements/PHASE_1_MVP_DEVELOPMENT.md
+# Find task 1.1.12 and mark completed subtasks:
+
+- [x] Create loading spinner component (`spinner.component.ts`) in `shared-ui` library
+  - [x] Standalone component
+  - [x] Use `input()` for size variants (sm, md, lg)
+  - [x] Use `input()` for color variants
+- [x] Apply BOM CSS methodology
+  - [x] Base `.spinner` class
+  - [x] Size modifiers
+  - [x] Use Tailwind `@apply` directives
+- [x] Implement CSS animation for spinner
+- [ ] Write component tests  # Still in progress
+- [x] Export from `shared-ui` public API
+
+# Stage the updated backlog
+git add requirements/PHASE_1_MVP_DEVELOPMENT.md
+```
+
+**Best Practices:**
+
+- Update the backlog **before each commit** to keep it current
+- Be accurate with your progress - don't mark tasks as complete until they're actually done
+- Use `- [-]` for partially completed tasks to indicate progress
+- Commit backlog updates along with your code changes in the same commit
+
+---
+
+### 9. Commit Changes
 
 1. **Stage your changes:**
 
@@ -234,7 +275,7 @@ Repeat steps 4-6 until:
 
 ---
 
-### 9. Push to Remote
+### 10. Push to Remote
 
 1. **Push your branch:**
 
@@ -255,16 +296,16 @@ Repeat steps 4-6 until:
 
 ---
 
-### 10. Update Backlog and Repeat
+### 11. Update Backlog and Repeat
 
-1. **Update task status in backlog:**
+1. **Update task status in backlog** (see step 8 for details):
    - Mark completed subtasks with `[x]`
    - Mark partially completed tasks with `[-]`
    - Add notes about progress if needed
-   - Commit backlog updates:
+   - Commit backlog updates along with your code changes, or in a separate commit:
      ```bash
-     git add requirements/*.md
-     git commit -m "docs(backlog): update task 1.1.1 status"
+     git add requirements/PHASE_1_MVP_DEVELOPMENT.md
+     git commit -m "docs(backlog): update task 1.1.12 status"
      git push
      ```
 

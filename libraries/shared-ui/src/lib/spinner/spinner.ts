@@ -1,142 +1,163 @@
-import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Directive,
+  TemplateRef,
+  ViewContainerRef,
+  ComponentRef,
+  DestroyRef,
+  ChangeDetectorRef,
+  EmbeddedViewRef,
+  Renderer2,
+  Injector,
+  afterRenderEffect,
+  input,
+  effect,
+  inject,
+} from '@angular/core';
+import { SpinnerContent, SpinnerSize, SpinnerColor } from './spinner-content';
 
-export type SpinnerSize = 'sm' | 'md' | 'lg';
-export type SpinnerColor = 'default' | 'primary' | 'secondary' | 'white';
-
-@Component({
-  selector: 'lib-spinner',
-  template: `
-    <div
-      class="spinner"
-      [class.spinner--sm]="size() === 'sm'"
-      [class.spinner--md]="size() === 'md'"
-      [class.spinner--lg]="size() === 'lg'"
-      [class.spinner--default]="color() === 'default'"
-      [class.spinner--primary]="color() === 'primary'"
-      [class.spinner--secondary]="color() === 'secondary'"
-      [class.spinner--white]="color() === 'white'"
-      [attr.aria-label]="ariaLabel() || 'Loading'"
-      [attr.aria-hidden]="ariaHidden() ? 'true' : null"
-      role="status"
-    >
-      <svg
-        class="spinner_circle"
-        viewBox="0 0 24 24"
-        [attr.width]="computedSize()"
-        [attr.height]="computedSize()"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle
-          class="spinner_circle-path"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-dasharray="32"
-          stroke-dashoffset="32"
-        />
-      </svg>
-    </div>
-  `,
-  styles: [
-    `
-      @reference "#theme";
-
-      .spinner {
-        @apply inline-flex items-center justify-center;
-        @apply animate-spin;
-        flex-shrink: 0;
-        color: var(--color-text-primary);
-      }
-
-      .spinner_circle {
-        display: block;
-      }
-
-      .spinner_circle-path {
-        animation: spinner-dash 1.5s ease-in-out infinite;
-        transform-origin: center;
-      }
-
-      /* Size variants - using spacing scale */
-      .spinner--sm {
-        @apply w-4 h-4; /* 16px - spacing-4 */
-      }
-
-      .spinner--sm .spinner_circle {
-        @apply w-4 h-4;
-      }
-
-      .spinner--md {
-        @apply w-5 h-5; /* 20px - 1.25rem */
-      }
-
-      .spinner--md .spinner_circle {
-        @apply w-5 h-5;
-      }
-
-      .spinner--lg {
-        @apply w-6 h-6; /* 24px - spacing-6 */
-      }
-
-      .spinner--lg .spinner_circle {
-        @apply w-6 h-6;
-      }
-
-      /* Color variants */
-      .spinner--default {
-        color: var(--color-text-primary);
-      }
-
-      .spinner--primary {
-        color: var(--color-primary-500);
-      }
-
-      .spinner--secondary {
-        color: var(--color-secondary-500);
-      }
-
-      .spinner--white {
-        color: var(--color-text-inverse);
-      }
-
-      /* Spinner animation */
-      @keyframes spinner-dash {
-        0% {
-          stroke-dasharray: 1, 150;
-          stroke-dashoffset: 0;
-        }
-        50% {
-          stroke-dasharray: 90, 150;
-          stroke-dashoffset: -35;
-        }
-        100% {
-          stroke-dasharray: 90, 150;
-          stroke-dashoffset: -124;
-        }
-      }
-    `,
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+@Directive({
+  selector: '[spinner]',
 })
 export class Spinner {
-  // Inputs
-  size = input<SpinnerSize>('md');
-  color = input<SpinnerColor>('default');
-  ariaLabel = input<string>('');
-  ariaHidden = input<boolean>(false);
+  private embeddedViewRef: EmbeddedViewRef<any> | null = null;
+  private spinnerComponentRef: ComponentRef<SpinnerContent> | null = null;
+  private hostElement: HTMLElement | null = null;
+  private isInitialized = false;
 
-  // Computed
-  readonly computedSize = computed(() => {
-    const size = this.size();
-    const sizeMap: Record<SpinnerSize, number> = {
-      sm: 16,
-      md: 20,
-      lg: 24,
-    };
-    return sizeMap[size] || 20;
+  // Inject dependencies using inject()
+  private readonly templateRef = inject(TemplateRef<any>);
+  private readonly viewContainer = inject(ViewContainerRef);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly renderer = inject(Renderer2);
+  private readonly injector = inject(Injector);
+  private readonly destroyRef = inject(DestroyRef);
+
+  // Main input for loading state - using signal-based input
+  spinner = input<boolean | null | undefined>(false);
+
+  // Optional configuration inputs - using signal-based inputs
+  spinnerSize = input<SpinnerSize>('md');
+  spinnerColor = input<SpinnerColor>('default');
+  spinnerMessage = input<string>('');
+  spinnerAriaLabel = input<string>('');
+
+  // Effect to watch for loading state changes
+  private readonly updateSpinner = effect(() => {
+    const isLoading = Boolean(this.spinner());
+    // Only update if already initialized
+    if (this.isInitialized) {
+      this.updateView(isLoading);
+    }
   });
+
+  // Effect to watch for configuration changes (size, color, message, etc.)
+  // Explicitly read all input signals so the effect tracks them
+  private readonly updateSpinnerConfig = effect(() => {
+    // Read all inputs to track changes
+    this.spinnerSize();
+    this.spinnerColor();
+    this.spinnerMessage();
+    this.spinnerAriaLabel();
+
+    // If spinner is currently shown, update its configuration
+    if (this.spinnerComponentRef && this.isInitialized) {
+      this.updateSpinnerComponentInputs();
+    }
+  });
+
+  private updateSpinnerComponentInputs(): void {
+    if (!this.spinnerComponentRef) {
+      return;
+    }
+
+    // Update all inputs
+    this.spinnerComponentRef.setInput('size', this.spinnerSize());
+    this.spinnerComponentRef.setInput('color', this.spinnerColor());
+    this.spinnerComponentRef.setInput('message', this.spinnerMessage());
+    this.spinnerComponentRef.setInput('ariaLabel', this.spinnerAriaLabel() || 'Loading');
+    this.spinnerComponentRef.changeDetectorRef.detectChanges();
+  }
+
+  // Use afterRenderEffect for DOM manipulation after render
+  // Guard against multiple initializations
+  private readonly initializeHostElement = afterRenderEffect(() => {
+    // Only initialize once
+    if (this.isInitialized || this.embeddedViewRef) {
+      return;
+    }
+
+    // Render the content template
+    this.embeddedViewRef = this.viewContainer.createEmbeddedView(this.templateRef);
+
+    // Find the first root node from the embedded view (the actual DOM element)
+    if (this.embeddedViewRef.rootNodes.length > 0) {
+      this.hostElement = this.embeddedViewRef.rootNodes[0] as HTMLElement;
+
+      // Ensure the host element has position: relative if it doesn't already have a position
+      const computedStyle = window.getComputedStyle(this.hostElement);
+      if (computedStyle.position === 'static') {
+        this.renderer.setStyle(this.hostElement, 'position', 'relative');
+      }
+    }
+
+    // Mark as initialized and do initial update
+    this.isInitialized = true;
+    this.updateView(Boolean(this.spinner()));
+  });
+
+  constructor() {
+    // Register cleanup on destroy
+    this.destroyRef.onDestroy(() => {
+      this.destroySpinner();
+      if (this.embeddedViewRef) {
+        this.embeddedViewRef.destroy();
+        this.embeddedViewRef = null;
+      }
+      this.isInitialized = false;
+    });
+  }
+
+  private updateView(isLoading: boolean): void {
+    if (!this.isInitialized || !this.hostElement) {
+      return; // Not ready yet
+    }
+
+    if (isLoading) {
+      this.createSpinner();
+    } else {
+      this.destroySpinner();
+    }
+    this.cdr.markForCheck();
+  }
+
+  private createSpinner(): void {
+    if (this.spinnerComponentRef || !this.hostElement) {
+      return; // Already exists or no host element
+    }
+
+    // Create spinner component
+    this.spinnerComponentRef = this.viewContainer.createComponent(SpinnerContent, {
+      injector: this.injector,
+    });
+
+    // Set inputs using signal values (will be kept in sync via updateSpinnerConfig effect)
+    this.updateSpinnerComponentInputs();
+
+    // Append spinner directly to the host element
+    const spinnerElement = this.spinnerComponentRef.location.nativeElement;
+    this.renderer.appendChild(this.hostElement, spinnerElement);
+
+    this.spinnerComponentRef.changeDetectorRef.detectChanges();
+  }
+
+  private destroySpinner(): void {
+    if (this.spinnerComponentRef && this.hostElement) {
+      const spinnerElement = this.spinnerComponentRef.location.nativeElement;
+      if (spinnerElement.parentNode === this.hostElement) {
+        this.renderer.removeChild(this.hostElement, spinnerElement);
+      }
+      this.spinnerComponentRef.destroy();
+      this.spinnerComponentRef = null;
+    }
+  }
 }

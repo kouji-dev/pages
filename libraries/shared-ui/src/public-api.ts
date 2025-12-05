@@ -9,6 +9,8 @@ export * from './lib/button/button';
 export * from './lib/icon/icon';
 export * from './lib/input/input';
 export * from './lib/spinner/spinner';
+export * from './lib/spinner/spinner-content';
+export type { SpinnerSize, SpinnerColor } from './lib/spinner/spinner-content';
 export * from './lib/toast/toast';
 export * from './lib/toast/toast.service';
 export * from './lib/modal/modal';
