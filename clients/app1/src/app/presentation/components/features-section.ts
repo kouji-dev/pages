@@ -127,7 +127,7 @@ export class FeaturesSection {
         'Your data is protected with enterprise-grade security. Privacy and safety are our top priorities.',
     },
     {
-      icon: 'layout',
+      icon: 'folder',
       title: 'Flexible Workspace',
       description:
         'Organize your work the way you want. Customize layouts, views, and workflows to fit your needs.',
