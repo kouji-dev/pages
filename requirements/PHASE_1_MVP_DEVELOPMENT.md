@@ -469,27 +469,30 @@ This phase focuses on building the foundational features required for a function
 **Priority**: High  
 **Estimated Time**: 0.5-1 day  
 **Dependencies**: 1.1.1  
-**Assigned To**: HWIMDA2
+**Assigned To**: HWIMDA2  
+**Status**: ✅ Complete
 
 **Frontend Tasks**:
 
-- [ ] Create loading spinner component (`spinner.component.ts`) in `shared-ui` library
-  - [ ] Standalone component
-  - [ ] Use `input()` for size variants (sm, md, lg)
-  - [ ] Use `input()` for color variants
-- [ ] Apply BOM CSS methodology
-  - [ ] Base `.spinner` class
-  - [ ] Size modifiers
-  - [ ] Use Tailwind `@apply` directives
-- [ ] Implement CSS animation for spinner
-- [ ] Write component tests
-- [ ] Export from `shared-ui` public API
+- [x] Create loading spinner component (`spinner.component.ts`) in `shared-ui` library
+  - [x] Standalone component (directive-based approach)
+  - [x] Use `input()` and `@Input()` for size variants (sm, md, lg)
+  - [x] Use `@Input()` for color variants
+  - [x] Structural directive `*spinner` for encapsulating content
+  - [x] SpinnerContent component with Lucide loader icon
+- [x] Apply BOM CSS methodology
+  - [x] Base `.spinner` class
+  - [x] Size modifiers
+  - [x] Use Tailwind `@apply` directives
+- [x] Implement CSS animation for spinner (using Lucide icon with spin animation)
+- [x] Write component tests
+- [x] Export from `shared-ui` public API
 
 **Deliverables**:
 
-- Reusable loading spinner component
-- Component tests
-- Exported from shared-ui library
+- ✅ Reusable loading spinner directive and component
+- ✅ Component tests
+- ✅ Exported from shared-ui library
 
 ---
 
