@@ -4,6 +4,10 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, File, Form, UploadFile, status
 
+from src.application.dtos.preferences import (
+    UserPreferencesResponse,
+    UserPreferencesUpdateRequest,
+)
 from src.application.dtos.user import (
     EmailUpdateRequest,
     PasswordUpdateRequest,
@@ -11,6 +15,10 @@ from src.application.dtos.user import (
     UserUpdateRequest,
 )
 from src.application.use_cases.avatar import DeleteAvatarUseCase, UploadAvatarUseCase
+from src.application.use_cases.preferences import (
+    GetUserPreferencesUseCase,
+    UpdateUserPreferencesUseCase,
+)
 from src.application.use_cases.user import (
     GetUserProfileUseCase,
     UpdateUserEmailUseCase,
@@ -76,6 +84,20 @@ def get_delete_avatar_use_case(
 ) -> DeleteAvatarUseCase:
     """Get delete avatar use case with dependencies."""
     return DeleteAvatarUseCase(user_repository, storage_service)
+
+
+def get_user_preferences_use_case(
+    user_repository: Annotated[UserRepository, Depends(get_user_repository)],
+) -> GetUserPreferencesUseCase:
+    """Get user preferences use case with dependencies."""
+    return GetUserPreferencesUseCase(user_repository)
+
+
+def get_update_user_preferences_use_case(
+    user_repository: Annotated[UserRepository, Depends(get_user_repository)],
+) -> UpdateUserPreferencesUseCase:
+    """Get update user preferences use case with dependencies."""
+    return UpdateUserPreferencesUseCase(user_repository)
 
 
 @router.get("/me", response_model=UserResponse, status_code=status.HTTP_200_OK)
@@ -247,4 +269,62 @@ async def delete_avatar(
         HTTPException: If user not found or storage operation fails
     """
     return await use_case.execute(str(current_user.id))
+
+
+@router.get(
+    "/me/preferences",
+    response_model=UserPreferencesResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_current_user_preferences(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[
+        GetUserPreferencesUseCase, Depends(get_user_preferences_use_case)
+    ],
+) -> UserPreferencesResponse:
+    """Get current user preferences.
+
+    Returns default preferences if user has none set.
+
+    Args:
+        current_user: Current authenticated user (from dependency)
+        use_case: Get user preferences use case
+
+    Returns:
+        User preferences response data
+
+    Raises:
+        HTTPException: If user not found (should not happen if authenticated)
+    """
+    return await use_case.execute(str(current_user.id))
+
+
+@router.put(
+    "/me/preferences",
+    response_model=UserPreferencesResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def update_current_user_preferences(
+    request: UserPreferencesUpdateRequest,
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[
+        UpdateUserPreferencesUseCase, Depends(get_update_user_preferences_use_case)
+    ],
+) -> UserPreferencesResponse:
+    """Update current user preferences.
+
+    Only provided fields will be updated. Other fields remain unchanged.
+
+    Args:
+        request: Preferences update request (partial update)
+        current_user: Current authenticated user (from dependency)
+        use_case: Update user preferences use case
+
+    Returns:
+        Updated user preferences response data
+
+    Raises:
+        HTTPException: If validation fails or user not found
+    """
+    return await use_case.execute(str(current_user.id), request)
 
