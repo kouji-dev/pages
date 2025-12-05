@@ -928,38 +928,51 @@ This phase focuses on building the foundational features required for a function
 
 **Backend Tasks**:
 
-- [ ] Create organization creation endpoint (POST /api/organizations)
-  - [ ] Validate organization name (required, min length)
-  - [ ] Auto-generate slug from name
-  - [ ] Validate slug uniqueness
-  - [ ] Create organization record
-  - [ ] Add creator as admin member in OrganizationMembers table
-  - [ ] Return created organization with member info
-- [ ] Create organization retrieval endpoint (GET /api/organizations/:id)
-  - [ ] Include organization details (name, slug, description, settings)
-  - [ ] Permission check (organization member only)
-  - [ ] Include member count
-- [ ] Create organization list endpoint (GET /api/organizations)
-  - [ ] Filter by current user membership (only show user's orgs)
-  - [ ] Pagination support (page, limit)
-  - [ ] Return organization id, name, slug, member count
-- [ ] Create organization update endpoint (PUT /api/organizations/:id)
-  - [ ] Permission check (admin only)
-  - [ ] Update name, description fields
-  - [ ] Validate name and slug uniqueness if changed
-  - [ ] Return updated organization
-- [ ] Create organization deletion endpoint (DELETE /api/organizations/:id)
-  - [ ] Permission check (admin only)
-  - [ ] Soft delete (set deleted_at timestamp)
-  - [ ] Cascade delete or archive projects
-- [ ] Write API tests for CRUD operations
-- [ ] Write integration tests
+- [x] Create organization creation endpoint (POST /api/organizations)
+  - [x] Validate organization name (required, min length)
+  - [x] Auto-generate slug from name
+  - [x] Validate slug uniqueness
+  - [x] Create organization record
+  - [x] Add creator as admin member in OrganizationMembers table
+  - [x] Return created organization with member info
+- [x] Create organization retrieval endpoint (GET /api/organizations/:id)
+  - [x] Include organization details (name, slug, description, settings)
+  - [x] Permission check (organization member only)
+  - [x] Include member count
+- [x] Create organization list endpoint (GET /api/organizations)
+  - [x] Filter by current user membership (only show user's orgs)
+  - [x] Pagination support (page, limit)
+  - [x] Return organization id, name, slug, member count
+- [x] Create organization update endpoint (PUT /api/organizations/:id)
+  - [x] Permission check (admin only)
+  - [x] Update name, description fields
+  - [x] Validate name and slug uniqueness if changed
+  - [x] Return updated organization
+- [x] Create organization deletion endpoint (DELETE /api/organizations/:id)
+  - [x] Permission check (admin only)
+  - [x] Soft delete (set deleted_at timestamp)
+  - [x] Cascade delete or archive projects
+- [x] Write API tests for CRUD operations
+- [x] Write integration tests
 
 **Deliverables**:
 
-- Organization CRUD endpoints
-- Permission checks
-- API tests
+- [x] Organization CRUD endpoints
+- [x] Permission checks
+- [x] API tests
+
+**Note**: ✅ **COMPLETED** - Organization CRUD API implemented:
+- Domain layer: Organization entity with slug generation and validation
+- Repository: OrganizationRepository interface and SQLAlchemyOrganizationRepository
+- Use cases: Create, Get, List, Update, Delete organizations
+- Endpoints: Full CRUD operations at `/api/v1/organizations/`
+- Permissions: Member check for GET, admin check for UPDATE/DELETE
+- Auto-add creator as admin member when creating organization
+- Slug auto-generation from organization name
+- Slug uniqueness validation
+- Soft delete with deleted_at timestamp
+- Pagination and search support
+- Tests: 11 unit tests + 14 integration tests (all passing)
 
 ---
 

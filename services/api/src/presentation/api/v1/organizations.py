@@ -1,0 +1,276 @@
+"""Organization management API endpoints."""
+
+from uuid import UUID
+
+from fastapi import APIRouter, Depends, Query, status
+from sqlalchemy.ext.asyncio import AsyncSession
+from typing_extensions import Annotated
+
+from src.application.dtos.organization import (
+    CreateOrganizationRequest,
+    OrganizationListResponse,
+    OrganizationResponse,
+    UpdateOrganizationRequest,
+)
+from src.application.use_cases.organization import (
+    CreateOrganizationUseCase,
+    DeleteOrganizationUseCase,
+    GetOrganizationUseCase,
+    ListOrganizationsUseCase,
+    UpdateOrganizationUseCase,
+)
+from src.domain.entities import User
+from src.domain.repositories import OrganizationRepository, UserRepository
+from src.domain.services import PermissionService
+from src.infrastructure.database import get_session
+from src.presentation.dependencies.auth import get_current_active_user
+from src.presentation.dependencies.permissions import (
+    require_organization_admin,
+    require_organization_member,
+)
+from src.presentation.dependencies.services import (
+    get_organization_repository,
+    get_permission_service,
+    get_user_repository,
+)
+
+router = APIRouter()
+
+# Dependency injection for use cases
+def get_create_organization_use_case(
+    organization_repository: Annotated[
+        OrganizationRepository, Depends(get_organization_repository)
+    ],
+    user_repository: Annotated[UserRepository, Depends(get_user_repository)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> CreateOrganizationUseCase:
+    """Get create organization use case with dependencies."""
+    return CreateOrganizationUseCase(organization_repository, user_repository, session)
+
+
+def get_organization_use_case(
+    organization_repository: Annotated[
+        OrganizationRepository, Depends(get_organization_repository)
+    ],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> GetOrganizationUseCase:
+    """Get organization use case with dependencies."""
+    return GetOrganizationUseCase(organization_repository, session)
+
+
+def get_list_organizations_use_case(
+    organization_repository: Annotated[
+        OrganizationRepository, Depends(get_organization_repository)
+    ],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> ListOrganizationsUseCase:
+    """Get list organizations use case with dependencies."""
+    return ListOrganizationsUseCase(organization_repository, session)
+
+
+def get_update_organization_use_case(
+    organization_repository: Annotated[
+        OrganizationRepository, Depends(get_organization_repository)
+    ],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> UpdateOrganizationUseCase:
+    """Get update organization use case with dependencies."""
+    return UpdateOrganizationUseCase(organization_repository, session)
+
+
+def get_delete_organization_use_case(
+    organization_repository: Annotated[
+        OrganizationRepository, Depends(get_organization_repository)
+    ],
+) -> DeleteOrganizationUseCase:
+    """Get delete organization use case with dependencies."""
+    return DeleteOrganizationUseCase(organization_repository)
+
+
+
+
+@router.post(
+    "/",
+    response_model=OrganizationResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_organization(
+    request: CreateOrganizationRequest,
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[
+        CreateOrganizationUseCase, Depends(get_create_organization_use_case)
+    ],
+) -> OrganizationResponse:
+    """Create a new organization.
+
+    Creates an organization and automatically adds the creator as an admin member.
+
+    Args:
+        request: Organization creation request
+        current_user: Current authenticated user (will be added as admin)
+        use_case: Create organization use case
+
+    Returns:
+        Created organization response with member count
+
+    Raises:
+        HTTPException: If slug already exists or validation fails
+    """
+    return await use_case.execute(request, str(current_user.id))
+
+
+@router.get(
+    "/{organization_id}",
+    response_model=OrganizationResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_organization(
+    organization_id: UUID,
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[GetOrganizationUseCase, Depends(get_organization_use_case)],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+) -> OrganizationResponse:
+    """Get organization by ID.
+
+    Requires the user to be a member of the organization.
+
+    Args:
+        organization_id: Organization UUID (from path)
+        current_user: Current authenticated user
+        use_case: Get organization use case
+        permission_service: Permission service
+
+    Returns:
+        Organization response with details and member count
+
+    Raises:
+        HTTPException: If organization not found or user is not a member
+    """
+    # Verify user is a member
+    await require_organization_member(
+        organization_id=organization_id,
+        current_user=current_user,
+        permission_service=permission_service,
+    )
+
+    return await use_case.execute(str(organization_id))
+
+
+@router.get(
+    "/",
+    response_model=OrganizationListResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def list_organizations(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[
+        ListOrganizationsUseCase, Depends(get_list_organizations_use_case)
+    ],
+    page: Annotated[int, Query(ge=1, description="Page number (1-based)")] = 1,
+    limit: Annotated[
+        int, Query(ge=1, le=100, description="Number of organizations per page")
+    ] = 20,
+    search: Annotated[
+        str | None, Query(description="Search query (name or slug)")
+    ] = None,
+) -> OrganizationListResponse:
+    """List organizations for the current user.
+
+    Returns only organizations where the current user is a member.
+
+    Args:
+        current_user: Current authenticated user
+        use_case: List organizations use case
+        page: Page number (1-based)
+        limit: Number of organizations per page
+        search: Optional search query
+
+    Returns:
+        Paginated list of organizations with member counts
+    """
+    return await use_case.execute(
+        user_id=str(current_user.id),
+        page=page,
+        limit=limit,
+        search=search,
+    )
+
+
+@router.put(
+    "/{organization_id}",
+    response_model=OrganizationResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def update_organization(
+    organization_id: UUID,
+    request: UpdateOrganizationRequest,
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[
+        UpdateOrganizationUseCase, Depends(get_update_organization_use_case)
+    ],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+) -> OrganizationResponse:
+    """Update an organization.
+
+    Requires admin role in the organization.
+
+    Args:
+        organization_id: Organization UUID (from path)
+        request: Organization update request
+        current_user: Current authenticated user
+        use_case: Update organization use case
+        permission_service: Permission service
+
+    Returns:
+        Updated organization response
+
+    Raises:
+        HTTPException: If organization not found, user is not admin, or slug conflicts
+    """
+    # Verify user is admin
+    await require_organization_admin(
+        organization_id=organization_id,
+        current_user=current_user,
+        permission_service=permission_service,
+    )
+
+    return await use_case.execute(str(organization_id), request)
+
+
+@router.delete(
+    "/{organization_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_organization(
+    organization_id: UUID,
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[
+        DeleteOrganizationUseCase, Depends(get_delete_organization_use_case)
+    ],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+) -> None:
+    """Delete an organization (soft delete).
+
+    Requires admin role in the organization.
+    This will cascade soft delete to projects and spaces.
+
+    Args:
+        organization_id: Organization UUID (from path)
+        current_user: Current authenticated user
+        use_case: Delete organization use case
+        permission_service: Permission service
+
+    Returns:
+        No content (204) on success
+
+    Raises:
+        HTTPException: If organization not found or user is not admin
+    """
+    # Verify user is admin
+    await require_organization_admin(
+        organization_id=organization_id,
+        current_user=current_user,
+        permission_service=permission_service,
+    )
+
+    await use_case.execute(str(organization_id))

@@ -10,6 +10,13 @@ from src.application.dtos.auth import (
     RegisterResponse,
     TokenResponse,
 )
+from src.application.dtos.organization import (
+    CreateOrganizationRequest,
+    OrganizationListItemResponse,
+    OrganizationListResponse,
+    OrganizationResponse,
+    UpdateOrganizationRequest,
+)
 from src.application.dtos.user import (
     EmailUpdateRequest,
     PasswordUpdateRequest,
@@ -32,4 +39,10 @@ __all__ = [
     "UserUpdateRequest",
     "EmailUpdateRequest",
     "PasswordUpdateRequest",
+    # Organization DTOs
+    "OrganizationResponse",
+    "OrganizationListItemResponse",
+    "OrganizationListResponse",
+    "CreateOrganizationRequest",
+    "UpdateOrganizationRequest",
 ]

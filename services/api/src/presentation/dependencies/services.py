@@ -8,10 +8,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.interfaces import TokenService
 from src.application.services.permission_service import DatabasePermissionService
-from src.domain.repositories import UserRepository
+from src.domain.repositories import OrganizationRepository, UserRepository
 from src.domain.services import PasswordService, PermissionService, StorageService
 from src.infrastructure.database import get_session
-from src.infrastructure.database.repositories import SQLAlchemyUserRepository
+from src.infrastructure.database.repositories import (
+    SQLAlchemyOrganizationRepository,
+    SQLAlchemyUserRepository,
+)
 from src.infrastructure.security import BcryptPasswordService, JWTTokenService
 from src.infrastructure.services.local_storage_service import LocalStorageService
 
@@ -40,6 +43,20 @@ async def get_user_repository(
         SQLAlchemy implementation of UserRepository
     """
     return SQLAlchemyUserRepository(session)
+
+
+async def get_organization_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> OrganizationRepository:
+    """Get organization repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of OrganizationRepository
+    """
+    return SQLAlchemyOrganizationRepository(session)
 
 
 async def get_permission_service(

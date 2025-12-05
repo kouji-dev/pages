@@ -12,6 +12,13 @@ from src.application.use_cases.avatar import (
     UploadAvatarUseCase,
 )
 from src.application.use_cases.deactivate_user import DeactivateUserUseCase
+from src.application.use_cases.organization import (
+    CreateOrganizationUseCase,
+    DeleteOrganizationUseCase,
+    GetOrganizationUseCase,
+    ListOrganizationsUseCase,
+    UpdateOrganizationUseCase,
+)
 from src.application.use_cases.reactivate_user import ReactivateUserUseCase
 from src.application.use_cases.list_users import ListUsersUseCase
 from src.application.use_cases.preferences import (
@@ -49,4 +56,10 @@ __all__ = [
     "DeactivateUserUseCase",
     # Reactivate user use case
     "ReactivateUserUseCase",
+    # Organization use cases
+    "CreateOrganizationUseCase",
+    "GetOrganizationUseCase",
+    "ListOrganizationsUseCase",
+    "UpdateOrganizationUseCase",
+    "DeleteOrganizationUseCase",
 ]
