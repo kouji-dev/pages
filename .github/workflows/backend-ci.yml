@@ -311,6 +311,10 @@ jobs:
             sleep 2
           done
 
+      - name: Initialize database with migrations
+        run: |
+          poetry run alembic upgrade head
+
       - name: Check migration status
         run: |
           poetry run alembic current
@@ -318,7 +322,6 @@ jobs:
 
       - name: Test migrations up and down
         run: |
-          poetry run alembic upgrade head
           poetry run alembic downgrade -1
           poetry run alembic upgrade head
 

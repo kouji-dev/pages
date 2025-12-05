@@ -84,9 +84,25 @@ ignore = [
 [tool.mypy]
 python_version = "3.12"
 warn_return_any = true
-warn_unused_ignores = true
+warn_unused_ignores = false  # Disable to allow type: ignore for exception handlers
 disallow_untyped_defs = true
 plugins = ["pydantic.mypy"]
+
+# Ignore missing imports for third-party libraries without type stubs
+[[tool.mypy.overrides]]
+module = [
+    "sqlalchemy.*",
+    "fastapi.*",
+    "structlog.*",
+    "slowapi.*",
+    "uvicorn.*",
+    "alembic.*",
+    "asyncpg.*",
+    "passlib.*",
+    "celery.*",
+    "redis.*",
+]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

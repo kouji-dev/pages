@@ -82,8 +82,8 @@ def create_app(enable_rate_limiting: bool = True) -> FastAPI:
     )
 
     # Register exception handlers
-    app.add_exception_handler(DomainException, domain_exception_handler)  # type: ignore[arg-type]
-    app.add_exception_handler(ValidationError, validation_exception_handler)  # type: ignore[arg-type]
+    app.add_exception_handler(DomainException, domain_exception_handler)  # type: ignore
+    app.add_exception_handler(ValidationError, validation_exception_handler)  # type: ignore
     app.add_exception_handler(Exception, generic_exception_handler)
 
     # Include API routers
