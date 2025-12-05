@@ -11,6 +11,7 @@ from src.application.services.permission_service import DatabasePermissionServic
 from src.domain.repositories import (
     InvitationRepository,
     OrganizationRepository,
+    ProjectRepository,
     UserRepository,
 )
 from src.domain.services import PasswordService, PermissionService, StorageService
@@ -18,6 +19,7 @@ from src.infrastructure.database import get_session
 from src.infrastructure.database.repositories import (
     SQLAlchemyInvitationRepository,
     SQLAlchemyOrganizationRepository,
+    SQLAlchemyProjectRepository,
     SQLAlchemyUserRepository,
 )
 from src.infrastructure.security import BcryptPasswordService, JWTTokenService
@@ -76,6 +78,20 @@ async def get_invitation_repository(
         SQLAlchemy implementation of InvitationRepository
     """
     return SQLAlchemyInvitationRepository(session)
+
+
+async def get_project_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> ProjectRepository:
+    """Get project repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of ProjectRepository
+    """
+    return SQLAlchemyProjectRepository(session)
 
 
 async def get_permission_service(
