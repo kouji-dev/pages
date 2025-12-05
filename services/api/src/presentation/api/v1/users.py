@@ -2,7 +2,7 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, File, Form, UploadFile, status
+from fastapi import APIRouter, Depends, File, Query, UploadFile, status
 
 from src.application.dtos.preferences import (
     UserPreferencesResponse,
@@ -11,10 +11,12 @@ from src.application.dtos.preferences import (
 from src.application.dtos.user import (
     EmailUpdateRequest,
     PasswordUpdateRequest,
+    UserListResponse,
     UserResponse,
     UserUpdateRequest,
 )
 from src.application.use_cases.avatar import DeleteAvatarUseCase, UploadAvatarUseCase
+from src.application.use_cases.list_users import ListUsersUseCase
 from src.application.use_cases.preferences import (
     GetUserPreferencesUseCase,
     UpdateUserPreferencesUseCase,
@@ -98,6 +100,54 @@ def get_update_user_preferences_use_case(
 ) -> UpdateUserPreferencesUseCase:
     """Get update user preferences use case with dependencies."""
     return UpdateUserPreferencesUseCase(user_repository)
+
+
+def get_list_users_use_case(
+    user_repository: Annotated[UserRepository, Depends(get_user_repository)],
+) -> ListUsersUseCase:
+    """Get list users use case with dependencies."""
+    return ListUsersUseCase(user_repository)
+
+
+@router.get("", response_model=UserListResponse, status_code=status.HTTP_200_OK)
+async def list_users(
+    page: Annotated[int, Query(ge=1, description="Page number (1-based)")] = 1,
+    limit: Annotated[
+        int, Query(ge=1, le=100, description="Number of users per page")
+    ] = 20,
+    search: Annotated[
+        str | None, Query(description="Search query (name or email)")
+    ] = None,
+    organization_id: Annotated[
+        str | None, Query(description="Filter by organization ID")
+    ] = None,
+    current_user: Annotated[User, Depends(get_current_active_user)] = None,
+    use_case: Annotated[ListUsersUseCase, Depends(get_list_users_use_case)] = None,
+) -> UserListResponse:
+    """List users with optional search and filters.
+
+    Supports pagination, search by name/email, and filtering by organization.
+
+    Args:
+        page: Page number (default: 1)
+        limit: Number of users per page (default: 20, max: 100)
+        search: Optional search query for name or email (case-insensitive)
+        organization_id: Optional organization ID to filter by
+        current_user: Current authenticated user (from dependency)
+        use_case: List users use case
+
+    Returns:
+        User list response with pagination metadata
+
+    Raises:
+        HTTPException: If pagination parameters are invalid
+    """
+    return await use_case.execute(
+        page=page,
+        limit=limit,
+        search=search,
+        organization_id=organization_id,
+    )
 
 
 @router.get("/me", response_model=UserResponse, status_code=status.HTTP_200_OK)

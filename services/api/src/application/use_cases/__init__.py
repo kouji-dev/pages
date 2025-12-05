@@ -11,6 +11,7 @@ from src.application.use_cases.avatar import (
     DeleteAvatarUseCase,
     UploadAvatarUseCase,
 )
+from src.application.use_cases.list_users import ListUsersUseCase
 from src.application.use_cases.preferences import (
     GetUserPreferencesUseCase,
     UpdateUserPreferencesUseCase,
@@ -40,4 +41,6 @@ __all__ = [
     # Preferences use cases
     "GetUserPreferencesUseCase",
     "UpdateUserPreferencesUseCase",
+    # List users use case
+    "ListUsersUseCase",
 ]
