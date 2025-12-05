@@ -1,5 +1,6 @@
+import { Component, signal, inject } from '@angular/core';
 import { Component, signal, inject, ViewChild, TemplateRef, ViewContainerRef } from '@angular/core';
-import { Button, Icon, Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter } from 'shared-ui';
+import { Button, Icon, Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter, ToastService } from 'shared-ui';
 
 @Component({
   selector: 'app-demo',
@@ -129,6 +130,23 @@ import { Button, Icon, Modal, ModalContainer, ModalHeader, ModalContent, ModalFo
         </div>
       </section>
 
+      <!-- Toast Component Showcase -->
+      <section class="demo_section">
+        <h2 class="demo_section-title">Toast/Notification Component</h2>
+
+        <div class="demo_grid">
+          <div class="demo_item">
+            <h3 class="demo_item-title">Toast Types</h3>
+            <div class="demo_item-content">
+              <lib-button (clicked)="showToast('success')">Success Toast</lib-button>
+              <lib-button (clicked)="showToast('error')">Error Toast</lib-button>
+              <lib-button (clicked)="showToast('warning')">Warning Toast</lib-button>
+              <lib-button (clicked)="showToast('info')">Info Toast</lib-button>
+              </div>
+          </div>
+        </div>
+      </section>
+      
       <!-- Modal Component Showcase -->
       <section class="demo_section">
         <h2 class="demo_section-title">Modal Component</h2>
@@ -142,6 +160,20 @@ import { Button, Icon, Modal, ModalContainer, ModalHeader, ModalContent, ModalFo
           </div>
 
           <div class="demo_item">
+            <h3 class="demo_item-title">Positions</h3>
+            <div class="demo_item-content">
+              <lib-button (clicked)="showToastAtPosition('top-right')">Top Right</lib-button>
+              <lib-button (clicked)="showToastAtPosition('top-left')">Top Left</lib-button>
+              <lib-button (clicked)="showToastAtPosition('bottom-right')">Bottom Right</lib-button>
+              <lib-button (clicked)="showToastAtPosition('bottom-left')">Bottom Left</lib-button>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">Custom Duration</h3>
+            <div class="demo_item-content">
+              <lib-button (clicked)="showLongToast()">Long Duration (10s)</lib-button>
+              <lib-button (clicked)="showPermanentToast()">No Auto-Dismiss</lib-button>
             <h3 class="demo_item-title">Size Variants</h3>
             <div class="demo_item-content">
               <lib-button (clicked)="openModal('sm')">Small</lib-button>
@@ -247,6 +279,7 @@ import { Button, Icon, Modal, ModalContainer, ModalHeader, ModalContent, ModalFo
   ],
 })
 export class Demo {
+  readonly toast = inject(ToastService);
   readonly modal = inject(Modal);
   readonly viewContainerRef = inject(ViewContainerRef);
   readonly loadingButton = signal(false);
@@ -265,6 +298,54 @@ export class Demo {
     }
   }
 
+  showToast(type: 'success' | 'error' | 'warning' | 'info'): void {
+    const messages = {
+      success: 'Operation completed successfully!',
+      error: 'An error occurred. Please try again.',
+      warning: 'Warning: This action cannot be undone.',
+      info: 'Here is some useful information.',
+    };
+
+    switch (type) {
+      case 'success':
+        this.toast.success(messages.success);
+        break;
+      case 'error':
+        this.toast.error(messages.error);
+        break;
+      case 'warning':
+        this.toast.warning(messages.warning);
+        break;
+      case 'info':
+        this.toast.info(messages.info);
+        break;
+    }
+  }
+
+  showToastAtPosition(position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'): void {
+    this.toast.show({
+      type: 'info',
+      message: `Toast positioned at ${position.replace('-', ' ')}`,
+      position
+    });
+  }
+
+  showLongToast(): void {
+    this.toast.show({
+      type: 'info',
+      message: 'This toast will stay for 10 seconds',
+      duration: 10000,
+    });
+  }
+
+  showPermanentToast(): void {
+    this.toast.show({
+      type: 'warning',
+      message: 'This toast will not auto-dismiss. Click X to close.',
+      duration: 0
+    })
+  }
+  
   openBasicModal(): void {
     this.modal.open(this.basicModalTemplate, this.viewContainerRef, {
       size: 'md',

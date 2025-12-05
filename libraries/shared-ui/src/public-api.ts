@@ -7,6 +7,8 @@ export * from './lib/card/card';
 export * from './lib/test-button/test-button';
 export * from './lib/button/button';
 export * from './lib/icon/icon';
+export * from './lib/toast/toast';
+export * from './lib/toast/toast.service';
 export * from './lib/modal/modal';
 export * from './lib/modal/modal-container';
 export * from './lib/modal/modal-header';
