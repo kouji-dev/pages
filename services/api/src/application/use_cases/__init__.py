@@ -7,6 +7,10 @@ from src.application.use_cases.auth import (
     RequestPasswordResetUseCase,
     ResetPasswordUseCase,
 )
+from src.application.use_cases.avatar import (
+    DeleteAvatarUseCase,
+    UploadAvatarUseCase,
+)
 from src.application.use_cases.user import (
     GetUserProfileUseCase,
     UpdateUserEmailUseCase,
@@ -26,4 +30,7 @@ __all__ = [
     "UpdateUserProfileUseCase",
     "UpdateUserEmailUseCase",
     "UpdateUserPasswordUseCase",
+    # Avatar use cases
+    "UploadAvatarUseCase",
+    "DeleteAvatarUseCase",
 ]

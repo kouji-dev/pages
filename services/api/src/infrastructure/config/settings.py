@@ -46,6 +46,20 @@ class Settings(BaseSettings):
     # CORS
     allowed_origins: list[str] = Field(default=["http://localhost:4200"])
 
+    # File Storage
+    storage_path: str = Field(
+        default="./storage",
+        description="Local filesystem path for file storage",
+    )
+    storage_base_url: str = Field(
+        default="http://localhost:8000/storage",
+        description="Base URL for accessing stored files",
+    )
+    max_file_size_mb: int = Field(
+        default=5,
+        description="Maximum file size in MB",
+    )
+
     # Logging
     log_level: str = "INFO"
 

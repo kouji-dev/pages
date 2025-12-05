@@ -50,3 +50,10 @@ class ConflictException(DomainException):
     def __init__(self, message: str, field: str | None = None) -> None:
         details = {"field": field} if field else {}
         super().__init__(message=message, details=details)
+
+
+class StorageException(DomainException):
+    """Raised when storage operations fail."""
+
+    def __init__(self, message: str) -> None:
+        super().__init__(message=message)

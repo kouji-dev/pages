@@ -152,3 +152,5 @@ services/api/.env.*
 !services/api/.env.example
 services/api/alembic.ini.local
 services/api/local_settings.py
+services/api/storage/
+**/storage/

@@ -14,6 +14,7 @@ from src.domain.exceptions import (
     AuthenticationException,
     ConflictException,
     EntityNotFoundException,
+    StorageException,
     ValidationException,
 )
 from src.domain.repositories import UserRepository

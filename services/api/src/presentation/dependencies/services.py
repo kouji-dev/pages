@@ -9,10 +9,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.application.interfaces import TokenService
 from src.application.services.permission_service import DatabasePermissionService
 from src.domain.repositories import UserRepository
-from src.domain.services import PasswordService, PermissionService
+from src.domain.services import PasswordService, PermissionService, StorageService
 from src.infrastructure.database import get_session
 from src.infrastructure.database.repositories import SQLAlchemyUserRepository
 from src.infrastructure.security import BcryptPasswordService, JWTTokenService
+from src.infrastructure.services.local_storage_service import LocalStorageService
 
 
 @lru_cache
@@ -53,3 +54,13 @@ async def get_permission_service(
         DatabasePermissionService instance
     """
     return DatabasePermissionService(session)
+
+
+@lru_cache
+def get_storage_service() -> StorageService:
+    """Get storage service instance (singleton).
+
+    Returns:
+        LocalStorageService instance
+    """
+    return LocalStorageService()

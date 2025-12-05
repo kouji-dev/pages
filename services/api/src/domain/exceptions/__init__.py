@@ -6,6 +6,7 @@ from src.domain.exceptions.base import (
     ConflictException,
     DomainException,
     EntityNotFoundException,
+    StorageException,
     ValidationException,
 )
 
@@ -16,4 +17,5 @@ __all__ = [
     "AuthenticationException",
     "AuthorizationException",
     "ConflictException",
+    "StorageException",
 ]

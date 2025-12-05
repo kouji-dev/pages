@@ -2,7 +2,7 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, File, Form, UploadFile, status
 
 from src.application.dtos.user import (
     EmailUpdateRequest,
@@ -10,6 +10,7 @@ from src.application.dtos.user import (
     UserResponse,
     UserUpdateRequest,
 )
+from src.application.use_cases.avatar import DeleteAvatarUseCase, UploadAvatarUseCase
 from src.application.use_cases.user import (
     GetUserProfileUseCase,
     UpdateUserEmailUseCase,
@@ -18,10 +19,12 @@ from src.application.use_cases.user import (
 )
 from src.domain.entities import User
 from src.domain.repositories import UserRepository
-from src.domain.services import PasswordService
+from src.domain.services import PasswordService, StorageService
+from src.infrastructure.config import get_settings
 from src.presentation.dependencies.auth import get_current_active_user
 from src.presentation.dependencies.services import (
     get_password_service,
+    get_storage_service,
     get_user_repository,
 )
 
@@ -57,6 +60,22 @@ def get_update_user_password_use_case(
 ) -> UpdateUserPasswordUseCase:
     """Get update user password use case with dependencies."""
     return UpdateUserPasswordUseCase(user_repository, password_service)
+
+
+def get_upload_avatar_use_case(
+    user_repository: Annotated[UserRepository, Depends(get_user_repository)],
+    storage_service: Annotated[StorageService, Depends(get_storage_service)],
+) -> UploadAvatarUseCase:
+    """Get upload avatar use case with dependencies."""
+    return UploadAvatarUseCase(user_repository, storage_service)
+
+
+def get_delete_avatar_use_case(
+    user_repository: Annotated[UserRepository, Depends(get_user_repository)],
+    storage_service: Annotated[StorageService, Depends(get_storage_service)],
+) -> DeleteAvatarUseCase:
+    """Get delete avatar use case with dependencies."""
+    return DeleteAvatarUseCase(user_repository, storage_service)
 
 
 @router.get("/me", response_model=UserResponse, status_code=status.HTTP_200_OK)
@@ -160,4 +179,72 @@ async def update_current_user_password(
         HTTPException: If current password is incorrect or new password validation fails
     """
     await use_case.execute(str(current_user.id), request)
+
+
+@router.post(
+    "/me/avatar",
+    response_model=UserResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def upload_avatar(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[UploadAvatarUseCase, Depends(get_upload_avatar_use_case)],
+    file: UploadFile = File(...),
+) -> UserResponse:
+    """Upload user avatar image.
+
+    Accepts image files (JPEG, PNG, WEBP) up to 5MB.
+    Image is automatically resized to multiple sizes (64x64, 128x128, 256x256).
+
+    Args:
+        file: Uploaded image file
+        current_user: Current authenticated user (from dependency)
+        use_case: Upload avatar use case
+
+    Returns:
+        Updated user profile data with new avatar URL
+
+    Raises:
+        HTTPException: If file validation fails, user not found, or storage operation fails
+    """
+    settings = get_settings()
+    
+    # Read file content
+    file_content = await file.read()
+    file_name = file.filename or "avatar"
+    content_type = file.content_type or "application/octet-stream"
+
+    return await use_case.execute(
+        user_id=str(current_user.id),
+        file_content=file_content,
+        file_name=file_name,
+        content_type=content_type,
+        max_size_mb=settings.max_file_size_mb,
+    )
+
+
+@router.delete(
+    "/me/avatar",
+    response_model=UserResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def delete_avatar(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[DeleteAvatarUseCase, Depends(get_delete_avatar_use_case)],
+) -> UserResponse:
+    """Delete user avatar.
+
+    Removes avatar image from storage and clears avatar_url in database.
+
+    Args:
+        current_user: Current authenticated user (from dependency)
+        use_case: Delete avatar use case
+
+    Returns:
+        Updated user profile data with cleared avatar URL
+
+    Raises:
+        HTTPException: If user not found or storage operation fails
+    """
+    return await use_case.execute(str(current_user.id))
 
