@@ -12,7 +12,7 @@ import { Icon, IconName } from '../icon/icon';
           <lib-icon
             [name]="icon()!"
             size="xl"
-            color="var(--color-text-tertiary)"
+            [color]="'var(--color-text-tertiary)'"
             [ariaLabel]="iconLabel() || 'Empty state'"
           />
         }
@@ -23,7 +23,7 @@ import { Icon, IconName } from '../icon/icon';
         @if (actionLabel()) {
           <lib-button
             [variant]="actionVariant()"
-            [leftIcon]="actionIcon()"
+            [leftIcon]="actionIcon() || null"
             (clicked)="onAction.emit()"
             class="empty-state_button"
           >
