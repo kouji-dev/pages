@@ -39,6 +39,7 @@ faker = "^33.0.0"
 pytest-xdist = "^3.8.0"
 safety = "^3.2.0"
 bandit = "^1.7.8"
+types-python-jose = "^3.3.0"
 
 [tool.poetry.scripts]
 dev = "uvicorn src.main:app --reload --host 0.0.0.0 --port 8000"

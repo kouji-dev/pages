@@ -29,13 +29,13 @@ class Settings(BaseSettings):
 
     # Database
     database_url: PostgresDsn = Field(
-        default="postgresql+asyncpg://postgres:postgres@localhost:5432/pages"
+        default="postgresql+asyncpg://postgres:postgres@localhost:5432/pages"  # type: ignore[assignment]
     )
     database_pool_size: int = 5
     database_max_overflow: int = 10
 
     # Redis
-    redis_url: RedisDsn = Field(default="redis://localhost:6379/0")
+    redis_url: RedisDsn = Field(default="redis://localhost:6379/0")  # type: ignore[assignment]
 
     # JWT Authentication
     jwt_secret_key: str = Field(default="change-me-in-production-super-secret-key")

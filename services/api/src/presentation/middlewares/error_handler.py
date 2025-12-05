@@ -1,5 +1,7 @@
 """Error handling middleware and exception handlers."""
 
+from typing import Any
+
 import structlog
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
@@ -39,7 +41,7 @@ async def domain_exception_handler(request: Request, exc: DomainException) -> JS
         path=request.url.path,
     )
 
-    response_content = {
+    response_content: dict[str, Any] = {
         "error": type(exc).__name__,
         "message": exc.message,
     }

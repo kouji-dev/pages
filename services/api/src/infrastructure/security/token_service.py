@@ -49,7 +49,7 @@ class JWTTokenService(TokenService):
         if additional_claims:
             payload.update(additional_claims)
 
-        return jwt.encode(payload, self._secret_key, algorithm=self._algorithm)
+        return str(jwt.encode(payload, self._secret_key, algorithm=self._algorithm))
 
     def create_refresh_token(self, user_id: UUID) -> str:
         """Create a refresh token for a user.
@@ -69,7 +69,7 @@ class JWTTokenService(TokenService):
             "iat": datetime.now(UTC),
         }
 
-        return jwt.encode(payload, self._secret_key, algorithm=self._algorithm)
+        return str(jwt.encode(payload, self._secret_key, algorithm=self._algorithm))
 
     def verify_token(self, token: str) -> dict[str, Any]:
         """Verify and decode a token.
@@ -84,7 +84,7 @@ class JWTTokenService(TokenService):
             AuthenticationException: If token is invalid or expired
         """
         try:
-            payload = jwt.decode(token, self._secret_key, algorithms=[self._algorithm])
+            payload: dict[str, Any] = jwt.decode(token, self._secret_key, algorithms=[self._algorithm])
             return payload
         except JWTError as e:
             raise AuthenticationException(f"Invalid token: {str(e)}") from e
@@ -130,7 +130,7 @@ class JWTTokenService(TokenService):
             "iat": datetime.now(UTC),
         }
 
-        return jwt.encode(payload, self._secret_key, algorithm=self._algorithm)
+        return str(jwt.encode(payload, self._secret_key, algorithm=self._algorithm))
 
     def verify_password_reset_token(self, token: str) -> UUID:
         """Verify password reset token and get user ID.

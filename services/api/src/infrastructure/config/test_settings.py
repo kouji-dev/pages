@@ -13,11 +13,11 @@ class TestSettings(Settings):
 
     model_config = Settings.model_config.copy()
 
-    database_url: str = os.getenv(
+    database_url: str = os.getenv(  # type: ignore[assignment]
         "TEST_DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5434/pages_test"
     )
     debug: bool = True
-    environment: str = "test"
+    environment: str = "test"  # type: ignore[assignment]
 
     # Disable rate limiting in tests by using a very high limit
     # Or we can mock the limiter in tests

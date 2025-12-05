@@ -69,7 +69,7 @@ def create_app(enable_rate_limiting: bool = True) -> FastAPI:
     # Add rate limiting middleware (disabled in tests)
     if enable_rate_limiting:
         app.state.limiter = limiter
-        app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
+        app.add_exception_handler(RateLimitExceeded, rate_limit_handler)  # type: ignore[arg-type]
         app.add_middleware(SlowAPIMiddleware)
 
     # Configure CORS
@@ -82,8 +82,8 @@ def create_app(enable_rate_limiting: bool = True) -> FastAPI:
     )
 
     # Register exception handlers
-    app.add_exception_handler(DomainException, domain_exception_handler)
-    app.add_exception_handler(ValidationError, validation_exception_handler)
+    app.add_exception_handler(DomainException, domain_exception_handler)  # type: ignore[arg-type]
+    app.add_exception_handler(ValidationError, validation_exception_handler)  # type: ignore[arg-type]
     app.add_exception_handler(Exception, generic_exception_handler)
 
     # Include API routers

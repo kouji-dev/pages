@@ -28,9 +28,11 @@ def get_rate_limiter() -> Limiter:
 # Custom rate limit exceeded handler
 def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> Response:
     """Handle rate limit exceeded exception."""
+    # RateLimitExceeded doesn't have retry_after attribute, use default
+    retry_after = getattr(exc, "retry_after", 60)
     response = Response(
         content=f"Rate limit exceeded: {exc.detail}",
         status_code=429,
-        headers={"Retry-After": str(exc.retry_after)},
+        headers={"Retry-After": str(retry_after)},
     )
     return response
