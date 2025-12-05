@@ -186,7 +186,6 @@ import { Icon, IconName } from '../icon/icon';
       }
     `,
   ],
-  standalone: true,
 })
 export class Button {
   // Inputs

@@ -357,6 +357,14 @@ body {
 .lib-toast-panel {
   pointer-events: none;
   z-index: 1000;
+}
+/* CDK Overlay Modal Panel Size Classes */
+.cdk-overlay-pane.lib-modal-panel--sm,
+.cdk-overlay-pane.lib-modal-panel--md,
+.cdk-overlay-pane.lib-modal-panel--lg {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
   max-width: 100vw;
   max-height: 100vh;
   padding: 1rem;
@@ -409,4 +417,28 @@ body {
   transform: translateX(-50%) !important;
   top: auto !important;
   right: auto !important;
+}
+
+.lib-modal-panel--sm {
+  max-width: calc(24rem + 2rem); /* 384px + padding */
+}
+
+.lib-modal-panel--md {
+  max-width: calc(32rem + 2rem); /* 512px + padding */
+}
+
+.lib-modal-panel--lg {
+  max-width: calc(48rem + 2rem); /* 768px + padding */
+}
+
+.lib-modal-panel--sm .modal-container,
+.lib-modal-panel--md .modal-container,
+.lib-modal-panel--lg .modal-container {
+  width: 100%;
+}
+
+/* CDK Overlay Dark Backdrop */
+.cdk-overlay-dark-backdrop {
+  background-color: var(--color-bg-overlay);
+  backdrop-filter: blur(4px);
 }
