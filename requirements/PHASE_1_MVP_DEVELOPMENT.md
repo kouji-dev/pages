@@ -794,31 +794,36 @@ This phase focuses on building the foundational features required for a function
 
 **Backend Tasks**:
 
-- [ ] Create user profile endpoint (GET /api/users/me)
-  - [ ] Return current user profile data
-  - [ ] Include name, email, avatar_url, created_at
-  - [ ] Require authentication
-- [ ] Create user profile update endpoint (PUT /api/users/me)
-  - [ ] Update name field
-  - [ ] Validate input (name not empty)
-  - [ ] Return updated user data
-- [ ] Create email update endpoint (PUT /api/users/me/email)
-  - [ ] Validate email format and uniqueness
-  - [ ] Send verification email (async)
-  - [ ] Require current password for security
-- [ ] Create password update endpoint (PUT /api/users/me/password)
-  - [ ] Require current password
-  - [ ] Validate new password strength
-  - [ ] Hash new password
-  - [ ] Update password_hash in database
-- [ ] Write API tests for profile endpoints
-- [ ] Write integration tests
+- [x] Create user profile endpoint (GET /api/users/me)
+  - [x] Return current user profile data
+  - [x] Include name, email, avatar_url, created_at
+  - [x] Require authentication
+- [x] Create user profile update endpoint (PUT /api/users/me)
+  - [x] Update name field
+  - [x] Validate input (name not empty)
+  - [x] Return updated user data
+- [x] Create email update endpoint (PUT /api/users/me/email)
+  - [x] Validate email format and uniqueness
+  - [ ] Send verification email (async) - pending email service
+  - [x] Require current password for security
+- [x] Create password update endpoint (PUT /api/users/me/password)
+  - [x] Require current password
+  - [x] Validate new password strength
+  - [x] Hash new password
+  - [x] Update password_hash in database
+- [x] Write API tests for profile endpoints
+- [x] Write integration tests
 
 **Deliverables**:
 
-- User profile CRUD endpoints
-- Email and password update endpoints
-- API tests
+- [x] User profile CRUD endpoints
+- [x] Email and password update endpoints
+- [x] API tests
+
+**Note**: ✅ **COMPLETED** - Full user profile API implemented with DDD/Clean Architecture:
+- Use cases: GetUserProfileUseCase, UpdateUserProfileUseCase, UpdateUserEmailUseCase, UpdateUserPasswordUseCase
+- Endpoints: GET/PUT /api/users/me, PUT /api/users/me/email, PUT /api/users/me/password
+- Unit and integration tests (11 tests each)
 
 ---
 
@@ -831,28 +836,35 @@ This phase focuses on building the foundational features required for a function
 
 **Backend Tasks**:
 
-- [ ] Create avatar upload endpoint (POST /api/users/me/avatar)
-  - [ ] Accept multipart/form-data
-  - [ ] Validate file type (image/jpeg, image/png, image/webp)
-  - [ ] Validate file size (max 5MB)
-  - [ ] Generate unique filename
-  - [ ] Save file to storage (local or S3)
-  - [ ] Update user.avatar_url in database
-- [ ] Implement image processing
-  - [ ] Resize image to standard sizes (64x64, 128x128, 256x256)
-  - [ ] Optimize image quality
-  - [ ] Store multiple sizes for different use cases
-- [ ] Create avatar deletion endpoint (DELETE /api/users/me/avatar)
-  - [ ] Remove file from storage
-  - [ ] Clear avatar_url in database
-- [ ] Write API tests for avatar upload
-- [ ] Write integration tests with file upload
+- [x] Create avatar upload endpoint (POST /api/users/me/avatar)
+  - [x] Accept multipart/form-data
+  - [x] Validate file type (image/jpeg, image/png, image/webp)
+  - [x] Validate file size (max 5MB)
+  - [x] Generate unique filename
+  - [x] Save file to storage (local or S3)
+  - [x] Update user.avatar_url in database
+- [x] Implement image processing
+  - [x] Resize image to standard sizes (64x64, 128x128, 256x256)
+  - [x] Optimize image quality
+  - [x] Store multiple sizes for different use cases
+- [x] Create avatar deletion endpoint (DELETE /api/users/me/avatar)
+  - [x] Remove file from storage
+  - [x] Clear avatar_url in database
+- [x] Write API tests for avatar upload
+- [x] Write integration tests with file upload
 
 **Deliverables**:
 
-- Avatar upload endpoint
-- Image processing and storage
-- API tests
+- [x] Avatar upload endpoint
+- [x] Image processing and storage
+- [x] API tests
+
+**Note**: ✅ **COMPLETED** - Full avatar upload system implemented:
+- Storage service interface (LocalStorageService implementation)
+- ImageProcessingService with Pillow for resizing and optimization
+- Use cases: UploadAvatarUseCase, DeleteAvatarUseCase
+- Endpoints: POST/DELETE /api/users/me/avatar
+- Unit and integration tests (8 unit + 9 integration tests)
 
 ---
 
@@ -865,25 +877,32 @@ This phase focuses on building the foundational features required for a function
 
 **Backend Tasks**:
 
-- [ ] Design user preferences schema (JSON field in users table or separate table)
-- [ ] Create get preferences endpoint (GET /api/users/me/preferences)
-  - [ ] Return user preferences JSON
-  - [ ] Default preferences if none set
-- [ ] Create update preferences endpoint (PUT /api/users/me/preferences)
-  - [ ] Validate preferences JSON schema
-  - [ ] Update preferences in database
-  - [ ] Return updated preferences
-- [ ] Define default preferences structure
-  - [ ] Theme preference (light/dark)
-  - [ ] Notification preferences
-  - [ ] Language preference
-- [ ] Write API tests
+- [x] Design user preferences schema (JSON field in users table or separate table)
+- [x] Create get preferences endpoint (GET /api/users/me/preferences)
+  - [x] Return user preferences JSON
+  - [x] Default preferences if none set
+- [x] Create update preferences endpoint (PUT /api/users/me/preferences)
+  - [x] Validate preferences JSON schema
+  - [x] Update preferences in database
+  - [x] Return updated preferences
+- [x] Define default preferences structure
+  - [x] Theme preference (light/dark/auto)
+  - [x] Notification preferences (email, push, in_app)
+  - [x] Language preference (ISO 639-1)
+- [x] Write API tests
 
 **Deliverables**:
 
-- User preferences API endpoints
-- Default preferences structure
-- API tests
+- [x] User preferences API endpoints
+- [x] Default preferences structure
+- [x] API tests
+
+**Note**: ✅ **COMPLETED** - Full user preferences system implemented:
+- Preferences value object with default schema and validation
+- Use cases: GetUserPreferencesUseCase, UpdateUserPreferencesUseCase
+- Endpoints: GET/PUT /api/users/me/preferences
+- Support for theme (light/dark/auto), language, and granular notification preferences
+- Unit and integration tests (8 unit + 8 integration tests)
 
 ---
 
@@ -896,24 +915,30 @@ This phase focuses on building the foundational features required for a function
 
 **Backend Tasks**:
 
-- [ ] Create user list endpoint (GET /api/users)
-  - [ ] Filter by organization membership (optional query param)
-  - [ ] Search by name or email (optional query param)
-  - [ ] Pagination support (page, limit)
-  - [ ] Return user id, name, email, avatar_url
-- [ ] Implement search functionality
-  - [ ] Case-insensitive search on name and email
-  - [ ] Use database indexes for performance
-- [ ] Implement pagination
-  - [ ] Default limit (e.g., 20 users per page)
-  - [ ] Return total count, page, limit in response
-- [ ] Add permission check (organization members only if filtering by org)
-- [ ] Write API tests
+- [x] Create user list endpoint (GET /api/users)
+  - [x] Filter by organization membership (optional query param)
+  - [x] Search by name or email (optional query param)
+  - [x] Pagination support (page, limit)
+  - [x] Return user id, name, email, avatar_url
+- [x] Implement search functionality
+  - [x] Case-insensitive search on name and email
+  - [x] Use database indexes for performance
+- [x] Implement pagination
+  - [x] Default limit (e.g., 20 users per page)
+  - [x] Return total count, page, limit in response
+- [x] Add permission check (organization members only if filtering by org)
+- [x] Write API tests
 
 **Deliverables**:
 
-- User list endpoint with search and pagination
-- API tests
+- [x] User list endpoint with search and pagination
+- [x] API tests
+
+**Note**: ✅ **COMPLETED** - Full user list API implemented:
+- Use case: ListUsersUseCase with pagination, search, and organization filtering
+- Endpoint: GET /api/users with query parameters (page, limit, search, organization_id)
+- Support for case-insensitive search and organization membership filtering
+- Unit and integration tests (7 unit + 9 integration tests)
 
 ---
 
@@ -926,19 +951,32 @@ This phase focuses on building the foundational features required for a function
 
 **Backend Tasks**:
 
-- [ ] Create user deactivation endpoint (POST /api/users/me/deactivate)
-  - [ ] Soft delete (set deleted_at timestamp)
-  - [ ] Invalidate all user sessions/tokens
-  - [ ] Prevent login after deactivation
-- [ ] Update authentication logic to check deleted_at
-- [ ] Create user reactivation endpoint (admin only, optional)
-- [ ] Write API tests
+- [x] Create user deactivation endpoint (POST /api/users/me/deactivate)
+  - [x] Soft delete (set deleted_at timestamp)
+  - [x] Invalidate all user sessions/tokens
+  - [x] Prevent login after deactivation
+- [x] Update authentication logic to check deleted_at
+- [x] Create user reactivation endpoint (admin only, optional)
+  - [x] Endpoint POST /api/users/{user_id}/reactivate
+  - [x] Admin permission check (admin of at least one organization)
+  - [x] Reactivate user (clear deleted_at, set is_active=True)
+- [x] Write API tests
 
 **Deliverables**:
 
-- User deactivation endpoint
-- Updated authentication logic
-- API tests
+- [x] User deactivation endpoint
+- [x] Updated authentication logic
+- [x] API tests
+
+**Note**: ✅ **COMPLETED** - User deactivation and reactivation system implemented:
+- Use case: DeactivateUserUseCase (soft delete via User.deactivate() method)
+- Use case: ReactivateUserUseCase (admin only, reactivates via User.reactivate() method)
+- Endpoint: POST /api/users/me/deactivate (204 No Content)
+- Endpoint: POST /api/users/{user_id}/reactivate (204 No Content, admin only)
+- Admin permission check: requires admin of at least one organization
+- Automatic token invalidation via get_current_user checks (is_active, is_deleted)
+- Login prevention already implemented in LoginUserUseCase
+- Unit and integration tests (3 unit + 4 integration tests for deactivation)
 
 ---
 
@@ -951,38 +989,51 @@ This phase focuses on building the foundational features required for a function
 
 **Backend Tasks**:
 
-- [ ] Create organization creation endpoint (POST /api/organizations)
-  - [ ] Validate organization name (required, min length)
-  - [ ] Auto-generate slug from name
-  - [ ] Validate slug uniqueness
-  - [ ] Create organization record
-  - [ ] Add creator as admin member in OrganizationMembers table
-  - [ ] Return created organization with member info
-- [ ] Create organization retrieval endpoint (GET /api/organizations/:id)
-  - [ ] Include organization details (name, slug, description, settings)
-  - [ ] Permission check (organization member only)
-  - [ ] Include member count
-- [ ] Create organization list endpoint (GET /api/organizations)
-  - [ ] Filter by current user membership (only show user's orgs)
-  - [ ] Pagination support (page, limit)
-  - [ ] Return organization id, name, slug, member count
-- [ ] Create organization update endpoint (PUT /api/organizations/:id)
-  - [ ] Permission check (admin only)
-  - [ ] Update name, description fields
-  - [ ] Validate name and slug uniqueness if changed
-  - [ ] Return updated organization
-- [ ] Create organization deletion endpoint (DELETE /api/organizations/:id)
-  - [ ] Permission check (admin only)
-  - [ ] Soft delete (set deleted_at timestamp)
-  - [ ] Cascade delete or archive projects
-- [ ] Write API tests for CRUD operations
-- [ ] Write integration tests
+- [x] Create organization creation endpoint (POST /api/organizations)
+  - [x] Validate organization name (required, min length)
+  - [x] Auto-generate slug from name
+  - [x] Validate slug uniqueness
+  - [x] Create organization record
+  - [x] Add creator as admin member in OrganizationMembers table
+  - [x] Return created organization with member info
+- [x] Create organization retrieval endpoint (GET /api/organizations/:id)
+  - [x] Include organization details (name, slug, description, settings)
+  - [x] Permission check (organization member only)
+  - [x] Include member count
+- [x] Create organization list endpoint (GET /api/organizations)
+  - [x] Filter by current user membership (only show user's orgs)
+  - [x] Pagination support (page, limit)
+  - [x] Return organization id, name, slug, member count
+- [x] Create organization update endpoint (PUT /api/organizations/:id)
+  - [x] Permission check (admin only)
+  - [x] Update name, description fields
+  - [x] Validate name and slug uniqueness if changed
+  - [x] Return updated organization
+- [x] Create organization deletion endpoint (DELETE /api/organizations/:id)
+  - [x] Permission check (admin only)
+  - [x] Soft delete (set deleted_at timestamp)
+  - [x] Cascade delete or archive projects
+- [x] Write API tests for CRUD operations
+- [x] Write integration tests
 
 **Deliverables**:
 
-- Organization CRUD endpoints
-- Permission checks
-- API tests
+- [x] Organization CRUD endpoints
+- [x] Permission checks
+- [x] API tests
+
+**Note**: ✅ **COMPLETED** - Organization CRUD API implemented:
+- Domain layer: Organization entity with slug generation and validation
+- Repository: OrganizationRepository interface and SQLAlchemyOrganizationRepository
+- Use cases: Create, Get, List, Update, Delete organizations
+- Endpoints: Full CRUD operations at `/api/v1/organizations/`
+- Permissions: Member check for GET, admin check for UPDATE/DELETE
+- Auto-add creator as admin member when creating organization
+- Slug auto-generation from organization name
+- Slug uniqueness validation
+- Soft delete with deleted_at timestamp
+- Pagination and search support
+- Tests: 11 unit tests + 14 integration tests (all passing)
 
 ---
 
@@ -995,34 +1046,44 @@ This phase focuses on building the foundational features required for a function
 
 **Backend Tasks**:
 
-- [ ] Create add member endpoint (POST /api/organizations/:id/members)
-  - [ ] Validate user_id exists
-  - [ ] Check user is not already a member
-  - [ ] Add member with default role (member)
-  - [ ] Permission check (admin only)
-  - [ ] Return added member info
-- [ ] Create list members endpoint (GET /api/organizations/:id/members)
-  - [ ] Return members with user details (name, email, avatar_url)
-  - [ ] Include role for each member
-  - [ ] Pagination support
-  - [ ] Permission check (organization member)
-- [ ] Create update member role endpoint (PUT /api/organizations/:id/members/:userId)
-  - [ ] Update member role (member, admin)
-  - [ ] Permission check (admin only)
-  - [ ] Prevent removing last admin
-  - [ ] Return updated member info
-- [ ] Create remove member endpoint (DELETE /api/organizations/:id/members/:userId)
-  - [ ] Permission check (admin only, or user removing themselves)
-  - [ ] Prevent removing last admin
-  - [ ] Remove member from organization
-- [ ] Write API tests for member management
-- [ ] Write integration tests
+- [x] Create add member endpoint (POST /api/organizations/:id/members)
+  - [x] Validate user_id exists
+  - [x] Check user is not already a member
+  - [x] Add member with default role (member)
+  - [x] Permission check (admin only)
+  - [x] Return added member info
+- [x] Create list members endpoint (GET /api/organizations/:id/members)
+  - [x] Return members with user details (name, email, avatar_url)
+  - [x] Include role for each member
+  - [x] Pagination support
+  - [x] Permission check (organization member)
+- [x] Create update member role endpoint (PUT /api/organizations/:id/members/:userId)
+  - [x] Update member role (member, admin)
+  - [x] Permission check (admin only)
+  - [x] Prevent removing last admin
+  - [x] Return updated member info
+- [x] Create remove member endpoint (DELETE /api/organizations/:id/members/:userId)
+  - [x] Permission check (admin only, or user removing themselves)
+  - [x] Prevent removing last admin
+  - [x] Remove member from organization
+- [x] Write API tests for member management
+- [x] Write integration tests
 
 **Deliverables**:
 
-- Organization member management endpoints
-- Role-based permissions
-- API tests
+- [x] Organization member management endpoints
+- [x] Role-based permissions
+- [x] API tests
+
+**Note**: ✅ **COMPLETED** - Organization Members API implemented:
+- Use cases: Add, List, Update role, Remove organization members
+- Endpoints: Full member management at `/api/v1/organizations/{id}/members/`
+- Permissions: Member check for GET, admin check for POST/PUT/DELETE
+- Self-removal: Users can remove themselves without admin role
+- Last admin protection: Prevents removing/changing role of last admin
+- Role validation: Validates roles (admin, member, viewer)
+- Pagination: List members supports pagination
+- Tests: 11 unit tests + 10 integration tests (all passing)
 
 ---
 
@@ -1031,44 +1092,57 @@ This phase focuses on building the foundational features required for a function
 **Priority**: Medium  
 **Estimated Time**: 4-5 days  
 **Dependencies**: 1.2.7  
-**Assigned To**: BATATA1
+**Assigned To**: BATATA1  
+**Status**: ✅ Complete
 
 **Backend Tasks**:
 
-- [ ] Create invitation model/table
-  - [ ] Fields: id, organization_id, email, token, role, invited_by, expires_at, accepted_at, created_at
-  - [ ] Migration for invitations table
-- [ ] Create send invitation endpoint (POST /api/organizations/:id/members/invite)
-  - [ ] Validate email format
-  - [ ] Check user is not already a member
-  - [ ] Check invitation not already sent (pending)
-  - [ ] Generate secure invitation token
-  - [ ] Create invitation record (expires in 7 days)
-  - [ ] Send invitation email (async) with invitation link
-  - [ ] Permission check (admin only)
-  - [ ] Return invitation info
-- [ ] Create accept invitation endpoint (POST /api/organizations/invitations/:token/accept)
-  - [ ] Validate token exists and not expired
-  - [ ] Check user email matches invitation email (if authenticated) or allow registration
-  - [ ] Add user to organization with specified role
-  - [ ] Mark invitation as accepted
-  - [ ] Send welcome notification (async)
-  - [ ] Return organization info
-- [ ] Create list invitations endpoint (GET /api/organizations/:id/invitations)
-  - [ ] Return pending invitations
-  - [ ] Permission check (admin only)
-- [ ] Create cancel invitation endpoint (DELETE /api/organizations/invitations/:id)
-  - [ ] Cancel pending invitation
-  - [ ] Permission check (admin only)
-- [ ] Implement invitation email template
-- [ ] Write API tests for invitation system
-- [ ] Write integration tests
+- [x] Create invitation model/table
+  - [x] Fields: id, organization_id, email, token, role, invited_by, expires_at, accepted_at, created_at
+  - [x] Migration for invitations table
+- [x] Create send invitation endpoint (POST /api/organizations/:id/members/invite)
+  - [x] Validate email format
+  - [x] Check user is not already a member
+  - [x] Check invitation not already sent (pending)
+  - [x] Generate secure invitation token
+  - [x] Create invitation record (expires in 7 days)
+  - [ ] Send invitation email (async) with invitation link (pending email service)
+  - [x] Permission check (admin only)
+  - [x] Return invitation info
+- [x] Create accept invitation endpoint (POST /api/organizations/invitations/:token/accept)
+  - [x] Validate token exists and not expired
+  - [x] Check user email matches invitation email (if authenticated) or allow registration
+  - [x] Add user to organization with specified role
+  - [x] Mark invitation as accepted
+  - [ ] Send welcome notification (async) (pending notification service)
+  - [x] Return organization info
+- [x] Create list invitations endpoint (GET /api/organizations/:id/invitations)
+  - [x] Return pending invitations
+  - [x] Permission check (admin only)
+- [x] Create cancel invitation endpoint (DELETE /api/organizations/invitations/:id)
+  - [x] Cancel pending invitation
+  - [x] Permission check (admin only)
+- [ ] Implement invitation email template (pending email service)
+- [x] Write API tests for invitation system
+- [x] Write integration tests
 
 **Deliverables**:
 
-- Organization invitation system
-- Invitation email handling
-- API tests
+- [x] Organization invitation system
+- [ ] Invitation email handling (pending email service)
+- [x] API tests
+
+**Note**: ✅ **COMPLETED** - Full organization invitation system implemented:
+- Domain layer: Invitation entity with validation, expiration checks, and accept method
+- Repository: InvitationRepository interface and SQLAlchemyInvitationRepository implementation
+- Migration: 2024_12_05_0002_add_invitations_table.py with timezone-aware datetime fields
+- Use cases: SendInvitationUseCase, AcceptInvitationUseCase, ListInvitationsUseCase, CancelInvitationUseCase
+- Endpoints: POST /api/v1/organizations/{id}/members/invite, POST /api/v1/organizations/invitations/{token}/accept, GET /api/v1/organizations/{id}/invitations, DELETE /api/v1/organizations/invitations/{id}
+- Permissions: Admin required for send/list/cancel, authenticated user required for accept
+- Security: Secure token generation with secrets.token_urlsafe(32), email validation, expiration management (7 days default)
+- Validations: Email format, role validation, duplicate member check, pending invitation check, email match on accept
+- Tests: 16 unit tests + 11 integration tests (all passing: 27/27 ✅)
+- Email sending pending email service implementation (similar to password reset)
 
 ---
 
@@ -1077,31 +1151,41 @@ This phase focuses on building the foundational features required for a function
 **Priority**: Low  
 **Estimated Time**: 1-2 days  
 **Dependencies**: 1.2.6  
-**Assigned To**: BATATA1
+**Assigned To**: BATATA1  
+**Status**: ✅ Complete
 
 **Backend Tasks**:
 
-- [ ] Design organization settings schema (JSON field in organizations table)
-- [ ] Create get settings endpoint (GET /api/organizations/:id/settings)
-  - [ ] Return organization settings JSON
-  - [ ] Include default settings if none set
-  - [ ] Permission check (organization member)
-- [ ] Create update settings endpoint (PUT /api/organizations/:id/settings)
-  - [ ] Validate settings JSON schema
-  - [ ] Update settings in database
-  - [ ] Permission check (admin only)
-  - [ ] Return updated settings
-- [ ] Define default settings structure
-  - [ ] Feature flags
-  - [ ] Notification preferences
-  - [ ] Custom branding (optional)
-- [ ] Write API tests
+- [x] Design organization settings schema (JSON field in organizations table)
+- [x] Create get settings endpoint (GET /api/organizations/:id/settings)
+  - [x] Return organization settings JSON
+  - [x] Include default settings if none set
+  - [x] Permission check (organization member)
+- [x] Create update settings endpoint (PUT /api/organizations/:id/settings)
+  - [x] Validate settings JSON schema
+  - [x] Update settings in database
+  - [x] Permission check (admin only)
+  - [x] Return updated settings
+- [x] Define default settings structure
+  - [x] Feature flags
+  - [x] Notification preferences
+  - [x] Custom branding (optional)
+- [x] Write API tests
 
 **Deliverables**:
 
-- Organization settings API endpoints
-- Default settings structure
-- API tests
+- [x] Organization settings API endpoints
+- [x] Default settings structure
+- [x] API tests
+
+**Note**: ✅ **COMPLETED** - Full organization settings API implemented:
+- Value object: `OrganizationSettings` with default schema and validation in `src/domain/value_objects/organization_settings.py`
+- Use cases: `GetOrganizationSettingsUseCase`, `UpdateOrganizationSettingsUseCase`
+- Endpoints: GET/PUT `/api/v1/organizations/{id}/settings`
+- Permissions: Member check for GET, admin check for PUT
+- Settings structure: Feature flags, notification preferences (email digest, project/space updates), and branding (logo, colors)
+- Settings merging: Update merges with existing settings (not replaced)
+- Unit and integration tests (8 unit + 9 integration tests)
 
 ---
 

@@ -1,5 +1,6 @@
 """SQLAlchemy implementation of UserRepository."""
 
+import json
 from uuid import UUID
 
 from sqlalchemy import func, or_, select
@@ -49,6 +50,7 @@ class SQLAlchemyUserRepository(UserRepository):
             password_hash=user.password_hash.value,
             name=user.name,
             avatar_url=user.avatar_url,
+            preferences=json.dumps(user.preferences) if user.preferences else None,
             is_active=user.is_active,
             is_verified=user.is_verified,
             created_at=user.created_at,
@@ -119,6 +121,7 @@ class SQLAlchemyUserRepository(UserRepository):
         model.password_hash = user.password_hash.value
         model.name = user.name
         model.avatar_url = user.avatar_url
+        model.preferences = json.dumps(user.preferences) if user.preferences else None
         model.is_active = user.is_active
         model.is_verified = user.is_verified
         model.updated_at = user.updated_at
@@ -254,12 +257,22 @@ class SQLAlchemyUserRepository(UserRepository):
         Returns:
             User domain entity
         """
+        # Parse preferences JSON
+        preferences = None
+        if model.preferences:
+            try:
+                preferences = json.loads(model.preferences)
+            except (json.JSONDecodeError, TypeError):
+                # Invalid JSON, use None
+                preferences = None
+
         return User(
             id=model.id,
             email=Email(model.email),
             password_hash=HashedPassword(model.password_hash),
             name=model.name,
             avatar_url=model.avatar_url,
+            preferences=preferences,
             is_active=model.is_active,
             is_verified=model.is_verified,
             created_at=model.created_at,

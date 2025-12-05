@@ -2,10 +2,11 @@
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Self
+from typing import Any, Self
 from uuid import UUID, uuid4
 
 from src.domain.value_objects import Email, HashedPassword
+from src.domain.value_objects.preferences import get_default_preferences
 
 
 @dataclass
@@ -21,6 +22,7 @@ class User:
     password_hash: HashedPassword
     name: str
     avatar_url: str | None = None
+    preferences: dict[str, Any] | None = None
     is_active: bool = True
     is_verified: bool = False
     created_at: datetime = field(default_factory=datetime.utcnow)
@@ -81,9 +83,42 @@ class User:
         self.avatar_url = avatar_url
         self._touch()
 
+    def update_email(self, email: Email) -> None:
+        """Update user email address.
+
+        Args:
+            email: New email value object
+
+        Raises:
+            ValueError: If email is invalid (handled by Email value object creation)
+        """
+        self.email = email
+        self._touch()
+
     def update_password(self, password_hash: HashedPassword) -> None:
         """Update user password hash."""
         self.password_hash = password_hash
+        self._touch()
+
+    def update_preferences(self, preferences: dict[str, Any]) -> None:
+        """Update user preferences.
+
+        Args:
+            preferences: Preferences dictionary (will be merged with existing preferences)
+
+        Raises:
+            ValueError: If preferences structure is invalid
+        """
+        from src.domain.value_objects.preferences import validate_preferences
+
+        # Start with current preferences or defaults
+        current_preferences = self.preferences or get_default_preferences()
+
+        # Merge new preferences with current
+        merged_preferences = {**current_preferences, **preferences}
+
+        # Validate and normalize
+        self.preferences = validate_preferences(merged_preferences)
         self._touch()
 
     def verify(self) -> None:

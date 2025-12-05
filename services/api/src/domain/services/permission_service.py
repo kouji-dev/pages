@@ -116,3 +116,15 @@ class PermissionService(ABC):
             True if user has admin or member role
         """
         pass
+
+    @abstractmethod
+    async def is_admin_of_any_organization(self, user: User) -> bool:
+        """Check if user is admin of at least one organization.
+
+        Args:
+            user: User entity
+
+        Returns:
+            True if user is admin of at least one organization
+        """
+        pass

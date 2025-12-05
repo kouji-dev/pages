@@ -137,3 +137,23 @@ class DatabasePermissionService(PermissionService):
                 return True
 
         return False
+
+    async def is_admin_of_any_organization(self, user: User) -> bool:
+        """Check if user is admin of at least one organization.
+
+        Args:
+            user: User entity
+
+        Returns:
+            True if user is admin of at least one organization
+        """
+        from src.infrastructure.database.models import OrganizationMemberModel
+
+        result = await self._session.execute(
+            select(OrganizationMemberModel).where(
+                OrganizationMemberModel.user_id == user.id,
+                OrganizationMemberModel.role == Role.ADMIN.value,
+            )
+        )
+        admin_membership = result.scalar_one_or_none()
+        return admin_membership is not None

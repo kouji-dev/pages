@@ -2,6 +2,7 @@
 
 from src.infrastructure.database.models.attachment import AttachmentModel
 from src.infrastructure.database.models.comment import CommentModel
+from src.infrastructure.database.models.invitation import InvitationModel
 from src.infrastructure.database.models.issue import IssueModel
 from src.infrastructure.database.models.notification import NotificationModel
 from src.infrastructure.database.models.organization import (
@@ -19,6 +20,7 @@ __all__ = [
     "UserModel",
     "OrganizationModel",
     "OrganizationMemberModel",
+    "InvitationModel",
     "ProjectModel",
     "ProjectMemberModel",
     "IssueModel",
