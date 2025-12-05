@@ -1,15 +1,16 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { BaseLayout } from './base-layout';
 import { UserMenu } from '../components/user-menu';
+import { OrganizationSelector } from '../components/organization-selector';
 
 @Component({
   selector: 'app-authenticated-layout',
-  imports: [BaseLayout, UserMenu],
+  imports: [BaseLayout, UserMenu, OrganizationSelector],
   template: `
     <app-base-layout>
       <!-- Breadcrumbs slot (Jira/Confluence style) -->
       <div slot="breadcrumbs">
-        <!-- Breadcrumb navigation will be added here -->
+        <app-organization-selector />
       </div>
 
       <!-- Global search slot (Jira/Confluence style) -->

@@ -45,53 +45,33 @@ describe('Dropdown', () => {
   });
 
   it('should open dropdown when trigger is clicked', () => {
-    expect(component.isDropdownOpen()).toBe(false);
+    expect(component.open()).toBe(false);
 
     triggerElement.click();
     fixture.detectChanges();
 
-    expect(component.isDropdownOpen()).toBe(true);
+    expect(component.open()).toBe(true);
   });
 
   it('should close dropdown when trigger is clicked again', () => {
     triggerElement.click();
     fixture.detectChanges();
-    expect(component.isDropdownOpen()).toBe(true);
+    expect(component.open()).toBe(true);
 
     triggerElement.click();
     fixture.detectChanges();
-    expect(component.isDropdownOpen()).toBe(false);
-  });
-
-  it('should emit dropdownOpened when opened', () => {
-    spyOn(component.dropdownOpened, 'emit');
-
-    triggerElement.click();
-    fixture.detectChanges();
-
-    expect(component.dropdownOpened.emit).toHaveBeenCalled();
-  });
-
-  it('should emit dropdownClosed when closed', () => {
-    spyOn(component.dropdownClosed, 'emit');
-
-    triggerElement.click();
-    fixture.detectChanges();
-    triggerElement.click();
-    fixture.detectChanges();
-
-    expect(component.dropdownClosed.emit).toHaveBeenCalled();
+    expect(component.open()).toBe(false);
   });
 
   it('should close dropdown when clicking outside', () => {
     triggerElement.click();
     fixture.detectChanges();
-    expect(component.isDropdownOpen()).toBe(true);
+    expect(component.open()).toBe(true);
 
     document.body.click();
     fixture.detectChanges();
 
-    expect(component.isDropdownOpen()).toBe(false);
+    expect(component.open()).toBe(false);
   });
 
   it('should pass dropdownData to template', () => {

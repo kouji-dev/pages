@@ -1409,28 +1409,31 @@ This phase focuses on building the foundational features required for a function
 **Estimated Time**: 1-2 days  
 **Dependencies**: 1.2.6, 1.1.5  
 **Assigned To**: BATATA2
+**Status**: ✅ Complete
 
 **Frontend Tasks**:
 
-- [ ] Create organization selector component (`organization-selector.component.ts`)
-  - [ ] Dropdown/select component showing current organization
-  - [ ] List of user's organizations
-  - [ ] Switch organization functionality
-- [ ] Create organization context/service (`organization.service.ts`)
-  - [ ] Current organization state (signal)
-  - [ ] Switch organization method
-  - [ ] Load user's organizations
-  - [ ] Persist selected organization (localStorage)
-- [ ] Integrate with organization list API
-- [ ] Add organization selector to base layout header
-- [ ] Implement loading state
-- [ ] Write component and service tests
+- [x] Create organization selector component (`organization-selector.component.ts`)
+  - [x] Dropdown/select component showing current organization
+  - [x] List of user's organizations
+  - [x] Switch organization functionality
+  - [x] Uses reusable Dropdown directive
+  - [x] Uses lib-button components
+- [x] Create organization context/service (`organization.service.ts`)
+  - [x] Current organization state (signal)
+  - [x] Switch organization method
+  - [x] Load user's organizations (placeholder data for now)
+  - [x] Persist selected organization (localStorage)
+- [ ] Integrate with organization list API (pending backend task 1.2.6)
+- [x] Add organization selector to base layout header
+- [x] Implement loading state
+- [x] Write component and service tests
 
 **Deliverables**:
 
-- Organization selector component
-- Organization context service
-- Integration with base layout
+- ✅ Organization selector component
+- ✅ Organization context service
+- ✅ Integration with base layout
 
 ---
 

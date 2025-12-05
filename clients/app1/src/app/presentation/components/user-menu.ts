@@ -20,7 +20,7 @@ import { AuthService } from '../../application/services/auth.service';
         type="button"
         [libDropdown]="dropdownTemplate"
         [position]="'below'"
-        [attr.aria-expanded]="dropdown.isDropdownOpen()"
+        [attr.aria-expanded]="dropdown.open()"
         aria-label="User menu"
         #dropdown="libDropdown"
       >
@@ -35,7 +35,7 @@ import { AuthService } from '../../application/services/auth.service';
         </div>
         <span class="user-menu_name">{{ userName() }}</span>
         <lib-icon
-          [name]="dropdown.isDropdownOpen() ? 'chevron-up' : 'chevron-down'"
+          [name]="dropdown.open() ? 'chevron-up' : 'chevron-down'"
           size="sm"
           class="user-menu_chevron"
         />
@@ -272,11 +272,11 @@ export class UserMenu {
   });
 
   closeMenu(dropdown: Dropdown): void {
-    dropdown.close();
+    dropdown.open.set(false);
   }
 
   handleLogout(dropdown: Dropdown): void {
-    dropdown.close();
+    dropdown.open.set(false);
     this.authService.logout();
   }
 }

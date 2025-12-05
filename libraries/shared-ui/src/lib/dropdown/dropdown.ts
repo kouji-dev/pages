@@ -1,10 +1,8 @@
 import {
   Directive,
   ElementRef,
-  Output,
-  EventEmitter,
   inject,
-  signal,
+  model,
   effect,
   afterRenderEffect,
   input,
@@ -36,14 +34,11 @@ export class Dropdown {
   readonly trigger = input<'click' | 'hover'>('click');
   readonly hoverDelay = input(200);
 
-  @Output() dropdownOpened = new EventEmitter<void>();
-  @Output() dropdownClosed = new EventEmitter<void>();
+  // Model signal for two-way binding
+  readonly open = model(false);
 
   private overlayRef: OverlayRef | null = null;
-  private readonly isOpen = signal(false);
   private hoverTimer: number | null = null;
-
-  readonly isDropdownOpen = this.isOpen.asReadonly();
 
   // Setup event listeners after render
   private readonly setupEventListeners = afterRenderEffect(() => {
@@ -57,10 +52,20 @@ export class Dropdown {
     }
   });
 
+  // Effect to sync open state with overlay
+  private readonly syncOpenState = effect(() => {
+    const isOpen = this.open();
+    if (isOpen && !this.overlayRef) {
+      this.openOverlay();
+    } else if (!isOpen && this.overlayRef) {
+      this.closeOverlay();
+    }
+  });
+
   constructor() {
     // Register cleanup
     this.destroyRef.onDestroy(() => {
-      this.close();
+      this.open.set(false);
       this.clearHoverTimer();
       const element = this.elementRef.nativeElement;
 
@@ -75,7 +80,7 @@ export class Dropdown {
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event): void {
-    if (!this.isOpen()) {
+    if (!this.open()) {
       return;
     }
 
@@ -91,7 +96,7 @@ export class Dropdown {
     const isAnotherDropdownTrigger = target.closest('[libDropdown]');
     if (isAnotherDropdownTrigger && isAnotherDropdownTrigger !== currentElement) {
       // Close this dropdown to allow the other one to open
-      this.close();
+      this.open.set(false);
       return;
     }
 
@@ -104,19 +109,15 @@ export class Dropdown {
     }
 
     // Close the dropdown for any other clicks
-    this.close();
+    this.open.set(false);
   }
 
   toggle(): void {
-    if (this.isOpen()) {
-      this.close();
-    } else {
-      this.open();
-    }
+    this.open.update((value) => !value);
   }
 
-  open(): void {
-    if (this.isOpen() || !this.libDropdown()) {
+  private openOverlay(): void {
+    if (!this.libDropdown()) {
       return;
     }
 
@@ -136,28 +137,24 @@ export class Dropdown {
     });
 
     this.overlayRef.attach(portal);
-    this.isOpen.set(true);
-    this.dropdownOpened.emit();
 
     // Handle backdrop clicks
     this.overlayRef.backdropClick().subscribe(() => {
-      this.close();
+      this.open.set(false);
     });
 
     // Handle escape key
     this.overlayRef.keydownEvents().subscribe((event) => {
       if (event.key === 'Escape') {
-        this.close();
+        this.open.set(false);
       }
     });
   }
 
-  close(): void {
+  private closeOverlay(): void {
     if (this.overlayRef) {
       this.overlayRef.dispose();
       this.overlayRef = null;
-      this.isOpen.set(false);
-      this.dropdownClosed.emit();
     }
   }
 
@@ -204,14 +201,14 @@ export class Dropdown {
   private onMouseEnter(): void {
     this.clearHoverTimer();
     this.hoverTimer = window.setTimeout(() => {
-      this.open();
+      this.open.set(true);
     }, this.hoverDelay());
   }
 
   private onMouseLeave(): void {
     this.clearHoverTimer();
     this.hoverTimer = window.setTimeout(() => {
-      this.close();
+      this.open.set(false);
     }, this.hoverDelay());
   }
 
