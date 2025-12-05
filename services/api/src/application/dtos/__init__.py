@@ -34,6 +34,17 @@ from src.application.dtos.organization_settings import (
     OrganizationSettingsResponse,
     UpdateOrganizationSettingsRequest,
 )
+from src.application.dtos.issue import (
+    CreateIssueRequest,
+    IssueListItemResponse,
+    IssueListResponse,
+    IssueResponse,
+    UpdateIssueRequest,
+)
+from src.application.dtos.issue_activity import (
+    IssueActivityListResponse,
+    IssueActivityResponse,
+)
 from src.application.dtos.project import (
     CreateProjectRequest,
     ProjectListItemResponse,
@@ -100,4 +111,13 @@ __all__ = [
     "ProjectMemberListResponse",
     "AddProjectMemberRequest",
     "UpdateProjectMemberRoleRequest",
+    # Issue DTOs
+    "IssueResponse",
+    "IssueListItemResponse",
+    "IssueListResponse",
+    "CreateIssueRequest",
+    "UpdateIssueRequest",
+    # Issue Activity DTOs
+    "IssueActivityResponse",
+    "IssueActivityListResponse",
 ]

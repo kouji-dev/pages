@@ -118,6 +118,13 @@ class IssueModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         lazy="selectin",
         viewonly=True,
     )
+    activities = relationship(
+        "IssueActivityModel",
+        back_populates="issue",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+        order_by="IssueActivityModel.created_at.desc()",
+    )
 
     def __repr__(self) -> str:
         return f"<Issue(id={self.id}, number={self.issue_number}, title={self.title[:30]})>"

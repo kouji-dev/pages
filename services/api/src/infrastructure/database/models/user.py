@@ -92,6 +92,11 @@ class UserModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         back_populates="user",
         lazy="selectin",
     )
+    issue_activities = relationship(
+        "IssueActivityModel",
+        back_populates="user",
+        lazy="selectin",
+    )
 
     def __repr__(self) -> str:
         return f"<User(id={self.id}, email={self.email}, name={self.name})>"

@@ -3,6 +3,12 @@
 from src.infrastructure.database.repositories.invitation_repository import (
     SQLAlchemyInvitationRepository,
 )
+from src.infrastructure.database.repositories.issue_activity_repository import (
+    SQLAlchemyIssueActivityRepository,
+)
+from src.infrastructure.database.repositories.issue_repository import (
+    SQLAlchemyIssueRepository,
+)
 from src.infrastructure.database.repositories.organization_repository import (
     SQLAlchemyOrganizationRepository,
 )
@@ -18,4 +24,6 @@ __all__ = [
     "SQLAlchemyOrganizationRepository",
     "SQLAlchemyInvitationRepository",
     "SQLAlchemyProjectRepository",
+    "SQLAlchemyIssueRepository",
+    "SQLAlchemyIssueActivityRepository",
 ]
