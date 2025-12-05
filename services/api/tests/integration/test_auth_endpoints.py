@@ -3,10 +3,6 @@
 import pytest
 from httpx import AsyncClient
 
-from src.domain.value_objects import Email, Password
-from src.domain.entities import User
-
-
 # Fixtures are defined in conftest.py
 
 

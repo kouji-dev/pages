@@ -1,19 +1,19 @@
 """Application DTOs (Data Transfer Objects)."""
 
 from src.application.dtos.auth import (
-    RegisterRequest,
-    RegisterResponse,
     LoginRequest,
     LoginResponse,
-    TokenResponse,
-    PasswordResetRequest,
     PasswordResetConfirm,
+    PasswordResetRequest,
     RefreshTokenRequest,
+    RegisterRequest,
+    RegisterResponse,
+    TokenResponse,
 )
 from src.application.dtos.user import (
+    PasswordUpdateRequest,
     UserResponse,
     UserUpdateRequest,
-    PasswordUpdateRequest,
 )
 
 __all__ = [

@@ -1,11 +1,10 @@
 """Attachment database model."""
 
-from datetime import datetime
 from uuid import UUID
 
 from sqlalchemy import BigInteger, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
 from src.infrastructure.database.config import Base
 from src.infrastructure.database.models.base import (

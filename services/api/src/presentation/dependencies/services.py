@@ -1,6 +1,5 @@
 """Service dependencies for FastAPI dependency injection."""
 
-from collections.abc import AsyncGenerator
 from functools import lru_cache
 from typing import Annotated
 

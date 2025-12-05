@@ -1,6 +1,5 @@
 """Comment database model."""
 
-from datetime import datetime
 from uuid import UUID
 
 from sqlalchemy import Boolean, ForeignKey, String, Text

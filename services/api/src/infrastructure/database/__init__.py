@@ -2,12 +2,12 @@
 
 from src.infrastructure.database.config import (
     Base,
+    close_db,
     get_engine,
     get_session,
     get_session_context,
     get_session_factory,
     init_db,
-    close_db,
 )
 
 __all__ = [

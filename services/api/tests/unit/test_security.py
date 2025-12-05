@@ -1,7 +1,8 @@
 """Tests for security services."""
 
-import pytest
 from uuid import uuid4
+
+import pytest
 
 from src.domain.exceptions import AuthenticationException
 from src.domain.value_objects import Password

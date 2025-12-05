@@ -1,8 +1,7 @@
 """Tests for domain entities."""
 
+
 import pytest
-from datetime import datetime
-from uuid import uuid4
 
 from src.domain.entities import User
 from src.domain.value_objects import Email, HashedPassword

@@ -2,8 +2,8 @@
 
 from src.presentation.middlewares.error_handler import (
     domain_exception_handler,
-    validation_exception_handler,
     generic_exception_handler,
+    validation_exception_handler,
 )
 from src.presentation.middlewares.rate_limit import (
     get_rate_limiter,

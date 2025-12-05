@@ -3,27 +3,15 @@
 import asyncio
 from logging.config import fileConfig
 
-from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
+from alembic import context
+from src.infrastructure.config import get_settings
+
 # Import all models to ensure they're registered with Base.metadata
 from src.infrastructure.database.config import Base
-from src.infrastructure.database.models import (
-    UserModel,
-    OrganizationModel,
-    OrganizationMemberModel,
-    ProjectModel,
-    ProjectMemberModel,
-    IssueModel,
-    CommentModel,
-    PageModel,
-    SpaceModel,
-    AttachmentModel,
-    NotificationModel,
-)
-from src.infrastructure.config import get_settings
 
 # Alembic Config object
 config = context.config

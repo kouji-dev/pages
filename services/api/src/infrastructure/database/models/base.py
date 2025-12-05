@@ -7,8 +7,6 @@ from sqlalchemy import DateTime, func
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.infrastructure.database.config import Base
-
 
 class TimestampMixin:
     """Mixin for created_at and updated_at timestamps."""

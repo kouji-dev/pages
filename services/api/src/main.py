@@ -4,6 +4,8 @@ import structlog
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import ValidationError
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
 
 from src.domain.exceptions import DomainException
 from src.infrastructure.config import get_settings
@@ -16,8 +18,6 @@ from src.presentation.middlewares import (
     rate_limit_handler,
     validation_exception_handler,
 )
-from slowapi.errors import RateLimitExceeded
-from slowapi.middleware import SlowAPIMiddleware
 
 # Configure structured logging
 structlog.configure(

@@ -1,9 +1,9 @@
 """Application use cases."""
 
 from src.application.use_cases.auth import (
-    RegisterUserUseCase,
     LoginUserUseCase,
     RefreshTokenUseCase,
+    RegisterUserUseCase,
     RequestPasswordResetUseCase,
     ResetPasswordUseCase,
 )

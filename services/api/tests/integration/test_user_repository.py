@@ -1,11 +1,12 @@
 """Integration tests for user repository."""
 
-import pytest
 from uuid import uuid4
+
+import pytest
 
 from src.domain.entities import User
 from src.domain.exceptions import ConflictException, EntityNotFoundException
-from src.domain.value_objects import Email, HashedPassword, Password
+from src.domain.value_objects import Email, Password
 from src.infrastructure.database.repositories import SQLAlchemyUserRepository
 from src.infrastructure.security import BcryptPasswordService
 

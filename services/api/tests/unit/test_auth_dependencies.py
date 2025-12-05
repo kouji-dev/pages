@@ -1,9 +1,10 @@
 """Tests for authentication dependencies."""
 
+from unittest.mock import AsyncMock, MagicMock
+
 import pytest
 from fastapi import HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
-from unittest.mock import AsyncMock, MagicMock
 
 from src.domain.entities import User
 from src.domain.exceptions import AuthenticationException

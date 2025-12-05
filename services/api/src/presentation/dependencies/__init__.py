@@ -1,8 +1,8 @@
 """FastAPI dependencies for dependency injection."""
 
 from src.presentation.dependencies.auth import (
-    get_current_user,
     get_current_active_user,
+    get_current_user,
     get_optional_user,
 )
 from src.presentation.dependencies.services import (

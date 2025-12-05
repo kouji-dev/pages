@@ -1,26 +1,25 @@
 """Pytest configuration and fixtures."""
 
-import os
 import sys
+
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
-from uuid import uuid4
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from src.domain.value_objects import Email, HashedPassword, Password
 from src.domain.entities import User
-from src.infrastructure.security import BcryptPasswordService, JWTTokenService
-from src.infrastructure.database.config import Base
+from src.domain.value_objects import Email, HashedPassword, Password
 from src.infrastructure.config.test_settings import TestSettings
+from src.infrastructure.database.config import Base
 
 # Import all models to ensure they are registered in Base.metadata
 from src.infrastructure.database.models import (  # noqa: F401
-    user,
     organization,
-    project,
     page,
+    project,
+    user,
 )
+from src.infrastructure.security import BcryptPasswordService, JWTTokenService
 
 # Use test settings
 _test_settings = TestSettings()
@@ -38,8 +37,7 @@ def event_loop():
 
 # Mock rate limiter BEFORE any routes are imported
 # This must be at module level to run before imports
-from unittest.mock import MagicMock
-import importlib
+import importlib  # noqa: E402
 
 
 # Create a no-op limiter class
@@ -57,7 +55,7 @@ class NoOpLimiter:
 
 # Replace limiter in rate_limit module BEFORE any imports
 # This must happen at module level before any routes are imported
-from src.presentation.middlewares import rate_limit
+from src.presentation.middlewares import rate_limit  # noqa: E402
 
 _original_limiter = rate_limit.limiter
 mock_limiter = NoOpLimiter()
@@ -65,10 +63,10 @@ rate_limit.limiter = mock_limiter
 
 # Also update the export in middlewares/__init__.py
 # The limiter is imported directly, so we need to update the module that exports it
-import src.presentation.middlewares as middlewares_module
+import src.presentation.middlewares as middlewares_module  # noqa: E402
 
 if hasattr(middlewares_module, "limiter"):
-    setattr(middlewares_module, "limiter", mock_limiter)
+    middlewares_module.limiter = mock_limiter
 
 # Reload modules that use the limiter to pick up the mock
 # Note: The decorator has already been applied, but reloading ensures new imports use the mock
@@ -118,7 +116,7 @@ async def test_engine():
         table_count = result.scalar()
         if table_count == 0:
             raise RuntimeError(
-                f"No tables found in test database! Expected tables from Base.metadata."
+                "No tables found in test database! Expected tables from Base.metadata."
             )
 
     yield engine
@@ -260,13 +258,13 @@ async def test_user(db_session) -> User:
     password = Password("TestPassword123!")
     hashed_password = password_service.hash(password)
 
-    user = User.create(
+    test_user = User.create(
         email=email,
         password_hash=hashed_password,
         name="Test User",
     )
 
-    await user_repo.create(user)
+    await user_repo.create(test_user)
     await db_session.flush()  # Flush to get ID, but don't commit (test will rollback)
 
-    return user
+    return test_user

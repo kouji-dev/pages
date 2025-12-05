@@ -1,13 +1,14 @@
 """Tests for permission dependencies."""
 
-import pytest
-from fastapi import HTTPException, status
 from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
+import pytest
+from fastapi import HTTPException, status
+
+from src.application.services.permission_service import PermissionService
 from src.domain.entities import User
 from src.domain.value_objects import Email, HashedPassword, Role
-from src.application.services.permission_service import PermissionService
 from src.presentation.dependencies.permissions import (
     get_organization_role,
     require_edit_permission,

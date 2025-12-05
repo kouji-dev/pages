@@ -8,18 +8,18 @@ from uuid import uuid4
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.domain.value_objects import Email, Password
+from src.domain.value_objects import Password
 from src.infrastructure.config import get_settings
 from src.infrastructure.database import get_session_context, init_db
 from src.infrastructure.database.models import (
-    UserModel,
-    OrganizationModel,
-    OrganizationMemberModel,
-    ProjectModel,
-    ProjectMemberModel,
-    SpaceModel,
-    PageModel,
     IssueModel,
+    OrganizationMemberModel,
+    OrganizationModel,
+    PageModel,
+    ProjectMemberModel,
+    ProjectModel,
+    SpaceModel,
+    UserModel,
 )
 from src.infrastructure.security import BcryptPasswordService
 
@@ -36,7 +36,7 @@ async def seed_database() -> None:
 
     async with get_session_context() as session:
         # Check if data already exists
-        from sqlalchemy import select, func
+        from sqlalchemy import func, select
 
         result = await session.execute(select(func.count()).select_from(UserModel))
         user_count = result.scalar_one()
@@ -265,12 +265,12 @@ async def seed_database() -> None:
 
         print("✅ Database seed completed successfully!")
         print("\n📋 Created:")
-        print(f"   - 3 users (password: TestPass123!)")
-        print(f"   - 1 organization (pages-dev)")
-        print(f"   - 1 project (PAGES)")
-        print(f"   - 5 issues")
-        print(f"   - 1 space (DOC)")
-        print(f"   - 4 pages")
+        print("   - 3 users (password: TestPass123!)")
+        print("   - 1 organization (pages-dev)")
+        print("   - 1 project (PAGES)")
+        print("   - 5 issues")
+        print("   - 1 space (DOC)")
+        print("   - 4 pages")
         print("\n🔑 Test accounts:")
         print("   - admin@pages.dev (admin)")
         print("   - dev@pages.dev (developer)")

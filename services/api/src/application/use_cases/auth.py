@@ -5,12 +5,12 @@ import structlog
 from src.application.dtos import (
     LoginRequest,
     LoginResponse,
+    PasswordResetConfirm,
+    PasswordResetRequest,
+    RefreshTokenRequest,
     RegisterRequest,
     RegisterResponse,
     TokenResponse,
-    PasswordResetRequest,
-    PasswordResetConfirm,
-    RefreshTokenRequest,
 )
 from src.application.dtos.auth import UserBasicInfo
 from src.application.interfaces import TokenService
@@ -22,7 +22,7 @@ from src.domain.exceptions import (
 )
 from src.domain.repositories import UserRepository
 from src.domain.services import PasswordService
-from src.domain.value_objects import Email, HashedPassword, Password
+from src.domain.value_objects import Email, Password
 
 logger = structlog.get_logger()
 
@@ -240,10 +240,10 @@ class RequestPasswordResetUseCase:
             return
 
         # Generate password reset token
-        reset_token = self._token_service.create_password_reset_token(user.id)
+        _reset_token = self._token_service.create_password_reset_token(user.id)
 
         # TODO: Send email with reset token
-        # await self._email_service.send_password_reset(user.email, reset_token)
+        # await self._email_service.send_password_reset(user.email, _reset_token)
 
         logger.info("Password reset token generated", user_id=str(user.id))
 

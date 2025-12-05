@@ -1,12 +1,12 @@
 """Domain exceptions."""
 
 from src.domain.exceptions.base import (
-    DomainException,
-    EntityNotFoundException,
-    ValidationException,
     AuthenticationException,
     AuthorizationException,
     ConflictException,
+    DomainException,
+    EntityNotFoundException,
+    ValidationException,
 )
 
 __all__ = [

@@ -3,7 +3,7 @@
 import pytest
 
 from src.domain.exceptions import ValidationException
-from src.domain.value_objects import Email, Password, HashedPassword
+from src.domain.value_objects import Email, HashedPassword, Password
 
 
 class TestEmail:

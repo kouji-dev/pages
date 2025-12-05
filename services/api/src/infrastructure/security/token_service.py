@@ -1,6 +1,6 @@
 """JWT token service implementation."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any
 from uuid import UUID
 
@@ -37,13 +37,13 @@ class JWTTokenService(TokenService):
         Returns:
             JWT access token string
         """
-        expire = datetime.now(timezone.utc) + timedelta(minutes=self._access_token_expire_minutes)
+        expire = datetime.now(UTC) + timedelta(minutes=self._access_token_expire_minutes)
 
         payload = {
             "sub": str(user_id),
             "type": "access",
             "exp": expire,
-            "iat": datetime.now(timezone.utc),
+            "iat": datetime.now(UTC),
         }
 
         if additional_claims:
@@ -60,13 +60,13 @@ class JWTTokenService(TokenService):
         Returns:
             JWT refresh token string
         """
-        expire = datetime.now(timezone.utc) + timedelta(days=self._refresh_token_expire_days)
+        expire = datetime.now(UTC) + timedelta(days=self._refresh_token_expire_days)
 
         payload = {
             "sub": str(user_id),
             "type": "refresh",
             "exp": expire,
-            "iat": datetime.now(timezone.utc),
+            "iat": datetime.now(UTC),
         }
 
         return jwt.encode(payload, self._secret_key, algorithm=self._algorithm)
@@ -87,7 +87,7 @@ class JWTTokenService(TokenService):
             payload = jwt.decode(token, self._secret_key, algorithms=[self._algorithm])
             return payload
         except JWTError as e:
-            raise AuthenticationException(f"Invalid token: {str(e)}")
+            raise AuthenticationException(f"Invalid token: {str(e)}") from e
 
     def get_user_id_from_token(self, token: str) -> UUID:
         """Extract user ID from token.
@@ -109,8 +109,8 @@ class JWTTokenService(TokenService):
 
         try:
             return UUID(user_id_str)
-        except ValueError:
-            raise AuthenticationException("Invalid token: invalid user ID format")
+        except ValueError as e:
+            raise AuthenticationException("Invalid token: invalid user ID format") from e
 
     def create_password_reset_token(self, user_id: UUID) -> str:
         """Create a password reset token.
@@ -121,13 +121,13 @@ class JWTTokenService(TokenService):
         Returns:
             Password reset token string
         """
-        expire = datetime.now(timezone.utc) + timedelta(hours=self._password_reset_expire_hours)
+        expire = datetime.now(UTC) + timedelta(hours=self._password_reset_expire_hours)
 
         payload = {
             "sub": str(user_id),
             "type": "password_reset",
             "exp": expire,
-            "iat": datetime.now(timezone.utc),
+            "iat": datetime.now(UTC),
         }
 
         return jwt.encode(payload, self._secret_key, algorithm=self._algorithm)
@@ -156,8 +156,8 @@ class JWTTokenService(TokenService):
 
         try:
             return UUID(user_id_str)
-        except ValueError:
-            raise AuthenticationException("Invalid token: invalid user ID format")
+        except ValueError as e:
+            raise AuthenticationException("Invalid token: invalid user ID format") from e
 
     @property
     def access_token_expire_minutes(self) -> int:
