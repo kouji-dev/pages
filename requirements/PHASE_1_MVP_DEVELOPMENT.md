@@ -733,31 +733,36 @@ This phase focuses on building the foundational features required for a function
 
 **Backend Tasks**:
 
-- [ ] Create user profile endpoint (GET /api/users/me)
-  - [ ] Return current user profile data
-  - [ ] Include name, email, avatar_url, created_at
-  - [ ] Require authentication
-- [ ] Create user profile update endpoint (PUT /api/users/me)
-  - [ ] Update name field
-  - [ ] Validate input (name not empty)
-  - [ ] Return updated user data
-- [ ] Create email update endpoint (PUT /api/users/me/email)
-  - [ ] Validate email format and uniqueness
-  - [ ] Send verification email (async)
-  - [ ] Require current password for security
-- [ ] Create password update endpoint (PUT /api/users/me/password)
-  - [ ] Require current password
-  - [ ] Validate new password strength
-  - [ ] Hash new password
-  - [ ] Update password_hash in database
-- [ ] Write API tests for profile endpoints
-- [ ] Write integration tests
+- [x] Create user profile endpoint (GET /api/users/me)
+  - [x] Return current user profile data
+  - [x] Include name, email, avatar_url, created_at
+  - [x] Require authentication
+- [x] Create user profile update endpoint (PUT /api/users/me)
+  - [x] Update name field
+  - [x] Validate input (name not empty)
+  - [x] Return updated user data
+- [x] Create email update endpoint (PUT /api/users/me/email)
+  - [x] Validate email format and uniqueness
+  - [ ] Send verification email (async) - pending email service
+  - [x] Require current password for security
+- [x] Create password update endpoint (PUT /api/users/me/password)
+  - [x] Require current password
+  - [x] Validate new password strength
+  - [x] Hash new password
+  - [x] Update password_hash in database
+- [x] Write API tests for profile endpoints
+- [x] Write integration tests
 
 **Deliverables**:
 
-- User profile CRUD endpoints
-- Email and password update endpoints
-- API tests
+- [x] User profile CRUD endpoints
+- [x] Email and password update endpoints
+- [x] API tests
+
+**Note**: ✅ **COMPLETED** - Full user profile API implemented with DDD/Clean Architecture:
+- Use cases: GetUserProfileUseCase, UpdateUserProfileUseCase, UpdateUserEmailUseCase, UpdateUserPasswordUseCase
+- Endpoints: GET/PUT /api/users/me, PUT /api/users/me/email, PUT /api/users/me/password
+- Unit and integration tests (11 tests each)
 
 ---
 
@@ -770,28 +775,35 @@ This phase focuses on building the foundational features required for a function
 
 **Backend Tasks**:
 
-- [ ] Create avatar upload endpoint (POST /api/users/me/avatar)
-  - [ ] Accept multipart/form-data
-  - [ ] Validate file type (image/jpeg, image/png, image/webp)
-  - [ ] Validate file size (max 5MB)
-  - [ ] Generate unique filename
-  - [ ] Save file to storage (local or S3)
-  - [ ] Update user.avatar_url in database
-- [ ] Implement image processing
-  - [ ] Resize image to standard sizes (64x64, 128x128, 256x256)
-  - [ ] Optimize image quality
-  - [ ] Store multiple sizes for different use cases
-- [ ] Create avatar deletion endpoint (DELETE /api/users/me/avatar)
-  - [ ] Remove file from storage
-  - [ ] Clear avatar_url in database
-- [ ] Write API tests for avatar upload
-- [ ] Write integration tests with file upload
+- [x] Create avatar upload endpoint (POST /api/users/me/avatar)
+  - [x] Accept multipart/form-data
+  - [x] Validate file type (image/jpeg, image/png, image/webp)
+  - [x] Validate file size (max 5MB)
+  - [x] Generate unique filename
+  - [x] Save file to storage (local or S3)
+  - [x] Update user.avatar_url in database
+- [x] Implement image processing
+  - [x] Resize image to standard sizes (64x64, 128x128, 256x256)
+  - [x] Optimize image quality
+  - [x] Store multiple sizes for different use cases
+- [x] Create avatar deletion endpoint (DELETE /api/users/me/avatar)
+  - [x] Remove file from storage
+  - [x] Clear avatar_url in database
+- [x] Write API tests for avatar upload
+- [x] Write integration tests with file upload
 
 **Deliverables**:
 
-- Avatar upload endpoint
-- Image processing and storage
-- API tests
+- [x] Avatar upload endpoint
+- [x] Image processing and storage
+- [x] API tests
+
+**Note**: ✅ **COMPLETED** - Full avatar upload system implemented:
+- Storage service interface (LocalStorageService implementation)
+- ImageProcessingService with Pillow for resizing and optimization
+- Use cases: UploadAvatarUseCase, DeleteAvatarUseCase
+- Endpoints: POST/DELETE /api/users/me/avatar
+- Unit and integration tests (8 unit + 9 integration tests)
 
 ---
 
@@ -804,25 +816,32 @@ This phase focuses on building the foundational features required for a function
 
 **Backend Tasks**:
 
-- [ ] Design user preferences schema (JSON field in users table or separate table)
-- [ ] Create get preferences endpoint (GET /api/users/me/preferences)
-  - [ ] Return user preferences JSON
-  - [ ] Default preferences if none set
-- [ ] Create update preferences endpoint (PUT /api/users/me/preferences)
-  - [ ] Validate preferences JSON schema
-  - [ ] Update preferences in database
-  - [ ] Return updated preferences
-- [ ] Define default preferences structure
-  - [ ] Theme preference (light/dark)
-  - [ ] Notification preferences
-  - [ ] Language preference
-- [ ] Write API tests
+- [x] Design user preferences schema (JSON field in users table or separate table)
+- [x] Create get preferences endpoint (GET /api/users/me/preferences)
+  - [x] Return user preferences JSON
+  - [x] Default preferences if none set
+- [x] Create update preferences endpoint (PUT /api/users/me/preferences)
+  - [x] Validate preferences JSON schema
+  - [x] Update preferences in database
+  - [x] Return updated preferences
+- [x] Define default preferences structure
+  - [x] Theme preference (light/dark/auto)
+  - [x] Notification preferences (email, push, in_app)
+  - [x] Language preference (ISO 639-1)
+- [x] Write API tests
 
 **Deliverables**:
 
-- User preferences API endpoints
-- Default preferences structure
-- API tests
+- [x] User preferences API endpoints
+- [x] Default preferences structure
+- [x] API tests
+
+**Note**: ✅ **COMPLETED** - Full user preferences system implemented:
+- Preferences value object with default schema and validation
+- Use cases: GetUserPreferencesUseCase, UpdateUserPreferencesUseCase
+- Endpoints: GET/PUT /api/users/me/preferences
+- Support for theme (light/dark/auto), language, and granular notification preferences
+- Unit and integration tests (8 unit + 8 integration tests)
 
 ---
 
@@ -835,24 +854,30 @@ This phase focuses on building the foundational features required for a function
 
 **Backend Tasks**:
 
-- [ ] Create user list endpoint (GET /api/users)
-  - [ ] Filter by organization membership (optional query param)
-  - [ ] Search by name or email (optional query param)
-  - [ ] Pagination support (page, limit)
-  - [ ] Return user id, name, email, avatar_url
-- [ ] Implement search functionality
-  - [ ] Case-insensitive search on name and email
-  - [ ] Use database indexes for performance
-- [ ] Implement pagination
-  - [ ] Default limit (e.g., 20 users per page)
-  - [ ] Return total count, page, limit in response
-- [ ] Add permission check (organization members only if filtering by org)
-- [ ] Write API tests
+- [x] Create user list endpoint (GET /api/users)
+  - [x] Filter by organization membership (optional query param)
+  - [x] Search by name or email (optional query param)
+  - [x] Pagination support (page, limit)
+  - [x] Return user id, name, email, avatar_url
+- [x] Implement search functionality
+  - [x] Case-insensitive search on name and email
+  - [x] Use database indexes for performance
+- [x] Implement pagination
+  - [x] Default limit (e.g., 20 users per page)
+  - [x] Return total count, page, limit in response
+- [x] Add permission check (organization members only if filtering by org)
+- [x] Write API tests
 
 **Deliverables**:
 
-- User list endpoint with search and pagination
-- API tests
+- [x] User list endpoint with search and pagination
+- [x] API tests
+
+**Note**: ✅ **COMPLETED** - Full user list API implemented:
+- Use case: ListUsersUseCase with pagination, search, and organization filtering
+- Endpoint: GET /api/users with query parameters (page, limit, search, organization_id)
+- Support for case-insensitive search and organization membership filtering
+- Unit and integration tests (7 unit + 9 integration tests)
 
 ---
 
@@ -865,19 +890,26 @@ This phase focuses on building the foundational features required for a function
 
 **Backend Tasks**:
 
-- [ ] Create user deactivation endpoint (POST /api/users/me/deactivate)
-  - [ ] Soft delete (set deleted_at timestamp)
-  - [ ] Invalidate all user sessions/tokens
-  - [ ] Prevent login after deactivation
-- [ ] Update authentication logic to check deleted_at
-- [ ] Create user reactivation endpoint (admin only, optional)
-- [ ] Write API tests
+- [x] Create user deactivation endpoint (POST /api/users/me/deactivate)
+  - [x] Soft delete (set deleted_at timestamp)
+  - [x] Invalidate all user sessions/tokens
+  - [x] Prevent login after deactivation
+- [x] Update authentication logic to check deleted_at
+- [ ] Create user reactivation endpoint (admin only, optional) - deferred
+- [x] Write API tests
 
 **Deliverables**:
 
-- User deactivation endpoint
-- Updated authentication logic
-- API tests
+- [x] User deactivation endpoint
+- [x] Updated authentication logic
+- [x] API tests
+
+**Note**: ✅ **COMPLETED** - User deactivation system implemented:
+- Use case: DeactivateUserUseCase (soft delete via User.deactivate() method)
+- Endpoint: POST /api/users/me/deactivate (204 No Content)
+- Automatic token invalidation via get_current_user checks (is_active, is_deleted)
+- Login prevention already implemented in LoginUserUseCase
+- Unit and integration tests (3 unit + 4 integration tests)
 
 ---
 
