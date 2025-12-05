@@ -41,3 +41,114 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+env/
+.eggs/
+*.egg-info/
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.pytype/
+.dmypy.json
+dmypy.json
+
+# Poetry
+# Note: poetry.lock should be committed for reproducible builds
+# Uncomment the next line only if you want to ignore it (not recommended)
+# poetry.lock
+
+# Testing
+.tox/
+.nox/
+nosetests.xml
+test-results/
+junit.xml
+.hypothesis/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+db.sqlite3
+*.db-journal
+
+# Environment variables (consolidated)
+.env
+.env.local
+.env.*.local
+.env.test
+.env.*.test
+.env.production
+.env.staging
+!.env.example
+
+# Logs
+*.log
+logs/
+*.log.*
+
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+
+# Docker
+.docker/
+docker-compose.override.yml
+*.pid
+
+# Database volumes (test databases)
+**/test_db_data/
+**/test-db-data/
+**/postgres-data/
+**/postgres_data/
+
+# Temporary files
+*.swp
+*.swo
+*~
+*.tmp
+*.bak
+*.backup
+
+# Application specific
+services/api/.env
+services/api/.env.*
+!services/api/.env.example
+services/api/alembic.ini.local
+services/api/local_settings.py
