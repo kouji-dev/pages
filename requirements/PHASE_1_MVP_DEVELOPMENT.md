@@ -357,29 +357,30 @@ This phase focuses on building the foundational features required for a function
 **Priority**: High  
 **Estimated Time**: 1 day  
 **Dependencies**: 1.1.1  
-**Assigned To**: BATATA2
+**Assigned To**: BATATA2  
+**Status**: ✅ Complete
 
 **Frontend Tasks**:
 
-- [ ] Install lucide-angular package
-- [ ] Create icon component (`icon.ts`) in `shared-ui` library
-  - [ ] Standalone component wrapper for Lucide icons
-  - [ ] Use `input()` for icon name (string type)
-  - [ ] Use `input()` for size (sm, md, lg, or custom number)
-  - [ ] Use `input()` for color (string or CSS custom property)
-  - [ ] Use `input()` for strokeWidth (number)
-  - [ ] Support dynamic icon loading from Lucide library
-- [ ] Apply BOM CSS methodology
-  - [ ] Base `.icon` class
-  - [ ] Size modifiers (`.icon--sm`, `.icon--md`, `.icon--lg`)
-  - [ ] Use Tailwind `@apply` directives
-  - [ ] Use Pages design tokens for default colors
-- [ ] Implement icon registry/selector logic
-  - [ ] Map icon names to Lucide icon components
-  - [ ] Support all common Lucide icons
-- [ ] Write component tests
-- [ ] Export from `shared-ui` public API
-- [ ] Document available icon names in component
+- [x] Install lucide-angular package
+- [x] Create icon component (`icon.ts`) in `shared-ui` library
+  - [x] Standalone component wrapper for Lucide icons
+  - [x] Use `input()` for icon name (string type)
+  - [x] Use `input()` for size (xs, sm, md, lg, xl, 2xl)
+  - [x] Use `input()` for color (string or CSS custom property)
+  - [x] Use `input()` for strokeWidth (number)
+  - [x] Support dynamic icon loading from Lucide library
+- [x] Apply BOM CSS methodology
+  - [x] Base `.icon` class
+  - [x] Size modifiers (`.icon--xs`, `.icon--sm`, `.icon--md`, `.icon--lg`, `.icon--xl`, `.icon--2xl`)
+  - [x] Use Tailwind `@apply` directives
+  - [x] Use Pages design tokens for default colors (color inheritance)
+- [x] Implement icon registry/selector logic
+  - [x] Map icon names to Lucide icon components (kebab-case to PascalCase conversion)
+  - [x] Support all common Lucide icons
+- [x] Write component tests
+- [x] Export from `shared-ui` public API
+- [x] Animation support (spin, pulse, bounce) using Tailwind CSS 4 built-in animations
 
 **Deliverables**:
 

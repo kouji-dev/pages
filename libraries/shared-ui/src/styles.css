@@ -352,3 +352,61 @@ body {
 
 /* Shared UI theme and global styles */
 /* This is the centralized theme managed by the shared-ui library */
+
+/* CDK Overlay Toast Panel Classes */
+.lib-toast-panel {
+  pointer-events: none;
+  z-index: 1000;
+  max-width: 100vw;
+  max-height: 100vh;
+  padding: 1rem;
+}
+
+.lib-toast-panel > * {
+  pointer-events: auto;
+}
+
+/* Position-specific margins */
+.lib-toast-panel--top-right {
+  top: 1rem !important;
+  right: 1rem !important;
+  left: auto !important;
+  bottom: auto !important;
+}
+
+.lib-toast-panel--top-left {
+  top: 1rem !important;
+  left: 1rem !important;
+  right: auto !important;
+  bottom: auto !important;
+}
+
+.lib-toast-panel--bottom-right {
+  bottom: 1rem !important;
+  right: 1rem !important;
+  top: auto !important;
+  left: auto !important;
+}
+
+.lib-toast-panel--bottom-left {
+  bottom: 1rem !important;
+  left: 1rem !important;
+  top: auto !important;
+  right: auto !important;
+}
+
+.lib-toast-panel--top-center {
+  top: 1rem !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  right: auto !important;
+  bottom: auto !important;
+}
+
+.lib-toast-panel--bottom-center {
+  bottom: 1rem !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  top: auto !important;
+  right: auto !important;
+}
