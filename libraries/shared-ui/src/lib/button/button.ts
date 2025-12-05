@@ -6,96 +6,59 @@ import { Icon, IconName } from '../icon/icon';
   selector: 'lib-button',
   imports: [Icon, RouterLink],
   template: `
-    @if (link()) {
-      <a
-        class="button"
-        [class.button--primary]="variant() === 'primary'"
-        [class.button--secondary]="variant() === 'secondary'"
-        [class.button--danger]="variant() === 'danger'"
-        [class.button--ghost]="variant() === 'ghost'"
-        [class.button--sm]="size() === 'sm'"
-        [class.button--md]="size() === 'md'"
-        [class.button--lg]="size() === 'lg'"
-        [class.button--disabled]="disabled() || loading()"
-        [class.button--icon-only]="iconOnly()"
-        [routerLink]="link()!"
-        [attr.aria-disabled]="disabled() || loading() ? 'true' : null"
-        [tabindex]="disabled() || loading() ? -1 : 0"
-        (click)="onClick($event)"
-      >
-        @if (loading()) {
-          <lib-icon
-            name="loader"
-            [size]="spinnerSize()"
-            animation="spin"
-            [ariaHidden]="true"
-            class="button_spinner"
-          ></lib-icon>
-        } @else {
-          <span class="button_content">
-            @if (leftIcon()) {
-              <lib-icon
-                [name]="leftIcon()!"
-                [size]="iconSize()"
-                class="button_icon button_icon--left"
-              ></lib-icon>
-            }
-            <ng-content></ng-content>
-            @if (rightIcon()) {
-              <lib-icon
-                [name]="rightIcon()!"
-                [size]="iconSize()"
-                class="button_icon button_icon--right"
-              ></lib-icon>
-            }
-          </span>
-        }
-      </a>
-    } @else {
-      <button
-        class="button"
-        [class.button--primary]="variant() === 'primary'"
-        [class.button--secondary]="variant() === 'secondary'"
-        [class.button--danger]="variant() === 'danger'"
-        [class.button--ghost]="variant() === 'ghost'"
-        [class.button--sm]="size() === 'sm'"
-        [class.button--md]="size() === 'md'"
-        [class.button--lg]="size() === 'lg'"
-        [class.button--disabled]="disabled() || loading()"
-        [class.button--icon-only]="iconOnly()"
-        [disabled]="disabled() || loading()"
-        [type]="type()"
-        (click)="onClick($event)"
-      >
-        @if (loading()) {
-          <lib-icon
-            name="loader"
-            [size]="spinnerSize()"
-            animation="spin"
-            [ariaHidden]="true"
-            class="button_spinner"
-          ></lib-icon>
-        } @else {
-          <span class="button_content">
-            @if (leftIcon()) {
-              <lib-icon
-                [name]="leftIcon()!"
-                [size]="iconSize()"
-                class="button_icon button_icon--left"
-              ></lib-icon>
-            }
-            <ng-content></ng-content>
-            @if (rightIcon()) {
-              <lib-icon
-                [name]="rightIcon()!"
-                [size]="iconSize()"
-                class="button_icon button_icon--right"
-              ></lib-icon>
-            }
-          </span>
-        }
-      </button>
-    }
+    <button
+      class="button"
+      [class.button--primary]="variant() === 'primary'"
+      [class.button--secondary]="variant() === 'secondary'"
+      [class.button--danger]="variant() === 'danger'"
+      [class.button--ghost]="variant() === 'ghost'"
+      [class.button--sm]="size() === 'sm'"
+      [class.button--md]="size() === 'md'"
+      [class.button--lg]="size() === 'lg'"
+      [class.button--disabled]="disabled() || loading()"
+      [class.button--icon-only]="iconOnly()"
+      [disabled]="!link() && (disabled() || loading())"
+      [type]="link() ? 'button' : type()"
+      (click)="onClick($event)"
+    >
+      @if (link()) {
+        <a
+          class="button_link"
+          [routerLink]="link()!"
+          [attr.aria-disabled]="disabled() || loading() ? 'true' : null"
+          [tabindex]="disabled() || loading() ? -1 : 0"
+          (click)="onLinkClick($event)"
+        >
+        </a>
+      }
+      @if (loading()) {
+        <lib-icon
+          name="loader"
+          [size]="spinnerSize()"
+          animation="spin"
+          [ariaHidden]="true"
+          class="button_spinner"
+        ></lib-icon>
+      } @else {
+        <span class="button_content">
+          @if (leftIcon()) {
+            <lib-icon
+              [name]="leftIcon()!"
+              [size]="iconSize()"
+              class="button_icon button_icon--left"
+            ></lib-icon>
+          }
+          <ng-content></ng-content>
+          @if (rightIcon()) {
+            <lib-icon
+              [name]="rightIcon()!"
+              [size]="iconSize()"
+              class="button_icon button_icon--right"
+            ></lib-icon>
+          }
+        </span>
+      }
+    </button>
   `,
   styles: [
     `
@@ -108,7 +71,7 @@ import { Icon, IconName } from '../icon/icon';
         @apply cursor-pointer;
         @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
         @apply rounded-md; /* Notion-style rounded corners */
-        text-decoration: none; /* Remove underline for links */
+        position: relative; /* For absolute positioned link */
         /* Default styles will be overridden by variant classes */
       }
 
@@ -233,6 +196,18 @@ import { Icon, IconName } from '../icon/icon';
       .button:has(.button_spinner) {
         position: relative;
       }
+
+      /* Link inside button */
+      .button_link {
+        @apply absolute inset-0;
+        @apply z-10;
+        text-decoration: none;
+        @apply cursor-pointer;
+      }
+
+      .button--disabled .button_link {
+        pointer-events: none;
+      }
     `,
   ],
 })
@@ -279,6 +254,20 @@ export class Button {
       event.stopPropagation();
       return;
     }
+    // If link is provided, let the link handle navigation
+    if (this.link()) {
+      return;
+    }
+    this.clicked.emit(event);
+  }
+
+  onLinkClick(event: MouseEvent): void {
+    if (this.disabled() || this.loading()) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    // Link handles navigation via RouterLink
     this.clicked.emit(event);
   }
 }
