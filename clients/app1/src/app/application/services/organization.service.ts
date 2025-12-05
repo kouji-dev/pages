@@ -10,6 +10,12 @@ export interface Organization {
   memberCount?: number;
 }
 
+export interface CreateOrganizationRequest {
+  name: string;
+  slug: string;
+  description?: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -132,6 +138,41 @@ export class OrganizationService {
       }
     } catch (error) {
       console.error('Failed to load organization from localStorage:', error);
+    }
+  }
+
+  /**
+   * Create a new organization
+   */
+  async createOrganization(request: CreateOrganizationRequest): Promise<Organization | null> {
+    this.isLoading.set(true);
+
+    try {
+      // TODO: Replace with actual API call when backend is ready
+      // const newOrg = await firstValueFrom(
+      //   this.http.post<Organization>(this.apiUrl, request)
+      // );
+      // this.organizations.update(orgs => [...orgs, newOrg]);
+      // return newOrg;
+
+      // Placeholder: Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const newOrg: Organization = {
+        id: `org-${Date.now()}`,
+        name: request.name,
+        slug: request.slug,
+        description: request.description,
+        memberCount: 1,
+      };
+
+      this.organizations.update((orgs) => [...orgs, newOrg]);
+      return newOrg;
+    } catch (error) {
+      console.error('Failed to create organization:', error);
+      throw error;
+    } finally {
+      this.isLoading.set(false);
     }
   }
 }

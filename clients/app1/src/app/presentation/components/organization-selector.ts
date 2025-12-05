@@ -5,10 +5,12 @@ import {
   inject,
   TemplateRef,
   ViewChild,
+  ViewContainerRef,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Icon, Dropdown, Button } from 'shared-ui';
+import { Icon, Dropdown, Button, Modal } from 'shared-ui';
 import { OrganizationService, Organization } from '../../application/services/organization.service';
+import { CreateOrganizationModal } from './create-organization-modal';
 
 @Component({
   selector: 'app-organization-selector',
@@ -263,6 +265,8 @@ import { OrganizationService, Organization } from '../../application/services/or
 })
 export class OrganizationSelector {
   private readonly organizationService = inject(OrganizationService);
+  private readonly modal = inject(Modal);
+  private readonly viewContainerRef = inject(ViewContainerRef);
 
   @ViewChild('dropdownTemplate') dropdownTemplate!: TemplateRef<any>;
 
@@ -298,6 +302,9 @@ export class OrganizationSelector {
 
   handleCreateOrganization(dropdown: Dropdown): void {
     dropdown.open.set(false);
-    // TODO: Open create organization modal (task 1.2.11)
+    this.modal.open(CreateOrganizationModal, this.viewContainerRef, {
+      size: 'md',
+      closable: true,
+    });
   }
 }
