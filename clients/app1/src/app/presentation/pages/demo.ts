@@ -1,10 +1,19 @@
-import { Component, signal, inject } from '@angular/core';
 import { Component, signal, inject, ViewChild, TemplateRef, ViewContainerRef } from '@angular/core';
-import { Button, Icon, Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter, ToastService } from 'shared-ui';
+import {
+  Button,
+  Icon,
+  Input,
+  Modal,
+  ModalContainer,
+  ModalHeader,
+  ModalContent,
+  ModalFooter,
+  ToastService,
+} from 'shared-ui';
 
 @Component({
   selector: 'app-demo',
-  imports: [Button, Icon, ModalContainer, ModalHeader, ModalContent, ModalFooter],
+  imports: [Button, Icon, Input, ModalContainer, ModalHeader, ModalContent, ModalFooter],
   template: `
     <div class="demo">
       <h1 class="demo_title">Component Library Demo</h1>
@@ -130,6 +139,156 @@ import { Button, Icon, Modal, ModalContainer, ModalHeader, ModalContent, ModalFo
         </div>
       </section>
 
+      <!-- Input Component Showcase -->
+      <section class="demo_section">
+        <h2 class="demo_section-title">Input Component</h2>
+
+        <div class="demo_grid">
+          <div class="demo_item">
+            <h3 class="demo_item-title">Basic Input</h3>
+            <div class="demo_item-content">
+              <lib-input
+                label="Name"
+                placeholder="Enter your name"
+                [(model)]="inputValue"
+              ></lib-input>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">With Helper Text</h3>
+            <div class="demo_item-content">
+              <lib-input
+                label="Email"
+                type="email"
+                placeholder="example@email.com"
+                helperText="We'll never share your email"
+                [(model)]="emailValue"
+              ></lib-input>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">With Error Message</h3>
+            <div class="demo_item-content">
+              <lib-input
+                label="Username"
+                placeholder="Choose a username"
+                errorMessage="Username is already taken"
+                [(model)]="usernameValue"
+              ></lib-input>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">Required Field</h3>
+            <div class="demo_item-content">
+              <lib-input
+                label="Password"
+                type="password"
+                placeholder="Enter password"
+                [required]="true"
+                [(model)]="passwordValue"
+              ></lib-input>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">Password with Toggle</h3>
+            <div class="demo_item-content">
+              <lib-input
+                label="Password"
+                type="password"
+                placeholder="Enter password"
+                [showPasswordToggle]="true"
+                [(model)]="passwordToggleValue"
+              ></lib-input>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">With Icons</h3>
+            <div class="demo_item-content">
+              <lib-input
+                label="Search"
+                type="search"
+                placeholder="Search..."
+                leftIcon="search"
+                [(model)]="searchValue"
+              ></lib-input>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">Disabled Input</h3>
+            <div class="demo_item-content">
+              <lib-input
+                label="Disabled Field"
+                placeholder="Cannot edit this"
+                [disabled]="true"
+                [(model)]="disabledInputValue"
+              ></lib-input>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">Readonly Input</h3>
+            <div class="demo_item-content">
+              <lib-input
+                label="Readonly Field"
+                [readonly]="true"
+                [(model)]="readonlyInputValue"
+              ></lib-input>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">Different Types</h3>
+            <div class="demo_item-content">
+              <lib-input
+                label="Email"
+                type="email"
+                placeholder="email@example.com"
+                [(model)]="typeEmailValue"
+              ></lib-input>
+              <lib-input
+                label="Number"
+                type="number"
+                placeholder="Enter a number"
+                [(model)]="typeNumberValue"
+              ></lib-input>
+              <lib-input
+                label="URL"
+                type="url"
+                placeholder="https://example.com"
+                [(model)]="typeUrlValue"
+              ></lib-input>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">Textarea</h3>
+            <div class="demo_item-content">
+              <lib-input
+                label="Message"
+                type="textarea"
+                placeholder="Enter your message..."
+                [rows]="4"
+                helperText="Maximum 500 characters"
+                [(model)]="textareaValue"
+              ></lib-input>
+              <lib-input
+                label="Description"
+                type="textarea"
+                placeholder="Enter description"
+                [rows]="6"
+                [(model)]="textareaValue2"
+              ></lib-input>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Toast Component Showcase -->
       <section class="demo_section">
         <h2 class="demo_section-title">Toast/Notification Component</h2>
@@ -142,20 +301,6 @@ import { Button, Icon, Modal, ModalContainer, ModalHeader, ModalContent, ModalFo
               <lib-button (clicked)="showToast('error')">Error Toast</lib-button>
               <lib-button (clicked)="showToast('warning')">Warning Toast</lib-button>
               <lib-button (clicked)="showToast('info')">Info Toast</lib-button>
-              </div>
-          </div>
-        </div>
-      </section>
-      
-      <!-- Modal Component Showcase -->
-      <section class="demo_section">
-        <h2 class="demo_section-title">Modal Component</h2>
-
-        <div class="demo_grid">
-          <div class="demo_item">
-            <h3 class="demo_item-title">Basic Modal</h3>
-            <div class="demo_item-content">
-              <lib-button (clicked)="openBasicModal()">Open Basic Modal</lib-button>
             </div>
           </div>
 
@@ -174,6 +319,24 @@ import { Button, Icon, Modal, ModalContainer, ModalHeader, ModalContent, ModalFo
             <div class="demo_item-content">
               <lib-button (clicked)="showLongToast()">Long Duration (10s)</lib-button>
               <lib-button (clicked)="showPermanentToast()">No Auto-Dismiss</lib-button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Modal Component Showcase -->
+      <section class="demo_section">
+        <h2 class="demo_section-title">Modal Component</h2>
+
+        <div class="demo_grid">
+          <div class="demo_item">
+            <h3 class="demo_item-title">Basic Modal</h3>
+            <div class="demo_item-content">
+              <lib-button (clicked)="openBasicModal()">Open Basic Modal</lib-button>
+            </div>
+          </div>
+
+          <div class="demo_item">
             <h3 class="demo_item-title">Size Variants</h3>
             <div class="demo_item-content">
               <lib-button (clicked)="openModal('sm')">Small</lib-button>
@@ -273,7 +436,8 @@ import { Button, Icon, Modal, ModalContainer, ModalHeader, ModalContent, ModalFo
       }
 
       .demo_item-content {
-        @apply flex flex-wrap gap-3 items-start;
+        @apply flex flex-col gap-3 items-start;
+        width: 100%;
       }
     `,
   ],
@@ -283,6 +447,21 @@ export class Demo {
   readonly modal = inject(Modal);
   readonly viewContainerRef = inject(ViewContainerRef);
   readonly loadingButton = signal(false);
+
+  // Input demo values
+  readonly inputValue = signal('');
+  readonly emailValue = signal('');
+  readonly usernameValue = signal('');
+  readonly passwordValue = signal('');
+  readonly passwordToggleValue = signal('');
+  readonly searchValue = signal('');
+  readonly typeEmailValue = signal('');
+  readonly typeNumberValue = signal('');
+  readonly typeUrlValue = signal('');
+  readonly disabledInputValue = signal('Disabled value');
+  readonly readonlyInputValue = signal('Read-only value');
+  readonly textareaValue = signal('');
+  readonly textareaValue2 = signal('');
 
   @ViewChild('basicModalTemplate') basicModalTemplate!: TemplateRef<any>;
   @ViewChild('smallModalTemplate') smallModalTemplate!: TemplateRef<any>;
@@ -326,7 +505,7 @@ export class Demo {
     this.toast.show({
       type: 'info',
       message: `Toast positioned at ${position.replace('-', ' ')}`,
-      position
+      position,
     });
   }
 
@@ -342,10 +521,10 @@ export class Demo {
     this.toast.show({
       type: 'warning',
       message: 'This toast will not auto-dismiss. Click X to close.',
-      duration: 0
-    })
+      duration: 0,
+    });
   }
-  
+
   openBasicModal(): void {
     this.modal.open(this.basicModalTemplate, this.viewContainerRef, {
       size: 'md',
