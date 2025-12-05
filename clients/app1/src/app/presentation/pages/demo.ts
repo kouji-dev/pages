@@ -1,4 +1,3 @@
-import { Component, signal, inject } from '@angular/core';
 import { Component, signal, inject, ViewChild, TemplateRef, ViewContainerRef } from '@angular/core';
 import { Button, Icon, Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter, ToastService } from 'shared-ui';
 
@@ -142,20 +141,6 @@ import { Button, Icon, Modal, ModalContainer, ModalHeader, ModalContent, ModalFo
               <lib-button (clicked)="showToast('error')">Error Toast</lib-button>
               <lib-button (clicked)="showToast('warning')">Warning Toast</lib-button>
               <lib-button (clicked)="showToast('info')">Info Toast</lib-button>
-              </div>
-          </div>
-        </div>
-      </section>
-      
-      <!-- Modal Component Showcase -->
-      <section class="demo_section">
-        <h2 class="demo_section-title">Modal Component</h2>
-
-        <div class="demo_grid">
-          <div class="demo_item">
-            <h3 class="demo_item-title">Basic Modal</h3>
-            <div class="demo_item-content">
-              <lib-button (clicked)="openBasicModal()">Open Basic Modal</lib-button>
             </div>
           </div>
 
@@ -174,6 +159,24 @@ import { Button, Icon, Modal, ModalContainer, ModalHeader, ModalContent, ModalFo
             <div class="demo_item-content">
               <lib-button (clicked)="showLongToast()">Long Duration (10s)</lib-button>
               <lib-button (clicked)="showPermanentToast()">No Auto-Dismiss</lib-button>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Modal Component Showcase -->
+      <section class="demo_section">
+        <h2 class="demo_section-title">Modal Component</h2>
+
+        <div class="demo_grid">
+          <div class="demo_item">
+            <h3 class="demo_item-title">Basic Modal</h3>
+            <div class="demo_item-content">
+              <lib-button (clicked)="openBasicModal()">Open Basic Modal</lib-button>
+            </div>
+          </div>
+
+          <div class="demo_item">
             <h3 class="demo_item-title">Size Variants</h3>
             <div class="demo_item-content">
               <lib-button (clicked)="openModal('sm')">Small</lib-button>

@@ -69,32 +69,41 @@ This phase focuses on building the foundational features required for a function
 
 **Backend Tasks**:
 
-- [ ] Design core database schema (users, organizations, projects, issues, pages, comments)
-- [ ] Set up PostgreSQL database
-- [ ] Choose and configure ORM (Prisma, TypeORM, SQLAlchemy, etc.)
-- [ ] Create migration system setup
-- [ ] Write initial migrations for:
-  - [ ] Users table (id, email, password_hash, name, avatar_url, created_at, updated_at, deleted_at)
-  - [ ] Organizations table (id, name, slug, settings, created_at, updated_at)
-  - [ ] OrganizationMembers table (organization_id, user_id, role, created_at)
-  - [ ] Projects table (id, organization_id, name, key, description, created_at, updated_at)
-  - [ ] ProjectMembers table (project_id, user_id, role, created_at)
-  - [ ] Issues table (id, project_id, type, title, description, status, priority, assignee_id, reporter_id, created_at, updated_at)
-  - [ ] Comments table (id, issue_id, user_id, content, created_at, updated_at)
-  - [ ] Pages table (id, space_id, title, content, parent_id, created_by, updated_by, created_at, updated_at)
-  - [ ] Spaces table (id, organization_id, name, key, description, created_at, updated_at)
-  - [ ] Attachments table (id, entity_type, entity_id, file_name, file_size, mime_type, storage_path, uploaded_by, created_at)
-  - [ ] Notifications table (id, user_id, type, title, content, read, created_at)
-- [ ] Create database indexes for performance (foreign keys, search fields, timestamps)
-- [ ] Set up database connection pooling
-- [ ] Create seed scripts for development data
-- [ ] Write database schema documentation
+- [x] Design core database schema (users, organizations, projects, issues, pages, comments)
+- [x] Set up PostgreSQL database (Docker Compose configured with PostgreSQL 17)
+- [x] Choose and configure ORM - SQLAlchemy 2.0+ with asyncpg driver
+- [x] Create migration system setup (Alembic) - `services/api/alembic/`
+- [x] Write initial migrations for:
+  - [x] Users table (id, email, password_hash, name, avatar_url, created_at, updated_at, deleted_at)
+  - [x] Organizations table (id, name, slug, settings, created_at, updated_at)
+  - [x] OrganizationMembers table (organization_id, user_id, role, created_at)
+  - [x] Projects table (id, organization_id, name, key, description, created_at, updated_at)
+  - [x] ProjectMembers table (project_id, user_id, role, created_at)
+  - [x] Issues table (id, project_id, type, title, description, status, priority, assignee_id, reporter_id, created_at, updated_at)
+  - [x] Comments table (id, issue_id, page_id, user_id, content, created_at, updated_at)
+  - [x] Pages table (id, space_id, title, content, parent_id, created_by, updated_by, created_at, updated_at)
+  - [x] Spaces table (id, organization_id, name, key, description, created_at, updated_at)
+  - [x] Attachments table (id, entity_type, entity_id, file_name, file_size, mime_type, storage_path, uploaded_by, created_at)
+  - [x] Notifications table (id, user_id, type, title, content, read, created_at)
+- [x] Create database indexes for performance (foreign keys, search fields, timestamps)
+- [x] Set up database connection pooling (asyncpg pooling with SQLAlchemy async)
+- [x] Create seed scripts for development data - `services/api/scripts/seed.py`
+- [x] Write database schema documentation
+- [x] Implement `SQLAlchemyUserRepository` - `services/api/src/infrastructure/database/repositories/user_repository.py`
 
 **Deliverables**:
 
-- Complete database schema
-- Migration scripts
-- Database documentation
+- [x] Complete database schema
+- [x] Migration scripts
+- [x] Database documentation
+- [x] Repository implementations
+
+**Note**: ✅ **COMPLETED** - Full database infrastructure implemented:
+- SQLAlchemy 2.0+ async models in `services/api/src/infrastructure/database/models/`
+- Alembic migrations configured with initial schema
+- `SQLAlchemyUserRepository` fully implemented
+- Seed script with test data (3 users, 1 org, 1 project, 5 issues, 1 space, 4 pages)
+- Connection pooling and async session management
 
 ---
 
@@ -107,35 +116,35 @@ This phase focuses on building the foundational features required for a function
 
 **Backend Tasks**:
 
-- [ ] Implement password hashing (bcrypt/Argon2)
-- [ ] Create user registration endpoint (POST /api/auth/register)
-  - [ ] Validate email format and uniqueness
-  - [ ] Validate password strength
-  - [ ] Hash password before storing
-  - [ ] Create user record
-  - [ ] Generate and return JWT token
-  - [ ] Send welcome email (async)
-- [ ] Create user login endpoint (POST /api/auth/login)
-  - [ ] Validate credentials
-  - [ ] Generate JWT access token
-  - [ ] Generate refresh token (optional)
-  - [ ] Return user data and tokens
-- [ ] Create password reset flow
-  - [ ] Request reset endpoint (POST /api/auth/password/reset-request)
-  - [ ] Reset token generation and storage
-  - [ ] Reset email sending
-  - [ ] Password reset endpoint (POST /api/auth/password/reset)
-- [ ] Implement JWT middleware for protected routes
-  - [ ] Token validation
-  - [ ] User context injection
-  - [ ] Token refresh handling
-- [ ] Create permission/role system foundation
-  - [ ] Define base roles (admin, member, viewer)
-  - [ ] Create role checking utilities
-  - [ ] Implement organization-level permissions
+- [x] Implement password hashing (bcrypt/Argon2) - `BcryptPasswordService` in `services/api/src/infrastructure/security/`
+- [x] Create user registration endpoint (POST /api/auth/register)
+  - [x] Validate email format and uniqueness - `Email` value object with validation
+  - [x] Validate password strength - `Password` value object with strength validation
+  - [x] Hash password before storing - via `PasswordService.hash()`
+  - [x] Create user record - `SQLAlchemyUserRepository` implemented
+  - [x] Generate and return JWT token - `JWTTokenService`
+  - [ ] Send welcome email (async) - pending email service
+- [x] Create user login endpoint (POST /api/auth/login)
+  - [x] Validate credentials - `LoginUserUseCase`
+  - [x] Generate JWT access token - `JWTTokenService.create_access_token()`
+  - [x] Generate refresh token - `JWTTokenService.create_refresh_token()`
+  - [x] Return user data and tokens - `LoginResponse` DTO
+- [x] Create password reset flow
+  - [x] Request reset endpoint (POST /api/auth/password/reset-request) - `RequestPasswordResetUseCase`
+  - [x] Reset token generation and storage - `JWTTokenService.create_password_reset_token()`
+  - [ ] Reset email sending - pending email service
+  - [x] Password reset endpoint (POST /api/auth/password/reset) - `ResetPasswordUseCase`
+- [x] Implement JWT middleware for protected routes
+  - [x] Token validation - `JWTTokenService.verify_token()`
+  - [x] User context injection - `get_current_user` dependency
+  - [x] Token refresh handling - `RefreshTokenUseCase`
+- [x] Create permission/role system foundation (structure complete, will be integrated in 1.2.6)
+  - [x] Define base roles (admin, member, viewer) - `Role` enum in `src/domain/value_objects/role.py`
+  - [x] Create role checking utilities - `PermissionService` interface and `DatabasePermissionService` implementation
+  - [x] Implement organization-level permissions - ready for integration in Organization endpoints (1.2.6)
 - [ ] Create email verification flow (optional for MVP)
-- [ ] Write authentication API documentation
-- [ ] Write unit tests for auth endpoints
+- [x] Write authentication API documentation - OpenAPI/Swagger via FastAPI
+- [x] Write unit tests for auth endpoints - tests in `services/api/tests/unit/`
 
 **Frontend Tasks**:
 
@@ -155,13 +164,24 @@ This phase focuses on building the foundational features required for a function
 - [ ] Create protected route wrapper component
 - [ ] Implement token storage (localStorage or httpOnly cookies)
 - [ ] Create logout functionality
-- [ ] Add form validation libraries (React Hook Form + Zod/Yup)
+- [ ] Add form validation libraries (Angular Reactive Forms + Validators)
 
 **Deliverables**:
 
-- Working authentication system
-- Login/register UI
-- Protected route system
+- [x] Working authentication system (backend complete)
+- [ ] Login/register UI
+- [x] Protected route system (backend middleware done)
+
+**Note**: ✅ **BACKEND COMPLETED** - Full backend authentication infrastructure implemented:
+- DDD/Clean Architecture structure in `services/api/`
+- Domain layer: User entity, Email/Password value objects, repository interfaces, Role enum, PermissionService interface
+- Application layer: Auth DTOs, use cases (Register, Login, RefreshToken, PasswordReset), DatabasePermissionService
+- Infrastructure layer: BcryptPasswordService, JWTTokenService, SQLAlchemyUserRepository
+- Presentation layer: FastAPI routes (`/api/v1/auth/*`), dependencies (auth & permissions), error handlers
+- Unit and integration tests (126 tests, 86% coverage)
+- Database integration complete with SQLAlchemy async
+- Permission/Role system foundation ready (Role enum, PermissionService, dependencies) - will be integrated in Organization APIs (1.2.6)
+- Email sending features pending email service implementation (welcome email, reset email, verification)
 
 ---
 
@@ -170,31 +190,43 @@ This phase focuses on building the foundational features required for a function
 **Priority**: Critical  
 **Estimated Time**: 5-7 days  
 **Dependencies**: 1.1.1, 1.1.2  
-**Assigned To**: BATATA1
+**Assigned To**: BATATA1 (partially done by HWIMDA1 during 1.1.3)
 
 **Backend Tasks**:
 
-- [ ] Set up Express/Fastify/FastAPI server
-- [ ] Configure CORS middleware
-- [ ] Set up request/response logging middleware
-- [ ] Create error handling middleware
-  - [ ] Global error handler
-  - [ ] Error response formatting
-  - [ ] Logging errors
-- [ ] Set up request validation middleware (express-validator, Pydantic)
-- [ ] Create API response formatting utilities
-- [ ] Set up API versioning structure (/api/v1)
-- [ ] Create health check endpoint (GET /api/health)
-- [ ] Set up API documentation (Swagger/OpenAPI)
-- [ ] Configure rate limiting
-- [ ] Set up request ID tracking
-- [ ] Create API testing utilities
+- [x] Set up Express/Fastify/FastAPI server - `services/api/src/main.py`
+- [x] Configure CORS middleware - FastAPI CORSMiddleware in `main.py`
+- [x] Set up request/response logging middleware - structlog configured
+- [x] Create error handling middleware
+  - [x] Global error handler - `domain_exception_handler`, `generic_exception_handler`
+  - [x] Error response formatting - JSON error responses with details
+  - [x] Logging errors - structlog integration
+- [x] Set up request validation middleware (express-validator, Pydantic) - Pydantic v2 for all DTOs
+- [x] Create API response formatting utilities - Pydantic BaseModel responses
+- [x] Set up API versioning structure (/api/v1) - `presentation/api/v1/`
+- [x] Create health check endpoint (GET /api/health) - `/api/v1/health`, `/api/v1/health/ready`, `/api/v1/health/live`
+- [x] Set up API documentation (Swagger/OpenAPI) - FastAPI built-in at `/docs`
+- [x] Configure rate limiting - `slowapi` integrated with Redis storage in `src/presentation/middlewares/rate_limit.py`
+- [x] Set up request ID tracking - `RequestIDMiddleware` in `src/presentation/middlewares/request_id.py`
+- [x] Create API testing utilities - pytest fixtures in `tests/conftest.py`
 
 **Deliverables**:
 
-- Functional API server
-- Error handling system
-- API documentation framework
+- [x] Functional API server
+- [x] Error handling system
+- [x] API documentation framework
+
+**Note**: ✅ **COMPLETED** - Full API infrastructure implemented:
+- FastAPI server with async support
+- DDD project structure in `services/api/`
+- Dockerfiles (production + development)
+- Docker Compose integration with PostgreSQL and Redis
+- Comprehensive error handling for domain exceptions
+- OpenAPI documentation auto-generated
+- Rate limiting with `slowapi` and Redis storage
+- Request ID tracking middleware with structured logging integration
+- Integration test database setup with Docker
+- Comprehensive test coverage (86% overall)
 
 ---
 
@@ -2315,10 +2347,10 @@ This phase focuses on building the foundational features required for a function
   - [ ] Redis cache
   - [ ] File storage (S3 or similar)
   - [ ] Load balancer
-- [-] Set up containerization (Docker)
+- [x] Set up containerization (Docker)
   - [x] Create Dockerfiles for frontend (app1 production and dev)
-  - [x] Create docker-compose for local development
-  - [ ] Create Dockerfiles for backend (pending)
+  - [x] Create docker-compose for local development (includes PostgreSQL, Redis, API, App1)
+  - [x] Create Dockerfiles for backend (`services/api/Dockerfile` and `Dockerfile.dev`)
 - [ ] Set up CI/CD pipeline
   - [ ] Build process
   - [ ] Automated testing

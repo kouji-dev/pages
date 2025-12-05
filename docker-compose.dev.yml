@@ -1,4 +1,29 @@
 services:
+  # FastAPI Backend
+  api:
+    build:
+      context: ./services/api
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/api:/app
+    ports:
+      - "${API_PORT:-8002}:8000"
+    environment:
+      - DEBUG=true
+      - ENVIRONMENT=development
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://postgres:postgres@db:5432/pages}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-dev-secret-key-change-in-production}
+      - ALLOWED_ORIGINS=["http://localhost:4200"]
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - pages-network
+
+  # Angular Frontend
   app1:
     build:
       context: .
@@ -14,12 +39,47 @@ services:
       - "${APP1_PORT:-4200}:4200"
     environment:
       - NODE_ENV=development
-      - API_URL=${API_URL:-http://localhost:8000}
+      - API_URL=${API_URL:-http://localhost:8002}
     command: pnpm exec ng serve app1 --host 0.0.0.0 --port 4200
+    depends_on:
+      - api
+    networks:
+      - pages-network
+
+  # PostgreSQL Database
+  db:
+    image: postgres:17-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-pages}
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pages-network
+
+  # Redis Cache
+  redis:
+    image: redis:8-alpine
+    volumes:
+      - redis_data:/data
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
     networks:
       - pages-network
 
 networks:
-      pages-network:
-        driver: bridge
+  pages-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
 

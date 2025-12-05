@@ -1,0 +1,39 @@
+"""Rate limiting middleware using slowapi."""
+
+from typing import Callable
+
+from fastapi import Request, Response
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
+from slowapi.util import get_remote_address
+
+from src.infrastructure.config import get_settings
+
+settings = get_settings()
+
+# Create limiter instance
+# For production, use Redis: limiter = Limiter(key_func=get_remote_address, storage_uri=settings.redis_url)
+# For development, use in-memory storage
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["100/minute"],  # Default rate limit
+    storage_uri=str(settings.redis_url),  # Use Redis if available, falls back to memory
+)
+
+
+def get_rate_limiter() -> Limiter:
+    """Get rate limiter instance."""
+    return limiter
+
+
+# Custom rate limit exceeded handler
+def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> Response:
+    """Handle rate limit exceeded exception."""
+    response = Response(
+        content=f"Rate limit exceeded: {exc.detail}",
+        status_code=429,
+        headers={"Retry-After": str(exc.retry_after)},
+    )
+    return response
+

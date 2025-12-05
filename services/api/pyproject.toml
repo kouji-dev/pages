@@ -1,0 +1,102 @@
+[tool.poetry]
+name = "pages-api"
+version = "0.1.0"
+description = "FastAPI backend with DDD architecture for Pages project"
+authors = ["Pages Team"]
+readme = "README.md"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.0"
+uvicorn = {extras = ["standard"], version = "^0.32.0"}
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.36"}
+alembic = "^1.14.0"
+asyncpg = "^0.30.0"
+pydantic = "^2.10.0"
+pydantic-settings = "^2.6.0"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+python-multipart = "^0.0.17"
+celery = {extras = ["redis"], version = "^5.4.0"}
+redis = "^5.2.0"
+python-dotenv = "^1.0.1"
+structlog = "^24.4.0"
+email-validator = "^2.2.0"
+httpx = "^0.28.0"
+slowapi = "^0.1.9"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.0"
+pytest-asyncio = "^0.24.0"
+pytest-cov = "^6.0.0"
+black = "^24.10.0"
+ruff = "^0.8.0"
+mypy = "^1.13.0"
+httpx = "^0.28.0"
+factory-boy = "^3.3.0"
+faker = "^33.0.0"
+pytest-xdist = "^3.8.0"
+safety = "^3.2.0"
+bandit = "^1.7.8"
+
+[tool.poetry.scripts]
+dev = "uvicorn src.main:app --reload --host 0.0.0.0 --port 8000"
+start = "uvicorn src.main:app --host 0.0.0.0 --port 8000"
+
+[tool.black]
+line-length = 100
+target-version = ['py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # defaults
+  \.eggs
+  | \.git
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+]
+ignore = [
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
