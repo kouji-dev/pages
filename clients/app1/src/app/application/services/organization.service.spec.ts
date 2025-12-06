@@ -22,8 +22,8 @@ describe('OrganizationService', () => {
     expect(Array.isArray(value) ? value : []).toEqual([]);
   });
 
-  it('should initialize with null current organization', () => {
-    expect(service.currentOrganization()).toBeNull();
+  it('should initialize with undefined current organization', () => {
+    expect(service.currentOrganization()).toBeUndefined();
   });
 
   it('should load organizations', (done) => {
@@ -50,9 +50,12 @@ describe('OrganizationService', () => {
         const firstOrg = orgs[0];
         service.switchOrganization(firstOrg.id);
 
-        expect(service.currentOrganization()).toEqual(firstOrg);
         expect(localStorage.getItem('current_organization_id')).toBe(firstOrg.id);
-        done();
+        // The organization will be fetched via the resource, so we need to wait
+        setTimeout(() => {
+          expect(service.getCurrentOrganization()?.id).toBe(firstOrg.id);
+          done();
+        }, 400);
       } else {
         done();
       }

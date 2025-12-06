@@ -4,6 +4,8 @@ import { Landing } from './presentation/pages/landing';
 import { FeaturesPage } from './presentation/pages/features-page';
 import { PricingPage } from './presentation/pages/pricing-page';
 import { OrganizationsPage } from './presentation/pages/organizations-page';
+import { OrganizationSettingsPage } from './presentation/pages/organization-settings-page';
+import { AuthenticatedLayout } from './presentation/layout/authenticated-layout';
 
 export const routes: Routes = [
   {
@@ -27,8 +29,19 @@ export const routes: Routes = [
     title: 'Pricing - Pages',
   },
   {
-    path: 'organizations',
-    component: OrganizationsPage,
-    title: 'Organizations - Pages',
+    path: 'app',
+    component: AuthenticatedLayout,
+    children: [
+      {
+        path: 'organizations',
+        component: OrganizationsPage,
+        title: 'Organizations - Pages',
+      },
+      {
+        path: 'organizations/:id/settings',
+        component: OrganizationSettingsPage,
+        title: 'Organization Settings - Pages',
+      },
+    ],
   },
 ];

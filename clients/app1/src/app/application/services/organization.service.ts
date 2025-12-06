@@ -24,11 +24,10 @@ export class OrganizationService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/api/organizations`;
 
-  // Organizations resource using httpResource (mocked by mockApiInterceptor until backend is ready)
-  // httpResource expects a function that returns a URL string or HttpResourceRequest
+  // Organizations list resource using httpResource
   readonly organizations = httpResource(() => this.apiUrl);
 
-  // Public accessors for easier access
+  // Public accessors for organizations list
   readonly organizationsList = computed(() => {
     const value = this.organizations.value();
     return Array.isArray(value) ? value : [];
@@ -37,32 +36,44 @@ export class OrganizationService {
   readonly error = computed(() => this.organizations.error());
   readonly hasError = computed(() => this.organizations.error() !== undefined);
 
-  // Current selected organization signal
-  readonly currentOrganization = signal<Organization | null>(null);
+  // Current organization ID signal
+  private readonly currentOrganizationId = signal<string | null>(null);
 
-  constructor() {
-    // Set current organization after organizations are loaded
-    effect(() => {
-      const orgs = this.organizationsList();
-      const currentOrgId = this.getStoredCurrentOrganizationId();
+  // Single organization resource using httpResource with computed URL
+  private readonly organizationResource = httpResource<Organization>(() => {
+    const id = this.currentOrganizationId();
+    return id ? `${this.apiUrl}/${id}` : undefined;
+  });
 
-      if (orgs.length > 0) {
-        // If we have a stored organization ID, try to restore it
-        if (currentOrgId) {
-          const org = orgs.find((o) => o.id === currentOrgId);
-          if (org) {
-            this.currentOrganization.set(org);
-            return;
-          }
-        }
+  // Current organization computed from resource
+  readonly currentOrganization = computed(() => {
+    return this.organizationResource.value() as Organization | undefined;
+  });
 
-        // Otherwise, set the first organization as current
-        if (!this.currentOrganization()) {
-          this.switchOrganization(orgs[0].id);
+  // Public accessors for current organization
+  readonly isFetchingOrganization = computed(() => this.organizationResource.isLoading());
+  readonly organizationError = computed(() => this.organizationResource.error());
+  readonly hasOrganizationError = computed(() => this.organizationResource.error() !== undefined);
+
+  // Effects declared as instance variables
+  private readonly initializeCurrentOrganizationEffect = effect(() => {
+    const orgs = this.organizationsList();
+    const currentOrgId = this.getStoredCurrentOrganizationId();
+
+    if (orgs.length > 0 && !this.currentOrganizationId()) {
+      // If we have a stored organization ID, try to restore it
+      if (currentOrgId) {
+        const org = orgs.find((o) => o.id === currentOrgId);
+        if (org) {
+          this.switchOrganization(currentOrgId);
+          return;
         }
       }
-    });
-  }
+
+      // Otherwise, set the first organization as current
+      this.switchOrganization(orgs[0].id);
+    }
+  });
 
   /**
    * Reload organizations from API
@@ -72,20 +83,29 @@ export class OrganizationService {
   }
 
   /**
-   * Switch to a different organization
+   * Fetch a single organization by ID using httpResource
+   */
+  fetchOrganization(id: string): void {
+    this.currentOrganizationId.set(id);
+    // Resource will reload automatically when ID changes
+  }
+
+  /**
+   * Switch to a different organization (from list)
+   * Sets the organization ID, which triggers the resource to reload automatically
    */
   switchOrganization(organizationId: string): void {
     const organization = this.organizationsList().find((org) => org.id === organizationId);
     if (organization) {
-      this.currentOrganization.set(organization);
+      this.currentOrganizationId.set(organizationId);
       this.persistCurrentOrganizationToStorage(organization);
     }
   }
 
   /**
-   * Get current organization
+   * Get current organization (from resource)
    */
-  getCurrentOrganization(): Organization | null {
+  getCurrentOrganization(): Organization | undefined {
     return this.currentOrganization();
   }
 
@@ -121,7 +141,6 @@ export class OrganizationService {
 
   /**
    * Create a new organization
-   * Uses HTTP POST (mocked by mockApiInterceptor until backend is ready)
    */
   async createOrganization(request: CreateOrganizationRequest): Promise<Organization> {
     const response = await this.http.post<Organization>(this.apiUrl, request).toPromise();
@@ -137,7 +156,6 @@ export class OrganizationService {
 
   /**
    * Update an organization
-   * Uses HTTP PUT/PATCH (mocked by mockApiInterceptor until backend is ready)
    */
   async updateOrganization(id: string, updates: Partial<Organization>): Promise<Organization> {
     const response = await this.http.put<Organization>(`${this.apiUrl}/${id}`, updates).toPromise();
@@ -145,15 +163,17 @@ export class OrganizationService {
       throw new Error('Failed to update organization: No response from server');
     }
 
-    // Reload organizations to get updated list
+    // Reload organizations list and current organization to get updated data
     this.loadOrganizations();
+    if (this.currentOrganizationId() === id) {
+      this.organizationResource.reload();
+    }
 
     return response;
   }
 
   /**
    * Delete an organization
-   * Uses HTTP DELETE (mocked by mockApiInterceptor until backend is ready)
    */
   async deleteOrganization(id: string): Promise<void> {
     await this.http.delete(`${this.apiUrl}/${id}`).toPromise();
@@ -161,13 +181,13 @@ export class OrganizationService {
     // Reload organizations to get updated list
     this.loadOrganizations();
 
-    // If deleted organization was current, clear it
-    if (this.currentOrganization()?.id === id) {
+    // If deleted organization was current, switch to another one
+    if (this.currentOrganizationId() === id) {
       const orgs = this.organizationsList();
       if (orgs.length > 0) {
         this.switchOrganization(orgs[0].id);
       } else {
-        this.currentOrganization.set(null);
+        this.currentOrganizationId.set(null);
       }
     }
   }

@@ -1325,26 +1325,28 @@ This phase focuses on building the foundational features required for a function
 **Estimated Time**: 2-3 days  
 **Dependencies**: 1.2.6, 1.1.5, 1.1.8, 1.1.9  
 **Assigned To**: HWIMDA2
+**Status**: ✅ Complete
 
 **Frontend Tasks**:
 
-- [ ] Create organization settings route (`/organizations/:id/settings`)
-- [ ] Create organization settings page component (`organization-settings.component.ts`)
-  - [ ] Organization details form (name, description)
-  - [ ] Save button
-  - [ ] Delete organization button (with confirmation)
-- [ ] Integrate with organization update API
-- [ ] Integrate with organization delete API
-- [ ] Add form validation
-- [ ] Implement loading and error states
-- [ ] Show confirmation modal before deletion (use modal component)
+- [x] Create organization settings route (`/app/organizations/:id/settings`)
+- [x] Create organization settings page component (`organization-settings.component.ts`)
+  - [x] Organization details form (name, description)
+  - [x] Save button
+  - [x] Delete organization button (with confirmation)
+- [x] Integrate with organization update API (using mock API interceptor)
+- [x] Integrate with organization delete API (using mock API interceptor)
+- [x] Add form validation
+- [x] Implement loading and error states
+- [x] Show confirmation modal before deletion (use modal component)
 - [ ] Write component tests
 
 **Deliverables**:
 
-- Organization settings page
-- Organization details update
-- Delete organization functionality
+- ✅ Organization settings page
+- ✅ Organization details update
+- ✅ Delete organization functionality
+- Component tests (pending)
 
 ---
 

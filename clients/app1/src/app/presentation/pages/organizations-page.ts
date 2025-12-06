@@ -153,7 +153,7 @@ export class OrganizationsPage implements OnInit {
   }
 
   handleOrganizationSettings(organization: Organization): void {
-    this.router.navigate(['/organizations', organization.id, 'settings']);
+    this.router.navigate(['/app/organizations', organization.id, 'settings']);
   }
 
   handleOrganizationLeave(organization: Organization): void {
