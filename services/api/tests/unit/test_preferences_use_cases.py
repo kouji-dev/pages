@@ -6,7 +6,7 @@ from uuid import uuid4
 import pytest
 
 from src.application.dtos.preferences import UserPreferencesUpdateRequest
-from src.application.use_cases.preferences import (
+from src.application.use_cases.user import (
     GetUserPreferencesUseCase,
     UpdateUserPreferencesUseCase,
 )

@@ -10,7 +10,7 @@ from src.application.dtos.organization_member import (
     AddMemberRequest,
     UpdateMemberRoleRequest,
 )
-from src.application.use_cases.organization_member import (
+from src.application.use_cases.organization import (
     AddOrganizationMemberUseCase,
     ListOrganizationMembersUseCase,
     RemoveOrganizationMemberUseCase,

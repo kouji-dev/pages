@@ -1,6 +1,6 @@
 """Issue database model."""
 
-from datetime import datetime
+from datetime import date
 from uuid import UUID
 
 from sqlalchemy import Date, ForeignKey, Integer, String, Text
@@ -65,7 +65,7 @@ class IssueModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
     )  # low, medium, high, critical
 
     # Assignment
-    reporter_id: Mapped[UUID] = mapped_column(
+    reporter_id: Mapped[UUID | None] = mapped_column(
         PGUUID(as_uuid=True),
         ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,
@@ -79,7 +79,7 @@ class IssueModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
     )
 
     # Dates
-    due_date: Mapped[datetime | None] = mapped_column(
+    due_date: Mapped[date | None] = mapped_column(
         Date,
         nullable=True,
     )
@@ -117,6 +117,13 @@ class IssueModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         "AttachmentModel.entity_type=='issue')",
         lazy="selectin",
         viewonly=True,
+    )
+    activities = relationship(
+        "IssueActivityModel",
+        back_populates="issue",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+        order_by="IssueActivityModel.created_at.desc()",
     )
 
     def __repr__(self) -> str:

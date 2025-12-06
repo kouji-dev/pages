@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from src.application.use_cases.list_users import ListUsersUseCase
+from src.application.use_cases.user import ListUsersUseCase
 from src.domain.entities import User
 from src.domain.value_objects import Email
 

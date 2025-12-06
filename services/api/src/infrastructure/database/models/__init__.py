@@ -4,6 +4,7 @@ from src.infrastructure.database.models.attachment import AttachmentModel
 from src.infrastructure.database.models.comment import CommentModel
 from src.infrastructure.database.models.invitation import InvitationModel
 from src.infrastructure.database.models.issue import IssueModel
+from src.infrastructure.database.models.issue_activity import IssueActivityModel
 from src.infrastructure.database.models.notification import NotificationModel
 from src.infrastructure.database.models.organization import (
     OrganizationMemberModel,
@@ -24,6 +25,7 @@ __all__ = [
     "ProjectModel",
     "ProjectMemberModel",
     "IssueModel",
+    "IssueActivityModel",
     "CommentModel",
     "PageModel",
     "SpaceModel",

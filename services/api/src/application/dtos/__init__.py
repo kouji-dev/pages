@@ -1,5 +1,11 @@
 """Application DTOs (Data Transfer Objects)."""
 
+from src.application.dtos.attachment import (
+    AttachmentListItemResponse,
+    AttachmentListResponse,
+    AttachmentResponse,
+    UploadAttachmentResponse,
+)
 from src.application.dtos.auth import (
     LoginRequest,
     LoginResponse,
@@ -10,12 +16,30 @@ from src.application.dtos.auth import (
     RegisterResponse,
     TokenResponse,
 )
+from src.application.dtos.comment import (
+    CommentListItemResponse,
+    CommentListResponse,
+    CommentResponse,
+    CreateCommentRequest,
+    UpdateCommentRequest,
+)
 from src.application.dtos.invitation import (
     AcceptInvitationResponse,
     CancelInvitationResponse,
     InvitationListResponse,
     InvitationResponse,
     SendInvitationRequest,
+)
+from src.application.dtos.issue import (
+    CreateIssueRequest,
+    IssueListItemResponse,
+    IssueListResponse,
+    IssueResponse,
+    UpdateIssueRequest,
+)
+from src.application.dtos.issue_activity import (
+    IssueActivityListResponse,
+    IssueActivityResponse,
 )
 from src.application.dtos.organization import (
     CreateOrganizationRequest,
@@ -33,6 +57,19 @@ from src.application.dtos.organization_member import (
 from src.application.dtos.organization_settings import (
     OrganizationSettingsResponse,
     UpdateOrganizationSettingsRequest,
+)
+from src.application.dtos.project import (
+    CreateProjectRequest,
+    ProjectListItemResponse,
+    ProjectListResponse,
+    ProjectResponse,
+    UpdateProjectRequest,
+)
+from src.application.dtos.project_member import (
+    AddProjectMemberRequest,
+    ProjectMemberListResponse,
+    ProjectMemberResponse,
+    UpdateProjectMemberRoleRequest,
 )
 from src.application.dtos.user import (
     EmailUpdateRequest,
@@ -76,4 +113,35 @@ __all__ = [
     # Organization Settings DTOs
     "OrganizationSettingsResponse",
     "UpdateOrganizationSettingsRequest",
+    # Project DTOs
+    "ProjectResponse",
+    "ProjectListItemResponse",
+    "ProjectListResponse",
+    "CreateProjectRequest",
+    "UpdateProjectRequest",
+    # Project Member DTOs
+    "ProjectMemberResponse",
+    "ProjectMemberListResponse",
+    "AddProjectMemberRequest",
+    "UpdateProjectMemberRoleRequest",
+    # Issue DTOs
+    "IssueResponse",
+    "IssueListItemResponse",
+    "IssueListResponse",
+    "CreateIssueRequest",
+    "UpdateIssueRequest",
+    # Issue Activity DTOs
+    "IssueActivityResponse",
+    "IssueActivityListResponse",
+    # Comment DTOs
+    "CommentResponse",
+    "CommentListItemResponse",
+    "CommentListResponse",
+    "CreateCommentRequest",
+    "UpdateCommentRequest",
+    # Attachment DTOs
+    "AttachmentResponse",
+    "AttachmentListItemResponse",
+    "AttachmentListResponse",
+    "UploadAttachmentResponse",
 ]

@@ -85,3 +85,18 @@ class StorageService(ABC):
             URL to access the file (absolute URL or relative path)
         """
         ...
+
+    @abstractmethod
+    async def get_file(self, file_path: str) -> bytes:
+        """Retrieve file content from storage.
+
+        Args:
+            file_path: Path to the file (relative to storage root)
+
+        Returns:
+            File content as bytes
+
+        Raises:
+            StorageException: If file does not exist or read fails
+        """
+        ...
