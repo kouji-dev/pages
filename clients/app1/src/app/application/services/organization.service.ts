@@ -1,5 +1,6 @@
-import { Injectable, signal, inject, computed } from '@angular/core';
+import { Injectable, signal, inject, computed, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { httpResource } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
 export interface Organization {
@@ -23,78 +24,58 @@ export class OrganizationService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/api/organizations`;
 
+  // Organizations resource using httpResource (mocked by mockApiInterceptor until backend is ready)
+  // httpResource expects a function that returns a URL string or HttpResourceRequest
+  readonly organizations = httpResource(() => this.apiUrl);
+
+  // Public accessors for easier access
+  readonly organizationsList = computed(() => {
+    const value = this.organizations.value();
+    return Array.isArray(value) ? value : [];
+  });
+  readonly isLoading = computed(() => this.organizations.isLoading());
+  readonly error = computed(() => this.organizations.error());
+  readonly hasError = computed(() => this.organizations.error() !== undefined);
+
   // Current selected organization signal
   readonly currentOrganization = signal<Organization | null>(null);
 
-  // User's organizations list signal
-  readonly organizations = signal<Organization[]>([]);
-
-  // Loading state signal
-  readonly isLoading = signal(false);
-
   constructor() {
-    // Load current organization from localStorage on initialization
-    this.loadCurrentOrganizationFromStorage();
+    // Set current organization after organizations are loaded
+    effect(() => {
+      const orgs = this.organizationsList();
+      const currentOrgId = this.getStoredCurrentOrganizationId();
 
-    // TODO: Load organizations from API when backend is ready
-    // For now, using placeholder data
-    this.loadOrganizations();
+      if (orgs.length > 0) {
+        // If we have a stored organization ID, try to restore it
+        if (currentOrgId) {
+          const org = orgs.find((o) => o.id === currentOrgId);
+          if (org) {
+            this.currentOrganization.set(org);
+            return;
+          }
+        }
+
+        // Otherwise, set the first organization as current
+        if (!this.currentOrganization()) {
+          this.switchOrganization(orgs[0].id);
+        }
+      }
+    });
   }
 
   /**
-   * Load user's organizations from API
+   * Reload organizations from API
    */
   loadOrganizations(): void {
-    this.isLoading.set(true);
-
-    // TODO: Replace with actual API call when backend is ready
-    // this.http.get<Organization[]>(this.apiUrl).subscribe({
-    //   next: (orgs) => {
-    //     this.organizations.set(orgs);
-    //     this.isLoading.set(false);
-    //   },
-    //   error: (error) => {
-    //     console.error('Failed to load organizations:', error);
-    //     this.isLoading.set(false);
-    //   },
-    // });
-
-    // Placeholder data for now
-    setTimeout(() => {
-      this.organizations.set([
-        {
-          id: '1',
-          name: 'Acme Corp',
-          slug: 'acme-corp',
-          description: 'Main organization',
-          memberCount: 5,
-        },
-        {
-          id: '2',
-          name: 'Personal',
-          slug: 'personal',
-          description: 'Personal workspace',
-          memberCount: 1,
-        },
-      ]);
-
-      // Set first organization as current if none is set
-      if (!this.currentOrganization()) {
-        const firstOrg = this.organizations()[0];
-        if (firstOrg) {
-          this.switchOrganization(firstOrg.id);
-        }
-      }
-
-      this.isLoading.set(false);
-    }, 300);
+    this.organizations.reload();
   }
 
   /**
    * Switch to a different organization
    */
   switchOrganization(organizationId: string): void {
-    const organization = this.organizations().find((org) => org.id === organizationId);
+    const organization = this.organizationsList().find((org) => org.id === organizationId);
     if (organization) {
       this.currentOrganization.set(organization);
       this.persistCurrentOrganizationToStorage(organization);
@@ -112,7 +93,7 @@ export class OrganizationService {
    * Get all organizations
    */
   getOrganizations(): Organization[] {
-    return this.organizations();
+    return this.organizationsList();
   }
 
   /**
@@ -127,52 +108,67 @@ export class OrganizationService {
   }
 
   /**
-   * Load current organization from localStorage
+   * Get stored current organization ID from localStorage
    */
-  private loadCurrentOrganizationFromStorage(): void {
+  private getStoredCurrentOrganizationId(): string | null {
     try {
-      const organizationId = localStorage.getItem('current_organization_id');
-      if (organizationId) {
-        // Organization will be set after loadOrganizations() completes
-        // This is just to restore the ID preference
-      }
+      return localStorage.getItem('current_organization_id');
     } catch (error) {
-      console.error('Failed to load organization from localStorage:', error);
+      console.error('Failed to load organization ID from localStorage:', error);
+      return null;
     }
   }
 
   /**
    * Create a new organization
+   * Uses HTTP POST (mocked by mockApiInterceptor until backend is ready)
    */
-  async createOrganization(request: CreateOrganizationRequest): Promise<Organization | null> {
-    this.isLoading.set(true);
+  async createOrganization(request: CreateOrganizationRequest): Promise<Organization> {
+    const response = await this.http.post<Organization>(this.apiUrl, request).toPromise();
+    if (!response) {
+      throw new Error('Failed to create organization: No response from server');
+    }
 
-    try {
-      // TODO: Replace with actual API call when backend is ready
-      // const newOrg = await firstValueFrom(
-      //   this.http.post<Organization>(this.apiUrl, request)
-      // );
-      // this.organizations.update(orgs => [...orgs, newOrg]);
-      // return newOrg;
+    // Reload organizations to get updated list
+    this.loadOrganizations();
 
-      // Placeholder: Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+    return response;
+  }
 
-      const newOrg: Organization = {
-        id: `org-${Date.now()}`,
-        name: request.name,
-        slug: request.slug,
-        description: request.description,
-        memberCount: 1,
-      };
+  /**
+   * Update an organization
+   * Uses HTTP PUT/PATCH (mocked by mockApiInterceptor until backend is ready)
+   */
+  async updateOrganization(id: string, updates: Partial<Organization>): Promise<Organization> {
+    const response = await this.http.put<Organization>(`${this.apiUrl}/${id}`, updates).toPromise();
+    if (!response) {
+      throw new Error('Failed to update organization: No response from server');
+    }
 
-      this.organizations.update((orgs) => [...orgs, newOrg]);
-      return newOrg;
-    } catch (error) {
-      console.error('Failed to create organization:', error);
-      throw error;
-    } finally {
-      this.isLoading.set(false);
+    // Reload organizations to get updated list
+    this.loadOrganizations();
+
+    return response;
+  }
+
+  /**
+   * Delete an organization
+   * Uses HTTP DELETE (mocked by mockApiInterceptor until backend is ready)
+   */
+  async deleteOrganization(id: string): Promise<void> {
+    await this.http.delete(`${this.apiUrl}/${id}`).toPromise();
+
+    // Reload organizations to get updated list
+    this.loadOrganizations();
+
+    // If deleted organization was current, clear it
+    if (this.currentOrganization()?.id === id) {
+      const orgs = this.organizationsList();
+      if (orgs.length > 0) {
+        this.switchOrganization(orgs[0].id);
+      } else {
+        this.currentOrganization.set(null);
+      }
     }
   }
 }

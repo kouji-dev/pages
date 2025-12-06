@@ -272,7 +272,10 @@ export class OrganizationSelector {
 
   readonly isLoading = this.organizationService.isLoading;
   readonly currentOrganization = this.organizationService.currentOrganization;
-  readonly organizations = this.organizationService.organizations;
+  readonly organizations = computed(() => {
+    const value = this.organizationService.organizations.value();
+    return Array.isArray(value) ? value : [];
+  });
 
   readonly currentOrgName = computed(() => {
     const org = this.currentOrganization();

@@ -336,7 +336,13 @@ This phase focuses on building the foundational features required for a function
   - [ ] Handle 403 (forbidden) responses
   - [ ] Handle 500 (server error) responses
   - [ ] Extract and format error messages
-- [-] Register interceptors in `app.config.ts` (HttpClient configured with `withInterceptorsFromDi()`, but no interceptors created yet)
+- [-] Register interceptors in `app.config.ts` (HttpClient configured with `withInterceptors()`, mock API interceptor registered for frontend demo)
+- [x] Create mock API interceptor (`mock-api.interceptor.ts`) for frontend demo
+  - [x] Intercepts `/api/organizations` requests
+  - [x] Provides mock data from localStorage or defaults
+  - [x] Simulates GET, POST, PUT/PATCH, DELETE operations
+  - [x] Includes network delay simulation
+  - [x] TODO: Remove when backend API is ready
 - [ ] Create error handling service (`error-handler.service.ts`)
   - [ ] Centralized error handling
   - [ ] User-friendly error messages
@@ -1430,7 +1436,10 @@ This phase focuses on building the foundational features required for a function
   - [x] Switch organization method
   - [x] Load user's organizations (placeholder data for now)
   - [x] Persist selected organization (localStorage)
-- [ ] Integrate with organization list API (pending backend task 1.2.6)
+- [x] Integrate with organization list API (using mock API interceptor for frontend demo, pending backend task 1.2.6)
+  - [x] Refactored OrganizationService to use `httpResource()` directly
+  - [x] Removed `organizations` signal, using `organizations` resource directly
+  - [x] Mock API interceptor provides organization data from localStorage
 - [x] Add organization selector to base layout header
 - [x] Implement loading state
 - [x] Write component and service tests

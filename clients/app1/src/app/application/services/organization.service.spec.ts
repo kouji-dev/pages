@@ -18,7 +18,8 @@ describe('OrganizationService', () => {
   });
 
   it('should initialize with empty organizations', () => {
-    expect(service.organizations()).toEqual([]);
+    const value = service.organizations.value();
+    expect(Array.isArray(value) ? value : []).toEqual([]);
   });
 
   it('should initialize with null current organization', () => {
@@ -29,7 +30,8 @@ describe('OrganizationService', () => {
     service.loadOrganizations();
 
     setTimeout(() => {
-      const orgs = service.organizations();
+      const value = service.organizations.value();
+      const orgs = Array.isArray(value) ? value : [];
       expect(orgs.length).toBeGreaterThan(0);
       expect(orgs[0]).toHaveProperty('id');
       expect(orgs[0]).toHaveProperty('name');
@@ -42,7 +44,8 @@ describe('OrganizationService', () => {
     service.loadOrganizations();
 
     setTimeout(() => {
-      const orgs = service.organizations();
+      const value = service.organizations.value();
+      const orgs = Array.isArray(value) ? value : [];
       if (orgs.length > 0) {
         const firstOrg = orgs[0];
         service.switchOrganization(firstOrg.id);

@@ -167,13 +167,6 @@ export class CreateOrganizationModal {
     this.isSubmitting.set(true);
 
     try {
-      // TODO: Replace with actual API call when backend is ready
-      // await this.organizationService.createOrganization({
-      //   name: this.name().trim(),
-      //   slug: this.slug().trim(),
-      //   description: this.description().trim() || undefined,
-      // });
-
       const newOrg = await this.organizationService.createOrganization({
         name: this.name().trim(),
         slug: this.slug().trim(),
