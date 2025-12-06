@@ -86,4 +86,3 @@ class UpdateCommentRequest(BaseModel):
         if not v or not v.strip():
             raise ValueError("Comment content cannot be empty")
         return v.strip()
-

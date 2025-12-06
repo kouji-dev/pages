@@ -159,9 +159,7 @@ class SQLAlchemyCommentRepository(CommentRepository):
 
         return [self._to_entity(model) for model in models]
 
-    async def count_by_issue_id(
-        self, issue_id: UUID, include_deleted: bool = False
-    ) -> int:
+    async def count_by_issue_id(self, issue_id: UUID, include_deleted: bool = False) -> int:
         """Count total comments for an issue.
 
         Args:
@@ -171,9 +169,7 @@ class SQLAlchemyCommentRepository(CommentRepository):
         Returns:
             Total count of comments
         """
-        query = select(func.count(CommentModel.id)).where(
-            CommentModel.issue_id == issue_id
-        )
+        query = select(func.count(CommentModel.id)).where(CommentModel.issue_id == issue_id)
 
         if not include_deleted:
             query = query.where(CommentModel.deleted_at.is_(None))
@@ -203,4 +199,3 @@ class SQLAlchemyCommentRepository(CommentRepository):
             updated_at=model.updated_at,
             deleted_at=model.deleted_at,
         )
-

@@ -86,9 +86,7 @@ class CommentRepository(ABC):
         ...
 
     @abstractmethod
-    async def count_by_issue_id(
-        self, issue_id: UUID, include_deleted: bool = False
-    ) -> int:
+    async def count_by_issue_id(self, issue_id: UUID, include_deleted: bool = False) -> int:
         """Count total comments for an issue.
 
         Args:
@@ -99,4 +97,3 @@ class CommentRepository(ABC):
             Total count of comments
         """
         ...
-

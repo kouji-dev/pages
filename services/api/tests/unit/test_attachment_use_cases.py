@@ -1,6 +1,5 @@
 """Unit tests for attachment use cases."""
 
-from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
@@ -122,8 +121,12 @@ class TestUploadAttachmentUseCase:
         mock_session.execute.return_value = result_mock
 
         # Mock storage service
-        mock_storage_service.save.return_value = "http://localhost:8000/storage/attachments/test/test_file.pdf"
-        mock_storage_service.get_url.return_value = "http://localhost:8000/storage/attachments/test/test_file.pdf"
+        mock_storage_service.save.return_value = (
+            "http://localhost:8000/storage/attachments/test/test_file.pdf"
+        )
+        mock_storage_service.get_url.return_value = (
+            "http://localhost:8000/storage/attachments/test/test_file.pdf"
+        )
 
         # Mock created attachment
         created_attachment = Attachment.create(
@@ -421,9 +424,7 @@ class TestDownloadAttachmentUseCase:
         mock_storage_service.get_file.return_value = b"file content"
 
         use_case = DownloadAttachmentUseCase(mock_attachment_repository, mock_storage_service)
-        file_content, mime_type, original_name = await use_case.execute(
-            str(test_attachment.id)
-        )
+        file_content, mime_type, original_name = await use_case.execute(str(test_attachment.id))
 
         assert file_content == b"file content"
         assert mime_type == test_attachment.mime_type
@@ -444,4 +445,3 @@ class TestDownloadAttachmentUseCase:
             await use_case.execute(str(uuid4()))
 
         assert "not found" in exc_info.value.message.lower()
-

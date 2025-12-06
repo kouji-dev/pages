@@ -48,9 +48,7 @@ def get_create_issue_use_case(
     issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
     project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
     user_repository: Annotated[UserRepository, Depends(get_user_repository)],
-    activity_repository: Annotated[
-        IssueActivityRepository, Depends(get_issue_activity_repository)
-    ],
+    activity_repository: Annotated[IssueActivityRepository, Depends(get_issue_activity_repository)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> CreateIssueUseCase:
     """Get create issue use case with dependencies."""
@@ -81,9 +79,7 @@ def get_update_issue_use_case(
     issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
     project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
     user_repository: Annotated[UserRepository, Depends(get_user_repository)],
-    activity_repository: Annotated[
-        IssueActivityRepository, Depends(get_issue_activity_repository)
-    ],
+    activity_repository: Annotated[IssueActivityRepository, Depends(get_issue_activity_repository)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> UpdateIssueUseCase:
     """Get update issue use case with dependencies."""
@@ -94,9 +90,7 @@ def get_update_issue_use_case(
 
 def get_delete_issue_use_case(
     issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
-    activity_repository: Annotated[
-        IssueActivityRepository, Depends(get_issue_activity_repository)
-    ],
+    activity_repository: Annotated[IssueActivityRepository, Depends(get_issue_activity_repository)],
 ) -> DeleteIssueUseCase:
     """Get delete issue use case with dependencies."""
     return DeleteIssueUseCase(issue_repository, activity_repository)
@@ -104,9 +98,7 @@ def get_delete_issue_use_case(
 
 def get_list_issue_activities_use_case(
     issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
-    activity_repository: Annotated[
-        IssueActivityRepository, Depends(get_issue_activity_repository)
-    ],
+    activity_repository: Annotated[IssueActivityRepository, Depends(get_issue_activity_repository)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> ListIssueActivitiesUseCase:
     """Get list issue activities use case with dependencies."""
@@ -132,9 +124,7 @@ async def create_issue(
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    await require_organization_member(
-        project.organization_id, current_user, permission_service
-    )
+    await require_organization_member(project.organization_id, current_user, permission_service)
 
     return await use_case.execute(request, str(current_user.id))
 
@@ -163,9 +153,7 @@ async def get_issue(
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    await require_organization_member(
-        project.organization_id, current_user, permission_service
-    )
+    await require_organization_member(project.organization_id, current_user, permission_service)
 
     return await use_case.execute(str(issue_id))
 
@@ -237,9 +225,7 @@ async def update_issue(
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    await require_organization_member(
-        project.organization_id, current_user, permission_service
-    )
+    await require_organization_member(project.organization_id, current_user, permission_service)
 
     return await use_case.execute(str(issue_id), request, current_user.id)
 
@@ -268,9 +254,7 @@ async def delete_issue(
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    await require_organization_member(
-        project.organization_id, current_user, permission_service
-    )
+    await require_organization_member(project.organization_id, current_user, permission_service)
 
     await use_case.execute(str(issue_id), current_user.id)
 
@@ -283,9 +267,7 @@ async def delete_issue(
 async def list_issue_activities(
     current_user: Annotated[User, Depends(get_current_active_user)],
     issue_id: UUID,
-    use_case: Annotated[
-        ListIssueActivitiesUseCase, Depends(get_list_issue_activities_use_case)
-    ],
+    use_case: Annotated[ListIssueActivitiesUseCase, Depends(get_list_issue_activities_use_case)],
     issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
     project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
@@ -307,9 +289,6 @@ async def list_issue_activities(
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    await require_organization_member(
-        project.organization_id, current_user, permission_service
-    )
+    await require_organization_member(project.organization_id, current_user, permission_service)
 
     return await use_case.execute(str(issue_id), page=page, limit=limit)
-

@@ -116,14 +116,14 @@ async def create_comment(
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    await require_organization_member(
-        project.organization_id, current_user, permission_service
-    )
+    await require_organization_member(project.organization_id, current_user, permission_service)
 
     return await use_case.execute(str(issue_id), request, str(current_user.id))
 
 
-@router.get("/comments/{comment_id}", response_model=CommentResponse, status_code=status.HTTP_200_OK)
+@router.get(
+    "/comments/{comment_id}", response_model=CommentResponse, status_code=status.HTTP_200_OK
+)
 async def get_comment(
     comment_id: UUID,
     current_user: Annotated[User, Depends(get_current_active_user)],
@@ -153,9 +153,7 @@ async def get_comment(
         if project is None:
             raise HTTPException(status_code=404, detail="Project not found")
 
-        await require_organization_member(
-            project.organization_id, current_user, permission_service
-        )
+        await require_organization_member(project.organization_id, current_user, permission_service)
 
     return await use_case.execute(str(comment_id))
 
@@ -190,14 +188,14 @@ async def list_comments(
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    await require_organization_member(
-        project.organization_id, current_user, permission_service
-    )
+    await require_organization_member(project.organization_id, current_user, permission_service)
 
     return await use_case.execute(str(issue_id), page=page, limit=limit)
 
 
-@router.put("/comments/{comment_id}", response_model=CommentResponse, status_code=status.HTTP_200_OK)
+@router.put(
+    "/comments/{comment_id}", response_model=CommentResponse, status_code=status.HTTP_200_OK
+)
 async def update_comment(
     comment_id: UUID,
     request: UpdateCommentRequest,
@@ -228,9 +226,7 @@ async def update_comment(
         if project is None:
             raise HTTPException(status_code=404, detail="Project not found")
 
-        await require_organization_member(
-            project.organization_id, current_user, permission_service
-        )
+        await require_organization_member(project.organization_id, current_user, permission_service)
 
     return await use_case.execute(str(comment_id), request, current_user.id)
 
@@ -267,9 +263,7 @@ async def delete_comment(
         if project is None:
             raise HTTPException(status_code=404, detail="Project not found")
 
-        await require_organization_member(
-            project.organization_id, current_user, permission_service
-        )
+        await require_organization_member(project.organization_id, current_user, permission_service)
 
         # Check if user is project admin
         result = await session.execute(
@@ -282,4 +276,3 @@ async def delete_comment(
         is_project_admin = result.scalar_one_or_none() is not None
 
     await use_case.execute(str(comment_id), current_user.id, is_project_admin)
-

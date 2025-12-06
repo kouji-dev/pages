@@ -110,9 +110,7 @@ async def create_project(
     Requires organization membership.
     """
     # Check user is member of the organization
-    await require_organization_member(
-        request.organization_id, current_user, permission_service
-    )
+    await require_organization_member(request.organization_id, current_user, permission_service)
 
     return await use_case.execute(request, str(current_user.id))
 
@@ -137,9 +135,7 @@ async def get_project(
         raise HTTPException(status_code=404, detail="Project not found")
 
     # Check user is member of the organization
-    await require_organization_member(
-        project.organization_id, current_user, permission_service
-    )
+    await require_organization_member(project.organization_id, current_user, permission_service)
 
     return await use_case.execute(str(project_id))
 
@@ -190,9 +186,7 @@ async def update_project(
         raise HTTPException(status_code=404, detail="Project not found")
 
     # Check user is member of the organization
-    await require_organization_member(
-        project.organization_id, current_user, permission_service
-    )
+    await require_organization_member(project.organization_id, current_user, permission_service)
 
     return await use_case.execute(str(project_id), request)
 
@@ -210,6 +204,7 @@ async def delete_project(
     Requires organization admin role.
     """
     from fastapi import HTTPException
+
     from src.presentation.dependencies.permissions import require_organization_admin
 
     project = await project_repository.get_by_id(project_id)
@@ -218,9 +213,7 @@ async def delete_project(
         raise HTTPException(status_code=404, detail="Project not found")
 
     # Check user is admin of the organization
-    await require_organization_admin(
-        project.organization_id, current_user, permission_service
-    )
+    await require_organization_admin(project.organization_id, current_user, permission_service)
 
     await use_case.execute(str(project_id))
 
@@ -285,9 +278,7 @@ async def add_project_member(
         raise HTTPException(status_code=404, detail="Project not found")
 
     # Verify user is admin of the organization
-    await require_organization_admin(
-        project.organization_id, current_user, permission_service
-    )
+    await require_organization_admin(project.organization_id, current_user, permission_service)
 
     return await use_case.execute(str(project_id), request)
 
@@ -300,9 +291,7 @@ async def add_project_member(
 async def list_project_members(
     project_id: UUID,
     current_user: Annotated[User, Depends(get_current_active_user)],
-    use_case: Annotated[
-        ListProjectMembersUseCase, Depends(get_list_project_members_use_case)
-    ],
+    use_case: Annotated[ListProjectMembersUseCase, Depends(get_list_project_members_use_case)],
     project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
     page: Annotated[int, Query(ge=1, description="Page number (1-based)")] = 1,
@@ -320,9 +309,7 @@ async def list_project_members(
         raise HTTPException(status_code=404, detail="Project not found")
 
     # Verify user is a member of the organization
-    await require_organization_member(
-        project.organization_id, current_user, permission_service
-    )
+    await require_organization_member(project.organization_id, current_user, permission_service)
 
     return await use_case.execute(str(project_id), page=page, limit=limit)
 
@@ -355,9 +342,7 @@ async def update_project_member_role(
         raise HTTPException(status_code=404, detail="Project not found")
 
     # Verify user is admin of the organization
-    await require_organization_admin(
-        project.organization_id, current_user, permission_service
-    )
+    await require_organization_admin(project.organization_id, current_user, permission_service)
 
     return await use_case.execute(str(project_id), str(user_id), request)
 
@@ -370,9 +355,7 @@ async def remove_project_member(
     project_id: UUID,
     user_id: UUID,
     current_user: Annotated[User, Depends(get_current_active_user)],
-    use_case: Annotated[
-        RemoveProjectMemberUseCase, Depends(get_remove_project_member_use_case)
-    ],
+    use_case: Annotated[RemoveProjectMemberUseCase, Depends(get_remove_project_member_use_case)],
     project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
 ) -> None:
@@ -388,9 +371,6 @@ async def remove_project_member(
         raise HTTPException(status_code=404, detail="Project not found")
 
     # Verify user is admin of the organization
-    await require_organization_admin(
-        project.organization_id, current_user, permission_service
-    )
+    await require_organization_admin(project.organization_id, current_user, permission_service)
 
     await use_case.execute(str(project_id), str(user_id))
-

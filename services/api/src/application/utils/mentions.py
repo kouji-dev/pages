@@ -20,4 +20,3 @@ def parse_mentions(text: str) -> set[str]:
 
     matches = re.findall(pattern, text)
     return set(matches)
-

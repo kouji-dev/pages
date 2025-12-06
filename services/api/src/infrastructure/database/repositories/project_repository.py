@@ -237,8 +237,10 @@ class SQLAlchemyProjectRepository(ProjectRepository):
         Returns:
             Total count of projects
         """
-        query = select(func.count()).select_from(ProjectModel).where(
-            ProjectModel.organization_id == organization_id
+        query = (
+            select(func.count())
+            .select_from(ProjectModel)
+            .where(ProjectModel.organization_id == organization_id)
         )
 
         if not include_deleted:
@@ -306,4 +308,3 @@ class SQLAlchemyProjectRepository(ProjectRepository):
             updated_at=model.updated_at,
             deleted_at=model.deleted_at,
         )
-

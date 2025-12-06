@@ -196,9 +196,7 @@ class UpdateIssueUseCase:
         # Get project to generate issue key
         project = await self._project_repository.get_by_id(updated_issue.project_id)
         if project is None:
-            logger.warning(
-                "Project not found for issue", project_id=str(updated_issue.project_id)
-            )
+            logger.warning("Project not found for issue", project_id=str(updated_issue.project_id))
             raise EntityNotFoundException("Project", str(updated_issue.project_id))
 
         # Generate issue key (PROJ-123 format)
@@ -225,4 +223,3 @@ class UpdateIssueUseCase:
             "updated_at": updated_issue.updated_at,
         }
         return IssueResponse.model_validate(issue_dict)
-

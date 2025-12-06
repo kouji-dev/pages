@@ -37,9 +37,7 @@ class Comment:
 
         valid_entity_types = {"issue", "page"}
         if self.entity_type not in valid_entity_types:
-            raise ValueError(
-                f"Entity type must be one of: {', '.join(valid_entity_types)}"
-            )
+            raise ValueError(f"Entity type must be one of: {', '.join(valid_entity_types)}")
 
         # Ensure issue_id or page_id matches entity_type
         if self.entity_type == "issue" and self.issue_id != self.entity_id:
@@ -129,4 +127,3 @@ class Comment:
     def _touch(self) -> None:
         """Update the updated_at timestamp."""
         self.updated_at = datetime.utcnow()
-

@@ -92,4 +92,3 @@ class GetAttachmentUseCase:
             created_at=attachment.created_at,
             updated_at=attachment.updated_at,
         )
-

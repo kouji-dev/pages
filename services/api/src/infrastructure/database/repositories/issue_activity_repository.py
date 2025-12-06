@@ -93,9 +93,6 @@ class SQLAlchemyIssueActivityRepository(IssueActivityRepository):
             Total count of activities
         """
         result = await self._session.execute(
-            select(func.count(IssueActivityModel.id)).where(
-                IssueActivityModel.issue_id == issue_id
-            )
+            select(func.count(IssueActivityModel.id)).where(IssueActivityModel.issue_id == issue_id)
         )
         return result.scalar_one() or 0
-

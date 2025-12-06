@@ -44,9 +44,7 @@ class CreateIssueUseCase:
         self._activity_repository = activity_repository
         self._session = session
 
-    async def execute(
-        self, request: CreateIssueRequest, reporter_user_id: str
-    ) -> IssueResponse:
+    async def execute(self, request: CreateIssueRequest, reporter_user_id: str) -> IssueResponse:
         """Execute issue creation.
 
         Args:
@@ -144,4 +142,3 @@ class CreateIssueUseCase:
             "updated_at": created_issue.updated_at,
         }
         return IssueResponse.model_validate(issue_dict)
-

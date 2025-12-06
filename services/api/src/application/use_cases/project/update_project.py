@@ -31,9 +31,7 @@ class UpdateProjectUseCase:
         self._project_repository = project_repository
         self._session = session
 
-    async def execute(
-        self, project_id: str, request: UpdateProjectRequest
-    ) -> ProjectResponse:
+    async def execute(self, project_id: str, request: UpdateProjectRequest) -> ProjectResponse:
         """Execute update project.
 
         Args:
@@ -99,4 +97,3 @@ class UpdateProjectUseCase:
             created_at=updated_project.created_at,
             updated_at=updated_project.updated_at,
         )
-

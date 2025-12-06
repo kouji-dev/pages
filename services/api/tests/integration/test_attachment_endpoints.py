@@ -1,7 +1,6 @@
 """Integration tests for attachment endpoints."""
 
 import io
-from uuid import uuid4
 
 import pytest
 from httpx import AsyncClient
@@ -12,7 +11,6 @@ from src.infrastructure.database.models import (
     OrganizationMemberModel,
     OrganizationModel,
     ProjectModel,
-    UserModel,
 )
 
 
@@ -480,6 +478,7 @@ async def test_download_attachment_success(client: AsyncClient, test_user, db_se
 
     # Create the file in storage (for testing)
     from pathlib import Path
+
     from src.infrastructure.config import get_settings
 
     settings = get_settings()
@@ -508,4 +507,3 @@ async def test_download_attachment_success(client: AsyncClient, test_user, db_se
     assert download_response.content == b"test file content"
     assert download_response.headers["content-type"] == "application/pdf"
     assert 'attachment; filename="test.pdf"' in download_response.headers["content-disposition"]
-

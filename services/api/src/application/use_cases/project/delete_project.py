@@ -44,4 +44,3 @@ class DeleteProjectUseCase:
         await self._project_repository.update(project)
 
         logger.info("Project deleted", project_id=project_id)
-

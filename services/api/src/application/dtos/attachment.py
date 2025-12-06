@@ -61,9 +61,7 @@ class AttachmentListItemResponse(BaseModel):
 class AttachmentListResponse(BaseModel):
     """Response DTO for list of attachments."""
 
-    attachments: list[AttachmentListItemResponse] = Field(
-        ..., description="List of attachments"
-    )
+    attachments: list[AttachmentListItemResponse] = Field(..., description="List of attachments")
     total: int = Field(..., description="Total number of attachments")
 
 
@@ -91,4 +89,3 @@ class UploadAttachmentResponse(BaseModel):
         """Pydantic config."""
 
         from_attributes = True
-

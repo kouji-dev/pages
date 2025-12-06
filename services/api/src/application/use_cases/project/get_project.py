@@ -80,4 +80,3 @@ class GetProjectUseCase:
             created_at=project.created_at,
             updated_at=project.updated_at,
         )
-

@@ -38,9 +38,7 @@ class CreateProjectUseCase:
         self._user_repository = user_repository
         self._session = session
 
-    async def execute(
-        self, request: CreateProjectRequest, creator_user_id: str
-    ) -> ProjectResponse:
+    async def execute(self, request: CreateProjectRequest, creator_user_id: str) -> ProjectResponse:
         """Execute project creation.
 
         Args:
@@ -134,4 +132,3 @@ class CreateProjectUseCase:
             created_at=created_project.created_at,
             updated_at=created_project.updated_at,
         )
-

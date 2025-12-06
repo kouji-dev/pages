@@ -170,4 +170,3 @@ class ListIssuesUseCase:
             limit=limit,
             pages=pages,
         )
-

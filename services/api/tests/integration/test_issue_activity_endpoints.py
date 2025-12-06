@@ -12,7 +12,6 @@ from src.infrastructure.database.models import (
     OrganizationMemberModel,
     OrganizationModel,
     ProjectModel,
-    UserModel,
 )
 
 
@@ -507,4 +506,3 @@ async def test_delete_issue_creates_activity_log(client: AsyncClient, test_user,
     assert len(delete_activities) >= 1
     assert delete_activities[0].user_id == test_user.id
     assert delete_activities[0].field_name is None
-

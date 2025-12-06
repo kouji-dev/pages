@@ -65,4 +65,3 @@ class AttachmentRepository(ABC):
             List of attachments, ordered by created_at ASC
         """
         ...
-

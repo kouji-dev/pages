@@ -10,7 +10,7 @@ from src.application.use_cases.issue.list_issue_activities import ListIssueActiv
 from src.domain.entities import Issue, Project, User
 from src.domain.exceptions import EntityNotFoundException
 from src.domain.value_objects import Email, HashedPassword
-from src.infrastructure.database.models import IssueActivityModel, UserModel
+from src.infrastructure.database.models import IssueActivityModel
 
 
 @pytest.fixture
@@ -219,9 +219,7 @@ class TestListIssueActivitiesUseCase:
         assert len(result.activities) == 2
 
         # Verify pagination
-        mock_activity_repository.get_by_issue_id.assert_called_with(
-            test_issue.id, skip=0, limit=2
-        )
+        mock_activity_repository.get_by_issue_id.assert_called_with(test_issue.id, skip=0, limit=2)
 
     @pytest.mark.asyncio
     async def test_list_activities_no_user(
@@ -288,4 +286,3 @@ class TestListIssueActivitiesUseCase:
         assert result.limit == 50
         assert result.total_pages == 0
         assert len(result.activities) == 0
-

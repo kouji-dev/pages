@@ -75,7 +75,6 @@ class TestAddProjectMemberUseCase:
         test_user,
     ):
         """Test successful project member addition."""
-        from src.infrastructure.database.models import ProjectMemberModel, UserModel
 
         request = AddProjectMemberRequest(user_id=test_user.id, role="member")
         mock_project_repository.get_by_id.return_value = test_project
@@ -200,7 +199,6 @@ class TestAddProjectMemberUseCase:
         test_user,
     ):
         """Test add member fails when user is already a member."""
-        from src.infrastructure.database.models import ProjectMemberModel
 
         request = AddProjectMemberRequest(user_id=test_user.id, role="member")
         mock_project_repository.get_by_id.return_value = test_project
@@ -228,7 +226,6 @@ class TestListProjectMembersUseCase:
         self, mock_project_repository, mock_session, test_project
     ):
         """Test successful project member listing."""
-        from src.infrastructure.database.models import ProjectMemberModel, UserModel
 
         mock_project_repository.get_by_id.return_value = test_project
 
@@ -308,7 +305,6 @@ class TestUpdateProjectMemberRoleUseCase:
         test_user,
     ):
         """Test successful project member role update."""
-        from src.infrastructure.database.models import ProjectMemberModel, UserModel
 
         request = UpdateProjectMemberRoleRequest(role="admin")
         mock_project_repository.get_by_id.return_value = test_project
@@ -425,7 +421,6 @@ class TestRemoveProjectMemberUseCase:
         self, mock_project_repository, mock_session, test_project
     ):
         """Test successful project member removal."""
-        from src.infrastructure.database.models import ProjectMemberModel
 
         mock_project_repository.get_by_id.return_value = test_project
 
@@ -462,7 +457,6 @@ class TestRemoveProjectMemberUseCase:
         self, mock_project_repository, mock_session, test_project
     ):
         """Test remove member fails when member not found."""
-        from src.infrastructure.database.models import ProjectMemberModel
 
         mock_project_repository.get_by_id.return_value = test_project
 
@@ -473,4 +467,3 @@ class TestRemoveProjectMemberUseCase:
 
         with pytest.raises(EntityNotFoundException, match="ProjectMember"):
             await use_case.execute(str(test_project.id), str(uuid4()))
-

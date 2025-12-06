@@ -58,11 +58,8 @@ class DownloadAttachmentUseCase:
                 storage_path=attachment.storage_path,
                 error=str(e),
             )
-            raise EntityNotFoundException(
-                f"File not found in storage: {attachment.storage_path}"
-            ) from e
+            raise EntityNotFoundException("Attachment file", attachment.storage_path) from e
 
         logger.info("Attachment downloaded", attachment_id=attachment_id)
 
         return file_content, attachment.mime_type, attachment.original_name
-

@@ -1,7 +1,6 @@
 """Unit tests for issue use cases."""
 
-from datetime import date, datetime
-from unittest.mock import AsyncMock, MagicMock, Mock
+from unittest.mock import AsyncMock
 from uuid import uuid4
 
 import pytest
@@ -15,7 +14,7 @@ from src.application.use_cases.issue import (
     UpdateIssueUseCase,
 )
 from src.domain.entities import Issue, Project, User
-from src.domain.exceptions import EntityNotFoundException, ValidationException
+from src.domain.exceptions import EntityNotFoundException
 from src.domain.value_objects import Email, HashedPassword
 
 
@@ -282,13 +281,9 @@ class TestListIssuesUseCase:
         mock_issue_repository.count.return_value = 1
         mock_project_repository.get_by_id.return_value = test_project
 
-        use_case = ListIssuesUseCase(
-            mock_issue_repository, mock_project_repository, mock_session
-        )
+        use_case = ListIssuesUseCase(mock_issue_repository, mock_project_repository, mock_session)
 
-        result = await use_case.execute(
-            str(test_project.id), page=1, limit=20, search=None
-        )
+        result = await use_case.execute(str(test_project.id), page=1, limit=20, search=None)
 
         assert len(result.issues) == 1
         assert result.total == 1
@@ -313,9 +308,7 @@ class TestListIssuesUseCase:
         mock_issue_repository.count.return_value = 1
         mock_project_repository.get_by_id.return_value = test_project
 
-        use_case = ListIssuesUseCase(
-            mock_issue_repository, mock_project_repository, mock_session
-        )
+        use_case = ListIssuesUseCase(mock_issue_repository, mock_project_repository, mock_session)
 
         result = await use_case.execute(
             str(test_project.id),
@@ -344,13 +337,9 @@ class TestListIssuesUseCase:
         mock_issue_repository.count.return_value = 1
         mock_project_repository.get_by_id.return_value = test_project
 
-        use_case = ListIssuesUseCase(
-            mock_issue_repository, mock_project_repository, mock_session
-        )
+        use_case = ListIssuesUseCase(mock_issue_repository, mock_project_repository, mock_session)
 
-        result = await use_case.execute(
-            str(test_project.id), page=1, limit=20, search="Test"
-        )
+        result = await use_case.execute(str(test_project.id), page=1, limit=20, search="Test")
 
         assert len(result.issues) == 1
         mock_issue_repository.search.assert_called_once()
@@ -479,9 +468,7 @@ class TestDeleteIssueUseCase:
         assert mock_issue_repository.update.call_args[0][0].deleted_at is not None
 
     @pytest.mark.asyncio
-    async def test_delete_issue_not_found(
-        self, mock_issue_repository, mock_activity_repository
-    ):
+    async def test_delete_issue_not_found(self, mock_issue_repository, mock_activity_repository):
         """Test issue deletion fails when issue not found."""
         mock_issue_repository.get_by_id.return_value = None
 
@@ -489,4 +476,3 @@ class TestDeleteIssueUseCase:
 
         with pytest.raises(EntityNotFoundException, match="Issue"):
             await use_case.execute(str(uuid4()))
-

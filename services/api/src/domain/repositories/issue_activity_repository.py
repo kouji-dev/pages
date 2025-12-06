@@ -68,4 +68,3 @@ class IssueActivityRepository(ABC):
             Total count of activities
         """
         ...
-

@@ -119,9 +119,7 @@ class ProjectRepository(ABC):
         ...
 
     @abstractmethod
-    async def count(
-        self, organization_id: UUID, include_deleted: bool = False
-    ) -> int:
+    async def count(self, organization_id: UUID, include_deleted: bool = False) -> int:
         """Count total projects in an organization.
 
         Args:
@@ -153,4 +151,3 @@ class ProjectRepository(ABC):
             List of matching projects
         """
         ...
-

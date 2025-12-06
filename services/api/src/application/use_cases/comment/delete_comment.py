@@ -27,9 +27,7 @@ class DeleteCommentUseCase:
         self._comment_repository = comment_repository
         self._project_repository = project_repository
 
-    async def execute(
-        self, comment_id: str, user_id: UUID, is_project_admin: bool = False
-    ) -> None:
+    async def execute(self, comment_id: str, user_id: UUID, is_project_admin: bool = False) -> None:
         """Execute delete comment.
 
         Args:
@@ -67,4 +65,3 @@ class DeleteCommentUseCase:
         await self._comment_repository.update(comment)
 
         logger.info("Comment soft-deleted", comment_id=comment_id)
-

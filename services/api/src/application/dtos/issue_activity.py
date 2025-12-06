@@ -34,4 +34,3 @@ class IssueActivityListResponse(BaseModel):
     page: int = Field(..., description="Current page number (1-based)")
     limit: int = Field(..., description="Number of items per page")
     total_pages: int = Field(..., description="Total number of pages")
-

@@ -7,7 +7,7 @@ import structlog
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.application.dtos.comment import CommentListResponse, CommentListItemResponse
+from src.application.dtos.comment import CommentListItemResponse, CommentListResponse
 from src.domain.exceptions import EntityNotFoundException
 from src.domain.repositories import CommentRepository, IssueRepository
 from src.infrastructure.database.models import UserModel
@@ -35,9 +35,7 @@ class ListCommentsUseCase:
         self._issue_repository = issue_repository
         self._session = session
 
-    async def execute(
-        self, issue_id: str, page: int = 1, limit: int = 50
-    ) -> CommentListResponse:
+    async def execute(self, issue_id: str, page: int = 1, limit: int = 50) -> CommentListResponse:
         """Execute list comments for issue.
 
         Args:
@@ -118,4 +116,3 @@ class ListCommentsUseCase:
             limit=limit,
             pages=total_pages,
         )
-

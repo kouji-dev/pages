@@ -81,4 +81,3 @@ class GetIssueUseCase:
             "updated_at": issue.updated_at,
         }
         return IssueResponse.model_validate(issue_dict)
-

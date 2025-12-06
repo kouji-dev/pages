@@ -6,7 +6,7 @@ import structlog
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.application.dtos.attachment import AttachmentListResponse, AttachmentListItemResponse
+from src.application.dtos.attachment import AttachmentListItemResponse, AttachmentListResponse
 from src.domain.exceptions import EntityNotFoundException
 from src.domain.repositories import AttachmentRepository, IssueRepository
 from src.domain.services import StorageService
@@ -112,4 +112,3 @@ class ListAttachmentsUseCase:
             attachments=attachment_responses,
             total=len(attachment_responses),
         )
-

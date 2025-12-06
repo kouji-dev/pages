@@ -3,8 +3,8 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
-from fastapi.responses import Response, StreamingResponse
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
+from fastapi.responses import Response
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -46,9 +46,7 @@ router = APIRouter()
 
 # Dependency injection for use cases
 def get_upload_attachment_use_case(
-    attachment_repository: Annotated[
-        AttachmentRepository, Depends(get_attachment_repository)
-    ],
+    attachment_repository: Annotated[AttachmentRepository, Depends(get_attachment_repository)],
     issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
     user_repository: Annotated[UserRepository, Depends(get_user_repository)],
     storage_service: Annotated[StorageService, Depends(get_storage_service)],
@@ -61,9 +59,7 @@ def get_upload_attachment_use_case(
 
 
 def get_get_attachment_use_case(
-    attachment_repository: Annotated[
-        AttachmentRepository, Depends(get_attachment_repository)
-    ],
+    attachment_repository: Annotated[AttachmentRepository, Depends(get_attachment_repository)],
     storage_service: Annotated[StorageService, Depends(get_storage_service)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> GetAttachmentUseCase:
@@ -72,23 +68,17 @@ def get_get_attachment_use_case(
 
 
 def get_list_attachments_use_case(
-    attachment_repository: Annotated[
-        AttachmentRepository, Depends(get_attachment_repository)
-    ],
+    attachment_repository: Annotated[AttachmentRepository, Depends(get_attachment_repository)],
     issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
     storage_service: Annotated[StorageService, Depends(get_storage_service)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> ListAttachmentsUseCase:
     """Get list attachments use case with dependencies."""
-    return ListAttachmentsUseCase(
-        attachment_repository, issue_repository, storage_service, session
-    )
+    return ListAttachmentsUseCase(attachment_repository, issue_repository, storage_service, session)
 
 
 def get_delete_attachment_use_case(
-    attachment_repository: Annotated[
-        AttachmentRepository, Depends(get_attachment_repository)
-    ],
+    attachment_repository: Annotated[AttachmentRepository, Depends(get_attachment_repository)],
     project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
     storage_service: Annotated[StorageService, Depends(get_storage_service)],
 ) -> DeleteAttachmentUseCase:
@@ -97,9 +87,7 @@ def get_delete_attachment_use_case(
 
 
 def get_download_attachment_use_case(
-    attachment_repository: Annotated[
-        AttachmentRepository, Depends(get_attachment_repository)
-    ],
+    attachment_repository: Annotated[AttachmentRepository, Depends(get_attachment_repository)],
     storage_service: Annotated[StorageService, Depends(get_storage_service)],
 ) -> DownloadAttachmentUseCase:
     """Get download attachment use case with dependencies."""
@@ -133,9 +121,7 @@ async def upload_attachment(
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    await require_organization_member(
-        project.organization_id, current_user, permission_service
-    )
+    await require_organization_member(project.organization_id, current_user, permission_service)
 
     # Read file content
     file_content = await file.read()
@@ -150,14 +136,16 @@ async def upload_attachment(
     )
 
 
-@router.get("/attachments/{attachment_id}", response_model=AttachmentResponse, status_code=status.HTTP_200_OK)
+@router.get(
+    "/attachments/{attachment_id}",
+    response_model=AttachmentResponse,
+    status_code=status.HTTP_200_OK,
+)
 async def get_attachment(
     attachment_id: UUID,
     current_user: Annotated[User, Depends(get_current_active_user)],
     use_case: Annotated[GetAttachmentUseCase, Depends(get_get_attachment_use_case)],
-    attachment_repository: Annotated[
-        AttachmentRepository, Depends(get_attachment_repository)
-    ],
+    attachment_repository: Annotated[AttachmentRepository, Depends(get_attachment_repository)],
     issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
     project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
@@ -180,9 +168,7 @@ async def get_attachment(
         if project is None:
             raise HTTPException(status_code=404, detail="Project not found")
 
-        await require_organization_member(
-            project.organization_id, current_user, permission_service
-        )
+        await require_organization_member(project.organization_id, current_user, permission_service)
 
     return await use_case.execute(str(attachment_id))
 
@@ -213,9 +199,7 @@ async def list_attachments(
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    await require_organization_member(
-        project.organization_id, current_user, permission_service
-    )
+    await require_organization_member(project.organization_id, current_user, permission_service)
 
     return await use_case.execute(str(issue_id))
 
@@ -227,12 +211,8 @@ async def list_attachments(
 async def download_attachment(
     attachment_id: UUID,
     current_user: Annotated[User, Depends(get_current_active_user)],
-    use_case: Annotated[
-        DownloadAttachmentUseCase, Depends(get_download_attachment_use_case)
-    ],
-    attachment_repository: Annotated[
-        AttachmentRepository, Depends(get_attachment_repository)
-    ],
+    use_case: Annotated[DownloadAttachmentUseCase, Depends(get_download_attachment_use_case)],
+    attachment_repository: Annotated[AttachmentRepository, Depends(get_attachment_repository)],
     issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
     project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
@@ -255,9 +235,7 @@ async def download_attachment(
         if project is None:
             raise HTTPException(status_code=404, detail="Project not found")
 
-        await require_organization_member(
-            project.organization_id, current_user, permission_service
-        )
+        await require_organization_member(project.organization_id, current_user, permission_service)
 
     file_content, mime_type, original_filename = await use_case.execute(str(attachment_id))
 
@@ -275,9 +253,7 @@ async def delete_attachment(
     attachment_id: UUID,
     current_user: Annotated[User, Depends(get_current_active_user)],
     use_case: Annotated[DeleteAttachmentUseCase, Depends(get_delete_attachment_use_case)],
-    attachment_repository: Annotated[
-        AttachmentRepository, Depends(get_attachment_repository)
-    ],
+    attachment_repository: Annotated[AttachmentRepository, Depends(get_attachment_repository)],
     issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
     project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
@@ -302,9 +278,7 @@ async def delete_attachment(
         if project is None:
             raise HTTPException(status_code=404, detail="Project not found")
 
-        await require_organization_member(
-            project.organization_id, current_user, permission_service
-        )
+        await require_organization_member(project.organization_id, current_user, permission_service)
 
         # Check if user is project admin
         result = await session.execute(
@@ -317,4 +291,3 @@ async def delete_attachment(
         is_project_admin = result.scalar_one_or_none() is not None
 
     await use_case.execute(str(attachment_id), current_user.id, is_project_admin)
-

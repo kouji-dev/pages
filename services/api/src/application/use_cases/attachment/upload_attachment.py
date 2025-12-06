@@ -1,7 +1,5 @@
 """Upload attachment use case."""
 
-import hashlib
-from pathlib import Path
 from uuid import UUID
 
 import structlog
@@ -85,9 +83,7 @@ class UploadAttachmentUseCase:
         # Validate file type
         if not validate_file_type(mime_type):
             logger.warning("Invalid file type", mime_type=mime_type)
-            raise ValidationException(
-                f"File type '{mime_type}' is not allowed", field="mime_type"
-            )
+            raise ValidationException(f"File type '{mime_type}' is not allowed", field="mime_type")
 
         # Validate file size
         file_size = len(file_content)
@@ -155,9 +151,7 @@ class UploadAttachmentUseCase:
         created_attachment = await self._attachment_repository.create(attachment)
 
         # Load user details for response
-        result = await self._session.execute(
-            select(UserModel).where(UserModel.id == user_uuid)
-        )
+        result = await self._session.execute(select(UserModel).where(UserModel.id == user_uuid))
         user_model = result.scalar_one()
 
         # Get download URL
@@ -188,4 +182,3 @@ class UploadAttachmentUseCase:
             created_at=created_attachment.created_at,
             updated_at=created_attachment.updated_at,
         )
-

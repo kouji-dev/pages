@@ -101,4 +101,3 @@ class UpdateCommentUseCase:
             created_at=updated_comment.created_at,
             updated_at=updated_comment.updated_at,
         )
-

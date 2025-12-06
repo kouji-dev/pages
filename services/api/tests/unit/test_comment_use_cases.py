@@ -1,6 +1,5 @@
 """Unit tests for comment use cases."""
 
-from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
@@ -470,4 +469,3 @@ class TestDeleteCommentUseCase:
         mock_comment_repository.update.assert_called_once()
         deleted_comment = mock_comment_repository.update.call_args[0][0]
         assert deleted_comment.deleted_at is not None
-

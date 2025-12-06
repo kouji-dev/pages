@@ -7,7 +7,7 @@ import structlog
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.application.dtos.project import ProjectListResponse, ProjectListItemResponse
+from src.application.dtos.project import ProjectListItemResponse, ProjectListResponse
 from src.domain.repositories import ProjectRepository
 from src.infrastructure.database.models import IssueModel, ProjectMemberModel
 
@@ -147,4 +147,3 @@ class ListProjectsUseCase:
         result = await self._session.execute(stmt)
         count: int = result.scalar_one()
         return count
-

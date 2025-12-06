@@ -83,4 +83,3 @@ class DeleteAttachmentUseCase:
         await self._attachment_repository.delete(attachment_uuid)
 
         logger.info("Attachment deleted", attachment_id=attachment_id)
-

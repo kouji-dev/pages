@@ -7,7 +7,7 @@ import structlog
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.application.dtos.comment import CreateCommentRequest, CommentResponse
+from src.application.dtos.comment import CommentResponse, CreateCommentRequest
 from src.application.utils.mentions import parse_mentions
 from src.domain.entities import Comment
 from src.domain.exceptions import EntityNotFoundException
@@ -88,9 +88,7 @@ class CreateCommentUseCase:
         created_comment = await self._comment_repository.create(comment)
 
         # Load user model for author details (needed for notifications and response)
-        result = await self._session.execute(
-            select(UserModel).where(UserModel.id == user_uuid)
-        )
+        result = await self._session.execute(select(UserModel).where(UserModel.id == user_uuid))
         author_user_model = result.scalar_one()
 
         # Parse @mentions and create notifications
@@ -103,12 +101,13 @@ class CreateCommentUseCase:
                 # Try to find user by email prefix or exact email
                 result = await self._session.execute(
                     select(UserModel).where(
-                        (UserModel.email.like(f"{username}@%"))
-                        | (UserModel.email == username)
+                        (UserModel.email.like(f"{username}@%")) | (UserModel.email == username)
                     )
                 )
                 mentioned_user_model = result.scalar_one_or_none()
-                if mentioned_user_model and mentioned_user_model.id != user_uuid:  # Don't notify the comment author
+                if (
+                    mentioned_user_model and mentioned_user_model.id != user_uuid
+                ):  # Don't notify the comment author
                     mentioned_users.append(mentioned_user_model)
 
             # Create notification records for mentioned users
@@ -168,4 +167,3 @@ class CreateCommentUseCase:
             created_at=created_comment.created_at,
             updated_at=created_comment.updated_at,
         )
-

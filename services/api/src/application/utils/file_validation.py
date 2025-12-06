@@ -4,7 +4,6 @@ import hashlib
 from pathlib import Path
 from uuid import UUID
 
-
 # Allowed MIME types for MVP
 ALLOWED_MIME_TYPES = {
     # Images
@@ -81,4 +80,3 @@ def generate_unique_filename(original_name: str, attachment_id: UUID) -> str:
     # Generate unique filename using attachment ID and hash of original name
     name_hash = hashlib.md5(original_name.encode()).hexdigest()[:8]
     return f"{attachment_id}_{name_hash}{extension}"
-

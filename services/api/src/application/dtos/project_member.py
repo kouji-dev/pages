@@ -47,4 +47,3 @@ class UpdateProjectMemberRoleRequest(BaseModel):
     """Request DTO for updating a project member's role."""
 
     role: str = Field(..., description="New member role: admin, member, or viewer")
-

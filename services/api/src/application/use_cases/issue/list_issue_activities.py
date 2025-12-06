@@ -13,7 +13,7 @@ from src.application.dtos.issue_activity import (
 )
 from src.domain.exceptions import EntityNotFoundException
 from src.domain.repositories import IssueActivityRepository, IssueRepository
-from src.infrastructure.database.models import IssueActivityModel, UserModel
+from src.infrastructure.database.models import UserModel
 
 logger = structlog.get_logger()
 
@@ -118,4 +118,3 @@ class ListIssueActivitiesUseCase:
             limit=limit,
             total_pages=total_pages,
         )
-

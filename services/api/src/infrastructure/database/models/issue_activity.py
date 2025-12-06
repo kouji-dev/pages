@@ -71,4 +71,3 @@ class IssueActivityModel(Base, UUIDPrimaryKeyMixin, TimestampMixin):
             f"<IssueActivity(id={self.id}, issue_id={self.issue_id}, "
             f"action={self.action}, field={self.field_name})>"
         )
-

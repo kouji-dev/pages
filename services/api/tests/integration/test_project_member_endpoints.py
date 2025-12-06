@@ -46,7 +46,9 @@ async def test_add_project_member_success(client: AsyncClient, test_user, db_ses
     another_user = User(
         id=uuid4(),
         email=Email("another@example.com"),
-        password_hash=HashedPassword("$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4yKJeyeQUzK6M5em"),
+        password_hash=HashedPassword(
+            "$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4yKJeyeQUzK6M5em"
+        ),
         name="Another User",
     )
     from src.infrastructure.database.models import UserModel
@@ -329,7 +331,9 @@ async def test_update_project_member_role_success(client: AsyncClient, test_user
     another_user = User(
         id=uuid4(),
         email=Email("another@example.com"),
-        password_hash=HashedPassword("$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4yKJeyeQUzK6M5em"),
+        password_hash=HashedPassword(
+            "$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4yKJeyeQUzK6M5em"
+        ),
         name="Another User",
     )
     another_user_model = UserModel(
@@ -459,7 +463,9 @@ async def test_remove_project_member_success(client: AsyncClient, test_user, db_
     another_user = User(
         id=uuid4(),
         email=Email("another@example.com"),
-        password_hash=HashedPassword("$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4yKJeyeQUzK6M5em"),
+        password_hash=HashedPassword(
+            "$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4yKJeyeQUzK6M5em"
+        ),
         name="Another User",
     )
     another_user_model = UserModel(
@@ -557,4 +563,3 @@ async def test_remove_project_member_requires_admin(client: AsyncClient, test_us
     )
 
     assert remove_response.status_code == 403
-

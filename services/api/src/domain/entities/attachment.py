@@ -31,9 +31,7 @@ class Attachment:
         """Validate attachment entity."""
         valid_entity_types = {"issue", "page"}
         if self.entity_type not in valid_entity_types:
-            raise ValueError(
-                f"Entity type must be one of: {', '.join(valid_entity_types)}"
-            )
+            raise ValueError(f"Entity type must be one of: {', '.join(valid_entity_types)}")
 
         if not self.file_name or not self.file_name.strip():
             raise ValueError("File name cannot be empty")
@@ -52,9 +50,7 @@ class Attachment:
 
         valid_storage_types = {"local", "s3", "pg_largeobject"}
         if self.storage_type not in valid_storage_types:
-            raise ValueError(
-                f"Storage type must be one of: {', '.join(valid_storage_types)}"
-            )
+            raise ValueError(f"Storage type must be one of: {', '.join(valid_storage_types)}")
 
     @classmethod
     def create(
@@ -108,4 +104,3 @@ class Attachment:
             created_at=now,
             updated_at=now,
         )
-

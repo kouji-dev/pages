@@ -56,4 +56,3 @@ class DeleteIssueUseCase:
         )
 
         logger.info("Issue soft-deleted", issue_id=issue_id)
-

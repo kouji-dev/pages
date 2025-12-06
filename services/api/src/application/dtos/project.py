@@ -121,4 +121,3 @@ class UpdateProjectRequest(BaseModel):
         if len(v) > 10:
             raise ValueError("Project key cannot exceed 10 characters")
         return v
-

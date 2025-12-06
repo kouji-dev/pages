@@ -418,7 +418,7 @@ async def test_update_comment_unauthorized(client: AsyncClient, test_user, db_se
     await db_session.flush()
 
     # Create another user (with same password as test_user)
-    from src.domain.value_objects import Email, HashedPassword, Password
+    from src.domain.value_objects import Email, Password
     from src.infrastructure.database.repositories import SQLAlchemyUserRepository
     from src.infrastructure.security import BcryptPasswordService
 
@@ -558,4 +558,3 @@ async def test_list_comments_pagination(client: AsyncClient, test_user, db_sessi
     assert data["page"] == 1
     assert data["limit"] == 2
     assert data["pages"] == 3
-

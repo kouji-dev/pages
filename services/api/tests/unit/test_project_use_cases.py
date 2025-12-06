@@ -265,9 +265,7 @@ class TestGetProjectUseCase:
     """Tests for GetProjectUseCase."""
 
     @pytest.mark.asyncio
-    async def test_get_project_success(
-        self, mock_project_repository, mock_session, test_project
-    ):
+    async def test_get_project_success(self, mock_project_repository, mock_session, test_project):
         """Test successful project retrieval."""
         mock_project_repository.get_by_id.return_value = test_project
         mock_session.execute = AsyncMock(return_value=MagicMock(scalar_one=Mock(return_value=0)))
@@ -307,9 +305,7 @@ class TestListProjectsUseCase:
 
         use_case = ListProjectsUseCase(mock_project_repository, mock_session)
 
-        result = await use_case.execute(
-            str(test_organization.id), page=1, limit=20, search=None
-        )
+        result = await use_case.execute(str(test_organization.id), page=1, limit=20, search=None)
 
         assert len(result.projects) == 1
         assert result.total == 1
@@ -329,9 +325,7 @@ class TestListProjectsUseCase:
 
         use_case = ListProjectsUseCase(mock_project_repository, mock_session)
 
-        result = await use_case.execute(
-            str(test_organization.id), page=1, limit=20, search="Test"
-        )
+        result = await use_case.execute(str(test_organization.id), page=1, limit=20, search="Test")
 
         assert len(result.projects) == 1
         mock_project_repository.search.assert_called_once()
@@ -398,9 +392,7 @@ class TestDeleteProjectUseCase:
     """Tests for DeleteProjectUseCase."""
 
     @pytest.mark.asyncio
-    async def test_delete_project_success(
-        self, mock_project_repository, test_project
-    ):
+    async def test_delete_project_success(self, mock_project_repository, test_project):
         """Test successful project deletion (soft delete)."""
         mock_project_repository.get_by_id.return_value = test_project
 
@@ -432,4 +424,3 @@ class TestDeleteProjectUseCase:
 
         with pytest.raises(EntityNotFoundException, match="Project"):
             await use_case.execute(str(uuid4()))
-
