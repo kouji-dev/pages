@@ -5,7 +5,7 @@ from uuid import uuid4
 
 import pytest
 
-from src.application.use_cases.avatar import DeleteAvatarUseCase, UploadAvatarUseCase
+from src.application.use_cases.user import DeleteAvatarUseCase, UploadAvatarUseCase
 from src.domain.entities import User
 from src.domain.exceptions import EntityNotFoundException, ValidationException
 from src.domain.value_objects import Email

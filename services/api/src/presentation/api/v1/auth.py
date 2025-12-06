@@ -15,7 +15,7 @@ from src.application.dtos import (
     TokenResponse,
 )
 from src.application.interfaces import TokenService
-from src.application.use_cases import (
+from src.application.use_cases.auth import (
     LoginUserUseCase,
     RefreshTokenUseCase,
     RegisterUserUseCase,

@@ -96,6 +96,7 @@ class TestCreateIssueUseCase:
         mock_issue_repository,
         mock_project_repository,
         mock_user_repository,
+        mock_activity_repository,
         mock_session,
         test_project,
         test_user,

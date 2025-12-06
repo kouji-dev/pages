@@ -5,7 +5,7 @@ from uuid import uuid4
 
 import pytest
 
-from src.application.use_cases.reactivate_user import ReactivateUserUseCase
+from src.application.use_cases.user import ReactivateUserUseCase
 from src.domain.entities import User
 from src.domain.exceptions import AuthorizationException, EntityNotFoundException
 from src.domain.value_objects import Email, HashedPassword

@@ -6,7 +6,7 @@ from uuid import uuid4
 import pytest
 
 from src.application.dtos.organization_settings import UpdateOrganizationSettingsRequest
-from src.application.use_cases.organization_settings import (
+from src.application.use_cases.organization import (
     GetOrganizationSettingsUseCase,
     UpdateOrganizationSettingsUseCase,
 )

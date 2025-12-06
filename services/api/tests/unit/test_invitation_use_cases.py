@@ -7,7 +7,7 @@ from uuid import uuid4
 import pytest
 
 from src.application.dtos.invitation import SendInvitationRequest
-from src.application.use_cases.invitation import (
+from src.application.use_cases.organization import (
     AcceptInvitationUseCase,
     CancelInvitationUseCase,
     ListInvitationsUseCase,

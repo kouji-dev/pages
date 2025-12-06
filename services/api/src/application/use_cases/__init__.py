@@ -7,45 +7,35 @@ from src.application.use_cases.auth import (
     RequestPasswordResetUseCase,
     ResetPasswordUseCase,
 )
-from src.application.use_cases.avatar import (
-    DeleteAvatarUseCase,
-    UploadAvatarUseCase,
-)
-from src.application.use_cases.deactivate_user import DeactivateUserUseCase
-from src.application.use_cases.invitation import (
-    AcceptInvitationUseCase,
-    CancelInvitationUseCase,
-    ListInvitationsUseCase,
-    SendInvitationUseCase,
-)
-from src.application.use_cases.list_users import ListUsersUseCase
 from src.application.use_cases.organization import (
+    AcceptInvitationUseCase,
+    AddOrganizationMemberUseCase,
+    CancelInvitationUseCase,
     CreateOrganizationUseCase,
     DeleteOrganizationUseCase,
+    GetOrganizationSettingsUseCase,
     GetOrganizationUseCase,
+    ListInvitationsUseCase,
+    ListOrganizationMembersUseCase,
     ListOrganizationsUseCase,
+    RemoveOrganizationMemberUseCase,
+    SendInvitationUseCase,
+    UpdateOrganizationMemberRoleUseCase,
+    UpdateOrganizationSettingsUseCase,
     UpdateOrganizationUseCase,
 )
-from src.application.use_cases.organization_member import (
-    AddOrganizationMemberUseCase,
-    ListOrganizationMembersUseCase,
-    RemoveOrganizationMemberUseCase,
-    UpdateOrganizationMemberRoleUseCase,
-)
-from src.application.use_cases.organization_settings import (
-    GetOrganizationSettingsUseCase,
-    UpdateOrganizationSettingsUseCase,
-)
-from src.application.use_cases.preferences import (
-    GetUserPreferencesUseCase,
-    UpdateUserPreferencesUseCase,
-)
-from src.application.use_cases.reactivate_user import ReactivateUserUseCase
 from src.application.use_cases.user import (
+    DeactivateUserUseCase,
+    DeleteAvatarUseCase,
+    GetUserPreferencesUseCase,
     GetUserProfileUseCase,
+    ListUsersUseCase,
+    ReactivateUserUseCase,
     UpdateUserEmailUseCase,
     UpdateUserPasswordUseCase,
+    UpdateUserPreferencesUseCase,
     UpdateUserProfileUseCase,
+    UploadAvatarUseCase,
 )
 
 __all__ = [

@@ -16,19 +16,18 @@ from src.application.dtos.user import (
     UserResponse,
     UserUpdateRequest,
 )
-from src.application.use_cases.avatar import DeleteAvatarUseCase, UploadAvatarUseCase
-from src.application.use_cases.deactivate_user import DeactivateUserUseCase
-from src.application.use_cases.list_users import ListUsersUseCase
-from src.application.use_cases.preferences import (
-    GetUserPreferencesUseCase,
-    UpdateUserPreferencesUseCase,
-)
-from src.application.use_cases.reactivate_user import ReactivateUserUseCase
 from src.application.use_cases.user import (
+    DeactivateUserUseCase,
+    DeleteAvatarUseCase,
+    GetUserPreferencesUseCase,
     GetUserProfileUseCase,
+    ListUsersUseCase,
+    ReactivateUserUseCase,
     UpdateUserEmailUseCase,
     UpdateUserPasswordUseCase,
+    UpdateUserPreferencesUseCase,
     UpdateUserProfileUseCase,
+    UploadAvatarUseCase,
 )
 from src.domain.entities import User
 from src.domain.repositories import UserRepository
