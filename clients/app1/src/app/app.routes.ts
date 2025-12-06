@@ -3,6 +3,7 @@ import { Demo } from './presentation/pages/demo';
 import { Landing } from './presentation/pages/landing';
 import { FeaturesPage } from './presentation/pages/features-page';
 import { PricingPage } from './presentation/pages/pricing-page';
+import { OrganizationsPage } from './presentation/pages/organizations-page';
 
 export const routes: Routes = [
   {
@@ -24,5 +25,10 @@ export const routes: Routes = [
     path: 'pricing',
     component: PricingPage,
     title: 'Pricing - Pages',
+  },
+  {
+    path: 'organizations',
+    component: OrganizationsPage,
+    title: 'Organizations - Pages',
   },
 ];
