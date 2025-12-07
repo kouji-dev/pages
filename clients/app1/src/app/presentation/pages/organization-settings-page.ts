@@ -15,15 +15,30 @@ import { DeleteOrganizationModal } from '../components/delete-organization-modal
 import { MemberList } from '../components/member-list';
 import { AddMemberModal } from '../components/add-member-modal';
 import { ChangeRoleModal } from '../components/change-role-modal';
+import { PendingInvitations } from '../components/pending-invitations';
+import { InviteMemberModal } from '../components/invite-member-modal';
 import {
   OrganizationMembersService,
   OrganizationMember,
 } from '../../application/services/organization-members.service';
+import {
+  OrganizationInvitationsService,
+  OrganizationInvitation,
+} from '../../application/services/organization-invitations.service';
 import { AuthService } from '../../application/services/auth.service';
 
 @Component({
   selector: 'app-organization-settings-page',
-  imports: [Button, Icon, Input, LoadingState, ErrorState, RouterLink, MemberList],
+  imports: [
+    Button,
+    Icon,
+    Input,
+    LoadingState,
+    ErrorState,
+    RouterLink,
+    MemberList,
+    PendingInvitations,
+  ],
   template: `
     <div class="org-settings-page">
       <div class="org-settings-page_header">
@@ -114,6 +129,23 @@ import { AuthService } from '../../application/services/auth.service';
                   (onChangeRole)="handleChangeRole($event)"
                   (onRemoveMember)="handleRemoveMember($event)"
                   (onRetry)="handleMembersRetry()"
+                />
+              </div>
+            }
+
+            <!-- Pending Invitations Section -->
+            @if (organizationId() && canManageMembers()) {
+              <div class="org-settings-page_section">
+                <app-pending-invitations
+                  [invitations]="invitationsService.invitations()"
+                  [isLoading]="invitationsService.isLoading()"
+                  [hasError]="invitationsService.hasError()"
+                  [errorMessage]="invitationsErrorMessage()"
+                  [canSendInvitations]="canManageMembers()"
+                  [canCancelInvitations]="canManageMembers()"
+                  (onSendInvitation)="handleSendInvitation()"
+                  (onCancelInvitation)="handleCancelInvitation($event)"
+                  (onRetry)="handleInvitationsRetry()"
                 />
               </div>
             }
@@ -272,6 +304,7 @@ export class OrganizationSettingsPage {
   private readonly router = inject(Router);
   private readonly organizationService = inject(OrganizationService);
   readonly membersService = inject(OrganizationMembersService);
+  readonly invitationsService = inject(OrganizationInvitationsService);
   private readonly authService = inject(AuthService);
   private readonly toast = inject(ToastService);
   private readonly modal = inject(Modal);
@@ -358,12 +391,25 @@ export class OrganizationSettingsPage {
     return error instanceof Error ? error.message : 'An unknown error occurred.';
   });
 
+  readonly invitationsErrorMessage = computed(() => {
+    const error = this.invitationsService.error();
+    return error instanceof Error ? error.message : 'An unknown error occurred.';
+  });
+
   // Effects declared as instance variables (not in constructor or ngOnInit)
   private readonly loadOrganizationEffect = effect(() => {
     const id = this.organizationId();
     if (id) {
       this.organizationService.fetchOrganization(id);
       this.membersService.loadMembers(id);
+    }
+  });
+
+  private readonly loadInvitationsEffect = effect(() => {
+    const id = this.organizationId();
+    const canManage = this.canManageMembers();
+    if (id && canManage) {
+      this.invitationsService.loadInvitations(id);
     }
   });
 
@@ -520,6 +566,47 @@ export class OrganizationSettingsPage {
     const id = this.organizationId();
     if (id) {
       this.membersService.loadMembers(id);
+    }
+  }
+
+  handleSendInvitation(): void {
+    const orgId = this.organizationId();
+    if (!orgId) {
+      return;
+    }
+
+    this.modal
+      .open<{ sent: boolean; error?: any }>(InviteMemberModal, this.viewContainerRef, {
+        size: 'md',
+        data: {
+          organizationId: orgId,
+        },
+      })
+      .subscribe((result) => {
+        if (result?.sent) {
+          // Invitations are automatically reloaded by the service
+          this.toast.success('Invitation sent successfully!');
+        }
+      });
+  }
+
+  async handleCancelInvitation(invitation: OrganizationInvitation): Promise<void> {
+    try {
+      await this.invitationsService.cancelInvitation(invitation.id);
+      this.toast.success(`Invitation to "${invitation.email}" canceled successfully.`);
+      // Invitations are automatically reloaded by the service
+    } catch (error: any) {
+      console.error('Failed to cancel invitation:', error);
+      const errorMessage =
+        error?.error?.detail || error?.message || 'Failed to cancel invitation. Please try again.';
+      this.toast.error(errorMessage);
+    }
+  }
+
+  handleInvitationsRetry(): void {
+    const id = this.organizationId();
+    if (id) {
+      this.invitationsService.loadInvitations(id);
     }
   }
 }
