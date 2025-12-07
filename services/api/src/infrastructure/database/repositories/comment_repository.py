@@ -177,6 +177,58 @@ class SQLAlchemyCommentRepository(CommentRepository):
         result = await self._session.execute(query)
         return result.scalar_one() or 0
 
+    async def get_by_page_id(
+        self,
+        page_id: UUID,
+        skip: int = 0,
+        limit: int = 50,
+        include_deleted: bool = False,
+    ) -> list[Comment]:
+        """Get all comments for a page.
+
+        Args:
+            page_id: Page UUID
+            skip: Number of records to skip
+            limit: Maximum number of records to return
+            include_deleted: Whether to include soft-deleted comments
+
+        Returns:
+            List of comments, ordered by created_at ASC
+        """
+        query = (
+            select(CommentModel)
+            .where(CommentModel.page_id == page_id)
+            .order_by(CommentModel.created_at.asc())
+            .offset(skip)
+            .limit(limit)
+        )
+
+        if not include_deleted:
+            query = query.where(CommentModel.deleted_at.is_(None))
+
+        result = await self._session.execute(query)
+        models = result.scalars().all()
+
+        return [self._to_entity(model) for model in models]
+
+    async def count_by_page_id(self, page_id: UUID, include_deleted: bool = False) -> int:
+        """Count total comments for a page.
+
+        Args:
+            page_id: Page UUID
+            include_deleted: Whether to include soft-deleted comments
+
+        Returns:
+            Total count of comments
+        """
+        query = select(func.count(CommentModel.id)).where(CommentModel.page_id == page_id)
+
+        if not include_deleted:
+            query = query.where(CommentModel.deleted_at.is_(None))
+
+        result = await self._session.execute(query)
+        return result.scalar_one() or 0
+
     def _to_entity(self, model: CommentModel) -> Comment:
         """Convert SQLAlchemy model to domain entity.
 

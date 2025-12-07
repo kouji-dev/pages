@@ -18,8 +18,17 @@ from src.infrastructure.database.repositories.issue_repository import (
 from src.infrastructure.database.repositories.organization_repository import (
     SQLAlchemyOrganizationRepository,
 )
+from src.infrastructure.database.repositories.page_repository import (
+    SQLAlchemyPageRepository,
+)
 from src.infrastructure.database.repositories.project_repository import (
     SQLAlchemyProjectRepository,
+)
+from src.infrastructure.database.repositories.space_repository import (
+    SQLAlchemySpaceRepository,
+)
+from src.infrastructure.database.repositories.template_repository import (
+    SQLAlchemyTemplateRepository,
 )
 from src.infrastructure.database.repositories.user_repository import (
     SQLAlchemyUserRepository,
@@ -34,4 +43,7 @@ __all__ = [
     "SQLAlchemyIssueActivityRepository",
     "SQLAlchemyCommentRepository",
     "SQLAlchemyAttachmentRepository",
+    "SQLAlchemySpaceRepository",
+    "SQLAlchemyPageRepository",
+    "SQLAlchemyTemplateRepository",
 ]

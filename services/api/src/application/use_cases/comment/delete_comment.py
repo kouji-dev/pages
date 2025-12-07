@@ -22,18 +22,25 @@ class DeleteCommentUseCase:
 
         Args:
             comment_repository: Comment repository for data access
-            project_repository: Project repository for permission check
+            project_repository: Project repository for permission check (for issue comments)
         """
         self._comment_repository = comment_repository
         self._project_repository = project_repository
 
-    async def execute(self, comment_id: str, user_id: UUID, is_project_admin: bool = False) -> None:
+    async def execute(
+        self,
+        comment_id: str,
+        user_id: UUID,
+        is_project_admin: bool = False,
+        is_space_admin: bool = False,
+    ) -> None:
         """Execute delete comment.
 
         Args:
             comment_id: Comment ID
             user_id: ID of the user deleting the comment
-            is_project_admin: Whether the user is a project admin
+            is_project_admin: Whether the user is a project admin (for issue comments)
+            is_space_admin: Whether the user is a space admin (for page comments)
 
         Raises:
             EntityNotFoundException: If comment not found
@@ -48,16 +55,18 @@ class DeleteCommentUseCase:
             logger.warning("Comment not found for deletion", comment_id=comment_id)
             raise EntityNotFoundException("Comment", comment_id)
 
-        # Check permission: comment author or project admin
-        if comment.user_id != user_id and not is_project_admin:
+        # Check permission: comment author or admin (project admin for issues, space admin for pages)
+        is_admin = is_project_admin if comment.entity_type == "issue" else is_space_admin
+        if comment.user_id != user_id and not is_admin:
             logger.warning(
                 "User not authorized to delete comment",
                 comment_id=comment_id,
                 user_id=str(user_id),
                 comment_author_id=str(comment.user_id),
             )
+            admin_type = "project admin" if comment.entity_type == "issue" else "space admin"
             raise ValidationException(
-                "Only the comment author or project admin can delete the comment",
+                f"Only the comment author or {admin_type} can delete the comment",
                 field="user_id",
             )
 

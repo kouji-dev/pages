@@ -15,16 +15,21 @@ from src.application.dtos.comment import (
 )
 from src.application.use_cases.comment import (
     CreateCommentUseCase,
+    CreatePageCommentUseCase,
     DeleteCommentUseCase,
     GetCommentUseCase,
     ListCommentsUseCase,
+    ListPageCommentsUseCase,
     UpdateCommentUseCase,
 )
 from src.domain.entities import User
+from src.domain.exceptions import EntityNotFoundException
 from src.domain.repositories import (
     CommentRepository,
     IssueRepository,
+    PageRepository,
     ProjectRepository,
+    SpaceRepository,
     UserRepository,
 )
 from src.domain.services import PermissionService
@@ -35,8 +40,10 @@ from src.presentation.dependencies.permissions import require_organization_membe
 from src.presentation.dependencies.services import (
     get_comment_repository,
     get_issue_repository,
+    get_page_repository,
     get_permission_service,
     get_project_repository,
+    get_space_repository,
     get_user_repository,
 )
 
@@ -69,6 +76,25 @@ def get_list_comments_use_case(
 ) -> ListCommentsUseCase:
     """Get list comments use case with dependencies."""
     return ListCommentsUseCase(comment_repository, issue_repository, session)
+
+
+def get_create_page_comment_use_case(
+    comment_repository: Annotated[CommentRepository, Depends(get_comment_repository)],
+    page_repository: Annotated[PageRepository, Depends(get_page_repository)],
+    user_repository: Annotated[UserRepository, Depends(get_user_repository)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> CreatePageCommentUseCase:
+    """Get create page comment use case with dependencies."""
+    return CreatePageCommentUseCase(comment_repository, page_repository, user_repository, session)
+
+
+def get_list_page_comments_use_case(
+    comment_repository: Annotated[CommentRepository, Depends(get_comment_repository)],
+    page_repository: Annotated[PageRepository, Depends(get_page_repository)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> ListPageCommentsUseCase:
+    """Get list page comments use case with dependencies."""
+    return ListPageCommentsUseCase(comment_repository, page_repository, session)
 
 
 def get_update_comment_use_case(
@@ -105,16 +131,14 @@ async def create_comment(
 
     Requires project membership (via organization membership).
     """
-    from fastapi import HTTPException
-
     issue = await issue_repository.get_by_id(issue_id)
     if issue is None:
-        raise HTTPException(status_code=404, detail="Issue not found")
+        raise EntityNotFoundException("Issue", str(issue_id))
 
     # Check user is member of the organization
     project = await project_repository.get_by_id(issue.project_id)
     if project is None:
-        raise HTTPException(status_code=404, detail="Project not found")
+        raise EntityNotFoundException("Project", str(issue.project_id))
 
     await require_organization_member(project.organization_id, current_user, permission_service)
 
@@ -132,28 +156,38 @@ async def get_comment(
     issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
     project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+    page_repository: Annotated[PageRepository, Depends(get_page_repository)],
+    space_repository: Annotated[SpaceRepository, Depends(get_space_repository)],
 ) -> CommentResponse:
     """Get a comment by ID.
 
-    Requires project membership (via organization membership).
+    Requires project or space membership (via organization membership).
     """
-    from fastapi import HTTPException
-
     comment = await comment_repository.get_by_id(comment_id)
     if comment is None:
-        raise HTTPException(status_code=404, detail="Comment not found")
+        raise EntityNotFoundException("Comment", str(comment_id))
 
     # Check user is member of the organization
     if comment.issue_id:
         issue = await issue_repository.get_by_id(comment.issue_id)
         if issue is None:
-            raise HTTPException(status_code=404, detail="Issue not found")
+            raise EntityNotFoundException("Issue", str(comment.issue_id))
 
         project = await project_repository.get_by_id(issue.project_id)
         if project is None:
-            raise HTTPException(status_code=404, detail="Project not found")
+            raise EntityNotFoundException("Project", str(issue.project_id))
 
         await require_organization_member(project.organization_id, current_user, permission_service)
+    elif comment.page_id:
+        page = await page_repository.get_by_id(comment.page_id)
+        if page is None:
+            raise EntityNotFoundException("Page", str(comment.page_id))
+
+        space = await space_repository.get_by_id(page.space_id)
+        if space is None:
+            raise EntityNotFoundException("Space", str(page.space_id))
+
+        await require_organization_member(space.organization_id, current_user, permission_service)
 
     return await use_case.execute(str(comment_id))
 
@@ -177,16 +211,14 @@ async def list_comments(
 
     Requires project membership (via organization membership).
     """
-    from fastapi import HTTPException
-
     issue = await issue_repository.get_by_id(issue_id)
     if issue is None:
-        raise HTTPException(status_code=404, detail="Issue not found")
+        raise EntityNotFoundException("Issue", str(issue_id))
 
     # Check user is member of the organization
     project = await project_repository.get_by_id(issue.project_id)
     if project is None:
-        raise HTTPException(status_code=404, detail="Project not found")
+        raise EntityNotFoundException("Project", str(issue.project_id))
 
     await require_organization_member(project.organization_id, current_user, permission_service)
 
@@ -205,28 +237,38 @@ async def update_comment(
     issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
     project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+    page_repository: Annotated[PageRepository, Depends(get_page_repository)],
+    space_repository: Annotated[SpaceRepository, Depends(get_space_repository)],
 ) -> CommentResponse:
     """Update a comment.
 
     Requires comment author permission.
     """
-    from fastapi import HTTPException
-
     comment = await comment_repository.get_by_id(comment_id)
     if comment is None:
-        raise HTTPException(status_code=404, detail="Comment not found")
+        raise EntityNotFoundException("Comment", str(comment_id))
 
     # Check user is member of the organization (for access)
     if comment.issue_id:
         issue = await issue_repository.get_by_id(comment.issue_id)
         if issue is None:
-            raise HTTPException(status_code=404, detail="Issue not found")
+            raise EntityNotFoundException("Issue", str(comment.issue_id))
 
         project = await project_repository.get_by_id(issue.project_id)
         if project is None:
-            raise HTTPException(status_code=404, detail="Project not found")
+            raise EntityNotFoundException("Project", str(issue.project_id))
 
         await require_organization_member(project.organization_id, current_user, permission_service)
+    elif comment.page_id:
+        page = await page_repository.get_by_id(comment.page_id)
+        if page is None:
+            raise EntityNotFoundException("Page", str(comment.page_id))
+
+        space = await space_repository.get_by_id(page.space_id)
+        if space is None:
+            raise EntityNotFoundException("Space", str(page.space_id))
+
+        await require_organization_member(space.organization_id, current_user, permission_service)
 
     return await use_case.execute(str(comment_id), request, current_user.id)
 
@@ -241,27 +283,28 @@ async def delete_comment(
     project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
     session: Annotated[AsyncSession, Depends(get_session)],
+    page_repository: Annotated[PageRepository, Depends(get_page_repository)],
+    space_repository: Annotated[SpaceRepository, Depends(get_space_repository)],
 ) -> None:
     """Delete a comment (soft delete).
 
     Requires comment author or project admin permission.
     """
-    from fastapi import HTTPException
-
     comment = await comment_repository.get_by_id(comment_id)
     if comment is None:
-        raise HTTPException(status_code=404, detail="Comment not found")
+        raise EntityNotFoundException("Comment", str(comment_id))
 
     # Check user is member of the organization (for access)
     is_project_admin = False
+    is_space_admin = False
     if comment.issue_id:
         issue = await issue_repository.get_by_id(comment.issue_id)
         if issue is None:
-            raise HTTPException(status_code=404, detail="Issue not found")
+            raise EntityNotFoundException("Issue", str(comment.issue_id))
 
         project = await project_repository.get_by_id(issue.project_id)
         if project is None:
-            raise HTTPException(status_code=404, detail="Project not found")
+            raise EntityNotFoundException("Project", str(issue.project_id))
 
         await require_organization_member(project.organization_id, current_user, permission_service)
 
@@ -274,5 +317,85 @@ async def delete_comment(
             )
         )
         is_project_admin = result.scalar_one_or_none() is not None
+    elif comment.page_id:
+        page = await page_repository.get_by_id(comment.page_id)
+        if page is None:
+            raise EntityNotFoundException("Page", str(comment.page_id))
 
-    await use_case.execute(str(comment_id), current_user.id, is_project_admin)
+        space = await space_repository.get_by_id(page.space_id)
+        if space is None:
+            raise EntityNotFoundException("Space", str(page.space_id))
+
+        await require_organization_member(space.organization_id, current_user, permission_service)
+
+        # Check if user is organization admin (space admin)
+        is_space_admin = await permission_service.can_manage_organization(
+            current_user, space.organization_id
+        )
+
+    await use_case.execute(str(comment_id), current_user.id, is_project_admin, is_space_admin)
+
+
+@router.post(
+    "/pages/{page_id}/comments",
+    response_model=CommentResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_page_comment(
+    page_id: UUID,
+    request: CreateCommentRequest,
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[CreatePageCommentUseCase, Depends(get_create_page_comment_use_case)],
+    page_repository: Annotated[PageRepository, Depends(get_page_repository)],
+    space_repository: Annotated[SpaceRepository, Depends(get_space_repository)],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+) -> CommentResponse:
+    """Create a comment on a page.
+
+    Requires space membership (via organization membership).
+    """
+    page = await page_repository.get_by_id(page_id)
+    if page is None:
+        raise EntityNotFoundException("Page", str(page_id))
+
+    # Check user is member of the organization
+    space = await space_repository.get_by_id(page.space_id)
+    if space is None:
+        raise EntityNotFoundException("Space", str(page.space_id))
+
+    await require_organization_member(space.organization_id, current_user, permission_service)
+
+    return await use_case.execute(str(page_id), request, str(current_user.id))
+
+
+@router.get(
+    "/pages/{page_id}/comments",
+    response_model=CommentListResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def list_page_comments(
+    page_id: UUID,
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[ListPageCommentsUseCase, Depends(get_list_page_comments_use_case)],
+    page_repository: Annotated[PageRepository, Depends(get_page_repository)],
+    space_repository: Annotated[SpaceRepository, Depends(get_space_repository)],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+    page: Annotated[int, Query(ge=1, description="Page number (1-based)")] = 1,
+    limit: Annotated[int, Query(ge=1, le=100, description="Number of comments per page")] = 50,
+) -> CommentListResponse:
+    """List comments for a page.
+
+    Requires space membership (via organization membership).
+    """
+    page_entity = await page_repository.get_by_id(page_id)
+    if page_entity is None:
+        raise EntityNotFoundException("Page", str(page_id))
+
+    # Check user is member of the organization
+    space = await space_repository.get_by_id(page_entity.space_id)
+    if space is None:
+        raise EntityNotFoundException("Space", str(page_entity.space_id))
+
+    await require_organization_member(space.organization_id, current_user, permission_service)
+
+    return await use_case.execute(str(page_id), page=page, limit=limit)

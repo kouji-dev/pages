@@ -66,6 +66,7 @@ class GetCommentUseCase:
             entity_type=comment.entity_type,
             entity_id=comment.entity_id,
             issue_id=comment.issue_id,
+            page_id=comment.page_id,
             user_id=comment.user_id,
             content=comment.content,
             is_edited=comment.is_edited,

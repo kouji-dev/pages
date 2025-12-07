@@ -97,3 +97,37 @@ class CommentRepository(ABC):
             Total count of comments
         """
         ...
+
+    @abstractmethod
+    async def get_by_page_id(
+        self,
+        page_id: UUID,
+        skip: int = 0,
+        limit: int = 50,
+        include_deleted: bool = False,
+    ) -> list[Comment]:
+        """Get all comments for a page.
+
+        Args:
+            page_id: Page UUID
+            skip: Number of records to skip
+            limit: Maximum number of records to return
+            include_deleted: Whether to include soft-deleted comments
+
+        Returns:
+            List of comments, ordered by created_at ASC
+        """
+        ...
+
+    @abstractmethod
+    async def count_by_page_id(self, page_id: UUID, include_deleted: bool = False) -> int:
+        """Count total comments for a page.
+
+        Args:
+            page_id: Page UUID
+            include_deleted: Whether to include soft-deleted comments
+
+        Returns:
+            Total count of comments
+        """
+        ...

@@ -13,6 +13,7 @@ class CommentResponse(BaseModel):
     entity_type: str = Field(..., description="Entity type: issue or page")
     entity_id: UUID
     issue_id: UUID | None = None
+    page_id: UUID | None = None
     user_id: UUID
     content: str
     is_edited: bool = Field(default=False, description="Whether the comment has been edited")
@@ -35,6 +36,7 @@ class CommentListItemResponse(BaseModel):
     entity_type: str
     entity_id: UUID
     issue_id: UUID | None = None
+    page_id: UUID | None = None
     user_id: UUID
     content: str
     is_edited: bool

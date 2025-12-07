@@ -15,7 +15,10 @@ from src.domain.repositories import (
     IssueActivityRepository,
     IssueRepository,
     OrganizationRepository,
+    PageRepository,
     ProjectRepository,
+    SpaceRepository,
+    TemplateRepository,
     UserRepository,
 )
 from src.domain.services import PasswordService, PermissionService, StorageService
@@ -27,7 +30,10 @@ from src.infrastructure.database.repositories import (
     SQLAlchemyIssueActivityRepository,
     SQLAlchemyIssueRepository,
     SQLAlchemyOrganizationRepository,
+    SQLAlchemyPageRepository,
     SQLAlchemyProjectRepository,
+    SQLAlchemySpaceRepository,
+    SQLAlchemyTemplateRepository,
     SQLAlchemyUserRepository,
 )
 from src.infrastructure.security import BcryptPasswordService, JWTTokenService
@@ -156,6 +162,48 @@ async def get_attachment_repository(
         SQLAlchemy implementation of AttachmentRepository
     """
     return SQLAlchemyAttachmentRepository(session)
+
+
+async def get_space_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> SpaceRepository:
+    """Get space repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of SpaceRepository
+    """
+    return SQLAlchemySpaceRepository(session)
+
+
+async def get_page_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> PageRepository:
+    """Get page repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of PageRepository
+    """
+    return SQLAlchemyPageRepository(session)
+
+
+async def get_template_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> TemplateRepository:
+    """Get template repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of TemplateRepository
+    """
+    return SQLAlchemyTemplateRepository(session)
 
 
 async def get_permission_service(
