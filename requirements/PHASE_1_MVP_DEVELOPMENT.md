@@ -1414,11 +1414,11 @@ This phase focuses on building the foundational features required for a function
   - [x] List pending invitations
   - [x] Cancel invitation
 - [x] Integrate invitation components into organization settings page
-- [ ] Create invitation acceptance page (`/invitations/:token`)
-  - [ ] Display invitation details
-  - [ ] Accept button (if logged in)
-  - [ ] Sign up link (if not logged in)
-- [ ] Integrate with accept invitation API
+- [x] Create invitation acceptance page (`/invitations/:token`)
+  - [x] Display invitation details
+  - [x] Accept button (if logged in)
+  - [x] Sign up link (if not logged in)
+- [x] Integrate with accept invitation API
 - [x] Implement loading and error states
 - [ ] Write component tests
 
@@ -1427,7 +1427,7 @@ This phase focuses on building the foundational features required for a function
 - ✅ Send invitation modal
 - ✅ Pending invitations list
 - ✅ Integration into organization settings page
-- ⏳ Invitation acceptance page (pending)
+- ✅ Invitation acceptance page
 
 ---
 
