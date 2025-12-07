@@ -41,6 +41,8 @@ safety = "^3.2.0"
 bandit = "^1.7.8"
 types-python-jose = "^3.3.0"
 pillow = "^12.0.0"
+types-bleach = "^6.3.0.20251115"
+types-markdown = "^3.10.0.20251106"
 
 [tool.poetry.scripts]
 dev = "uvicorn src.main:app --reload --host 0.0.0.0 --port 8000"

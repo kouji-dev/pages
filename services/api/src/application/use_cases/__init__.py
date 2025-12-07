@@ -24,6 +24,28 @@ from src.application.use_cases.organization import (
     UpdateOrganizationSettingsUseCase,
     UpdateOrganizationUseCase,
 )
+from src.application.use_cases.page import (
+    CreatePageUseCase,
+    DeletePageUseCase,
+    GetPageTreeUseCase,
+    GetPageUseCase,
+    ListPagesUseCase,
+    UpdatePageUseCase,
+)
+from src.application.use_cases.space import (
+    CreateSpaceUseCase,
+    DeleteSpaceUseCase,
+    GetSpaceUseCase,
+    ListSpacesUseCase,
+    UpdateSpaceUseCase,
+)
+from src.application.use_cases.template import (
+    CreateTemplateUseCase,
+    DeleteTemplateUseCase,
+    GetTemplateUseCase,
+    ListTemplatesUseCase,
+    UpdateTemplateUseCase,
+)
 from src.application.use_cases.user import (
     DeactivateUserUseCase,
     DeleteAvatarUseCase,
@@ -81,4 +103,23 @@ __all__ = [
     # Organization settings use cases
     "GetOrganizationSettingsUseCase",
     "UpdateOrganizationSettingsUseCase",
+    # Space use cases
+    "CreateSpaceUseCase",
+    "GetSpaceUseCase",
+    "ListSpacesUseCase",
+    "UpdateSpaceUseCase",
+    "DeleteSpaceUseCase",
+    # Page use cases
+    "CreatePageUseCase",
+    "GetPageUseCase",
+    "ListPagesUseCase",
+    "UpdatePageUseCase",
+    "DeletePageUseCase",
+    "GetPageTreeUseCase",
+    # Template use cases
+    "CreateTemplateUseCase",
+    "GetTemplateUseCase",
+    "ListTemplatesUseCase",
+    "UpdateTemplateUseCase",
+    "DeleteTemplateUseCase",
 ]

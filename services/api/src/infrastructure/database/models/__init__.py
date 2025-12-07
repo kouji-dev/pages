@@ -15,6 +15,7 @@ from src.infrastructure.database.models.project import (
     ProjectMemberModel,
     ProjectModel,
 )
+from src.infrastructure.database.models.template import TemplateModel
 from src.infrastructure.database.models.user import UserModel
 
 __all__ = [
@@ -29,6 +30,7 @@ __all__ = [
     "CommentModel",
     "PageModel",
     "SpaceModel",
+    "TemplateModel",
     "AttachmentModel",
     "NotificationModel",
 ]
