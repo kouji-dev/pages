@@ -107,7 +107,7 @@ import {
         @apply gap-4;
         @apply pb-4;
         @apply border-b;
-        border-color: var(--color-border-default);
+        @apply border-border-default;
       }
 
       .change-role-form_member {
@@ -120,7 +120,7 @@ import {
         @apply rounded-full;
         @apply overflow-hidden;
         @apply flex-shrink-0;
-        background: var(--color-bg-tertiary);
+        @apply bg-bg-tertiary;
       }
 
       .change-role-form_member-avatar-image {
@@ -132,7 +132,7 @@ import {
         @apply w-full h-full;
         @apply flex items-center justify-center;
         @apply text-sm font-semibold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .change-role-form_member-info {
@@ -143,13 +143,13 @@ import {
 
       .change-role-form_member-name {
         @apply text-sm font-medium;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         @apply truncate;
       }
 
       .change-role-form_member-email {
         @apply text-xs;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         @apply truncate;
       }
 
@@ -159,7 +159,7 @@ import {
 
       .change-role-form_current-role-label {
         @apply text-sm;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
       }
 
       .change-role-form_role-badge {
@@ -170,18 +170,18 @@ import {
       }
 
       .change-role-form_role-badge--admin {
-        background: var(--color-primary-100);
-        color: var(--color-primary-700);
+        @apply bg-primary-100;
+        @apply text-primary-700;
       }
 
       .change-role-form_role-badge--member {
-        background: var(--color-gray-100);
-        color: var(--color-gray-700);
+        @apply bg-gray-100;
+        @apply text-gray-700;
       }
 
       .change-role-form_role-badge--viewer {
-        background: var(--color-gray-50);
-        color: var(--color-gray-600);
+        @apply bg-gray-50;
+        @apply text-gray-600;
       }
 
       .change-role-form_role {
@@ -191,7 +191,7 @@ import {
 
       .change-role-form_role-label {
         @apply text-sm font-medium;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .change-role-form_role-options {
@@ -204,8 +204,8 @@ import {
         @apply p-3;
         @apply rounded-lg;
         @apply border;
-        border-color: var(--color-border-default);
-        background: var(--color-bg-primary);
+        @apply border-border-default;
+        @apply bg-bg-primary;
         @apply transition-colors;
         @apply cursor-pointer;
         @apply hover:bg-gray-50;
@@ -213,8 +213,8 @@ import {
       }
 
       .change-role-form_role-option--selected {
-        border-color: var(--color-primary-500);
-        background: var(--color-primary-50);
+        @apply border-primary-500;
+        @apply bg-primary-50;
       }
 
       .change-role-form_role-option--disabled {
@@ -228,20 +228,20 @@ import {
 
       .change-role-form_role-option-name {
         @apply text-sm font-medium;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .change-role-form_role-option-current {
         @apply text-xs;
         @apply px-2 py-0.5;
         @apply rounded;
-        background: var(--color-gray-200);
-        color: var(--color-gray-700);
+        @apply bg-gray-200;
+        @apply text-gray-700;
       }
 
       .change-role-form_role-option-description {
         @apply text-xs;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
       }
     `,

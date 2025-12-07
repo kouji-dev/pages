@@ -10,6 +10,57 @@ import { LucideAngularModule, icons } from 'lucide-angular';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
+// Icon color names - maps to CSS variables
+export type IconColor =
+  // Semantic colors
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'warning'
+  | 'error'
+  | 'info'
+  // Primary shades
+  | 'primary-50'
+  | 'primary-100'
+  | 'primary-200'
+  | 'primary-300'
+  | 'primary-400'
+  | 'primary-500'
+  | 'primary-600'
+  | 'primary-700'
+  | 'primary-800'
+  | 'primary-900'
+  // Secondary shades
+  | 'secondary-50'
+  | 'secondary-100'
+  | 'secondary-200'
+  | 'secondary-300'
+  | 'secondary-400'
+  | 'secondary-500'
+  | 'secondary-600'
+  | 'secondary-700'
+  | 'secondary-800'
+  | 'secondary-900'
+  // Text colors
+  | 'text-primary'
+  | 'text-secondary'
+  | 'text-tertiary'
+  | 'text-muted'
+  | 'text-disabled'
+  | 'text-inverse'
+  | 'text-link'
+  // Gray shades
+  | 'gray-50'
+  | 'gray-100'
+  | 'gray-200'
+  | 'gray-300'
+  | 'gray-400'
+  | 'gray-500'
+  | 'gray-600'
+  | 'gray-700'
+  | 'gray-800'
+  | 'gray-900';
+
 // Convert PascalCase icon names to kebab-case for better developer experience
 type PascalCaseToKebabCase<S extends string> = S extends `${infer P1}${infer P2}`
   ? P2 extends Uncapitalize<P2>
@@ -29,7 +80,7 @@ export type IconName = PascalCaseToKebabCase<keyof typeof icons>;
         <lucide-icon
           [img]="src()!"
           [size]="computedSize()"
-          [color]="color() || undefined"
+          [color]="computedColor()"
           [strokeWidth]="strokeWidth()"
           [attr.aria-label]="ariaLabel()"
           [attr.aria-hidden]="ariaHidden()"
@@ -101,12 +152,82 @@ export class Icon {
   // Inputs
   name = input.required<IconName>();
   size = input<IconSize>('md');
-  color = input<string>();
+  color = input<IconColor | string>();
   strokeWidth = input<number>(2);
   animation = input<'none' | 'spin' | 'pulse' | 'bounce'>('none');
   ariaLabel = input<string>('');
   ariaHidden = input<boolean, boolean | string>(false, {
     transform: booleanAttribute,
+  });
+
+  /**
+   * Map color name to CSS variable
+   */
+  private readonly colorMap: Record<IconColor, string> = {
+    // Semantic colors
+    primary: 'var(--color-primary)',
+    secondary: 'var(--color-secondary)',
+    success: 'var(--color-success)',
+    warning: 'var(--color-warning)',
+    error: 'var(--color-error)',
+    info: 'var(--color-info)',
+    // Primary shades
+    'primary-50': 'var(--color-primary-50)',
+    'primary-100': 'var(--color-primary-100)',
+    'primary-200': 'var(--color-primary-200)',
+    'primary-300': 'var(--color-primary-300)',
+    'primary-400': 'var(--color-primary-400)',
+    'primary-500': 'var(--color-primary-500)',
+    'primary-600': 'var(--color-primary-600)',
+    'primary-700': 'var(--color-primary-700)',
+    'primary-800': 'var(--color-primary-800)',
+    'primary-900': 'var(--color-primary-900)',
+    // Secondary shades
+    'secondary-50': 'var(--color-secondary-50)',
+    'secondary-100': 'var(--color-secondary-100)',
+    'secondary-200': 'var(--color-secondary-200)',
+    'secondary-300': 'var(--color-secondary-300)',
+    'secondary-400': 'var(--color-secondary-400)',
+    'secondary-500': 'var(--color-secondary-500)',
+    'secondary-600': 'var(--color-secondary-600)',
+    'secondary-700': 'var(--color-secondary-700)',
+    'secondary-800': 'var(--color-secondary-800)',
+    'secondary-900': 'var(--color-secondary-900)',
+    // Text colors
+    'text-primary': 'var(--color-text-primary)',
+    'text-secondary': 'var(--color-text-secondary)',
+    'text-tertiary': 'var(--color-text-tertiary)',
+    'text-muted': 'var(--color-text-muted)',
+    'text-disabled': 'var(--color-text-disabled)',
+    'text-inverse': 'var(--color-text-inverse)',
+    'text-link': 'var(--color-text-link)',
+    // Gray shades
+    'gray-50': 'var(--color-gray-50)',
+    'gray-100': 'var(--color-gray-100)',
+    'gray-200': 'var(--color-gray-200)',
+    'gray-300': 'var(--color-gray-300)',
+    'gray-400': 'var(--color-gray-400)',
+    'gray-500': 'var(--color-gray-500)',
+    'gray-600': 'var(--color-gray-600)',
+    'gray-700': 'var(--color-gray-700)',
+    'gray-800': 'var(--color-gray-800)',
+    'gray-900': 'var(--color-gray-900)',
+  };
+
+  /**
+   * Get the CSS variable for the given color name, or return the string as-is if not in the map
+   */
+  readonly computedColor = computed<string | undefined>(() => {
+    const colorName = this.color();
+    if (!colorName) {
+      return undefined;
+    }
+    // If it's a known color name, return the CSS variable
+    if (colorName in this.colorMap) {
+      return this.colorMap[colorName as IconColor];
+    }
+    // Otherwise, return the string as-is (for custom colors, hex codes, etc.)
+    return colorName;
   });
 
   // Computed

@@ -20,7 +20,7 @@ interface Feature {
             <div class="features-section_card">
               <div class="features-section_card-content">
                 <div class="features-section_card-icon">
-                  <lib-icon [name]="feature.icon" size="xl" [color]="'var(--color-primary-500)'" />
+                  <lib-icon [name]="feature.icon" size="xl" color="primary-500" />
                 </div>
                 <h3 class="features-section_card-title">{{ feature.title }}</h3>
                 <p class="features-section_card-description">{{ feature.description }}</p>
@@ -39,7 +39,7 @@ interface Feature {
         @apply w-full;
         @apply py-16 md:py-24;
         @apply px-4 sm:px-6 lg:px-8;
-        background: var(--color-bg-secondary);
+        @apply bg-bg-secondary;
       }
 
       .features-section_container {
@@ -52,14 +52,14 @@ interface Feature {
         @apply text-3xl sm:text-4xl md:text-5xl;
         @apply font-bold;
         @apply text-center;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0;
       }
 
       .features-section_subheading {
         @apply text-lg sm:text-xl md:text-2xl;
         @apply text-center;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
       }
 
@@ -72,8 +72,9 @@ interface Feature {
         @apply h-full;
         @apply rounded-lg;
         @apply p-6;
-        background: var(--color-bg-primary);
-        border: 1px solid var(--color-border-default);
+        @apply bg-bg-primary;
+        @apply border;
+        @apply border-border-default;
         @apply transition-shadow;
         @apply hover:shadow-lg;
       }
@@ -88,18 +89,18 @@ interface Feature {
         @apply flex items-center justify-center;
         @apply w-12 h-12;
         @apply rounded-lg;
-        background: var(--color-bg-tertiary);
+        @apply bg-bg-tertiary;
       }
 
       .features-section_card-title {
         @apply text-xl font-semibold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0;
       }
 
       .features-section_card-description {
         @apply text-base leading-relaxed;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
       }
     `,

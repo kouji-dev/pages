@@ -52,18 +52,14 @@ interface FeatureCategory {
                 @for (feature of category.features; track feature.title) {
                   <div class="features-page_feature-card">
                     <div class="features-page_feature-icon">
-                      <lib-icon
-                        [name]="feature.icon"
-                        size="xl"
-                        [color]="'var(--color-primary-500)'"
-                      />
+                      <lib-icon [name]="feature.icon" size="xl" color="primary-500" />
                     </div>
                     <h3 class="features-page_feature-title">{{ feature.title }}</h3>
                     <p class="features-page_feature-description">{{ feature.description }}</p>
                     <ul class="features-page_feature-details">
                       @for (detail of feature.details; track detail) {
                         <li class="features-page_feature-detail">
-                          <lib-icon name="check" size="sm" [color]="'var(--color-success)'" />
+                          <lib-icon name="check" size="sm" color="success" />
                           <span>{{ detail }}</span>
                         </li>
                       }
@@ -98,15 +94,16 @@ interface FeatureCategory {
       .features-page {
         @apply min-h-screen;
         @apply flex flex-col;
-        background: var(--color-bg-primary);
+        @apply bg-bg-primary;
       }
 
       .features-page_header {
         @apply w-full;
         @apply py-16 md:py-24;
         @apply px-4 sm:px-6 lg:px-8;
-        background: var(--color-bg-secondary);
-        border-bottom: 1px solid var(--color-border-default);
+        @apply bg-bg-secondary;
+        @apply border-b;
+        @apply border-border-default;
       }
 
       .features-page_header-container {
@@ -119,13 +116,13 @@ interface FeatureCategory {
       .features-page_title {
         @apply text-4xl sm:text-5xl md:text-6xl;
         @apply font-bold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0;
       }
 
       .features-page_subtitle {
         @apply text-lg sm:text-xl md:text-2xl;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
         @apply max-w-2xl;
       }
@@ -162,13 +159,13 @@ interface FeatureCategory {
       .features-page_category-title {
         @apply text-3xl sm:text-4xl md:text-5xl;
         @apply font-bold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0 0 1rem 0;
       }
 
       .features-page_category-description {
         @apply text-lg sm:text-xl;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
       }
 
@@ -183,8 +180,9 @@ interface FeatureCategory {
         @apply gap-4;
         @apply p-6;
         @apply rounded-lg;
-        background: var(--color-bg-primary);
-        border: 1px solid var(--color-border-default);
+        @apply bg-bg-primary;
+        @apply border;
+        @apply border-border-default;
         @apply transition-shadow;
         @apply hover:shadow-lg;
       }
@@ -193,18 +191,18 @@ interface FeatureCategory {
         @apply flex items-center justify-center;
         @apply w-12 h-12;
         @apply rounded-lg;
-        background: var(--color-bg-tertiary);
+        @apply bg-bg-tertiary;
       }
 
       .features-page_feature-title {
         @apply text-xl font-semibold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0;
       }
 
       .features-page_feature-description {
         @apply text-base leading-relaxed;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
       }
 
@@ -220,7 +218,7 @@ interface FeatureCategory {
       .features-page_feature-detail {
         @apply flex items-start gap-2;
         @apply text-sm;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
       }
 
       .features-page_feature-detail lib-icon {
@@ -236,8 +234,9 @@ interface FeatureCategory {
         @apply w-full;
         @apply py-16 md:py-24;
         @apply px-4 sm:px-6 lg:px-8;
-        background: var(--color-bg-secondary);
-        border-top: 1px solid var(--color-border-default);
+        @apply bg-bg-secondary;
+        @apply border-t;
+        @apply border-border-default;
       }
 
       .features-page_cta-container {
@@ -250,13 +249,13 @@ interface FeatureCategory {
       .features-page_cta-title {
         @apply text-3xl sm:text-4xl md:text-5xl;
         @apply font-bold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0;
       }
 
       .features-page_cta-description {
         @apply text-lg sm:text-xl;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
       }
     `,

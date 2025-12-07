@@ -77,14 +77,15 @@ import { CreateOrganizationModal } from '../components/create-organization-modal
       .organizations-page {
         @apply min-h-screen;
         @apply flex flex-col;
-        background: var(--color-bg-primary);
+        @apply bg-bg-primary;
       }
 
       .organizations-page_header {
         @apply w-full;
         @apply py-8;
         @apply px-4 sm:px-6 lg:px-8;
-        border-bottom: 1px solid var(--color-border-default);
+        @apply border-b;
+        @apply border-border-default;
       }
 
       .organizations-page_header-content {
@@ -96,13 +97,13 @@ import { CreateOrganizationModal } from '../components/create-organization-modal
 
       .organizations-page_title {
         @apply text-3xl font-bold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0 0 0.5rem 0;
       }
 
       .organizations-page_subtitle {
         @apply text-base;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
       }
 

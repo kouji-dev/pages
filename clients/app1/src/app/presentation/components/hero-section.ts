@@ -37,7 +37,7 @@ import { Button, Icon } from 'shared-ui';
         @apply w-full;
         @apply py-16 md:py-24 lg:py-32;
         @apply px-4 sm:px-6 lg:px-8;
-        background: var(--color-bg-primary);
+        @apply bg-bg-primary;
       }
 
       .hero-section_container {
@@ -55,21 +55,21 @@ import { Button, Icon } from 'shared-ui';
       .hero-section_headline {
         @apply text-4xl sm:text-5xl md:text-6xl lg:text-7xl;
         @apply font-bold leading-tight;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0;
       }
 
       .hero-section_subheading {
         @apply text-xl sm:text-2xl md:text-3xl;
         @apply font-semibold;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
       }
 
       .hero-section_description {
         @apply text-base sm:text-lg md:text-xl;
         @apply leading-relaxed;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
         max-width: 600px;
         @apply mx-auto lg:mx-0;
@@ -93,15 +93,15 @@ import { Button, Icon } from 'shared-ui';
         @apply aspect-square;
         @apply flex flex-col items-center justify-center;
         @apply border-2 border-dashed;
-        border-color: var(--color-border-default);
+        @apply border-border-default;
         @apply rounded-lg;
-        background: var(--color-bg-secondary);
+        @apply bg-bg-secondary;
         @apply gap-4;
       }
 
       .hero-section_image-text {
         @apply text-sm font-medium;
-        color: var(--color-text-tertiary);
+        @apply text-text-tertiary;
         margin: 0;
       }
     `,

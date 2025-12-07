@@ -162,13 +162,13 @@ export type InputType =
 
       .input-label {
         @apply text-sm font-medium;
-        color: var(--color-text-primary);
-        line-height: 1.5;
+        @apply text-text-primary;
+        @apply leading-normal;
       }
 
       .input-label-required {
         @apply ml-0.5;
-        color: var(--color-error);
+        @apply text-error;
       }
 
       .input-container {
@@ -188,52 +188,53 @@ export type InputType =
         @apply bg-white;
         @apply transition-colors;
         @apply focus:outline-none;
-        color: var(--color-text-primary);
-        border-color: var(--color-border-default);
-        font-family: var(--font-family-sans);
+        @apply text-text-primary;
+        @apply border-border-default;
+        @apply font-sans;
         min-height: 2.5rem;
       }
 
       .input--textarea {
         @apply resize-y;
         min-height: 6rem; /* Default for textarea */
-        line-height: 1.5;
+        @apply leading-normal;
       }
 
       .input::placeholder {
-        color: var(--color-text-tertiary);
+        @apply text-text-tertiary;
         opacity: 1;
       }
 
       .input:hover:not(:disabled):not(:read-only):not(.input--error) {
-        border-color: var(--color-border-hover);
+        @apply border-border-hover;
       }
 
       .input:focus:not(:disabled):not(:read-only) {
-        border-color: var(--color-border-focus);
-        outline: 2px solid var(--color-border-focus);
+        @apply border-border-focus;
+        @apply outline-2;
+        @apply outline-border-focus;
         outline-offset: -2px;
       }
 
       .input--error {
-        border-color: var(--color-border-error);
+        @apply border-border-error;
       }
 
       .input--error:focus {
-        border-color: var(--color-border-error);
-        outline-color: var(--color-border-error);
+        @apply border-border-error;
+        @apply outline-border-error;
       }
 
       .input--disabled {
         @apply cursor-not-allowed;
-        background-color: var(--color-bg-tertiary);
-        border-color: var(--color-border-default);
+        @apply bg-bg-tertiary;
+        @apply border-border-default;
       }
 
       .input--readonly {
         @apply cursor-default;
-        background-color: var(--color-bg-tertiary);
-        border-color: var(--color-border-default);
+        @apply bg-bg-tertiary;
+        @apply border-border-default;
       }
 
       /* Number input spinner styling - hide native spinners */
@@ -252,7 +253,7 @@ export type InputType =
       .input-number-spinner {
         @apply absolute right-0 flex flex-col;
         @apply border-l border-solid;
-        border-left-color: var(--color-border-default);
+        @apply border-l-border-default;
         height: 100%;
         justify-content: center;
         gap: 0;
@@ -271,22 +272,23 @@ export type InputType =
         width: 1.5rem;
         height: 50%;
         min-height: 0.875rem;
-        color: var(--color-text-tertiary);
+        @apply text-text-tertiary;
         border-radius: 0;
         margin: 0;
       }
 
       .input-number-spinner-button:hover {
-        background-color: var(--color-bg-hover);
-        color: var(--color-text-primary);
+        @apply bg-bg-hover;
+        @apply text-text-primary;
       }
 
       .input-number-spinner-button:active {
-        background-color: var(--color-bg-active);
+        @apply bg-bg-active;
       }
 
       .input-number-spinner-button--up {
-        border-bottom: 1px solid var(--color-border-default);
+        @apply border-b;
+        @apply border-border-default;
         border-top-right-radius: 0.375rem;
         border-bottom-right-radius: 0;
       }
@@ -307,7 +309,7 @@ export type InputType =
       .input-icon {
         @apply absolute flex items-center justify-center;
         @apply pointer-events-none;
-        color: var(--color-text-tertiary);
+        @apply text-text-tertiary;
         z-index: 1;
       }
 
@@ -324,26 +326,27 @@ export type InputType =
         @apply border-none bg-transparent p-0;
         @apply hover:opacity-70;
         @apply focus:outline-none focus:ring-2 focus:ring-offset-1;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         border-radius: 0.25rem;
       }
 
       .input-password-toggle:focus-visible {
-        outline: 2px solid var(--color-border-focus);
+        @apply outline-2;
+        @apply outline-border-focus;
         outline-offset: 2px;
       }
 
       .input-helper-text {
         @apply text-xs;
-        color: var(--color-text-tertiary);
-        line-height: 1.5;
+        @apply text-text-tertiary;
+        @apply leading-normal;
       }
 
       .input-error-message {
         @apply flex items-center gap-1.5;
         @apply text-xs font-medium;
-        color: var(--color-error);
-        line-height: 1.5;
+        @apply text-error;
+        @apply leading-normal;
       }
 
       .input-error-icon {
@@ -351,7 +354,7 @@ export type InputType =
       }
 
       .input-wrapper--error .input-label {
-        color: var(--color-error);
+        @apply text-error;
       }
     `,
   ],

@@ -1,5 +1,5 @@
 import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
-import { Icon, IconSize } from '../icon/icon';
+import { Icon, IconSize, IconColor } from '../icon/icon';
 
 export type LoadingStateSize = 'sm' | 'md' | 'lg';
 export type LoadingStateColor = 'default' | 'primary' | 'secondary';
@@ -42,7 +42,7 @@ export type LoadingStateColor = 'default' | 'primary' | 'secondary';
 
       .loading-state_message {
         @apply text-sm font-medium;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
         text-align: center;
       }
@@ -66,12 +66,12 @@ export class LoadingState {
     return sizeMap[size] || 'md';
   });
 
-  readonly iconColor = computed<string | undefined>(() => {
+  readonly iconColor = computed<IconColor | undefined>(() => {
     const color = this.color();
-    const colorMap: Record<LoadingStateColor, string> = {
-      default: 'var(--color-text-primary)',
-      primary: 'var(--color-primary-500)',
-      secondary: 'var(--color-secondary-500)',
+    const colorMap: Record<LoadingStateColor, IconColor> = {
+      default: 'text-primary',
+      primary: 'primary-500',
+      secondary: 'secondary-500',
     };
     return colorMap[color] || colorMap.default;
   });

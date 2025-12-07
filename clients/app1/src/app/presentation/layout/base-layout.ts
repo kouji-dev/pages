@@ -90,15 +90,16 @@ import { RouterOutlet } from '@angular/router';
 
       .layout {
         @apply flex flex-col min-h-screen;
-        background-color: var(--color-bg-primary);
+        @apply bg-bg-primary;
       }
 
       /* Header Toolbar (Jira/Confluence Style) */
       .layout_header {
         @apply sticky top-0 z-50;
-        background-color: var(--color-bg-primary);
-        border-bottom: 1px solid var(--color-border-default);
-        box-shadow: var(--shadow-sm);
+        @apply bg-bg-primary;
+        @apply border-b;
+        @apply border-border-default;
+        @apply shadow-sm;
       }
 
       .layout_header-content {
@@ -118,12 +119,12 @@ import { RouterOutlet } from '@angular/router';
       .layout_sidebar-toggle {
         @apply lg:hidden p-2 rounded-md transition-colors;
         @apply border-none bg-transparent cursor-pointer;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
       }
 
       .layout_sidebar-toggle:hover {
-        color: var(--color-text-primary);
-        background-color: var(--color-bg-hover);
+        @apply text-text-primary;
+        @apply bg-bg-hover;
       }
 
       .layout_sidebar-toggle-icon {
@@ -138,7 +139,7 @@ import { RouterOutlet } from '@angular/router';
 
       .layout_logo-text {
         @apply text-xl font-bold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       /* Breadcrumb Navigation (Jira/Confluence Style) */
@@ -201,8 +202,9 @@ import { RouterOutlet } from '@angular/router';
       .layout_sidebar {
         @apply hidden lg:flex lg:flex-col;
         width: 17.5rem; /* 280px - Notion style, wider than typical */
-        background-color: var(--color-bg-secondary); /* Notion's light beige */
-        border-right: 1px solid var(--color-border-default);
+        @apply bg-bg-secondary; /* Notion's light beige */
+        @apply border-r;
+        @apply border-border-default;
         @apply transition-transform duration-300 ease-in-out;
       }
 
@@ -221,14 +223,14 @@ import { RouterOutlet } from '@angular/router';
         .layout--sidebar-open .layout_sidebar {
           @apply fixed inset-y-0 left-0 z-40 flex flex-col shadow-lg;
           width: 17.5rem;
-          background-color: var(--color-bg-secondary);
+          @apply bg-bg-secondary;
           top: 3.5rem; /* Match header height */
         }
 
         .layout--sidebar-open::before {
           content: '';
           @apply fixed inset-0 z-30;
-          background-color: var(--color-bg-overlay);
+          @apply bg-bg-overlay;
           @apply lg:hidden;
         }
       }
@@ -236,7 +238,7 @@ import { RouterOutlet } from '@angular/router';
       /* Main Content Area (Notion Style: Generous padding, wide readable max-width) */
       .layout_main {
         @apply flex-1 overflow-y-auto;
-        background-color: var(--color-bg-primary);
+        @apply bg-bg-primary;
       }
 
       .layout_main-content {
@@ -251,8 +253,9 @@ import { RouterOutlet } from '@angular/router';
       /* Footer */
       .layout_footer {
         @apply mt-auto;
-        background-color: var(--color-bg-primary);
-        border-top: 1px solid var(--color-border-default);
+        @apply bg-bg-primary;
+        @apply border-t;
+        @apply border-border-default;
       }
 
       .layout_footer-content {
@@ -270,7 +273,7 @@ import { RouterOutlet } from '@angular/router';
 
       .layout_footer-copyright {
         @apply text-sm;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
       }
 
       /* Responsive adjustments */

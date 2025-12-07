@@ -7,7 +7,13 @@ import { OrganizationsPage } from './presentation/pages/organizations-page';
 import { OrganizationSettingsPage } from './presentation/pages/organization-settings-page';
 import { InvitationAcceptancePage } from './presentation/pages/invitation-acceptance-page';
 import { ProfilePage } from './presentation/pages/profile-page';
+import { LoginPage } from './presentation/pages/login-page.component';
+import { RegisterPage } from './presentation/pages/register-page.component';
+import { ForgotPasswordPage } from './presentation/pages/forgot-password-page.component';
+import { ResetPasswordPage } from './presentation/pages/reset-password-page.component';
+import { NotFoundComponent } from './presentation/pages/not-found.component';
 import { AuthenticatedLayout } from './presentation/layout/authenticated-layout';
+import { authGuard } from './application/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -35,9 +41,32 @@ export const routes: Routes = [
     component: InvitationAcceptancePage,
     title: 'Accept Invitation - Pages',
   },
+  // Public authentication routes
+  {
+    path: 'login',
+    component: LoginPage,
+    title: 'Login - Pages',
+  },
+  {
+    path: 'register',
+    component: RegisterPage,
+    title: 'Sign Up - Pages',
+  },
+  {
+    path: 'forgot-password',
+    component: ForgotPasswordPage,
+    title: 'Forgot Password - Pages',
+  },
+  {
+    path: 'reset-password',
+    component: ResetPasswordPage,
+    title: 'Reset Password - Pages',
+  },
+  // Protected routes (require authentication)
   {
     path: 'app',
     component: AuthenticatedLayout,
+    canActivate: [authGuard],
     children: [
       {
         path: 'organizations',
@@ -55,5 +84,11 @@ export const routes: Routes = [
         title: 'Profile - Pages',
       },
     ],
+  },
+  // 404 - must be last
+  {
+    path: '**',
+    component: NotFoundComponent,
+    title: 'Page Not Found - Pages',
   },
 ];

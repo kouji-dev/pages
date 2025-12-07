@@ -22,7 +22,7 @@ export interface CreateOrganizationRequest {
 })
 export class OrganizationService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${environment.apiUrl}/api/v1/organizations`;
+  private readonly apiUrl = `${environment.apiUrl}/organizations`;
 
   // Organizations list resource using httpResource
   readonly organizations = httpResource(() => this.apiUrl);
@@ -103,17 +103,19 @@ export class OrganizationService {
   }
 
   /**
-   * Get current organization (from resource)
+   * Get current organization signal
+   * Returns readonly signal - consumers can convert to Observable using toObservable() if needed
    */
-  getCurrentOrganization(): Organization | undefined {
-    return this.currentOrganization();
+  getCurrentOrganization(): typeof this.currentOrganization {
+    return this.currentOrganization;
   }
 
   /**
-   * Get all organizations
+   * Get all organizations signal
+   * Returns readonly signal - consumers can convert to Observable using toObservable() if needed
    */
-  getOrganizations(): Organization[] {
-    return this.organizationsList();
+  getOrganizations(): typeof this.organizationsList {
+    return this.organizationsList;
   }
 
   /**

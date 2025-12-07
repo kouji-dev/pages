@@ -12,7 +12,7 @@ import { Icon, IconName } from '../icon/icon';
           <lib-icon
             [name]="icon()!"
             size="xl"
-            [color]="'var(--color-text-tertiary)'"
+            [color]="'text-tertiary'"
             [ariaLabel]="iconLabel() || 'Empty state'"
           />
         }
@@ -58,13 +58,13 @@ import { Icon, IconName } from '../icon/icon';
 
       .empty-state_title {
         @apply text-lg font-semibold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0;
       }
 
       .empty-state_message {
         @apply text-sm;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
       }
     `,

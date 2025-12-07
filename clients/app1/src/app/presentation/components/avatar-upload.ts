@@ -102,13 +102,13 @@ import { UserProfileService } from '../../application/services/user-profile.serv
 
       .avatar-upload_title {
         @apply text-xl font-semibold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0;
       }
 
       .avatar-upload_description {
         @apply text-sm;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
       }
 
@@ -128,7 +128,8 @@ import { UserProfileService } from '../../application/services/user-profile.serv
         @apply w-full h-full;
         @apply rounded-full;
         @apply overflow-hidden;
-        border: 2px solid var(--color-border-default);
+        @apply border-2;
+        @apply border-border-default;
       }
 
       .avatar-upload_preview-image {
@@ -140,7 +141,7 @@ import { UserProfileService } from '../../application/services/user-profile.serv
         @apply absolute inset-0;
         @apply flex flex-col items-center justify-center gap-2;
         @apply rounded-full;
-        background: var(--color-bg-overlay);
+        @apply bg-bg-overlay;
       }
 
       .avatar-upload_preview-overlay-text {
@@ -153,13 +154,13 @@ import { UserProfileService } from '../../application/services/user-profile.serv
         @apply flex items-center justify-center;
         @apply rounded-full;
         @apply border-2 border-dashed;
-        border-color: var(--color-border-default);
-        background: var(--color-bg-tertiary);
+        @apply border-border-default;
+        @apply bg-bg-tertiary;
       }
 
       .avatar-upload_preview-placeholder-text {
         @apply text-3xl font-bold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .avatar-upload_actions {
@@ -187,8 +188,8 @@ import { UserProfileService } from '../../application/services/user-profile.serv
         @apply p-3;
         @apply rounded-lg;
         @apply text-sm;
-        background: var(--color-error-50);
-        color: var(--color-error);
+        @apply bg-error-50;
+        @apply text-error;
       }
 
       .avatar-upload_info {
@@ -196,8 +197,8 @@ import { UserProfileService } from '../../application/services/user-profile.serv
         @apply p-3;
         @apply rounded-lg;
         @apply text-sm;
-        background: var(--color-bg-tertiary);
-        color: var(--color-text-secondary);
+        @apply bg-bg-tertiary;
+        @apply text-text-secondary;
       }
 
       .avatar-upload_info lib-icon {

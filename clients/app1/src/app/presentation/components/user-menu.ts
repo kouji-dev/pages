@@ -102,7 +102,7 @@ import { AuthService } from '../../application/services/auth.service';
         @apply rounded-md;
         @apply border-none bg-transparent;
         @apply transition-colors;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         @apply cursor-pointer;
         @apply hover:bg-gray-100;
       }
@@ -112,7 +112,7 @@ import { AuthService } from '../../application/services/auth.service';
         @apply rounded-full;
         @apply overflow-hidden;
         @apply flex-shrink-0;
-        background: var(--color-bg-tertiary);
+        @apply bg-bg-tertiary;
       }
 
       .user-menu_avatar-image {
@@ -124,19 +124,19 @@ import { AuthService } from '../../application/services/auth.service';
         @apply w-full h-full;
         @apply flex items-center justify-center;
         @apply text-xs font-semibold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .user-menu_name {
         @apply text-sm font-medium;
         @apply hidden sm:inline;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .user-menu_chevron {
         @apply flex-shrink-0;
         @apply hidden sm:block;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
       }
 
       .user-menu_dropdown {
@@ -147,7 +147,7 @@ import { AuthService } from '../../application/services/auth.service';
       .user-menu_user-info {
         @apply flex items-center gap-3;
         @apply px-4 py-3;
-        background: var(--color-bg-secondary);
+        @apply bg-bg-secondary;
       }
 
       .user-menu_user-info-avatar {
@@ -155,7 +155,7 @@ import { AuthService } from '../../application/services/auth.service';
         @apply rounded-full;
         @apply overflow-hidden;
         @apply flex-shrink-0;
-        background: var(--color-bg-tertiary);
+        @apply bg-bg-tertiary;
       }
 
       .user-menu_user-info-avatar-image {
@@ -167,7 +167,7 @@ import { AuthService } from '../../application/services/auth.service';
         @apply w-full h-full;
         @apply flex items-center justify-center;
         @apply text-sm font-semibold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .user-menu_user-info-details {
@@ -178,19 +178,19 @@ import { AuthService } from '../../application/services/auth.service';
 
       .user-menu_user-info-name {
         @apply text-sm font-semibold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         @apply truncate;
       }
 
       .user-menu_user-info-email {
         @apply text-xs;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         @apply truncate;
       }
 
       .user-menu_divider {
         @apply h-px;
-        background: var(--color-border-default);
+        @apply bg-border-default;
       }
 
       .user-menu_nav {
@@ -207,7 +207,7 @@ import { AuthService } from '../../application/services/auth.service';
         @apply px-4 py-2;
         @apply text-sm;
         @apply transition-colors;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         text-decoration: none;
         @apply border-none bg-transparent;
         @apply cursor-pointer;
@@ -216,15 +216,15 @@ import { AuthService } from '../../application/services/auth.service';
 
       .user-menu_item-icon {
         @apply flex-shrink-0;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
       }
 
       .user-menu_item--logout {
-        color: var(--color-error);
+        @apply text-error;
       }
 
       .user-menu_item--logout:hover {
-        background: var(--color-error);
+        @apply bg-error;
         color: white;
       }
 

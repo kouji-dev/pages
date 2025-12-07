@@ -1,5 +1,5 @@
 import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
-import { Icon, IconSize } from '../icon/icon';
+import { Icon, IconSize, IconColor } from '../icon/icon';
 
 export type SpinnerSize = 'sm' | 'md' | 'lg';
 export type SpinnerColor = 'default' | 'primary' | 'secondary' | 'white';
@@ -37,7 +37,7 @@ export type SpinnerColor = 'default' | 'primary' | 'secondary' | 'white';
 
       .spinner-content_backdrop {
         @apply absolute inset-0;
-        background-color: var(--color-bg-overlay);
+        @apply bg-bg-overlay;
         backdrop-filter: blur(2px);
       }
 
@@ -49,7 +49,7 @@ export type SpinnerColor = 'default' | 'primary' | 'secondary' | 'white';
 
       .spinner-content_message {
         @apply text-sm font-medium;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0;
       }
     `,
@@ -73,14 +73,14 @@ export class SpinnerContent {
     return sizeMap[size] || 'md';
   });
 
-  // Computed: map spinner color to icon color (using CSS variable)
-  readonly iconColor = computed<string | undefined>(() => {
+  // Computed: map spinner color to icon color name
+  readonly iconColor = computed<IconColor | undefined>(() => {
     const color = this.color();
-    const colorMap: Record<SpinnerColor, string> = {
-      default: 'var(--color-text-primary)',
-      primary: 'var(--color-primary-500)',
-      secondary: 'var(--color-secondary-500)',
-      white: 'var(--color-text-inverse)',
+    const colorMap: Record<SpinnerColor, IconColor> = {
+      default: 'text-primary',
+      primary: 'primary-500',
+      secondary: 'secondary-500',
+      white: 'text-inverse',
     };
     return colorMap[color] || colorMap.default;
   });

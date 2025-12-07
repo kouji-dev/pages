@@ -103,14 +103,15 @@ import { AvatarUpload } from '../components/avatar-upload';
       .profile-page {
         @apply min-h-screen;
         @apply flex flex-col;
-        background: var(--color-bg-primary);
+        @apply bg-bg-primary;
       }
 
       .profile-page_header {
         @apply w-full;
         @apply py-8;
         @apply px-4 sm:px-6 lg:px-8;
-        border-bottom: 1px solid var(--color-border-default);
+        @apply border-b;
+        @apply border-border-default;
       }
 
       .profile-page_header-content {
@@ -119,13 +120,13 @@ import { AvatarUpload } from '../components/avatar-upload';
 
       .profile-page_title {
         @apply text-3xl font-bold mb-2;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0;
       }
 
       .profile-page_subtitle {
         @apply text-base;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
       }
 
@@ -148,13 +149,13 @@ import { AvatarUpload } from '../components/avatar-upload';
         @apply p-6;
         @apply rounded-lg;
         @apply border;
-        border-color: var(--color-border-default);
-        background: var(--color-bg-primary);
+        @apply border-border-default;
+        @apply bg-bg-primary;
       }
 
       .profile-page_section-title {
         @apply text-xl font-semibold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0;
       }
 
@@ -168,7 +169,7 @@ import { AvatarUpload } from '../components/avatar-upload';
         @apply gap-3;
         @apply pt-4;
         @apply border-t;
-        border-color: var(--color-border-default);
+        @apply border-border-default;
       }
     `,
   ],

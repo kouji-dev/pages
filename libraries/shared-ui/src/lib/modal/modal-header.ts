@@ -25,7 +25,8 @@ import { Modal } from './modal';
       .modal-header {
         @apply flex items-center justify-between;
         @apply px-6 py-4;
-        border-bottom: 1px solid var(--color-border-divider);
+        @apply border-b;
+        @apply border-border-divider;
       }
 
       .modal-header_content {
@@ -34,7 +35,7 @@ import { Modal } from './modal';
 
       .modal-header_title {
         @apply text-xl font-semibold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0;
       }
 
@@ -45,17 +46,18 @@ import { Modal } from './modal';
         @apply transition-colors;
         background: transparent;
         border: none;
-        color: var(--color-text-tertiary);
+        @apply text-text-tertiary;
         cursor: pointer;
       }
 
       .modal-header_close:hover {
-        background-color: var(--color-bg-hover);
-        color: var(--color-text-primary);
+        @apply bg-bg-hover;
+        @apply text-text-primary;
       }
 
       .modal-header_close:focus-visible {
-        outline: 2px solid var(--color-border-focus);
+        @apply outline-2;
+        @apply outline-border-focus;
         outline-offset: 2px;
       }
     `,

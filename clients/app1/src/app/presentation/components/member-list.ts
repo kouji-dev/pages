@@ -156,13 +156,13 @@ import { OrganizationMember } from '../../application/services/organization-memb
 
       .member-list_title {
         @apply text-xl font-semibold mb-1;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0;
       }
 
       .member-list_subtitle {
         @apply text-sm;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
       }
 
@@ -180,7 +180,7 @@ import { OrganizationMember } from '../../application/services/organization-memb
         @apply rounded-full;
         @apply overflow-hidden;
         @apply flex-shrink-0;
-        background: var(--color-bg-tertiary);
+        @apply bg-bg-tertiary;
       }
 
       .member-list_table-avatar-image {
@@ -192,7 +192,7 @@ import { OrganizationMember } from '../../application/services/organization-memb
         @apply w-full h-full;
         @apply flex items-center justify-center;
         @apply text-sm font-semibold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .member-list_table-info {
@@ -202,13 +202,13 @@ import { OrganizationMember } from '../../application/services/organization-memb
 
       .member-list_table-name {
         @apply text-sm font-medium;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         @apply truncate;
       }
 
       .member-list_table-email {
         @apply text-xs;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         @apply truncate;
       }
 
@@ -220,18 +220,18 @@ import { OrganizationMember } from '../../application/services/organization-memb
       }
 
       .member-list_role-badge--admin {
-        background: var(--color-primary-100);
-        color: var(--color-primary-700);
+        @apply bg-primary-100;
+        @apply text-primary-700;
       }
 
       .member-list_role-badge--member {
-        background: var(--color-gray-100);
-        color: var(--color-gray-700);
+        @apply bg-gray-100;
+        @apply text-gray-700;
       }
 
       .member-list_role-badge--viewer {
-        background: var(--color-gray-50);
-        color: var(--color-gray-600);
+        @apply bg-gray-50;
+        @apply text-gray-600;
       }
 
       .member-list_actions-menu {
@@ -250,11 +250,11 @@ import { OrganizationMember } from '../../application/services/organization-memb
       }
 
       .member-list_action-item--danger {
-        color: var(--color-error);
+        @apply text-error;
       }
 
       .member-list_action-item--danger:hover {
-        background: var(--color-error-50);
+        @apply bg-error-50;
       }
     `,
   ],

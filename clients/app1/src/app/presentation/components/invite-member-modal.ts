@@ -81,12 +81,12 @@ import {
         @apply gap-3;
         @apply pt-4;
         @apply border-t;
-        border-color: var(--color-border-default);
+        @apply border-border-default;
       }
 
       .invite-member-form_role-label {
         @apply text-sm font-medium;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .invite-member-form_role-options {
@@ -99,8 +99,8 @@ import {
         @apply p-3;
         @apply rounded-lg;
         @apply border;
-        border-color: var(--color-border-default);
-        background: var(--color-bg-primary);
+        @apply border-border-default;
+        @apply bg-bg-primary;
         @apply transition-colors;
         @apply cursor-pointer;
         @apply hover:bg-gray-50;
@@ -108,8 +108,8 @@ import {
       }
 
       .invite-member-form_role-option--selected {
-        border-color: var(--color-primary-500);
-        background: var(--color-primary-50);
+        @apply border-primary-500;
+        @apply bg-primary-50;
       }
 
       .invite-member-form_role-option-header {
@@ -118,12 +118,12 @@ import {
 
       .invite-member-form_role-option-name {
         @apply text-sm font-medium;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .invite-member-form_role-option-description {
         @apply text-xs;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
       }
     `,

@@ -16,7 +16,8 @@ import { CommonModule } from '@angular/common';
       .modal-footer {
         @apply flex items-center justify-end gap-3;
         @apply px-6 py-4;
-        border-top: 1px solid var(--color-border-divider);
+        @apply border-t;
+        @apply border-border-divider;
       }
 
       @media (max-width: 640px) {

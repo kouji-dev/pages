@@ -54,8 +54,9 @@ import { ToastType } from './toast.service';
         @apply mb-3;
         @apply transform transition-all duration-300 ease-out;
         @apply opacity-0 translate-x-full;
-        background-color: var(--color-bg-primary);
-        border: 1px solid var(--color-border-default);
+        @apply bg-bg-primary;
+        @apply border;
+        @apply border-border-default;
         margin-bottom: 0.75rem; /* Stack spacing between toasts */
       }
 
@@ -89,7 +90,7 @@ import { ToastType } from './toast.service';
         @apply text-sm;
         @apply m-0;
         @apply leading-relaxed;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         word-wrap: break-word;
         display: block;
         width: 100%;
@@ -101,46 +102,50 @@ import { ToastType } from './toast.service';
         @apply transition-colors;
         background: transparent;
         border: none;
-        color: var(--color-text-tertiary);
+        @apply text-text-tertiary;
         cursor: pointer;
       }
 
       .toast_close:hover {
-        background-color: var(--color-bg-hover);
-        color: var(--color-text-primary);
+        @apply bg-bg-hover;
+        @apply text-text-primary;
       }
 
       /* Type variants */
       .toast--success {
-        border-left: 4px solid var(--color-success);
+        @apply border-l-4;
+        @apply border-success;
       }
 
       .toast--success .toast_icon {
-        color: var(--color-success);
+        @apply text-success;
       }
 
       .toast--error {
-        border-left: 4px solid var(--color-error);
+        @apply border-l-4;
+        @apply border-error;
       }
 
       .toast--error .toast_icon {
-        color: var(--color-error);
+        @apply text-error;
       }
 
       .toast--warning {
-        border-left: 4px solid var(--color-warning);
+        @apply border-l-4;
+        @apply border-warning;
       }
 
       .toast--warning .toast_icon {
-        color: var(--color-warning);
+        @apply text-warning;
       }
 
       .toast--info {
-        border-left: 4px solid var(--color-info);
+        @apply border-l-4;
+        @apply border-info;
       }
 
       .toast--info .toast_icon {
-        color: var(--color-info);
+        @apply text-info;
       }
 
       /* Animations */
