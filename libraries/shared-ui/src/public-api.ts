@@ -22,3 +22,7 @@ export * from './lib/modal/modal-container';
 export * from './lib/modal/modal-header';
 export * from './lib/modal/modal-content';
 export * from './lib/modal/modal-footer';
+export * from './lib/dropdown/dropdown';
+export type { DropdownPosition } from './lib/dropdown/dropdown';
+export * from './lib/table/table';
+export type { TableColumn } from './lib/table/table';

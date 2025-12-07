@@ -288,7 +288,7 @@ export class FeatureComponent {}
 - ✅ `model()` for two-way binding
 - ✅ `signal()` for reactive state
 - ✅ `computed()` for derived state
-- ✅ `effect()` for side effects
+- ✅ `effect()` for side effects (declare as instance variables, NOT in constructor or ngOnInit)
 - ✅ `afterRenderEffect()` for DOM manipulation after render (instead of `ngOnInit`)
 - ✅ `inject()` instead of constructor injection
 - ✅ `DestroyRef` instead of `OnDestroy` interface
@@ -330,12 +330,13 @@ export class Card {
     // Can access DOM elements safely here
   });
 
-  // Effects for reactive side effects
-  constructor() {
-    effect(() => {
-      console.log('Title changed:', this.title());
-    });
+  // Effects for reactive side effects - declare as instance variables
+  // ❌ NEVER declare effects in constructor or ngOnInit
+  private readonly titleChangeEffect = effect(() => {
+    console.log('Title changed:', this.title());
+  });
 
+  constructor() {
     // Register cleanup using DestroyRef
     this.destroyRef.onDestroy(() => {
       // Cleanup code here (e.g., unsubscribe, remove event listeners)
@@ -563,6 +564,7 @@ describe('Feature', () => {
 ❌ Use NgModules (use standalone components)  
 ❌ Use constructor injection (use `inject()`)  
 ❌ Use `OnDestroy` interface (use `DestroyRef.onDestroy()` instead)  
+❌ Declare `effect()` in constructor or `ngOnInit()` (declare as instance variables)  
 ❌ Use prefixes like `I` for interfaces  
 ❌ Mix naming conventions  
 ❌ Use unclear or abbreviated names
