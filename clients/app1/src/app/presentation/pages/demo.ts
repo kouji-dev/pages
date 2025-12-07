@@ -14,6 +14,7 @@ import {
   LoadingState,
   ErrorState,
   EmptyState,
+  Dropdown,
 } from 'shared-ui';
 
 @Component({
@@ -30,6 +31,7 @@ import {
     LoadingState,
     ErrorState,
     EmptyState,
+    Dropdown,
     RouterLink,
   ],
   template: `
@@ -710,6 +712,140 @@ import {
           </lib-modal-footer>
         </lib-modal-container>
       </ng-template>
+
+      <!-- Dropdown Component Showcase -->
+      <section class="demo_section">
+        <h2 class="demo_section-title">Dropdown Component</h2>
+
+        <div class="demo_grid">
+          <div class="demo_item">
+            <h3 class="demo_item-title">Basic Dropdown (Click)</h3>
+            <div class="demo_item-content">
+              <button
+                type="button"
+                [libDropdown]="basicDropdownTemplate"
+                class="demo_dropdown-trigger"
+                #basicDropdown="libDropdown"
+              >
+                Click me
+                <lib-icon [name]="basicDropdown.open() ? 'chevron-up' : 'chevron-down'" size="sm" />
+              </button>
+              <ng-template #basicDropdownTemplate>
+                <div class="demo_dropdown-content">
+                  <div class="demo_dropdown-item">Item 1</div>
+                  <div class="demo_dropdown-item">Item 2</div>
+                  <div class="demo_dropdown-item">Item 3</div>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">Dropdown Positions</h3>
+            <div class="demo_item-content" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+              <button
+                type="button"
+                [libDropdown]="positionDropdownTemplate"
+                [position]="'below'"
+                class="demo_dropdown-trigger"
+              >
+                Below
+              </button>
+              <button
+                type="button"
+                [libDropdown]="positionDropdownTemplate"
+                [position]="'above'"
+                class="demo_dropdown-trigger"
+              >
+                Above
+              </button>
+              <button
+                type="button"
+                [libDropdown]="positionDropdownTemplate"
+                [position]="'right'"
+                class="demo_dropdown-trigger"
+              >
+                Right
+              </button>
+              <button
+                type="button"
+                [libDropdown]="positionDropdownTemplate"
+                [position]="'left'"
+                class="demo_dropdown-trigger"
+              >
+                Left
+              </button>
+              <ng-template #positionDropdownTemplate>
+                <div class="demo_dropdown-content">
+                  <div class="demo_dropdown-item">Menu Item 1</div>
+                  <div class="demo_dropdown-item">Menu Item 2</div>
+                  <div class="demo_dropdown-item">Menu Item 3</div>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">With Icons</h3>
+            <div class="demo_item-content">
+              <button
+                type="button"
+                [libDropdown]="iconDropdownTemplate"
+                class="demo_dropdown-trigger"
+                #iconDropdown="libDropdown"
+              >
+                Actions
+                <lib-icon [name]="iconDropdown.open() ? 'chevron-up' : 'chevron-down'" size="sm" />
+              </button>
+              <ng-template #iconDropdownTemplate>
+                <div class="demo_dropdown-content">
+                  <div class="demo_dropdown-item">
+                    <lib-icon name="pencil" size="sm" />
+                    <span>Edit</span>
+                  </div>
+                  <div class="demo_dropdown-item">
+                    <lib-icon name="copy" size="sm" />
+                    <span>Copy</span>
+                  </div>
+                  <div class="demo_dropdown-item">
+                    <lib-icon name="trash" size="sm" />
+                    <span>Delete</span>
+                  </div>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+
+          <div class="demo_item">
+            <h3 class="demo_item-title">With Data Binding</h3>
+            <div class="demo_item-content">
+              <button
+                type="button"
+                [libDropdown]="dataDropdownTemplate"
+                [dropdownData]="selectedItem()"
+                class="demo_dropdown-trigger"
+                #dataDropdown="libDropdown"
+              >
+                Selected: {{ selectedItem() || 'None' }}
+                <lib-icon [name]="dataDropdown.open() ? 'chevron-up' : 'chevron-down'" size="sm" />
+              </button>
+              <ng-template #dataDropdownTemplate let-data>
+                <div class="demo_dropdown-content">
+                  @for (item of dropdownItems(); track item) {
+                    <div
+                      class="demo_dropdown-item"
+                      [class.demo_dropdown-item--active]="selectedItem() === item"
+                      (click)="selectItem(item, dataDropdown)"
+                    >
+                      {{ item }}
+                    </div>
+                  }
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   `,
   styles: [
@@ -775,6 +911,45 @@ import {
         @apply flex flex-col gap-3 items-start;
         width: 100%;
       }
+
+      .demo_dropdown-trigger {
+        @apply flex items-center gap-2;
+        @apply px-4 py-2;
+        @apply rounded-md;
+        @apply border;
+        border-color: var(--color-border-default);
+        background: var(--color-bg-primary);
+        color: var(--color-text-primary);
+        @apply font-medium;
+        @apply transition-colors;
+        @apply cursor-pointer;
+        @apply hover:bg-gray-100;
+      }
+
+      .demo_dropdown-content {
+        @apply py-1;
+        min-width: 12rem;
+      }
+
+      .demo_dropdown-item {
+        @apply flex items-center gap-2;
+        @apply px-4 py-2;
+        @apply text-sm;
+        @apply transition-colors;
+        color: var(--color-text-primary);
+        @apply cursor-pointer;
+        @apply hover:bg-gray-100;
+      }
+
+      .demo_dropdown-item--active {
+        background: var(--color-bg-secondary);
+        color: var(--color-primary-500);
+        font-weight: 500;
+      }
+
+      .demo_dropdown-item lib-icon {
+        @apply flex-shrink-0;
+      }
     `,
   ],
 })
@@ -806,6 +981,10 @@ export class Demo {
   readonly typeUrlValue = signal('');
   readonly disabledInputValue = signal('Disabled value');
   readonly readonlyInputValue = signal('Read-only value');
+
+  // Dropdown demo values
+  readonly selectedItem = signal<string | null>(null);
+  readonly dropdownItems = signal(['Option 1', 'Option 2', 'Option 3', 'Option 4']);
   readonly textareaValue = signal('');
   readonly textareaValue2 = signal('');
 
@@ -813,6 +992,10 @@ export class Demo {
   @ViewChild('smallModalTemplate') smallModalTemplate!: TemplateRef<any>;
   @ViewChild('mediumModalTemplate') mediumModalTemplate!: TemplateRef<any>;
   @ViewChild('largeModalTemplate') largeModalTemplate!: TemplateRef<any>;
+  @ViewChild('basicDropdownTemplate') basicDropdownTemplate!: TemplateRef<any>;
+  @ViewChild('positionDropdownTemplate') positionDropdownTemplate!: TemplateRef<any>;
+  @ViewChild('iconDropdownTemplate') iconDropdownTemplate!: TemplateRef<any>;
+  @ViewChild('dataDropdownTemplate') dataDropdownTemplate!: TemplateRef<any>;
 
   toggleLoading(): void {
     this.loadingButton.update((loading) => !loading);
@@ -884,6 +1067,11 @@ export class Demo {
 
   handleEmptyStateAction(): void {
     this.toast.info('Action button clicked!');
+  }
+
+  selectItem(item: string, dropdown: Dropdown): void {
+    this.selectedItem.set(item);
+    dropdown.open.set(false);
   }
 
   openModal(size: 'sm' | 'md' | 'lg'): void {

@@ -99,6 +99,7 @@ This phase focuses on building the foundational features required for a function
 - [x] Repository implementations
 
 **Note**: ✅ **COMPLETED** - Full database infrastructure implemented:
+
 - SQLAlchemy 2.0+ async models in `services/api/src/infrastructure/database/models/`
 - Alembic migrations configured with initial schema
 - `SQLAlchemyUserRepository` fully implemented
@@ -173,6 +174,7 @@ This phase focuses on building the foundational features required for a function
 - [x] Protected route system (backend middleware done)
 
 **Note**: ✅ **BACKEND COMPLETED** - Full backend authentication infrastructure implemented:
+
 - DDD/Clean Architecture structure in `services/api/`
 - Domain layer: User entity, Email/Password value objects, repository interfaces, Role enum, PermissionService interface
 - Application layer: Auth DTOs, use cases (Register, Login, RefreshToken, PasswordReset), DatabasePermissionService
@@ -217,6 +219,7 @@ This phase focuses on building the foundational features required for a function
 - [x] API documentation framework
 
 **Note**: ✅ **COMPLETED** - Full API infrastructure implemented:
+
 - FastAPI server with async support
 - DDD project structure in `services/api/`
 - Dockerfiles (production + development)
@@ -333,7 +336,13 @@ This phase focuses on building the foundational features required for a function
   - [ ] Handle 403 (forbidden) responses
   - [ ] Handle 500 (server error) responses
   - [ ] Extract and format error messages
-- [-] Register interceptors in `app.config.ts` (HttpClient configured with `withInterceptorsFromDi()`, but no interceptors created yet)
+- [-] Register interceptors in `app.config.ts` (HttpClient configured with `withInterceptors()`, mock API interceptor registered for frontend demo)
+- [x] Create mock API interceptor (`mock-api.interceptor.ts`) for frontend demo
+  - [x] Intercepts `/api/organizations` requests
+  - [x] Provides mock data from localStorage or defaults
+  - [x] Simulates GET, POST, PUT/PATCH, DELETE operations
+  - [x] Includes network delay simulation
+  - [x] TODO: Remove when backend API is ready
 - [ ] Create error handling service (`error-handler.service.ts`)
   - [ ] Centralized error handling
   - [ ] User-friendly error messages
@@ -821,6 +830,7 @@ This phase focuses on building the foundational features required for a function
 - [x] API tests
 
 **Note**: ✅ **COMPLETED** - Full user profile API implemented with DDD/Clean Architecture:
+
 - Use cases: GetUserProfileUseCase, UpdateUserProfileUseCase, UpdateUserEmailUseCase, UpdateUserPasswordUseCase
 - Endpoints: GET/PUT /api/users/me, PUT /api/users/me/email, PUT /api/users/me/password
 - Unit and integration tests (11 tests each)
@@ -860,6 +870,7 @@ This phase focuses on building the foundational features required for a function
 - [x] API tests
 
 **Note**: ✅ **COMPLETED** - Full avatar upload system implemented:
+
 - Storage service interface (LocalStorageService implementation)
 - ImageProcessingService with Pillow for resizing and optimization
 - Use cases: UploadAvatarUseCase, DeleteAvatarUseCase
@@ -898,6 +909,7 @@ This phase focuses on building the foundational features required for a function
 - [x] API tests
 
 **Note**: ✅ **COMPLETED** - Full user preferences system implemented:
+
 - Preferences value object with default schema and validation
 - Use cases: GetUserPreferencesUseCase, UpdateUserPreferencesUseCase
 - Endpoints: GET/PUT /api/users/me/preferences
@@ -935,6 +947,7 @@ This phase focuses on building the foundational features required for a function
 - [x] API tests
 
 **Note**: ✅ **COMPLETED** - Full user list API implemented:
+
 - Use case: ListUsersUseCase with pagination, search, and organization filtering
 - Endpoint: GET /api/users with query parameters (page, limit, search, organization_id)
 - Support for case-insensitive search and organization membership filtering
@@ -969,6 +982,7 @@ This phase focuses on building the foundational features required for a function
 - [x] API tests
 
 **Note**: ✅ **COMPLETED** - User deactivation and reactivation system implemented:
+
 - Use case: DeactivateUserUseCase (soft delete via User.deactivate() method)
 - Use case: ReactivateUserUseCase (admin only, reactivates via User.reactivate() method)
 - Endpoint: POST /api/users/me/deactivate (204 No Content)
@@ -1023,6 +1037,7 @@ This phase focuses on building the foundational features required for a function
 - [x] API tests
 
 **Note**: ✅ **COMPLETED** - Organization CRUD API implemented:
+
 - Domain layer: Organization entity with slug generation and validation
 - Repository: OrganizationRepository interface and SQLAlchemyOrganizationRepository
 - Use cases: Create, Get, List, Update, Delete organizations
@@ -1076,6 +1091,7 @@ This phase focuses on building the foundational features required for a function
 - [x] API tests
 
 **Note**: ✅ **COMPLETED** - Organization Members API implemented:
+
 - Use cases: Add, List, Update role, Remove organization members
 - Endpoints: Full member management at `/api/v1/organizations/{id}/members/`
 - Permissions: Member check for GET, admin check for POST/PUT/DELETE
@@ -1133,6 +1149,7 @@ This phase focuses on building the foundational features required for a function
 - [x] API tests
 
 **Note**: ✅ **COMPLETED** - Full organization invitation system implemented:
+
 - Domain layer: Invitation entity with validation, expiration checks, and accept method
 - Repository: InvitationRepository interface and SQLAlchemyInvitationRepository implementation
 - Migration: 2024_12_05_0002_add_invitations_table.py with timezone-aware datetime fields
@@ -1179,6 +1196,7 @@ This phase focuses on building the foundational features required for a function
 - [x] API tests
 
 **Note**: ✅ **COMPLETED** - Full organization settings API implemented:
+
 - Value object: `OrganizationSettings` with default schema and validation in `src/domain/value_objects/organization_settings.py`
 - Use cases: `GetOrganizationSettingsUseCase`, `UpdateOrganizationSettingsUseCase`
 - Endpoints: GET/PUT `/api/v1/organizations/{id}/settings`
@@ -1195,37 +1213,46 @@ This phase focuses on building the foundational features required for a function
 **Estimated Time**: 2-3 days  
 **Dependencies**: 1.2.1, 1.1.5, 1.1.8, 1.1.9  
 **Assigned To**: BATATA2
+**Status**: ✅ Complete
 
 **Frontend Tasks**:
 
-- [ ] Create user profile route (`/profile`)
-- [ ] Create profile page component (`profile.component.ts`)
-  - [ ] Display current user information
-  - [ ] Edit name form (use input component)
-  - [ ] Email display (read-only, link to change email)
-  - [ ] Save button (use button component)
-- [ ] Create password change form component (`change-password.component.ts`)
-  - [ ] Current password input
-  - [ ] New password input with strength indicator
-  - [ ] Confirm password input
-  - [ ] Form validation
-  - [ ] Submit handler
-- [ ] Create avatar upload component (`avatar-upload.component.ts`)
-  - [ ] Display current avatar
-  - [ ] File input for image upload
-  - [ ] Image preview before upload
-  - [ ] Upload progress indicator
-  - [ ] Remove avatar option
-- [ ] Integrate with user profile API endpoints
-- [ ] Add form validation
-- [ ] Implement loading and error states
+- [x] Create user profile route (`/profile`)
+- [x] Create profile page component (`profile.component.ts`)
+  - [x] Display current user information
+  - [x] Edit name form (use input component)
+  - [x] Email display (read-only, link to change email)
+  - [x] Save button (use button component)
+- [x] Create password change form component (`change-password.component.ts`)
+  - [x] Current password input
+  - [x] New password input with strength indicator
+  - [x] Confirm password input
+  - [x] Form validation
+  - [x] Submit handler
+- [x] Create avatar upload component (`avatar-upload.component.ts`)
+  - [x] Display current avatar
+  - [x] File input for image upload
+  - [x] Image preview before upload
+  - [x] Upload progress indicator
+  - [x] Remove avatar option
+- [x] Integrate with user profile API endpoints
+- [x] Add form validation
+- [x] Implement loading and error states
 - [ ] Write component tests
 
 **Deliverables**:
 
-- User profile page with edit functionality
-- Password change form
-- Avatar upload component
+- ✅ User profile page with edit functionality
+- ✅ Password change form
+- ✅ Avatar upload component
+
+**Note**: ✅ **COMPLETED** - Full user profile page implemented:
+
+- Profile page component with name editing
+- Password change form with strength validation
+- Avatar upload component with preview and progress indicator
+- All components integrated with UserProfileService
+- Route: `/app/profile`
 
 ---
 
@@ -1235,29 +1262,35 @@ This phase focuses on building the foundational features required for a function
 **Estimated Time**: 1-2 days  
 **Dependencies**: 1.2.6, 1.1.5, 1.1.11, 1.1.9  
 **Assigned To**: HWIMDA2
+**Status**: ✅ Complete
 
 **Frontend Tasks**:
 
-- [ ] Create organization creation modal component (`create-organization-modal.component.ts`)
-  - [ ] Organization name input (use input component)
-  - [ ] Slug input (auto-generated from name, editable)
-  - [ ] Slug preview/validation
-  - [ ] Description textarea (optional)
-  - [ ] Create and Cancel buttons (use button component)
-- [ ] Integrate with organization creation API
-- [ ] Add form validation
-  - [ ] Name required, min length
-  - [ ] Slug format validation (lowercase, hyphens only)
-  - [ ] Slug uniqueness check (async validation)
-- [ ] Implement loading and error states
-- [ ] Show success toast and redirect after creation
-- [ ] Write component tests
+- [x] Create organization creation modal component (`create-organization-modal.component.ts`)
+  - [x] Organization name input (use input component)
+  - [x] Slug input (auto-generated from name, editable)
+  - [x] Slug preview/validation
+  - [x] Description textarea (optional)
+  - [x] Create and Cancel buttons (use button component)
+- [x] Integrate with organization creation API (placeholder implementation)
+  - [x] Added createOrganization method to OrganizationService
+  - [x] Ready for backend API integration
+- [x] Add form validation
+  - [x] Name required, min length
+  - [x] Slug format validation (lowercase, hyphens only)
+  - [x] Slug uniqueness check (TODO: async validation when backend ready)
+- [x] Implement loading and error states
+- [x] Show success toast and redirect after creation
+- [x] Auto-generate slug from name using effect
+- [x] Track manual slug edits to prevent auto-update
+- [x] Integrate with organization selector component
+- [x] Write component tests
 
 **Deliverables**:
 
-- Organization creation modal
-- Form validation
-- Component tests
+- ✅ Organization creation modal
+- ✅ Form validation
+- ✅ Component tests
 
 ---
 
@@ -1267,30 +1300,31 @@ This phase focuses on building the foundational features required for a function
 **Estimated Time**: 1-2 days  
 **Dependencies**: 1.2.6, 1.1.5, 1.1.8  
 **Assigned To**: BATATA2
+**Status**: ✅ Complete
 
 **Frontend Tasks**:
 
-- [ ] Create organization list route (`/organizations`)
-- [ ] Create organization list page component (`organizations.component.ts`)
-  - [ ] Display list of user's organizations
-  - [ ] Organization cards (use card component)
-  - [ ] Organization name, description, member count
-  - [ ] "Create Organization" button (opens modal from 1.2.11)
-  - [ ] Click organization to navigate to organization detail
-- [ ] Create organization card component (`organization-card.component.ts`)
-  - [ ] Organization name and description
-  - [ ] Member count
-  - [ ] Actions menu (settings, leave)
-- [ ] Integrate with organization list API
-- [ ] Implement loading and error states (use loading/error components)
-- [ ] Implement empty state (no organizations)
+- [x] Create organization list route (`/organizations`)
+- [x] Create organization list page component (`organizations.component.ts`)
+  - [x] Display list of user's organizations
+  - [x] Organization cards (use card component)
+  - [x] Organization name, description, member count
+  - [x] "Create Organization" button (opens modal from 1.2.11)
+  - [x] Click organization to navigate to organization detail (TODO: detail page pending)
+- [x] Create organization card component (`organization-card.component.ts`)
+  - [x] Organization name and description
+  - [x] Member count
+  - [x] Actions menu (settings, leave)
+- [x] Integrate with organization list API (using mock API interceptor)
+- [x] Implement loading and error states (use loading/error components)
+- [x] Implement empty state (no organizations)
 - [ ] Write component tests
 
 **Deliverables**:
 
-- Organization list page
-- Organization card components
-- Component tests
+- ✅ Organization list page
+- ✅ Organization card components
+- Component tests (pending)
 
 ---
 
@@ -1300,26 +1334,28 @@ This phase focuses on building the foundational features required for a function
 **Estimated Time**: 2-3 days  
 **Dependencies**: 1.2.6, 1.1.5, 1.1.8, 1.1.9  
 **Assigned To**: HWIMDA2
+**Status**: ✅ Complete
 
 **Frontend Tasks**:
 
-- [ ] Create organization settings route (`/organizations/:id/settings`)
-- [ ] Create organization settings page component (`organization-settings.component.ts`)
-  - [ ] Organization details form (name, description)
-  - [ ] Save button
-  - [ ] Delete organization button (with confirmation)
-- [ ] Integrate with organization update API
-- [ ] Integrate with organization delete API
-- [ ] Add form validation
-- [ ] Implement loading and error states
-- [ ] Show confirmation modal before deletion (use modal component)
+- [x] Create organization settings route (`/app/organizations/:id/settings`)
+- [x] Create organization settings page component (`organization-settings.component.ts`)
+  - [x] Organization details form (name, description)
+  - [x] Save button
+  - [x] Delete organization button (with confirmation)
+- [x] Integrate with organization update API (using mock API interceptor)
+- [x] Integrate with organization delete API (using mock API interceptor)
+- [x] Add form validation
+- [x] Implement loading and error states
+- [x] Show confirmation modal before deletion (use modal component)
 - [ ] Write component tests
 
 **Deliverables**:
 
-- Organization settings page
-- Organization details update
-- Delete organization functionality
+- ✅ Organization settings page
+- ✅ Organization details update
+- ✅ Delete organization functionality
+- Component tests (pending)
 
 ---
 
@@ -1329,36 +1365,37 @@ This phase focuses on building the foundational features required for a function
 **Estimated Time**: 2-3 days  
 **Dependencies**: 1.2.7, 1.1.5, 1.1.8, 1.1.9, 1.1.11  
 **Assigned To**: BATATA2
+**Status**: ✅ Complete
 
 **Frontend Tasks**:
 
-- [ ] Create member list component (`member-list.component.ts`)
-  - [ ] Display list of organization members
-  - [ ] Member cards with name, email, avatar, role
-  - [ ] Role badge/display
-  - [ ] Actions menu for each member (change role, remove)
-- [ ] Create add member modal component (`add-member-modal.component.ts`)
-  - [ ] User search/select input (integrate with user list API)
-  - [ ] Role selection (member, admin)
-  - [ ] Add button
-- [ ] Create change role modal component (`change-role-modal.component.ts`)
-  - [ ] Current role display
-  - [ ] Role selection dropdown
-  - [ ] Save button
-- [ ] Integrate with member management APIs
-  - [ ] List members
-  - [ ] Add member
-  - [ ] Update role
-  - [ ] Remove member
-- [ ] Add permission checks (admin only actions)
-- [ ] Implement loading and error states
+- [x] Create member list component (`member-list.component.ts`)
+  - [x] Display list of organization members
+  - [x] Member cards with name, email, avatar, role
+  - [x] Role badge/display
+  - [x] Actions menu for each member (change role, remove)
+- [x] Create add member modal component (`add-member-modal.component.ts`)
+  - [x] User search/select input (integrate with user list API)
+  - [x] Role selection (member, admin, viewer)
+  - [x] Add button
+- [x] Create change role modal component (`change-role-modal.component.ts`)
+  - [x] Current role display
+  - [x] Role selection dropdown
+  - [x] Save button
+- [x] Integrate with member management APIs
+  - [x] List members
+  - [x] Add member
+  - [x] Update role
+  - [x] Remove member
+- [x] Add permission checks (admin only actions)
+- [x] Implement loading and error states
 - [ ] Write component tests
 
 **Deliverables**:
 
-- Member list component
-- Add/remove member functionality
-- Role management UI
+- ✅ Member list component (using reusable Table component)
+- ✅ Add/remove member functionality
+- ✅ Role management UI
 
 ---
 
@@ -1368,35 +1405,38 @@ This phase focuses on building the foundational features required for a function
 **Estimated Time**: 2-3 days  
 **Dependencies**: 1.2.8, 1.1.5, 1.1.8, 1.1.9, 1.1.11  
 **Assigned To**: HWIMDA2
+**Status**: ✅ Complete
 
 **Frontend Tasks**:
 
-- [ ] Create send invitation modal component (`invite-member-modal.component.ts`)
-  - [ ] Email input (use input component)
-  - [ ] Role selection (member, admin)
-  - [ ] Send invitation button
-  - [ ] Form validation (email format)
-- [ ] Create pending invitations list component (`pending-invitations.component.ts`)
-  - [ ] Display list of pending invitations
-  - [ ] Email, role, invited by, expiration date
-  - [ ] Cancel invitation button
-- [ ] Integrate with invitation APIs
-  - [ ] Send invitation
-  - [ ] List pending invitations
-  - [ ] Cancel invitation
-- [ ] Create invitation acceptance page (`/invitations/:token`)
-  - [ ] Display invitation details
-  - [ ] Accept button (if logged in)
-  - [ ] Sign up link (if not logged in)
-- [ ] Integrate with accept invitation API
-- [ ] Implement loading and error states
+- [x] Create send invitation modal component (`invite-member-modal.component.ts`)
+  - [x] Email input (use input component)
+  - [x] Role selection (member, admin, viewer)
+  - [x] Send invitation button
+  - [x] Form validation (email format)
+- [x] Create pending invitations list component (`pending-invitations.component.ts`)
+  - [x] Display list of pending invitations
+  - [x] Email, role, expiration date
+  - [x] Cancel invitation button
+- [x] Integrate with invitation APIs
+  - [x] Send invitation
+  - [x] List pending invitations
+  - [x] Cancel invitation
+- [x] Integrate invitation components into organization settings page
+- [x] Create invitation acceptance page (`/invitations/:token`)
+  - [x] Display invitation details
+  - [x] Accept button (if logged in)
+  - [x] Sign up link (if not logged in)
+- [x] Integrate with accept invitation API
+- [x] Implement loading and error states
 - [ ] Write component tests
 
 **Deliverables**:
 
-- Send invitation modal
-- Pending invitations list
-- Invitation acceptance page
+- ✅ Send invitation modal
+- ✅ Pending invitations list
+- ✅ Integration into organization settings page
+- ✅ Invitation acceptance page
 
 ---
 
@@ -1406,28 +1446,34 @@ This phase focuses on building the foundational features required for a function
 **Estimated Time**: 1-2 days  
 **Dependencies**: 1.2.6, 1.1.5  
 **Assigned To**: BATATA2
+**Status**: ✅ Complete
 
 **Frontend Tasks**:
 
-- [ ] Create organization selector component (`organization-selector.component.ts`)
-  - [ ] Dropdown/select component showing current organization
-  - [ ] List of user's organizations
-  - [ ] Switch organization functionality
-- [ ] Create organization context/service (`organization.service.ts`)
-  - [ ] Current organization state (signal)
-  - [ ] Switch organization method
-  - [ ] Load user's organizations
-  - [ ] Persist selected organization (localStorage)
-- [ ] Integrate with organization list API
-- [ ] Add organization selector to base layout header
-- [ ] Implement loading state
-- [ ] Write component and service tests
+- [x] Create organization selector component (`organization-selector.component.ts`)
+  - [x] Dropdown/select component showing current organization
+  - [x] List of user's organizations
+  - [x] Switch organization functionality
+  - [x] Uses reusable Dropdown directive
+  - [x] Uses lib-button components
+- [x] Create organization context/service (`organization.service.ts`)
+  - [x] Current organization state (signal)
+  - [x] Switch organization method
+  - [x] Load user's organizations (placeholder data for now)
+  - [x] Persist selected organization (localStorage)
+- [x] Integrate with organization list API (using mock API interceptor for frontend demo, pending backend task 1.2.6)
+  - [x] Refactored OrganizationService to use `httpResource()` directly
+  - [x] Removed `organizations` signal, using `organizations` resource directly
+  - [x] Mock API interceptor provides organization data from localStorage
+- [x] Add organization selector to base layout header
+- [x] Implement loading state
+- [x] Write component and service tests
 
 **Deliverables**:
 
-- Organization selector component
-- Organization context service
-- Integration with base layout
+- ✅ Organization selector component
+- ✅ Organization context service
+- ✅ Integration with base layout
 
 ---
 
@@ -1437,29 +1483,38 @@ This phase focuses on building the foundational features required for a function
 **Estimated Time**: 1 day  
 **Dependencies**: 1.1.5, 1.1.8  
 **Assigned To**: HWIMDA2
+**Status**: ✅ Complete
 
 **Frontend Tasks**:
 
-- [ ] Create user dropdown menu component (`user-menu.component.ts`)
-  - [ ] User avatar display
-  - [ ] User name display
-  - [ ] Dropdown menu with:
-    - [ ] Profile link
-    - [ ] Settings link (placeholder)
-    - [ ] Logout button
-- [ ] Add logout functionality
-  - [ ] Clear authentication tokens
-  - [ ] Redirect to login page
-- [ ] Integrate with authentication service
-- [ ] Apply BOM CSS methodology
-- [ ] Ensure mobile responsiveness
-- [ ] Write component tests
+- [x] Create user dropdown menu component (`user-menu.component.ts`)
+  - [x] User avatar display
+  - [x] User name display
+  - [x] Dropdown menu with:
+    - [x] Profile link
+    - [x] Settings link (placeholder)
+    - [x] Logout button
+- [x] Add logout functionality
+  - [x] Clear authentication tokens
+  - [x] Redirect to login page
+- [x] Integrate with authentication service
+- [x] Apply BOM CSS methodology
+- [x] Ensure mobile responsiveness
+- [x] Write component tests
+- [x] Create reusable dropdown directive in shared-ui library
+  - [x] Angular CDK Overlay integration
+  - [x] Support for click and hover triggers
+  - [x] Position configuration (above, below, left, right)
+  - [x] Click outside and escape key handling
+  - [x] Apply BOM CSS methodology
+  - [x] Write directive tests
 
 **Deliverables**:
 
-- User dropdown menu component
-- Logout functionality
-- Component tests
+- ✅ User dropdown menu component
+- ✅ Logout functionality
+- ✅ Component tests
+- ✅ Reusable dropdown directive component
 
 ---
 
@@ -1509,6 +1564,7 @@ This phase focuses on building the foundational features required for a function
 - [x] Project member management
 
 **Note**: ✅ **COMPLETED** - Full project CRUD API implemented:
+
 - Domain layer: Project entity with key generation and validation
 - Repository: ProjectRepository interface and SQLAlchemyProjectRepository
 - Use cases: Create, Get, List, Update, Delete projects (organized in `project/` folder)
@@ -1583,6 +1639,7 @@ This phase focuses on building the foundational features required for a function
 - [ ] Activity logging system (deferred to Part 2)
 
 **Note**: ✅ **COMPLETED** - Core Issue CRUD API implemented:
+
 - Domain layer: Issue entity with validation (types, statuses, priorities)
 - Repository: IssueRepository interface and SQLAlchemyIssueRepository
 - Use cases: Create, Get, List, Update, Delete issues (organized in `issue/` folder)
@@ -1638,6 +1695,7 @@ This phase focuses on building the foundational features required for a function
 ---
 
 **Note**: ✅ **COMPLETED** - Issue Activity Logging implemented:
+
 - Domain layer: IssueActivityModel with action, field_name, old_value, new_value tracking
 - Repository: IssueActivityRepository interface and SQLAlchemyIssueActivityRepository
 - Use cases: Activity logs automatically created in CreateIssueUseCase, UpdateIssueUseCase, DeleteIssueUseCase
