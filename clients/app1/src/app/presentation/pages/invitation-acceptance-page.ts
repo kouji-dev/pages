@@ -33,7 +33,7 @@ import { Footer } from '../components/footer';
           } @else if (isAccepted()) {
             <div class="invitation-acceptance-page_success">
               <div class="invitation-acceptance-page_success-icon">
-                <lib-icon name="check-circle" size="xl" [color]="'var(--color-success)'" />
+                <lib-icon name="circle-check" size="xl" [color]="'var(--color-success)'" />
               </div>
               <h1 class="invitation-acceptance-page_success-title">Invitation Accepted!</h1>
               @if (acceptedOrganization()) {
