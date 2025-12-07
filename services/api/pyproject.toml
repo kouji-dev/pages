@@ -47,6 +47,7 @@ types-markdown = "^3.10.0.20251106"
 [tool.poetry.scripts]
 dev = "uvicorn src.main:app --reload --host 0.0.0.0 --port 8000"
 start = "uvicorn src.main:app --host 0.0.0.0 --port 8000"
+seed = "python scripts/seed.py"
 
 [tool.black]
 line-length = 100
