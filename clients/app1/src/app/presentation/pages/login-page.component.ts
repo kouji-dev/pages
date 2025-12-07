@@ -47,6 +47,7 @@ import { AuthService } from '../../application/services/auth.service';
                 [loading]="isSubmitting()"
                 [disabled]="!isFormValid()"
                 class="login-page_submit-button"
+                (clicked)="handleSubmit()"
               >
                 Sign In
               </lib-button>
@@ -199,7 +200,7 @@ export class LoginPage {
   });
 
   async handleSubmit(): Promise<void> {
-    if (!this.isFormValid()) {
+    if (!this.isFormValid() || this.isSubmitting()) {
       return;
     }
 

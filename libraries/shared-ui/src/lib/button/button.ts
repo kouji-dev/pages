@@ -259,6 +259,13 @@ export class Button {
     if (this.link()) {
       return;
     }
+    // For submit buttons, don't prevent default - let the form handle submission
+    if (this.type() === 'submit') {
+      // Still emit the clicked event for handlers that want to listen to it
+      this.clicked.emit(event);
+      // Don't prevent default - allow form submission to proceed
+      return;
+    }
     this.clicked.emit(event);
   }
 
