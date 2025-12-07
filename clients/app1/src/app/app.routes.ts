@@ -7,6 +7,9 @@ import { OrganizationsPage } from './presentation/pages/organizations-page';
 import { OrganizationSettingsPage } from './presentation/pages/organization-settings-page';
 import { InvitationAcceptancePage } from './presentation/pages/invitation-acceptance-page';
 import { ProfilePage } from './presentation/pages/profile-page';
+import { ProjectsPage } from './presentation/pages/projects-page';
+import { ProjectDetailPage } from './presentation/pages/project-detail-page';
+import { ProjectSettingsPage } from './presentation/pages/project-settings-page';
 import { LoginPage } from './presentation/pages/login-page.component';
 import { RegisterPage } from './presentation/pages/register-page.component';
 import { ForgotPasswordPage } from './presentation/pages/forgot-password-page.component';
@@ -82,6 +85,21 @@ export const routes: Routes = [
         path: 'profile',
         component: ProfilePage,
         title: 'Profile - Pages',
+      },
+      {
+        path: 'projects',
+        component: ProjectsPage,
+        title: 'Projects - Pages',
+      },
+      {
+        path: 'projects/:id',
+        component: ProjectDetailPage,
+        title: 'Project Details - Pages',
+      },
+      {
+        path: 'projects/:id/settings',
+        component: ProjectSettingsPage,
+        title: 'Project Settings - Pages',
       },
     ],
   },
