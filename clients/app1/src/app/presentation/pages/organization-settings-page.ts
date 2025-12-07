@@ -12,10 +12,18 @@ import { Button, Icon, Input, LoadingState, ErrorState, Modal } from 'shared-ui'
 import { ToastService } from 'shared-ui';
 import { OrganizationService, Organization } from '../../application/services/organization.service';
 import { DeleteOrganizationModal } from '../components/delete-organization-modal';
+import { MemberList } from '../components/member-list';
+import { AddMemberModal } from '../components/add-member-modal';
+import { ChangeRoleModal } from '../components/change-role-modal';
+import {
+  OrganizationMembersService,
+  OrganizationMember,
+} from '../../application/services/organization-members.service';
+import { AuthService } from '../../application/services/auth.service';
 
 @Component({
   selector: 'app-organization-settings-page',
-  imports: [Button, Icon, Input, LoadingState, ErrorState, RouterLink],
+  imports: [Button, Icon, Input, LoadingState, ErrorState, RouterLink, MemberList],
   template: `
     <div class="org-settings-page">
       <div class="org-settings-page_header">
@@ -90,6 +98,25 @@ import { DeleteOrganizationModal } from '../components/delete-organization-modal
                 </div>
               </form>
             </div>
+
+            <!-- Members Section -->
+            @if (organizationId()) {
+              <div class="org-settings-page_section">
+                <app-member-list
+                  [members]="membersService.members()"
+                  [isLoading]="membersService.isLoading()"
+                  [hasError]="membersService.hasError()"
+                  [errorMessage]="membersErrorMessage()"
+                  [canAddMembers]="canManageMembers()"
+                  [currentUserId]="currentUserId()"
+                  [currentUserRole]="currentUserRole()"
+                  (onAddMember)="handleAddMember()"
+                  (onChangeRole)="handleChangeRole($event)"
+                  (onRemoveMember)="handleRemoveMember($event)"
+                  (onRetry)="handleMembersRetry()"
+                />
+              </div>
+            }
 
             <!-- Danger Zone -->
             <div class="org-settings-page_section org-settings-page_section--danger">
@@ -244,6 +271,8 @@ export class OrganizationSettingsPage {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly organizationService = inject(OrganizationService);
+  readonly membersService = inject(OrganizationMembersService);
+  private readonly authService = inject(AuthService);
   private readonly toast = inject(ToastService);
   private readonly modal = inject(Modal);
   private readonly viewContainerRef = inject(ViewContainerRef);
@@ -306,11 +335,35 @@ export class OrganizationSettingsPage {
     return 'An unknown error occurred.';
   });
 
+  readonly currentUserId = computed(() => {
+    return this.authService.currentUser()?.id || null;
+  });
+
+  readonly currentUserRole = computed<'admin' | 'member' | 'viewer' | null>(() => {
+    const userId = this.currentUserId();
+    const members = this.membersService.members();
+    if (!userId || members.length === 0) {
+      return null;
+    }
+    const member = members.find((m) => m.user_id === userId);
+    return member?.role || null;
+  });
+
+  readonly canManageMembers = computed(() => {
+    return this.currentUserRole() === 'admin';
+  });
+
+  readonly membersErrorMessage = computed(() => {
+    const error = this.membersService.error();
+    return error instanceof Error ? error.message : 'An unknown error occurred.';
+  });
+
   // Effects declared as instance variables (not in constructor or ngOnInit)
   private readonly loadOrganizationEffect = effect(() => {
     const id = this.organizationId();
     if (id) {
       this.organizationService.fetchOrganization(id);
+      this.membersService.loadMembers(id);
     }
   });
 
@@ -400,6 +453,73 @@ export class OrganizationSettingsPage {
     const id = this.organizationId();
     if (id) {
       this.organizationService.fetchOrganization(id);
+    }
+  }
+
+  handleAddMember(): void {
+    const orgId = this.organizationId();
+    if (!orgId) {
+      return;
+    }
+
+    this.modal
+      .open<{ added: boolean; error?: any }>(AddMemberModal, this.viewContainerRef, {
+        size: 'md',
+        data: {
+          organizationId: orgId,
+        },
+      })
+      .subscribe((result) => {
+        if (result?.added) {
+          // Members are automatically reloaded by the service
+          this.toast.success('Member added successfully!');
+        }
+      });
+  }
+
+  handleChangeRole(member: OrganizationMember): void {
+    const orgId = this.organizationId();
+    if (!orgId) {
+      return;
+    }
+
+    this.modal
+      .open<{ changed: boolean; error?: any }>(ChangeRoleModal, this.viewContainerRef, {
+        size: 'md',
+        data: {
+          organizationId: orgId,
+          member: member,
+        },
+      })
+      .subscribe((result) => {
+        if (result?.changed) {
+          // Members are automatically reloaded by the service
+          this.toast.success('Member role updated successfully!');
+        }
+      });
+  }
+
+  async handleRemoveMember(member: OrganizationMember): Promise<void> {
+    const orgId = this.organizationId();
+    if (!orgId) {
+      return;
+    }
+
+    // TODO: Add confirmation modal before removing
+    try {
+      await this.membersService.removeMember(orgId, member.user_id);
+      this.toast.success(`Member "${member.user_name}" removed successfully.`);
+      // Members are automatically reloaded by the service
+    } catch (error: any) {
+      console.error('Failed to remove member:', error);
+      this.toast.error(error.message || 'Failed to remove member. Please try again.');
+    }
+  }
+
+  handleMembersRetry(): void {
+    const id = this.organizationId();
+    if (id) {
+      this.membersService.loadMembers(id);
     }
   }
 }

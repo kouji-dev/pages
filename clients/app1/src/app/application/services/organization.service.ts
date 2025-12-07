@@ -22,7 +22,7 @@ export interface CreateOrganizationRequest {
 })
 export class OrganizationService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${environment.apiUrl}/api/organizations`;
+  private readonly apiUrl = `${environment.apiUrl}/api/v1/organizations`;
 
   // Organizations list resource using httpResource
   readonly organizations = httpResource(() => this.apiUrl);

@@ -62,9 +62,17 @@ export class Modal {
       portal = new ComponentPortal(content, viewContainerRef);
       const componentRef = this.overlayRef.attach(portal);
 
-      // Pass data to component if it has a data input
+      // Pass data to component - set individual inputs from data object if they exist
       if (config.data) {
+        // First, try setting as 'data' input (for components that use data input pattern)
         componentRef.setInput('data', config.data);
+
+        // Also set individual inputs from data object if they match component inputs
+        if (typeof config.data === 'object' && config.data !== null) {
+          Object.keys(config.data).forEach((key) => {
+            componentRef.setInput(key, (config.data as any)[key]);
+          });
+        }
       }
 
       this.setupEventHandlers(config);

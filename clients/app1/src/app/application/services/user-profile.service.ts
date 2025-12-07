@@ -30,7 +30,7 @@ export interface UpdatePasswordRequest {
 })
 export class UserProfileService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${environment.apiUrl}/api/users/me`;
+  private readonly apiUrl = `${environment.apiUrl}/api/v1/users/me`;
 
   // User profile resource using httpResource
   readonly profile = httpResource<UserProfile>(() => this.apiUrl);
