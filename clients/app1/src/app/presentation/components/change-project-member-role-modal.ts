@@ -22,73 +22,69 @@ import {
     <lib-modal-container>
       <lib-modal-header>Change Role</lib-modal-header>
       <lib-modal-content>
-        @if (member()) {
-          <div class="change-project-role-form">
-            <div class="change-project-role-form_info">
-              <div class="change-project-role-form_member">
-                <div class="change-project-role-form_member-avatar">
-                  @if (member()!.avatar_url) {
-                    <img
-                      [src]="member()!.avatar_url"
-                      [alt]="member()!.user_name"
-                      class="change-project-role-form_member-avatar-image"
-                    />
-                  } @else {
-                    <div class="change-project-role-form_member-avatar-placeholder">
-                      {{ getInitials(member()!.user_name) }}
-                    </div>
-                  }
-                </div>
-                <div class="change-project-role-form_member-info">
-                  <div class="change-project-role-form_member-name">{{ member()!.user_name }}</div>
-                  <div class="change-project-role-form_member-email">
-                    {{ member()!.user_email }}
+        <div class="change-project-role-form">
+          <div class="change-project-role-form_info">
+            <div class="change-project-role-form_member">
+              <div class="change-project-role-form_member-avatar">
+                @if (member().avatar_url) {
+                  <img
+                    [src]="member().avatar_url"
+                    [alt]="member().user_name"
+                    class="change-project-role-form_member-avatar-image"
+                  />
+                } @else {
+                  <div class="change-project-role-form_member-avatar-placeholder">
+                    {{ getInitials(member().user_name) }}
                   </div>
-                </div>
-              </div>
-              <div class="change-project-role-form_current-role">
-                <span class="change-project-role-form_current-role-label">Current role:</span>
-                <span
-                  class="change-project-role-form_role-badge"
-                  [class]="'change-project-role-form_role-badge--' + member()!.role"
-                >
-                  {{ getRoleLabel(member()!.role) }}
-                </span>
-              </div>
-            </div>
-
-            <div class="change-project-role-form_role">
-              <label class="change-project-role-form_role-label">New Role</label>
-              <div class="change-project-role-form_role-options">
-                @for (role of availableRoles(); track role.value) {
-                  <button
-                    type="button"
-                    class="change-project-role-form_role-option"
-                    [class.change-project-role-form_role-option--selected]="
-                      selectedRole() === role.value
-                    "
-                    [class.change-project-role-form_role-option--disabled]="
-                      role.value === member()!.role
-                    "
-                    (click)="selectRole(role.value)"
-                  >
-                    <div class="change-project-role-form_role-option-header">
-                      <span class="change-project-role-form_role-option-name">{{
-                        role.label
-                      }}</span>
-                      @if (role.value === member()!.role) {
-                        <span class="change-project-role-form_role-option-current">Current</span>
-                      }
-                    </div>
-                    <p class="change-project-role-form_role-option-description">
-                      {{ role.description }}
-                    </p>
-                  </button>
                 }
               </div>
+              <div class="change-project-role-form_member-info">
+                <div class="change-project-role-form_member-name">{{ member().user_name }}</div>
+                <div class="change-project-role-form_member-email">
+                  {{ member().user_email }}
+                </div>
+              </div>
+            </div>
+            <div class="change-project-role-form_current-role">
+              <span class="change-project-role-form_current-role-label">Current role:</span>
+              <span
+                class="change-project-role-form_role-badge"
+                [class]="'change-project-role-form_role-badge--' + member().role"
+              >
+                {{ getRoleLabel(member().role) }}
+              </span>
             </div>
           </div>
-        }
+
+          <div class="change-project-role-form_role">
+            <label class="change-project-role-form_role-label">New Role</label>
+            <div class="change-project-role-form_role-options">
+              @for (role of availableRoles(); track role.value) {
+                <button
+                  type="button"
+                  class="change-project-role-form_role-option"
+                  [class.change-project-role-form_role-option--selected]="
+                    selectedRole() === role.value
+                  "
+                  [class.change-project-role-form_role-option--disabled]="
+                    role.value === member().role
+                  "
+                  (click)="selectRole(role.value)"
+                >
+                  <div class="change-project-role-form_role-option-header">
+                    <span class="change-project-role-form_role-option-name">{{ role.label }}</span>
+                    @if (role.value === member().role) {
+                      <span class="change-project-role-form_role-option-current">Current</span>
+                    }
+                  </div>
+                  <p class="change-project-role-form_role-option-description">
+                    {{ role.description }}
+                  </p>
+                </button>
+              }
+            </div>
+          </div>
+        </div>
       </lib-modal-content>
       <lib-modal-footer>
         <lib-button variant="secondary" (clicked)="handleCancel()" [disabled]="isSubmitting()">
@@ -265,8 +261,8 @@ export class ChangeProjectMemberRoleModal {
   private readonly membersService = inject(ProjectMembersService);
   private readonly toast = inject(ToastService);
 
-  readonly projectId = input<string>('');
-  readonly member = input<ProjectMember | null>(null);
+  readonly projectId = input.required<string>();
+  readonly member = input.required<ProjectMember>();
   readonly selectedRole = signal<'admin' | 'member' | 'viewer'>('member');
   readonly isSubmitting = signal(false);
 
@@ -299,8 +295,7 @@ export class ChangeProjectMemberRoleModal {
   ]);
 
   readonly isValid = computed(() => {
-    const member = this.member();
-    return member !== null && this.selectedRole() !== member.role && !this.isSubmitting();
+    return this.selectedRole() !== this.member().role && !this.isSubmitting();
   });
 
   getInitials(name: string): string {
@@ -327,8 +322,7 @@ export class ChangeProjectMemberRoleModal {
   }
 
   selectRole(role: 'admin' | 'member' | 'viewer'): void {
-    const member = this.member();
-    if (!member || role === member.role) {
+    if (role === this.member().role) {
       return; // Don't allow selecting current role
     }
     this.selectedRole.set(role);
@@ -350,13 +344,7 @@ export class ChangeProjectMemberRoleModal {
         role: this.selectedRole(),
       };
 
-      const projectId = this.projectId();
-      const member = this.member();
-      if (!projectId || !member) {
-        this.toast.error('Missing required data');
-        return;
-      }
-      await this.membersService.updateMemberRole(projectId, member.user_id, request);
+      await this.membersService.updateMemberRole(this.projectId(), this.member().user_id, request);
       this.toast.success('Member role updated successfully!');
       this.modal.close({ success: true });
     } catch (error) {

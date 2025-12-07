@@ -318,7 +318,7 @@ export class AddProjectMemberModal {
   readonly userService = inject(UserService);
   private readonly toast = inject(ToastService);
 
-  readonly projectId = input<string>('');
+  readonly projectId = input.required<string>();
   readonly searchQuery = signal('');
   readonly selectedUserId = signal<string | null>(null);
   readonly selectedRole = signal<'admin' | 'member' | 'viewer'>('member');
@@ -399,12 +399,7 @@ export class AddProjectMemberModal {
         role: this.selectedRole(),
       };
 
-      const projectId = this.projectId();
-      if (!projectId) {
-        this.toast.error('Project ID is required');
-        return;
-      }
-      await this.membersService.addMember(projectId, request);
+      await this.membersService.addMember(this.projectId(), request);
       this.toast.success('Member added successfully!');
       this.modal.close({ success: true });
     } catch (error) {

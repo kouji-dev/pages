@@ -6,7 +6,6 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { authInterceptor } from './infrastructure/interceptors/auth.interceptor';
 import { errorInterceptor } from './infrastructure/interceptors/error.interceptor';
-import { mockApiInterceptor } from './infrastructure/interceptors/mock-api.interceptor';
 import { ThemeService } from './application/services/theme.service';
 
 export const appConfig: ApplicationConfig = {
@@ -16,7 +15,6 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([
         authInterceptor, // Add JWT token to requests
         errorInterceptor, // Handle error responses
-        mockApiInterceptor, // Mock API for frontend demo (TODO: remove when backend is ready)
       ]),
     ),
     provideRouter(routes),
