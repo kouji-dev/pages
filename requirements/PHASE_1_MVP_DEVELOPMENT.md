@@ -1356,36 +1356,37 @@ This phase focuses on building the foundational features required for a function
 **Estimated Time**: 2-3 days  
 **Dependencies**: 1.2.7, 1.1.5, 1.1.8, 1.1.9, 1.1.11  
 **Assigned To**: BATATA2
+**Status**: ✅ Complete
 
 **Frontend Tasks**:
 
-- [ ] Create member list component (`member-list.component.ts`)
-  - [ ] Display list of organization members
-  - [ ] Member cards with name, email, avatar, role
-  - [ ] Role badge/display
-  - [ ] Actions menu for each member (change role, remove)
-- [ ] Create add member modal component (`add-member-modal.component.ts`)
-  - [ ] User search/select input (integrate with user list API)
-  - [ ] Role selection (member, admin)
-  - [ ] Add button
-- [ ] Create change role modal component (`change-role-modal.component.ts`)
-  - [ ] Current role display
-  - [ ] Role selection dropdown
-  - [ ] Save button
-- [ ] Integrate with member management APIs
-  - [ ] List members
-  - [ ] Add member
-  - [ ] Update role
-  - [ ] Remove member
-- [ ] Add permission checks (admin only actions)
-- [ ] Implement loading and error states
+- [x] Create member list component (`member-list.component.ts`)
+  - [x] Display list of organization members
+  - [x] Member cards with name, email, avatar, role
+  - [x] Role badge/display
+  - [x] Actions menu for each member (change role, remove)
+- [x] Create add member modal component (`add-member-modal.component.ts`)
+  - [x] User search/select input (integrate with user list API)
+  - [x] Role selection (member, admin, viewer)
+  - [x] Add button
+- [x] Create change role modal component (`change-role-modal.component.ts`)
+  - [x] Current role display
+  - [x] Role selection dropdown
+  - [x] Save button
+- [x] Integrate with member management APIs
+  - [x] List members
+  - [x] Add member
+  - [x] Update role
+  - [x] Remove member
+- [x] Add permission checks (admin only actions)
+- [x] Implement loading and error states
 - [ ] Write component tests
 
 **Deliverables**:
 
-- Member list component
-- Add/remove member functionality
-- Role management UI
+- ✅ Member list component (using reusable Table component)
+- ✅ Add/remove member functionality
+- ✅ Role management UI
 
 ---
 
@@ -1395,35 +1396,38 @@ This phase focuses on building the foundational features required for a function
 **Estimated Time**: 2-3 days  
 **Dependencies**: 1.2.8, 1.1.5, 1.1.8, 1.1.9, 1.1.11  
 **Assigned To**: HWIMDA2
+**Status**: 🚧 In Progress
 
 **Frontend Tasks**:
 
-- [ ] Create send invitation modal component (`invite-member-modal.component.ts`)
-  - [ ] Email input (use input component)
-  - [ ] Role selection (member, admin)
-  - [ ] Send invitation button
-  - [ ] Form validation (email format)
-- [ ] Create pending invitations list component (`pending-invitations.component.ts`)
-  - [ ] Display list of pending invitations
-  - [ ] Email, role, invited by, expiration date
-  - [ ] Cancel invitation button
-- [ ] Integrate with invitation APIs
-  - [ ] Send invitation
-  - [ ] List pending invitations
-  - [ ] Cancel invitation
+- [x] Create send invitation modal component (`invite-member-modal.component.ts`)
+  - [x] Email input (use input component)
+  - [x] Role selection (member, admin, viewer)
+  - [x] Send invitation button
+  - [x] Form validation (email format)
+- [x] Create pending invitations list component (`pending-invitations.component.ts`)
+  - [x] Display list of pending invitations
+  - [x] Email, role, expiration date
+  - [x] Cancel invitation button
+- [x] Integrate with invitation APIs
+  - [x] Send invitation
+  - [x] List pending invitations
+  - [x] Cancel invitation
+- [x] Integrate invitation components into organization settings page
 - [ ] Create invitation acceptance page (`/invitations/:token`)
   - [ ] Display invitation details
   - [ ] Accept button (if logged in)
   - [ ] Sign up link (if not logged in)
 - [ ] Integrate with accept invitation API
-- [ ] Implement loading and error states
+- [x] Implement loading and error states
 - [ ] Write component tests
 
 **Deliverables**:
 
-- Send invitation modal
-- Pending invitations list
-- Invitation acceptance page
+- ✅ Send invitation modal
+- ✅ Pending invitations list
+- ✅ Integration into organization settings page
+- ⏳ Invitation acceptance page (pending)
 
 ---
 
