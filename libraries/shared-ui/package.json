@@ -4,6 +4,7 @@
   "peerDependencies": {
     "@angular/common": "^21.0.0",
     "@angular/core": "^21.0.0",
+    "@angular/cdk": "^21.0.0",
     "tailwindcss": "^4.0.0"
   },
   "dependencies": {
