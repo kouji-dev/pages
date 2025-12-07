@@ -6,7 +6,7 @@ import {
   computed,
   effect,
 } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Button, Icon, LoadingState, ErrorState, ToastService } from 'shared-ui';
 import { AuthService } from '../../application/services/auth.service';
 import { OrganizationInvitationsService } from '../../application/services/organization-invitations.service';
@@ -15,7 +15,7 @@ import { Footer } from '../components/footer';
 
 @Component({
   selector: 'app-invitation-acceptance-page',
-  imports: [PublicNav, Footer, Button, Icon, LoadingState, ErrorState, RouterLink],
+  imports: [PublicNav, Footer, Button, Icon, LoadingState, ErrorState],
   template: `
     <div class="invitation-acceptance-page">
       <app-public-nav />
@@ -27,8 +27,9 @@ import { Footer } from '../components/footer';
             <lib-error-state
               [title]="errorTitle()"
               [message]="errorMessage()"
-              [retryLabel]="isAuthenticated() ? 'Try Again' : undefined"
-              (onRetry)="isAuthenticated() ? handleAccept() : undefined"
+              [retryLabel]="isAuthenticated() ? 'Try Again' : ''"
+              [showRetry]="isAuthenticated()"
+              (onRetry)="handleAccept()"
             />
           } @else if (isAccepted()) {
             <div class="invitation-acceptance-page_success">
@@ -88,13 +89,18 @@ import { Footer } from '../components/footer';
                     You need to log in or create an account to accept this invitation.
                   </p>
                   <div class="invitation-acceptance-page_unauthenticated-actions">
-                    <lib-button variant="primary" size="lg" [link]="loginUrl()" leftIcon="log-in">
+                    <lib-button
+                      variant="primary"
+                      size="lg"
+                      (clicked)="handleLogin()"
+                      leftIcon="log-in"
+                    >
                       Log In
                     </lib-button>
                     <lib-button
                       variant="secondary"
                       size="lg"
-                      [link]="registerUrl()"
+                      (clicked)="handleRegister()"
                       leftIcon="user-plus"
                     >
                       Sign Up
@@ -231,8 +237,7 @@ import { Footer } from '../components/footer';
         @apply flex items-center justify-center;
         @apply w-16 h-16;
         @apply rounded-full;
-        background: var(--color-success);
-        background-opacity: 0.1;
+        background: var(--color-success-50);
       }
 
       .invitation-acceptance-page_success-title {
@@ -314,17 +319,27 @@ export class InvitationAcceptancePage {
     return err.message;
   });
 
-  readonly loginUrl = computed(() => {
+  handleLogin(): void {
     const token = this.token();
-    if (!token) return ['/login'];
-    return ['/login', { returnUrl: `/invitations/${token}` }];
-  });
+    if (token) {
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: `/invitations/${token}` },
+      });
+    } else {
+      this.router.navigate(['/login']);
+    }
+  }
 
-  readonly registerUrl = computed(() => {
+  handleRegister(): void {
     const token = this.token();
-    if (!token) return ['/register'];
-    return ['/register', { returnUrl: `/invitations/${token}` }];
-  });
+    if (token) {
+      this.router.navigate(['/register'], {
+        queryParams: { returnUrl: `/invitations/${token}` },
+      });
+    } else {
+      this.router.navigate(['/register']);
+    }
+  }
 
   constructor() {
     // Auto-accept if user is already authenticated when component loads
@@ -346,7 +361,7 @@ export class InvitationAcceptancePage {
 
     if (!this.isAuthenticated()) {
       // Redirect to login with return URL
-      this.router.navigate(this.loginUrl());
+      this.handleLogin();
       return;
     }
 

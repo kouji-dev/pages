@@ -6,6 +6,7 @@ import { PricingPage } from './presentation/pages/pricing-page';
 import { OrganizationsPage } from './presentation/pages/organizations-page';
 import { OrganizationSettingsPage } from './presentation/pages/organization-settings-page';
 import { InvitationAcceptancePage } from './presentation/pages/invitation-acceptance-page';
+import { ProfilePage } from './presentation/pages/profile-page';
 import { AuthenticatedLayout } from './presentation/layout/authenticated-layout';
 
 export const routes: Routes = [
@@ -47,6 +48,11 @@ export const routes: Routes = [
         path: 'organizations/:id/settings',
         component: OrganizationSettingsPage,
         title: 'Organization Settings - Pages',
+      },
+      {
+        path: 'profile',
+        component: ProfilePage,
+        title: 'Profile - Pages',
       },
     ],
   },

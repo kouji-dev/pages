@@ -64,7 +64,7 @@ import { AuthService } from '../../application/services/auth.service';
           </div>
           <div class="user-menu_divider"></div>
           <nav class="user-menu_nav">
-            <a routerLink="/profile" class="user-menu_item" (click)="closeMenu(dropdown)">
+            <a routerLink="/app/profile" class="user-menu_item" (click)="closeMenu(dropdown)">
               <lib-icon name="user" size="sm" class="user-menu_item-icon" />
               <span>Profile</span>
             </a>

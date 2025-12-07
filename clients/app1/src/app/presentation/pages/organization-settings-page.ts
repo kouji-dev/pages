@@ -413,13 +413,16 @@ export class OrganizationSettingsPage {
     }
   });
 
-  private readonly initializeFormEffect = effect(() => {
-    const org = this.organization();
-    if (org) {
-      this.name.set(org.name);
-      this.description.set(org.description || '');
-    }
-  });
+  private readonly initializeFormEffect = effect(
+    () => {
+      const org = this.organization();
+      if (org) {
+        this.name.set(org.name);
+        this.description.set(org.description || '');
+      }
+    },
+    { allowSignalWrites: true },
+  );
 
   handleSave(): void {
     if (!this.isFormValid() || !this.hasChanges()) {
