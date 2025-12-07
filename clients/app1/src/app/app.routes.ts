@@ -9,6 +9,8 @@ import { InvitationAcceptancePage } from './presentation/pages/invitation-accept
 import { ProfilePage } from './presentation/pages/profile-page';
 import { LoginPage } from './presentation/pages/login-page.component';
 import { RegisterPage } from './presentation/pages/register-page.component';
+import { ForgotPasswordPage } from './presentation/pages/forgot-password-page.component';
+import { ResetPasswordPage } from './presentation/pages/reset-password-page.component';
 import { NotFoundComponent } from './presentation/pages/not-found.component';
 import { AuthenticatedLayout } from './presentation/layout/authenticated-layout';
 import { authGuard } from './application/guards/auth.guard';
@@ -49,6 +51,16 @@ export const routes: Routes = [
     path: 'register',
     component: RegisterPage,
     title: 'Sign Up - Pages',
+  },
+  {
+    path: 'forgot-password',
+    component: ForgotPasswordPage,
+    title: 'Forgot Password - Pages',
+  },
+  {
+    path: 'reset-password',
+    component: ResetPasswordPage,
+    title: 'Reset Password - Pages',
   },
   // Protected routes (require authentication)
   {

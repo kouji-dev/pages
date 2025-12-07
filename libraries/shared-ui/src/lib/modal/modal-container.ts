@@ -18,9 +18,9 @@ import { CommonModule } from '@angular/common';
         @apply bg-white rounded-lg shadow-xl;
         @apply w-full;
         @apply overflow-hidden;
-        background-color: var(--color-bg-primary);
-        border-radius: var(--radius-lg);
-        box-shadow: var(--shadow-lg);
+        @apply bg-bg-primary;
+        @apply rounded-lg;
+        @apply shadow-lg;
         animation: modalFadeIn 0.2s ease-out;
         max-height: calc(100vh - 4rem);
       }
@@ -40,7 +40,7 @@ import { CommonModule } from '@angular/common';
       /* Dark theme support */
       [data-theme='dark'] .modal-container,
       .dark .modal-container {
-        background-color: var(--color-bg-primary);
+        @apply bg-bg-primary;
       }
     `,
   ],

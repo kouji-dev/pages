@@ -65,7 +65,7 @@ interface ComparisonRow {
                   <ul class="pricing-page_tier-features">
                     @for (feature of tier.features; track feature) {
                       <li class="pricing-page_tier-feature">
-                        <lib-icon name="check" size="sm" [color]="'var(--color-success)'" />
+                        <lib-icon name="check" size="sm" color="success" />
                         <span>{{ feature }}</span>
                       </li>
                     }
@@ -112,45 +112,45 @@ interface ComparisonRow {
                       @if (isStringValue(row.free)) {
                         {{ row.free }}
                       } @else if (row.free === true) {
-                        <lib-icon name="check" size="sm" [color]="'var(--color-success)'" />
+                        <lib-icon name="check" size="sm" color="success" />
                       } @else {
-                        <lib-icon name="x" size="sm" [color]="'var(--color-text-tertiary)'" />
+                        <lib-icon name="x" size="sm" color="text-tertiary" />
                       }
                     </td>
                     <td class="pricing-page_table-value">
                       @if (isStringValue(row.starter)) {
                         {{ row.starter }}
                       } @else if (row.starter === true) {
-                        <lib-icon name="check" size="sm" [color]="'var(--color-success)'" />
+                        <lib-icon name="check" size="sm" color="success" />
                       } @else {
-                        <lib-icon name="x" size="sm" [color]="'var(--color-text-tertiary)'" />
+                        <lib-icon name="x" size="sm" color="text-tertiary" />
                       }
                     </td>
                     <td class="pricing-page_table-value">
                       @if (isStringValue(row.professional)) {
                         {{ row.professional }}
                       } @else if (row.professional === true) {
-                        <lib-icon name="check" size="sm" [color]="'var(--color-success)'" />
+                        <lib-icon name="check" size="sm" color="success" />
                       } @else {
-                        <lib-icon name="x" size="sm" [color]="'var(--color-text-tertiary)'" />
+                        <lib-icon name="x" size="sm" color="text-tertiary" />
                       }
                     </td>
                     <td class="pricing-page_table-value">
                       @if (isStringValue(row.business)) {
                         {{ row.business }}
                       } @else if (row.business === true) {
-                        <lib-icon name="check" size="sm" [color]="'var(--color-success)'" />
+                        <lib-icon name="check" size="sm" color="success" />
                       } @else {
-                        <lib-icon name="x" size="sm" [color]="'var(--color-text-tertiary)'" />
+                        <lib-icon name="x" size="sm" color="text-tertiary" />
                       }
                     </td>
                     <td class="pricing-page_table-value">
                       @if (isStringValue(row.enterprise)) {
                         {{ row.enterprise }}
                       } @else if (row.enterprise === true) {
-                        <lib-icon name="check" size="sm" [color]="'var(--color-success)'" />
+                        <lib-icon name="check" size="sm" color="success" />
                       } @else {
-                        <lib-icon name="x" size="sm" [color]="'var(--color-text-tertiary)'" />
+                        <lib-icon name="x" size="sm" color="text-tertiary" />
                       }
                     </td>
                   </tr>

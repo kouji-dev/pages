@@ -182,14 +182,15 @@ import { AuthService } from '../../application/services/auth.service';
       .org-settings-page {
         @apply min-h-screen;
         @apply flex flex-col;
-        background: var(--color-bg-primary);
+        @apply bg-bg-primary;
       }
 
       .org-settings-page_header {
         @apply w-full;
         @apply py-8;
         @apply px-4 sm:px-6 lg:px-8;
-        border-bottom: 1px solid var(--color-border-default);
+        @apply border-b;
+        @apply border-border-default;
       }
 
       .org-settings-page_header-content {
@@ -199,7 +200,7 @@ import { AuthService } from '../../application/services/auth.service';
       .org-settings-page_back-link {
         @apply inline-flex items-center gap-2;
         @apply text-sm font-medium mb-4;
-        color: var(--color-primary-500);
+        @apply text-primary-500;
         text-decoration: none;
         @apply transition-colors;
         @apply hover:opacity-80;
@@ -207,13 +208,13 @@ import { AuthService } from '../../application/services/auth.service';
 
       .org-settings-page_title {
         @apply text-3xl font-bold mb-2;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0;
       }
 
       .org-settings-page_subtitle {
         @apply text-base;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
       }
 
@@ -236,18 +237,18 @@ import { AuthService } from '../../application/services/auth.service';
         @apply p-6;
         @apply rounded-lg;
         @apply border;
-        border-color: var(--color-border-default);
-        background: var(--color-bg-primary);
+        @apply border-border-default;
+        @apply bg-bg-primary;
       }
 
       .org-settings-page_section--danger {
-        border-color: var(--color-error);
-        background: var(--color-error-50);
+        @apply border-error;
+        @apply bg-error-50;
       }
 
       .org-settings-page_section-title {
         @apply text-xl font-semibold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0;
       }
 
@@ -261,7 +262,7 @@ import { AuthService } from '../../application/services/auth.service';
         @apply gap-3;
         @apply pt-4;
         @apply border-t;
-        border-color: var(--color-border-default);
+        @apply border-border-default;
       }
 
       .org-settings-page_danger-content {
@@ -272,20 +273,20 @@ import { AuthService } from '../../application/services/auth.service';
 
       .org-settings-page_danger-title {
         @apply text-lg font-semibold mb-2;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0;
       }
 
       .org-settings-page_danger-description {
         @apply text-sm;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
         @apply max-w-md;
       }
 
       .org-settings-page_delete-warning {
         @apply text-sm font-medium;
-        color: var(--color-error);
+        @apply text-error;
         margin: 1rem 0 0 0;
       }
 
@@ -293,7 +294,7 @@ import { AuthService } from '../../application/services/auth.service';
         @apply list-disc list-inside;
         @apply mt-2 mb-4;
         @apply text-sm;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
       }
     `,
   ],

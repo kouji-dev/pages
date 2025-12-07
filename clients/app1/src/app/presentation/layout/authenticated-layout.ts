@@ -2,10 +2,11 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { BaseLayout } from './base-layout';
 import { UserMenu } from '../components/user-menu';
 import { OrganizationSelector } from '../components/organization-selector';
+import { ThemeToggle } from '../components/theme-toggle';
 
 @Component({
   selector: 'app-authenticated-layout',
-  imports: [BaseLayout, UserMenu, OrganizationSelector],
+  imports: [BaseLayout, UserMenu, OrganizationSelector, ThemeToggle],
   template: `
     <app-base-layout>
       <!-- Breadcrumbs slot (Jira/Confluence style) -->
@@ -25,7 +26,7 @@ import { OrganizationSelector } from '../components/organization-selector';
 
       <!-- Quick actions slot -->
       <div slot="quick-actions">
-        <!-- Quick actions will be added here -->
+        <app-theme-toggle />
       </div>
 
       <!-- Notifications slot -->

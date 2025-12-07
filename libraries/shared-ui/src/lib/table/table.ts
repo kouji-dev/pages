@@ -95,8 +95,8 @@ export interface TableColumn<T = any> {
         @apply overflow-hidden;
         @apply rounded-lg;
         @apply border;
-        border-color: var(--color-border-default);
-        background: var(--color-bg-primary);
+        @apply border-border-default;
+        @apply bg-bg-primary;
       }
 
       .table_container {
@@ -109,12 +109,12 @@ export interface TableColumn<T = any> {
       }
 
       .table_head {
-        background: var(--color-bg-tertiary);
+        @apply bg-bg-tertiary;
       }
 
       .table_row {
         @apply border-b;
-        border-color: var(--color-border-default);
+        @apply border-border-default;
       }
 
       .table_row--header {
@@ -126,7 +126,7 @@ export interface TableColumn<T = any> {
       }
 
       .table_row--hover:hover {
-        background: var(--color-bg-secondary);
+        @apply bg-bg-secondary;
       }
 
       .table_row--empty {
@@ -137,7 +137,7 @@ export interface TableColumn<T = any> {
         @apply px-4 py-3;
         @apply text-left;
         @apply text-sm font-semibold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         white-space: nowrap;
       }
 
@@ -158,7 +158,7 @@ export interface TableColumn<T = any> {
         @apply px-4 py-3;
         @apply text-sm;
         @apply text-left;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .table_cell--center {
@@ -177,12 +177,12 @@ export interface TableColumn<T = any> {
       .table_cell--empty {
         @apply text-center;
         @apply py-12;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
       }
 
       .table_empty-message {
         @apply text-sm;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
       }
     `,
   ],

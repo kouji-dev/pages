@@ -44,7 +44,7 @@ export interface DeleteOrganizationModalData {
 
       .delete-org-modal_warning {
         @apply text-sm font-medium;
-        color: var(--color-error);
+        @apply text-error;
         margin: 1rem 0 0 0;
       }
 
@@ -52,7 +52,7 @@ export interface DeleteOrganizationModalData {
         @apply list-disc list-inside;
         @apply mt-2 mb-4;
         @apply text-sm;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
       }
     `,
   ],

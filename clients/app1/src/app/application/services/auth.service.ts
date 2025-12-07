@@ -71,6 +71,23 @@ interface UserResponse {
   updated_at: string;
 }
 
+interface PasswordResetRequest {
+  email: string;
+}
+
+interface PasswordResetRequestResponse {
+  message: string;
+}
+
+interface PasswordResetConfirm {
+  token: string;
+  new_password: string;
+}
+
+interface PasswordResetConfirmResponse {
+  message: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -283,5 +300,27 @@ export class AuthService {
    */
   hasAccessToken(): boolean {
     return !!this.getAccessToken();
+  }
+
+  /**
+   * Request password reset
+   */
+  requestPasswordReset(email: string): Observable<PasswordResetRequestResponse> {
+    return this.http.post<PasswordResetRequestResponse>(
+      `${this.apiUrl}/auth/password/reset-request`,
+      {
+        email,
+      } as PasswordResetRequest,
+    );
+  }
+
+  /**
+   * Reset password with token
+   */
+  resetPassword(token: string, newPassword: string): Observable<PasswordResetConfirmResponse> {
+    return this.http.post<PasswordResetConfirmResponse>(`${this.apiUrl}/auth/password/reset`, {
+      token,
+      new_password: newPassword,
+    } as PasswordResetConfirm);
   }
 }

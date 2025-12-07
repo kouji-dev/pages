@@ -865,24 +865,24 @@ import {
         @apply inline-flex items-center gap-2;
         @apply text-sm font-medium;
         @apply mb-4;
-        color: var(--color-primary-500);
+        @apply text-primary-500;
         text-decoration: none;
         @apply transition-colors;
         @apply hover:opacity-80;
       }
 
       .demo_back-link:hover {
-        color: var(--color-primary-600);
+        @apply text-primary-600;
       }
 
       .demo_title {
         @apply text-4xl font-bold mb-2;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .demo_subtitle {
         @apply text-lg mb-8;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
       }
 
       .demo_section {
@@ -891,7 +891,7 @@ import {
 
       .demo_section-title {
         @apply text-2xl font-semibold mb-6;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .demo_grid {
@@ -904,7 +904,7 @@ import {
 
       .demo_item-title {
         @apply text-lg font-medium mb-3;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .demo_item-content {
@@ -917,9 +917,9 @@ import {
         @apply px-4 py-2;
         @apply rounded-md;
         @apply border;
-        border-color: var(--color-border-default);
-        background: var(--color-bg-primary);
-        color: var(--color-text-primary);
+        @apply border-border-default;
+        @apply bg-bg-primary;
+        @apply text-text-primary;
         @apply font-medium;
         @apply transition-colors;
         @apply cursor-pointer;
@@ -936,14 +936,14 @@ import {
         @apply px-4 py-2;
         @apply text-sm;
         @apply transition-colors;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         @apply cursor-pointer;
         @apply hover:bg-gray-100;
       }
 
       .demo_dropdown-item--active {
-        background: var(--color-bg-secondary);
-        color: var(--color-primary-500);
+        @apply bg-bg-secondary;
+        @apply text-primary-500;
         font-weight: 500;
       }
 

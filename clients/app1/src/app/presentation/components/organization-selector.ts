@@ -126,7 +126,7 @@ import { CreateOrganizationModal } from './create-organization-modal';
 
       .org-selector_current-icon {
         @apply flex-shrink-0;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
       }
 
       .org-selector_current-info {
@@ -138,19 +138,19 @@ import { CreateOrganizationModal } from './create-organization-modal';
 
       .org-selector_current-name {
         @apply text-sm font-medium;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         @apply truncate;
       }
 
       .org-selector_current-description {
         @apply text-xs;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         @apply truncate;
       }
 
       .org-selector_chevron {
         @apply flex-shrink-0;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
       }
 
       .org-selector_dropdown {
@@ -160,18 +160,18 @@ import { CreateOrganizationModal } from './create-organization-modal';
       .org-selector_header {
         @apply flex items-center justify-between;
         @apply px-4 py-3;
-        background: var(--color-bg-secondary);
+        @apply bg-bg-secondary;
       }
 
       .org-selector_header-title {
         @apply text-sm font-semibold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .org-selector_header-link {
         @apply flex items-center gap-1.5;
         @apply text-xs;
-        color: var(--color-primary-500);
+        @apply text-primary-500;
         text-decoration: none;
         @apply transition-colors;
         @apply hover:opacity-80;
@@ -179,7 +179,7 @@ import { CreateOrganizationModal } from './create-organization-modal';
 
       .org-selector_divider {
         @apply h-px;
-        background: var(--color-border-default);
+        @apply bg-border-default;
       }
 
       .org-selector_list {
@@ -206,12 +206,12 @@ import { CreateOrganizationModal } from './create-organization-modal';
       }
 
       .org-selector_item--active {
-        background: var(--color-bg-secondary);
+        @apply bg-bg-secondary;
       }
 
       .org-selector_item-icon {
         @apply flex-shrink-0;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
       }
 
       .org-selector_item-info {
@@ -222,18 +222,18 @@ import { CreateOrganizationModal } from './create-organization-modal';
 
       .org-selector_item-name {
         @apply text-sm font-medium;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .org-selector_item-description {
         @apply text-xs;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         @apply truncate;
       }
 
       .org-selector_item-check {
         @apply flex-shrink-0;
-        color: var(--color-primary-500);
+        @apply text-primary-500;
       }
 
       .org-selector_actions {
@@ -243,13 +243,13 @@ import { CreateOrganizationModal } from './create-organization-modal';
       .org-selector_action {
         @apply w-full;
         @apply justify-start;
-        color: var(--color-primary-500);
+        @apply text-primary-500;
       }
 
       .org-selector_action .button {
         @apply w-full;
         @apply justify-start;
-        color: var(--color-primary-500);
+        @apply text-primary-500;
       }
 
       .org-selector_action .button_content {

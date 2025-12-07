@@ -127,13 +127,13 @@ import { OrganizationInvitation } from '../../application/services/organization-
 
       .pending-invitations_title {
         @apply text-xl font-semibold mb-1;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0;
       }
 
       .pending-invitations_subtitle {
         @apply text-sm;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
       }
 
@@ -148,13 +148,13 @@ import { OrganizationInvitation } from '../../application/services/organization-
 
       .pending-invitations_table-email-address {
         @apply text-sm font-medium;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .pending-invitations_table-expiring-warning {
         @apply flex items-center gap-1;
         @apply text-xs;
-        color: var(--color-warning);
+        @apply text-warning;
       }
 
       .pending-invitations_role-badge {
@@ -165,18 +165,18 @@ import { OrganizationInvitation } from '../../application/services/organization-
       }
 
       .pending-invitations_role-badge--admin {
-        background: var(--color-primary-100);
-        color: var(--color-primary-700);
+        @apply bg-primary-100;
+        @apply text-primary-700;
       }
 
       .pending-invitations_role-badge--member {
-        background: var(--color-gray-100);
-        color: var(--color-gray-700);
+        @apply bg-gray-100;
+        @apply text-gray-700;
       }
 
       .pending-invitations_role-badge--viewer {
-        background: var(--color-gray-50);
-        color: var(--color-gray-600);
+        @apply bg-gray-50;
+        @apply text-gray-600;
       }
 
       .pending-invitations_table-date {
@@ -186,12 +186,12 @@ import { OrganizationInvitation } from '../../application/services/organization-
 
       .pending-invitations_table-date-value {
         @apply text-sm;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .pending-invitations_table-date-relative {
         @apply text-xs;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
       }
     `,
   ],

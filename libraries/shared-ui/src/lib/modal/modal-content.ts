@@ -18,7 +18,7 @@ import { CommonModule } from '@angular/common';
         @apply flex-1;
         @apply overflow-y-auto;
         @apply min-h-0;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
     `,
   ],

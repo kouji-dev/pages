@@ -34,18 +34,18 @@ import { Button } from 'shared-ui';
       .not-found_title {
         @apply text-8xl font-bold;
         @apply mb-4;
-        color: var(--color-primary-600);
+        @apply text-primary-600;
       }
 
       .not-found_message {
         @apply text-2xl font-semibold;
         @apply mb-2;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .not-found_description {
         @apply mb-6;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
       }
     `,
   ],

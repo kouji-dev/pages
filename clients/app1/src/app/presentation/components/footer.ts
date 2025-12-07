@@ -95,8 +95,8 @@ interface SocialLink {
       .footer {
         @apply w-full;
         @apply border-t;
-        border-color: var(--color-border-default);
-        background: var(--color-bg-primary);
+        @apply border-border-default;
+        @apply bg-bg-primary;
         @apply mt-auto;
       }
 
@@ -119,7 +119,7 @@ interface SocialLink {
       .footer_brand {
         @apply flex items-center gap-2;
         @apply font-bold text-lg;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         @apply mb-2;
       }
 
@@ -129,13 +129,13 @@ interface SocialLink {
 
       .footer_description {
         @apply text-sm leading-relaxed;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
       }
 
       .footer_section-title {
         @apply text-base font-semibold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0;
         @apply mb-2;
       }
@@ -149,14 +149,14 @@ interface SocialLink {
 
       .footer_link {
         @apply text-sm;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         text-decoration: none;
         @apply transition-colors;
         @apply hover:opacity-80;
       }
 
       .footer_link:hover {
-        color: var(--color-primary-500);
+        @apply text-primary-500;
       }
 
       .footer_contact {
@@ -166,7 +166,7 @@ interface SocialLink {
       .footer_contact-item {
         @apply flex items-center gap-2;
         @apply text-sm;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
       }
 
@@ -179,8 +179,8 @@ interface SocialLink {
         @apply flex items-center justify-center;
         @apply w-10 h-10;
         @apply rounded-lg;
-        color: var(--color-text-secondary);
-        background: var(--color-bg-tertiary);
+        @apply text-text-secondary;
+        @apply bg-bg-tertiary;
         @apply hover:bg-gray-200 transition-colors;
         text-decoration: none;
       }
@@ -188,12 +188,12 @@ interface SocialLink {
       .footer_copyright {
         @apply pt-8;
         @apply border-t;
-        border-color: var(--color-border-default);
+        @apply border-border-default;
       }
 
       .footer_copyright-text {
         @apply text-sm text-center;
-        color: var(--color-text-tertiary);
+        @apply text-text-tertiary;
         margin: 0;
       }
     `,

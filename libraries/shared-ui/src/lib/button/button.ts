@@ -76,52 +76,53 @@ import { Icon, IconName } from '../icon/icon';
       }
 
       .button:focus-visible {
-        outline: 2px solid var(--color-border-focus);
+        @apply outline-2;
+        @apply outline-border-focus;
         outline-offset: 2px;
       }
 
       /* Variants */
       .button--primary {
-        color: var(--color-text-inverse); /* White text */
-        background-color: var(--color-text-primary); /* Pure black background - Notion style */
-        border-color: var(--color-text-primary);
+        @apply text-text-inverse; /* White text */
+        @apply bg-text-primary; /* Pure black background - Notion style */
+        @apply border-text-primary;
       }
 
       .button--primary:not(.button--disabled):hover {
-        background-color: var(--color-gray-800); /* Dark gray on hover */
-        border-color: var(--color-gray-800);
+        @apply bg-gray-800; /* Dark gray on hover */
+        @apply border-gray-800;
       }
 
       .button--secondary {
-        color: var(--color-text-primary); /* Black text */
-        background-color: var(--color-bg-tertiary); /* Light gray/beige background - Notion style */
-        border-color: var(--color-border-default);
+        @apply text-text-primary; /* Black text */
+        @apply bg-bg-tertiary; /* Light gray/beige background - Notion style */
+        @apply border-border-default;
       }
 
       .button--secondary:not(.button--disabled):hover {
-        background-color: var(--color-gray-300); /* Slightly darker on hover */
-        border-color: var(--color-border-hover);
+        @apply bg-gray-300; /* Slightly darker on hover */
+        @apply border-border-hover;
       }
 
       .button--danger {
-        color: var(--color-text-inverse); /* White text */
-        background-color: var(--color-error); /* Red background */
-        border-color: var(--color-error);
+        @apply text-text-inverse; /* White text */
+        @apply bg-error; /* Red background */
+        @apply border-error;
       }
 
       .button--danger:not(.button--disabled):hover {
-        background-color: var(--color-error-600); /* Darker red on hover */
-        border-color: var(--color-error-600);
+        @apply bg-error-600; /* Darker red on hover */
+        @apply border-error-600;
       }
 
       .button--ghost {
-        color: var(--color-text-primary); /* Black text */
+        @apply text-text-primary; /* Black text */
         background-color: transparent;
         border-color: transparent;
       }
 
       .button--ghost:not(.button--disabled):hover {
-        background-color: var(--color-bg-hover); /* Light hover background - Notion style */
+        @apply bg-bg-hover; /* Light hover background - Notion style */
         border-color: transparent;
       }
 

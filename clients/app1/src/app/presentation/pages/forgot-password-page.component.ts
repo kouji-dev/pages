@@ -1,22 +1,24 @@
 import { Component, ChangeDetectionStrategy, computed, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { Button, Input, ToastService } from 'shared-ui';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../application/services/auth.service';
 
 @Component({
-  selector: 'app-login-page',
+  selector: 'app-forgot-password-page',
   standalone: true,
   imports: [Button, Input, RouterLink],
   template: `
-    <div class="login-page">
-      <div class="login-page_container">
-        <div class="login-page_content">
-          <h1 class="login-page_title">Welcome back</h1>
-          <p class="login-page_subtitle">Sign in to your account to continue</p>
+    <div class="forgot-password-page">
+      <div class="forgot-password-page_container">
+        <div class="forgot-password-page_content">
+          <h1 class="forgot-password-page_title">Forgot Password?</h1>
+          <p class="forgot-password-page_subtitle">
+            Enter your email address and we'll send you a link to reset your password.
+          </p>
 
           <form
-            class="login-page_form"
+            class="forgot-password-page_form"
             (ngSubmit)="handleSubmit()"
             (submit)="$event.preventDefault()"
           >
@@ -27,38 +29,33 @@ import { AuthService } from '../../application/services/auth.service';
               [(model)]="email"
               [required]="true"
               [errorMessage]="emailError()"
-              helperText="Enter your registered email address"
+              helperText="Enter the email address associated with your account"
             />
 
-            <lib-input
-              label="Password"
-              type="password"
-              placeholder="Enter your password"
-              [(model)]="password"
-              [required]="true"
-              [errorMessage]="passwordError()"
-              [showPasswordToggle]="true"
-            />
-
-            <div class="login-page_actions">
+            <div class="forgot-password-page_actions">
               <lib-button
                 variant="primary"
                 type="submit"
                 [loading]="isSubmitting()"
                 [disabled]="!isFormValid()"
-                class="login-page_submit-button"
+                class="forgot-password-page_submit-button"
               >
-                Sign In
+                Send Reset Link
               </lib-button>
             </div>
           </form>
 
-          <div class="login-page_footer">
-            <p class="login-page_footer-text">
-              Don't have an account?
-              <a routerLink="/register" class="login-page_link">Sign up</a>
-            </p>
-            <a routerLink="/forgot-password" class="login-page_forgot-link">Forgot password?</a>
+          @if (isSuccess()) {
+            <div class="forgot-password-page_success">
+              <p class="forgot-password-page_success-text">
+                If an account exists with this email, we've sent a password reset link. Please check
+                your inbox.
+              </p>
+            </div>
+          }
+
+          <div class="forgot-password-page_footer">
+            <a routerLink="/login" class="forgot-password-page_link">Back to Sign In</a>
           </div>
         </div>
       </div>
@@ -68,7 +65,7 @@ import { AuthService } from '../../application/services/auth.service';
     `
       @reference "#mainstyles";
 
-      .login-page {
+      .forgot-password-page {
         @apply min-h-screen;
         @apply flex items-center justify-center;
         @apply px-4;
@@ -76,12 +73,12 @@ import { AuthService } from '../../application/services/auth.service';
         @apply bg-bg-primary;
       }
 
-      .login-page_container {
+      .forgot-password-page_container {
         @apply w-full;
         @apply max-w-md;
       }
 
-      .login-page_content {
+      .forgot-password-page_content {
         @apply flex flex-col;
         @apply gap-8;
         @apply p-8;
@@ -91,68 +88,63 @@ import { AuthService } from '../../application/services/auth.service';
         @apply bg-bg-secondary;
       }
 
-      .login-page_title {
+      .forgot-password-page_title {
         @apply text-3xl font-bold;
         @apply mb-2;
         @apply text-text-primary;
         margin: 0;
       }
 
-      .login-page_subtitle {
+      .forgot-password-page_subtitle {
         @apply text-sm;
         @apply text-text-secondary;
         margin: 0;
       }
 
-      .login-page_form {
+      .forgot-password-page_form {
         @apply flex flex-col;
         @apply gap-6;
       }
 
-      .login-page_actions {
+      .forgot-password-page_actions {
         @apply flex flex-col;
         @apply gap-3;
         @apply pt-2;
       }
 
-      .login-page_submit-button {
+      .forgot-password-page_submit-button {
         @apply w-full;
       }
 
-      .login-page_footer {
-        @apply flex flex-col;
-        @apply gap-2;
+      .forgot-password-page_success {
+        @apply p-4;
+        @apply rounded-md;
+        @apply border;
+        @apply border-success-200;
+        @apply bg-success-50;
+      }
+
+      .forgot-password-page_success-text {
+        @apply text-sm;
+        @apply text-success-700;
+        margin: 0;
+      }
+
+      .forgot-password-page_footer {
         @apply text-center;
         @apply pt-4;
         @apply border-t;
         @apply border-border-default;
       }
 
-      .login-page_footer-text {
-        @apply text-sm;
-        @apply text-text-secondary;
-        margin: 0;
-      }
-
-      .login-page_link {
-        @apply font-medium;
-        @apply text-primary-600;
-        text-decoration: none;
-      }
-
-      .login-page_link:hover {
-        @apply text-primary-700;
-        text-decoration: underline;
-      }
-
-      .login-page_forgot-link {
+      .forgot-password-page_link {
         @apply text-sm;
         @apply font-medium;
         @apply text-primary-600;
         text-decoration: none;
       }
 
-      .login-page_forgot-link:hover {
+      .forgot-password-page_link:hover {
         @apply text-primary-700;
         text-decoration: underline;
       }
@@ -160,14 +152,13 @@ import { AuthService } from '../../application/services/auth.service';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoginPage {
+export class ForgotPasswordPage {
   private readonly authService = inject(AuthService);
-  private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
 
   readonly email = signal('');
-  readonly password = signal('');
   readonly isSubmitting = signal(false);
+  readonly isSuccess = signal(false);
 
   readonly emailError = computed(() => {
     const value = this.email();
@@ -181,21 +172,8 @@ export class LoginPage {
     return '';
   });
 
-  readonly passwordError = computed(() => {
-    const value = this.password();
-    if (!value.trim()) {
-      return 'Password is required';
-    }
-    return '';
-  });
-
   readonly isFormValid = computed(() => {
-    return (
-      !this.emailError() &&
-      !this.passwordError() &&
-      this.email().trim().length > 0 &&
-      this.password().trim().length > 0
-    );
+    return !this.emailError() && this.email().trim().length > 0;
   });
 
   async handleSubmit(): Promise<void> {
@@ -206,18 +184,12 @@ export class LoginPage {
     this.isSubmitting.set(true);
 
     try {
-      await firstValueFrom(
-        this.authService.login({
-          email: this.email().trim(),
-          password: this.password(),
-        }),
-      );
-
-      this.toast.success('Welcome back!');
-      this.router.navigate(['/app']);
+      await firstValueFrom(this.authService.requestPasswordReset(this.email().trim()));
+      this.isSuccess.set(true);
+      this.toast.success('Password reset link sent! Please check your email.');
     } catch (error) {
       // Error is already handled by error interceptor
-      console.error('Login failed:', error);
+      console.error('Password reset request failed:', error);
     } finally {
       this.isSubmitting.set(false);
     }

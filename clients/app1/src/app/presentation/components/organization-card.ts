@@ -87,8 +87,8 @@ import { Organization } from '../../application/services/organization.service';
         @apply flex flex-col;
         @apply rounded-lg;
         @apply border;
-        border-color: var(--color-border-default);
-        background: var(--color-bg-primary);
+        @apply border-border-default;
+        @apply bg-bg-primary;
         @apply transition-all;
         @apply hover:shadow-lg;
         min-height: 180px;
@@ -116,8 +116,8 @@ import { Organization } from '../../application/services/organization.service';
         @apply flex items-center justify-center;
         @apply w-12 h-12;
         @apply rounded-lg;
-        background: var(--color-bg-tertiary);
-        color: var(--color-primary-500);
+        @apply bg-bg-tertiary;
+        @apply text-primary-500;
       }
 
       .org-card_info {
@@ -128,13 +128,13 @@ import { Organization } from '../../application/services/organization.service';
 
       .org-card_name {
         @apply text-xl font-semibold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0;
       }
 
       .org-card_description {
         @apply text-sm;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
         @apply line-clamp-2;
       }
@@ -149,7 +149,7 @@ import { Organization } from '../../application/services/organization.service';
         @apply flex items-center;
         @apply gap-2;
         @apply text-sm;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
       }
 
       .org-card_actions {
@@ -177,11 +177,11 @@ import { Organization } from '../../application/services/organization.service';
       }
 
       .org-card_action-item--danger {
-        color: var(--color-error);
+        @apply text-error;
       }
 
       .org-card_action-item--danger:hover {
-        background: var(--color-error-50);
+        @apply bg-error-50;
       }
     `,
   ],

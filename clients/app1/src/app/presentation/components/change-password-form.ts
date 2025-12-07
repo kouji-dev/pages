@@ -74,13 +74,13 @@ import { UserProfileService } from '../../application/services/user-profile.serv
 
       .change-password-form_title {
         @apply text-xl font-semibold;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         margin: 0;
       }
 
       .change-password-form_description {
         @apply text-sm;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         margin: 0;
       }
 
@@ -94,7 +94,7 @@ import { UserProfileService } from '../../application/services/user-profile.serv
         @apply gap-3;
         @apply pt-4;
         @apply border-t;
-        border-color: var(--color-border-default);
+        @apply border-border-default;
       }
     `,
   ],

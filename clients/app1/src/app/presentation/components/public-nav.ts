@@ -1,10 +1,11 @@
 import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Button, Icon } from 'shared-ui';
+import { ThemeToggle } from './theme-toggle';
 
 @Component({
   selector: 'app-public-nav',
-  imports: [RouterLink, RouterLinkActive, Button, Icon],
+  imports: [RouterLink, RouterLinkActive, Button, Icon, ThemeToggle],
   template: `
     <nav class="public-nav">
       <div class="public-nav_container">
@@ -43,6 +44,7 @@ import { Button, Icon } from 'shared-ui';
             >
           </div>
           <div class="public-nav_actions">
+            <app-theme-toggle />
             <lib-button variant="ghost" size="md" [link]="['/login']">Log In</lib-button>
             <lib-button variant="primary" size="md" [link]="['/register']">Sign Up</lib-button>
           </div>
@@ -116,8 +118,8 @@ import { Button, Icon } from 'shared-ui';
       .public-nav {
         @apply w-full;
         @apply border-b;
-        border-color: var(--color-border-default);
-        background: var(--color-bg-primary);
+        @apply border-border-default;
+        @apply bg-bg-primary;
         @apply sticky top-0;
         z-index: 50;
         position: sticky;
@@ -133,7 +135,7 @@ import { Button, Icon } from 'shared-ui';
       .public-nav_logo {
         @apply flex items-center gap-2;
         @apply font-bold text-lg;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         text-decoration: none;
         @apply hover:opacity-80 transition-opacity;
       }
@@ -152,7 +154,7 @@ import { Button, Icon } from 'shared-ui';
 
       .public-nav_link {
         @apply text-sm font-medium;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         text-decoration: none;
         @apply transition-colors;
         @apply relative;
@@ -160,7 +162,7 @@ import { Button, Icon } from 'shared-ui';
       }
 
       .public-nav_link:hover {
-        color: var(--color-primary-500);
+        @apply text-primary-500;
       }
 
       .public-nav_link::after {
@@ -168,7 +170,7 @@ import { Button, Icon } from 'shared-ui';
         @apply absolute bottom-0 left-0;
         @apply h-0.5;
         width: 0;
-        background: var(--color-primary-500);
+        @apply bg-primary-500;
         @apply transform -translate-y-1;
         @apply transition-all duration-300 ease-in-out;
       }
@@ -178,7 +180,7 @@ import { Button, Icon } from 'shared-ui';
       }
 
       .public-nav_link--active {
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .public-nav_link--active::after {
@@ -186,16 +188,16 @@ import { Button, Icon } from 'shared-ui';
       }
 
       .public-nav_link--demo {
-        color: var(--color-primary-500);
+        @apply text-primary-500;
         font-weight: 600;
       }
 
       .public-nav_link--demo:hover {
-        color: var(--color-primary-600);
+        @apply text-primary-600;
       }
 
       .public-nav_link--demo::after {
-        background: var(--color-primary-500);
+        @apply bg-primary-500;
       }
 
       .public-nav_actions {
@@ -206,7 +208,7 @@ import { Button, Icon } from 'shared-ui';
         @apply md:hidden;
         @apply p-2;
         @apply border-none bg-transparent;
-        color: var(--color-text-primary);
+        @apply text-text-primary;
         @apply cursor-pointer;
         @apply hover:bg-gray-100 rounded;
       }
@@ -214,9 +216,9 @@ import { Button, Icon } from 'shared-ui';
       .public-nav_mobile {
         @apply md:hidden;
         @apply border-t;
-        border-color: var(--color-border-default);
+        @apply border-border-default;
         @apply px-4 py-4;
-        background: var(--color-bg-primary);
+        @apply bg-bg-primary;
       }
 
       .public-nav_mobile-links {
@@ -226,7 +228,7 @@ import { Button, Icon } from 'shared-ui';
 
       .public-nav_mobile-link {
         @apply text-base font-medium;
-        color: var(--color-text-secondary);
+        @apply text-text-secondary;
         text-decoration: none;
         @apply transition-colors;
         @apply py-2;
@@ -234,26 +236,31 @@ import { Button, Icon } from 'shared-ui';
       }
 
       .public-nav_mobile-link:hover {
-        color: var(--color-primary-500);
+        @apply text-primary-500;
       }
 
       .public-nav_mobile-link--active {
-        color: var(--color-text-primary);
+        @apply text-text-primary;
       }
 
       .public-nav_mobile-link--demo {
-        color: var(--color-primary-500);
+        @apply text-primary-500;
         font-weight: 600;
       }
 
       .public-nav_mobile-link--demo:hover {
-        color: var(--color-primary-600);
+        @apply text-primary-600;
       }
 
       .public-nav_mobile-actions {
         @apply flex flex-col gap-3;
         @apply pt-4 border-t;
-        border-color: var(--color-border-default);
+        @apply border-border-default;
+      }
+
+      .public-nav_mobile-theme {
+        @apply flex justify-center;
+        @apply pb-2;
       }
     `,
   ],
