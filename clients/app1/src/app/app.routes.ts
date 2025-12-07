@@ -5,6 +5,7 @@ import { FeaturesPage } from './presentation/pages/features-page';
 import { PricingPage } from './presentation/pages/pricing-page';
 import { OrganizationsPage } from './presentation/pages/organizations-page';
 import { OrganizationSettingsPage } from './presentation/pages/organization-settings-page';
+import { InvitationAcceptancePage } from './presentation/pages/invitation-acceptance-page';
 import { AuthenticatedLayout } from './presentation/layout/authenticated-layout';
 
 export const routes: Routes = [
@@ -27,6 +28,11 @@ export const routes: Routes = [
     path: 'pricing',
     component: PricingPage,
     title: 'Pricing - Pages',
+  },
+  {
+    path: 'invitations/:token',
+    component: InvitationAcceptancePage,
+    title: 'Accept Invitation - Pages',
   },
   {
     path: 'app',
