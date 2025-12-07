@@ -291,24 +291,25 @@ This phase focuses on building the foundational features required for a function
 **Priority**: Critical  
 **Estimated Time**: 1-2 days  
 **Dependencies**: 1.1.5  
-**Assigned To**: HWIMDA2
+**Assigned To**: HWIMDA2  
+**Status**: ✅ Complete
 
 **Frontend Tasks**:
 
-- [-] Define route structure in `app.routes.ts`
-  - [ ] Public routes (landing, login, register) (routes array exists but empty)
-  - [ ] Protected routes (dashboard, projects, etc.) (routes array exists but empty)
+- [x] Define route structure in `app.routes.ts`
+  - [x] Public routes (landing, login, register)
+  - [x] Protected routes (dashboard, projects, etc.)
   - [x] Route configuration with path, component (Router configured in app.config.ts)
-- [ ] Create route guard service (`auth.guard.ts`)
-  - [ ] Check authentication status
-  - [ ] Redirect to login if not authenticated
-  - [ ] Use `inject()` for dependencies
-- [ ] Create 404 not found component (`not-found.component.ts`)
-  - [ ] 404 page with navigation link
-  - [ ] Responsive design
-- [ ] Apply guards to protected routes
-- [ ] Test routing behavior
-- [ ] Write route guard tests
+- [x] Create route guard service (`auth.guard.ts`)
+  - [x] Check authentication status
+  - [x] Redirect to login if not authenticated
+  - [x] Use `inject()` for dependencies
+- [x] Create 404 not found component (`not-found.component.ts`)
+  - [x] 404 page with navigation link
+  - [x] Responsive design
+- [x] Apply guards to protected routes
+- [x] Test routing behavior
+- [x] Write route guard tests
 
 **Deliverables**:
 
