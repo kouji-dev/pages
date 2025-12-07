@@ -180,8 +180,8 @@ export class ChangePasswordForm {
 
     try {
       await this.userProfileService.updatePassword({
-        currentPassword: this.currentPassword(),
-        newPassword: this.newPassword(),
+        current_password: this.currentPassword(),
+        new_password: this.newPassword(),
       });
       this.toast.success('Password updated successfully!');
       this.handleReset();

@@ -43,7 +43,7 @@ export class OrganizationInvitationsService {
 
   // Base URL pattern for organization invitations
   private readonly invitationsApiUrl = (organizationId: string): string =>
-    `${environment.apiUrl}/api/v1/organizations/${organizationId}/invitations`;
+    `${environment.apiUrl}/organizations/${organizationId}/invitations`;
 
   // Current organization ID signal for invitations
   private readonly currentOrganizationId = signal<string | null>(null);
@@ -89,7 +89,7 @@ export class OrganizationInvitationsService {
   ): Promise<OrganizationInvitation> {
     const response = await this.http
       .post<OrganizationInvitation>(
-        `${environment.apiUrl}/api/v1/organizations/${organizationId}/members/invite`,
+        `${environment.apiUrl}/organizations/${organizationId}/members/invite`,
         request,
       )
       .toPromise();
@@ -110,7 +110,7 @@ export class OrganizationInvitationsService {
    */
   async cancelInvitation(invitationId: string): Promise<void> {
     await this.http
-      .delete(`${environment.apiUrl}/api/v1/organizations/invitations/${invitationId}`)
+      .delete(`${environment.apiUrl}/organizations/invitations/${invitationId}`)
       .toPromise();
 
     // Reload invitations if currently loaded
@@ -125,7 +125,7 @@ export class OrganizationInvitationsService {
   async acceptInvitation(token: string): Promise<AcceptInvitationResponse> {
     const response = await this.http
       .post<AcceptInvitationResponse>(
-        `${environment.apiUrl}/api/v1/organizations/invitations/${token}/accept`,
+        `${environment.apiUrl}/organizations/invitations/${token}/accept`,
         {},
       )
       .toPromise();

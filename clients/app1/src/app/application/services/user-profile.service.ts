@@ -1,28 +1,43 @@
-import { Injectable, signal, inject, computed } from '@angular/core';
-import { HttpClient, HttpEvent } from '@angular/common/http';
+import { Injectable, signal, inject, computed, type Signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { httpResource } from '@angular/common/http';
+import { Observable, map, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface UserProfile {
   id: string;
   name: string;
   email: string;
-  avatarUrl?: string;
-  createdAt?: string;
+  avatarUrl: string | null;
+  isActive: boolean;
+  isVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface UserProfileResponse {
+  id: string;
+  name: string;
+  email: string;
+  avatar_url: string | null;
+  is_active: boolean;
+  is_verified: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface UpdateProfileRequest {
-  name: string;
+  name?: string;
 }
 
 export interface UpdateEmailRequest {
-  newEmail: string;
-  currentPassword: string;
+  new_email: string;
+  current_password: string;
 }
 
 export interface UpdatePasswordRequest {
-  currentPassword: string;
-  newPassword: string;
+  current_password: string;
+  new_password: string;
 }
 
 @Injectable({
@@ -30,18 +45,38 @@ export interface UpdatePasswordRequest {
 })
 export class UserProfileService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${environment.apiUrl}/api/v1/users/me`;
+  private readonly apiUrl = `${environment.apiUrl}/users/me`;
 
-  // User profile resource using httpResource
-  readonly profile = httpResource<UserProfile>(() => this.apiUrl);
+  // User profile resource using httpResource (with mapping)
+  readonly profile = httpResource<UserProfileResponse>(() => this.apiUrl);
 
-  // Public accessors
-  readonly userProfile = computed(() => {
-    return this.profile.value() as UserProfile | undefined;
+  // Public accessors (mapped to camelCase)
+  readonly userProfile: Signal<UserProfile | undefined> = computed(() => {
+    const response = this.profile.value();
+    if (!response) {
+      return undefined;
+    }
+    return this.mapToUserProfile(response);
   });
   readonly isLoading = computed(() => this.profile.isLoading());
   readonly error = computed(() => this.profile.error());
   readonly hasError = computed(() => this.profile.error() !== undefined);
+
+  /**
+   * Map backend response (snake_case) to frontend model (camelCase)
+   */
+  private mapToUserProfile(response: UserProfileResponse): UserProfile {
+    return {
+      id: response.id,
+      name: response.name,
+      email: response.email,
+      avatarUrl: response.avatar_url,
+      isActive: response.is_active,
+      isVerified: response.is_verified,
+      createdAt: response.created_at,
+      updatedAt: response.updated_at,
+    };
+  }
 
   /**
    * Load user profile from API
@@ -51,74 +86,72 @@ export class UserProfileService {
   }
 
   /**
+   * Get current user profile signal
+   * Returns readonly signal - consumers can convert to Observable using toObservable() if needed
+   */
+  getProfile(): Signal<UserProfile | undefined> {
+    return this.userProfile;
+  }
+
+  /**
    * Update user profile (name only)
    */
-  async updateProfile(request: UpdateProfileRequest): Promise<UserProfile> {
-    const response = await this.http.put<UserProfile>(this.apiUrl, request).toPromise();
-    if (!response) {
-      throw new Error('Failed to update profile: No response from server');
-    }
-
-    // Reload profile to get updated data
-    this.loadProfile();
-
-    return response;
+  updateProfile(request: UpdateProfileRequest): Observable<UserProfile> {
+    return this.http.put<UserProfileResponse>(this.apiUrl, request).pipe(
+      tap(() => {
+        // Reload resource after successful update
+        this.profile.reload();
+      }),
+      map((response) => this.mapToUserProfile(response)),
+    );
   }
 
   /**
    * Update user email
    */
-  async updateEmail(request: UpdateEmailRequest): Promise<UserProfile> {
-    const response = await this.http.put<UserProfile>(`${this.apiUrl}/email`, request).toPromise();
-    if (!response) {
-      throw new Error('Failed to update email: No response from server');
-    }
-
-    // Reload profile to get updated data
-    this.loadProfile();
-
-    return response;
+  updateEmail(request: UpdateEmailRequest): Observable<UserProfile> {
+    return this.http.put<UserProfileResponse>(`${this.apiUrl}/email`, request).pipe(
+      tap(() => {
+        // Reload resource after successful update
+        this.profile.reload();
+      }),
+      map((response) => this.mapToUserProfile(response)),
+    );
   }
 
   /**
    * Update user password
    */
-  async updatePassword(request: UpdatePasswordRequest): Promise<void> {
-    await this.http.put(`${this.apiUrl}/password`, request).toPromise();
+  updatePassword(request: UpdatePasswordRequest): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/password`, request);
   }
 
   /**
    * Upload user avatar
    */
-  async uploadAvatar(file: File): Promise<UserProfile> {
+  uploadAvatar(file: File): Observable<UserProfile> {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await this.http
-      .post<UserProfile>(`${this.apiUrl}/avatar`, formData)
-      .toPromise();
-    if (!response) {
-      throw new Error('Failed to upload avatar: No response from server');
-    }
-
-    // Reload profile to get updated data
-    this.loadProfile();
-
-    return response;
+    return this.http.post<UserProfileResponse>(`${this.apiUrl}/avatar`, formData).pipe(
+      tap(() => {
+        // Reload resource after successful upload
+        this.profile.reload();
+      }),
+      map((response) => this.mapToUserProfile(response)),
+    );
   }
 
   /**
    * Delete user avatar
    */
-  async deleteAvatar(): Promise<UserProfile> {
-    const response = await this.http.delete<UserProfile>(`${this.apiUrl}/avatar`).toPromise();
-    if (!response) {
-      throw new Error('Failed to delete avatar: No response from server');
-    }
-
-    // Reload profile to get updated data
-    this.loadProfile();
-
-    return response;
+  deleteAvatar(): Observable<UserProfile> {
+    return this.http.delete<UserProfileResponse>(`${this.apiUrl}/avatar`).pipe(
+      tap(() => {
+        // Reload resource after successful deletion
+        this.profile.reload();
+      }),
+      map((response) => this.mapToUserProfile(response)),
+    );
   }
 }

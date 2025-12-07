@@ -34,7 +34,7 @@ export interface ListUsersParams {
 })
 export class UserService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${environment.apiUrl}/api/v1/users`;
+  private readonly apiUrl = `${environment.apiUrl}/users`;
 
   // Search query signal
   private readonly searchQuery = signal<string>('');

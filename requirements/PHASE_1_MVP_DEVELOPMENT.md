@@ -324,31 +324,32 @@ This phase focuses on building the foundational features required for a function
 **Priority**: Critical  
 **Estimated Time**: 1-2 days  
 **Dependencies**: 1.1.1  
-**Assigned To**: HWIMDA2
+**Assigned To**: HWIMDA2  
+**Status**: ✅ Complete
 
 **Frontend Tasks**:
 
-- [ ] Create request interceptor (`auth.interceptor.ts`)
-  - [ ] Add JWT token to request headers
-  - [ ] Handle token refresh logic
-  - [ ] Use `inject()` for dependencies
-- [ ] Create response interceptor (`error.interceptor.ts`)
-  - [ ] Handle 401 (unauthorized) responses
-  - [ ] Handle 403 (forbidden) responses
-  - [ ] Handle 500 (server error) responses
-  - [ ] Extract and format error messages
-- [-] Register interceptors in `app.config.ts` (HttpClient configured with `withInterceptors()`, mock API interceptor registered for frontend demo)
+- [x] Create request interceptor (`auth.interceptor.ts`)
+  - [x] Add JWT token to request headers
+  - [x] Handle token refresh logic
+  - [x] Use `inject()` for dependencies
+- [x] Create response interceptor (`error.interceptor.ts`)
+  - [x] Handle 401 (unauthorized) responses
+  - [x] Handle 403 (forbidden) responses
+  - [x] Handle 500 (server error) responses
+  - [x] Extract and format error messages
+- [x] Register interceptors in `app.config.ts` (HttpClient configured with `withInterceptors()`, auth and error interceptors registered)
 - [x] Create mock API interceptor (`mock-api.interceptor.ts`) for frontend demo
   - [x] Intercepts `/api/organizations` requests
   - [x] Provides mock data from localStorage or defaults
   - [x] Simulates GET, POST, PUT/PATCH, DELETE operations
   - [x] Includes network delay simulation
   - [x] TODO: Remove when backend API is ready
-- [ ] Create error handling service (`error-handler.service.ts`)
-  - [ ] Centralized error handling
-  - [ ] User-friendly error messages
-- [ ] Write interceptor tests
-- [ ] Test error scenarios
+- [x] Create error handling service (`error-handler.service.ts`)
+  - [x] Centralized error handling
+  - [x] User-friendly error messages
+- [x] Write interceptor tests
+- [x] Test error scenarios
 
 **Deliverables**:
 

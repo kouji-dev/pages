@@ -53,7 +53,7 @@ describe('OrganizationService', () => {
         expect(localStorage.getItem('current_organization_id')).toBe(firstOrg.id);
         // The organization will be fetched via the resource, so we need to wait
         setTimeout(() => {
-          expect(service.getCurrentOrganization()?.id).toBe(firstOrg.id);
+          expect(service.getCurrentOrganization()()?.id).toBe(firstOrg.id);
           done();
         }, 400);
       } else {
@@ -66,7 +66,7 @@ describe('OrganizationService', () => {
     service.loadOrganizations();
 
     setTimeout(() => {
-      const org = service.getCurrentOrganization();
+      const org = service.getCurrentOrganization()();
       expect(org).toBeTruthy();
       done();
     }, 400);
@@ -76,7 +76,7 @@ describe('OrganizationService', () => {
     service.loadOrganizations();
 
     setTimeout(() => {
-      const orgs = service.getOrganizations();
+      const orgs = service.getOrganizations()();
       expect(Array.isArray(orgs)).toBe(true);
       done();
     }, 400);

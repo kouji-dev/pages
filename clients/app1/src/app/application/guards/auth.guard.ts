@@ -10,7 +10,8 @@ export const authGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (authService.isAuthenticated()) {
+  // Check if user is authenticated (has token and user data)
+  if (authService.isAuthenticated() && authService.hasAccessToken()) {
     return true;
   }
 

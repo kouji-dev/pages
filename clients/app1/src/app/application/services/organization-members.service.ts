@@ -38,7 +38,7 @@ export class OrganizationMembersService {
 
   // Base URL pattern for organization members (includes /members)
   private readonly membersApiUrl = (organizationId: string): string =>
-    `${environment.apiUrl}/api/v1/organizations/${organizationId}/members`;
+    `${environment.apiUrl}/organizations/${organizationId}/members`;
 
   // Current organization ID signal for members
   private readonly currentOrganizationId = signal<string | null>(null);
