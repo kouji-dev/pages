@@ -3,9 +3,9 @@ import {
   ChangeDetectionStrategy,
   computed,
   inject,
-  OnInit,
   ViewContainerRef,
   signal,
+  effect,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { Button, Icon, LoadingState, ErrorState, EmptyState, Modal } from 'shared-ui';
@@ -123,7 +123,7 @@ import { CreateOrganizationModal } from '../components/create-organization-modal
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OrganizationsPage implements OnInit {
+export class OrganizationsPage {
   readonly organizationService = inject(OrganizationService);
   readonly router = inject(Router);
   readonly modal = inject(Modal);
@@ -141,10 +141,13 @@ export class OrganizationsPage implements OnInit {
     return 'An unknown error occurred.';
   });
 
-  ngOnInit(): void {
-    // Load organizations when component initializes
-    this.organizationService.loadOrganizations();
-  }
+  private readonly initializeEffect = effect(
+    () => {
+      // Load organizations when component initializes
+      this.organizationService.loadOrganizations();
+    },
+    { allowSignalWrites: true },
+  );
 
   handleCreateOrganization(): void {
     this.modal.open(CreateOrganizationModal, this.viewContainerRef, {

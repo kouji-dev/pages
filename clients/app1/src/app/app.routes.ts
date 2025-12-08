@@ -10,6 +10,7 @@ import { ProfilePage } from './presentation/pages/profile-page';
 import { ProjectsPage } from './presentation/pages/projects-page';
 import { ProjectDetailPage } from './presentation/pages/project-detail-page';
 import { ProjectSettingsPage } from './presentation/pages/project-settings-page';
+import { IssueDetailPage } from './presentation/pages/issue-detail-page';
 import { LoginPage } from './presentation/pages/login-page.component';
 import { RegisterPage } from './presentation/pages/register-page.component';
 import { ForgotPasswordPage } from './presentation/pages/forgot-password-page.component';
@@ -100,6 +101,11 @@ export const routes: Routes = [
         path: 'projects/:id/settings',
         component: ProjectSettingsPage,
         title: 'Project Settings - Pages',
+      },
+      {
+        path: 'issues/:id',
+        component: IssueDetailPage,
+        title: 'Issue Details - Pages',
       },
     ],
   },

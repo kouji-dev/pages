@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   computed,
   inject,
-  OnInit,
   signal,
   ViewContainerRef,
   effect,
@@ -220,7 +219,7 @@ import { DeleteProjectModal } from '../components/delete-project-modal';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectSettingsPage implements OnInit {
+export class ProjectSettingsPage {
   readonly projectService = inject(ProjectService);
   readonly route = inject(ActivatedRoute);
   readonly router = inject(Router);
@@ -285,12 +284,15 @@ export class ProjectSettingsPage implements OnInit {
     { allowSignalWrites: true },
   );
 
-  ngOnInit(): void {
-    const id = this.projectId();
-    if (id) {
-      this.projectService.fetchProject(id);
-    }
-  }
+  private readonly initializeEffect = effect(
+    () => {
+      const id = this.projectId();
+      if (id) {
+        this.projectService.fetchProject(id);
+      }
+    },
+    { allowSignalWrites: true },
+  );
 
   async handleSaveProject(): Promise<void> {
     if (!this.isFormValid() || !this.hasChanges()) {

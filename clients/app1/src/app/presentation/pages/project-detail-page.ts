@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   computed,
   inject,
-  OnInit,
   signal,
   effect,
 } from '@angular/core';
@@ -11,12 +10,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Button, Icon, LoadingState, ErrorState } from 'shared-ui';
 import { ProjectService } from '../../application/services/project.service';
 import { ProjectMemberList } from '../components/project-member-list';
+import { IssueList } from '../components/issue-list';
+import { KanbanBoard } from '../components/kanban-board';
 
-type TabType = 'issues' | 'settings' | 'members';
+type TabType = 'issues' | 'board' | 'settings' | 'members';
 
 @Component({
   selector: 'app-project-detail-page',
-  imports: [Button, LoadingState, ErrorState, ProjectMemberList],
+  imports: [Button, LoadingState, ErrorState, ProjectMemberList, IssueList, KanbanBoard],
   template: `
     <div class="project-detail-page">
       @if (projectService.isFetchingProject()) {
@@ -62,6 +63,14 @@ type TabType = 'issues' | 'settings' | 'members';
             <lib-button
               variant="ghost"
               size="md"
+              [class.project-detail-page_tab--active]="activeTab() === 'board'"
+              (clicked)="setActiveTab('board')"
+            >
+              Board
+            </lib-button>
+            <lib-button
+              variant="ghost"
+              size="md"
               [class.project-detail-page_tab--active]="activeTab() === 'members'"
               (clicked)="setActiveTab('members')"
             >
@@ -79,11 +88,9 @@ type TabType = 'issues' | 'settings' | 'members';
 
           <div class="project-detail-page_tab-content">
             @if (activeTab() === 'issues') {
-              <div class="project-detail-page_issues">
-                <p class="project-detail-page_placeholder">
-                  Issues list will be implemented in task 1.3.6
-                </p>
-              </div>
+              <app-issue-list [projectId]="projectId()" />
+            } @else if (activeTab() === 'board') {
+              <app-kanban-board [projectId]="projectId()" />
             } @else if (activeTab() === 'members') {
               <app-project-member-list [projectId]="projectId()" />
             } @else if (activeTab() === 'settings') {
@@ -189,7 +196,7 @@ type TabType = 'issues' | 'settings' | 'members';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectDetailPage implements OnInit {
+export class ProjectDetailPage {
   readonly projectService = inject(ProjectService);
   readonly route = inject(ActivatedRoute);
   readonly router = inject(Router);
@@ -208,12 +215,15 @@ export class ProjectDetailPage implements OnInit {
     return 'An unknown error occurred.';
   });
 
-  ngOnInit(): void {
-    const id = this.projectId();
-    if (id) {
-      this.projectService.fetchProject(id);
-    }
-  }
+  private readonly initializeEffect = effect(
+    () => {
+      const id = this.projectId();
+      if (id) {
+        this.projectService.fetchProject(id);
+      }
+    },
+    { allowSignalWrites: true },
+  );
 
   setActiveTab(tab: TabType): void {
     this.activeTab.set(tab);

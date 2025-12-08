@@ -4,10 +4,10 @@ import {
   input,
   computed,
   inject,
-  OnInit,
   ViewContainerRef,
   TemplateRef,
   ViewChild,
+  effect,
 } from '@angular/core';
 import {
   Button,
@@ -273,7 +273,7 @@ import { ChangeProjectMemberRoleModal } from './change-project-member-role-modal
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectMemberList implements OnInit {
+export class ProjectMemberList {
   readonly membersService = inject(ProjectMembersService);
   readonly authService = inject(AuthService);
   readonly modal = inject(Modal);
@@ -328,12 +328,15 @@ export class ProjectMemberList implements OnInit {
     return this.members().some((member) => this.canManageMember(member));
   });
 
-  ngOnInit(): void {
-    const id = this.projectId();
-    if (id) {
-      this.membersService.loadMembers(id);
-    }
-  }
+  private readonly initializeEffect = effect(
+    () => {
+      const id = this.projectId();
+      if (id) {
+        this.membersService.loadMembers(id);
+      }
+    },
+    { allowSignalWrites: true },
+  );
 
   trackByMemberId = (member: ProjectMember): string => member.user_id;
 

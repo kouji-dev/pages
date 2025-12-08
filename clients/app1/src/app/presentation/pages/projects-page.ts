@@ -3,9 +3,9 @@ import {
   ChangeDetectionStrategy,
   computed,
   inject,
-  OnInit,
   ViewContainerRef,
   signal,
+  effect,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { Button, LoadingState, ErrorState, EmptyState, Modal } from 'shared-ui';
@@ -121,7 +121,7 @@ import { CreateProjectModal } from '../components/create-project-modal';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectsPage implements OnInit {
+export class ProjectsPage {
   readonly projectService = inject(ProjectService);
   readonly organizationService = inject(OrganizationService);
   readonly router = inject(Router);
@@ -147,10 +147,13 @@ export class ProjectsPage implements OnInit {
     return 'An unknown error occurred.';
   });
 
-  ngOnInit(): void {
-    // Load projects when component initializes
-    this.projectService.loadProjects();
-  }
+  private readonly initializeEffect = effect(
+    () => {
+      // Load projects when component initializes
+      this.projectService.loadProjects();
+    },
+    { allowSignalWrites: true },
+  );
 
   handleCreateProject(): void {
     const orgId = this.currentOrganizationId();

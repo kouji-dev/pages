@@ -25,4 +25,4 @@ export * from './lib/modal/modal-footer';
 export * from './lib/dropdown/dropdown';
 export type { DropdownPosition } from './lib/dropdown/dropdown';
 export * from './lib/table/table';
-export type { TableColumn } from './lib/table/table';
+export type { TableColumn, SortEvent } from './lib/table/table';
