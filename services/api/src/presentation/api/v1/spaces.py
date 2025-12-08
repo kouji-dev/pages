@@ -30,6 +30,7 @@ from src.domain.services import PermissionService
 from src.infrastructure.database import get_session
 from src.presentation.dependencies.auth import get_current_active_user
 from src.presentation.dependencies.permissions import (
+    require_edit_permission,
     require_organization_admin,
     require_organization_member,
 )
@@ -98,8 +99,8 @@ async def create_space(
 
     Requires organization membership.
     """
-    # Check user is member of the organization
-    await require_organization_member(request.organization_id, current_user, permission_service)
+    # Check user has edit permissions
+    await require_edit_permission(request.organization_id, current_user, permission_service)
 
     return await use_case.execute(request, str(current_user.id))
 

@@ -95,9 +95,14 @@ class SQLAlchemyIssueRepository(IssueRepository):
             issue_id: Issue UUID
 
         Returns:
-            Issue if found, None otherwise
+            Issue if found, None otherwise (excludes soft-deleted issues)
         """
-        result = await self._session.execute(select(IssueModel).where(IssueModel.id == issue_id))
+        result = await self._session.execute(
+            select(IssueModel).where(
+                IssueModel.id == issue_id,
+                IssueModel.deleted_at.is_(None),
+            )
+        )
         model = result.scalar_one_or_none()
 
         if model is None:

@@ -9,8 +9,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.application.dtos.invitation import (
     AcceptInvitationResponse,
     InvitationListResponse,
-    InvitationResponse,
     SendInvitationRequest,
+    SendInvitationResponse,
 )
 from src.application.dtos.organization import (
     CreateOrganizationRequest,
@@ -577,7 +577,7 @@ async def remove_organization_member(
 # Invitation endpoints
 @router.post(
     "/{organization_id}/members/invite",
-    response_model=InvitationResponse,
+    response_model=SendInvitationResponse,
     status_code=status.HTTP_201_CREATED,
 )
 async def send_invitation(
@@ -586,7 +586,7 @@ async def send_invitation(
     current_user: Annotated[User, Depends(get_current_active_user)],
     use_case: Annotated[SendInvitationUseCase, Depends(get_send_invitation_use_case)],
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
-) -> InvitationResponse:
+) -> SendInvitationResponse:
     """Send an invitation to join an organization.
 
     Requires admin role in the organization.

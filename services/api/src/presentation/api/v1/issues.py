@@ -31,7 +31,10 @@ from src.domain.repositories import (
 from src.domain.services import PermissionService
 from src.infrastructure.database import get_session
 from src.presentation.dependencies.auth import get_current_active_user
-from src.presentation.dependencies.permissions import require_organization_member
+from src.presentation.dependencies.permissions import (
+    require_edit_permission,
+    require_organization_member,
+)
 from src.presentation.dependencies.services import (
     get_issue_activity_repository,
     get_issue_repository,
@@ -119,12 +122,14 @@ async def create_issue(
     """
     from fastapi import HTTPException
 
-    # Verify project exists and user is member of the organization
+    # Verify project exists and user has edit permissions
     project = await project_repository.get_by_id(request.project_id)
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    await require_organization_member(project.organization_id, current_user, permission_service)
+    await require_edit_permission(
+        project.organization_id, current_user, permission_service, project_id=project.id
+    )
 
     return await use_case.execute(request, str(current_user.id))
 
@@ -220,12 +225,14 @@ async def update_issue(
     if issue is None:
         raise HTTPException(status_code=404, detail="Issue not found")
 
-    # Check user is member of the organization
+    # Check user has edit permissions
     project = await project_repository.get_by_id(issue.project_id)
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    await require_organization_member(project.organization_id, current_user, permission_service)
+    await require_edit_permission(
+        project.organization_id, current_user, permission_service, project_id=project.id
+    )
 
     return await use_case.execute(str(issue_id), request, current_user.id)
 
@@ -249,12 +256,14 @@ async def delete_issue(
     if issue is None:
         raise HTTPException(status_code=404, detail="Issue not found")
 
-    # Check user is member of the organization
+    # Check user has edit permissions
     project = await project_repository.get_by_id(issue.project_id)
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    await require_organization_member(project.organization_id, current_user, permission_service)
+    await require_edit_permission(
+        project.organization_id, current_user, permission_service, project_id=project.id
+    )
 
     await use_case.execute(str(issue_id), current_user.id)
 

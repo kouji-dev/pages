@@ -17,7 +17,28 @@ class SendInvitationRequest(BaseModel):
 
 
 class InvitationResponse(BaseModel):
-    """Response DTO for invitation data."""
+    """Response DTO for invitation data (with token, for internal use)."""
+
+    id: UUID
+    organization_id: UUID
+    email: str = Field(..., description="Invited email address")
+    token: str = Field(..., description="Invitation token for acceptance")
+    role: str = Field(..., description="Assigned role: admin, member, or viewer")
+    invited_by: UUID = Field(..., description="ID of user who sent the invitation")
+    expires_at: datetime = Field(..., description="Invitation expiration date")
+    accepted_at: datetime | None = Field(
+        None, description="When invitation was accepted (if accepted)"
+    )
+    created_at: datetime = Field(..., description="When invitation was created")
+
+    class Config:
+        """Pydantic config."""
+
+        from_attributes = True
+
+
+class SendInvitationResponse(BaseModel):
+    """Response DTO for sending an invitation (without token for security)."""
 
     id: UUID
     organization_id: UUID

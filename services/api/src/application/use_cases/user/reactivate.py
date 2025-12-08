@@ -24,6 +24,7 @@ class ReactivateUserUseCase:
             permission_service: Permission service for admin checks
         """
         self._user_repository = user_repository
+        self._user_repository = user_repository
         self._permission_service = permission_service
 
     async def execute(self, target_user_id: str, admin_user_id: str) -> None:

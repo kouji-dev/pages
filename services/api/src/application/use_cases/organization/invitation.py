@@ -13,6 +13,7 @@ from src.application.dtos.invitation import (
     InvitationListResponse,
     InvitationResponse,
     SendInvitationRequest,
+    SendInvitationResponse,
 )
 from src.domain.entities import Invitation
 from src.domain.exceptions import (
@@ -56,7 +57,7 @@ class SendInvitationUseCase:
 
     async def execute(
         self, organization_id: str, request: SendInvitationRequest, invited_by_user_id: str
-    ) -> InvitationResponse:
+    ) -> SendInvitationResponse:
         """Execute send invitation.
 
         Args:
@@ -170,7 +171,7 @@ class SendInvitationUseCase:
             email=request.email,
         )
 
-        return InvitationResponse(
+        return SendInvitationResponse(
             id=created_invitation.id,
             organization_id=created_invitation.organization_id,
             email=str(created_invitation.email),
@@ -399,6 +400,7 @@ class ListInvitationsUseCase:
                 id=inv.id,
                 organization_id=inv.organization_id,
                 email=str(inv.email),
+                token=inv.token,
                 role=inv.role,
                 invited_by=inv.invited_by,
                 expires_at=inv.expires_at,
