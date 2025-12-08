@@ -32,6 +32,7 @@ from src.domain.services import PermissionService
 from src.infrastructure.database import get_session
 from src.presentation.dependencies.auth import get_current_active_user
 from src.presentation.dependencies.permissions import (
+    require_edit_permission,
     require_organization_admin,
     require_organization_member,
 )
@@ -106,12 +107,12 @@ async def create_page(
 
     Requires space membership (via organization membership).
     """
-    # Check user is member of the organization
+    # Check user has edit permissions
     space = await space_repository.get_by_id(request.space_id)
     if space is None:
         raise EntityNotFoundException("Space", str(request.space_id))
 
-    await require_organization_member(space.organization_id, current_user, permission_service)
+    await require_edit_permission(space.organization_id, current_user, permission_service)
 
     return await use_case.execute(request, str(current_user.id))
 
@@ -197,12 +198,12 @@ async def update_page(
     if page is None:
         raise EntityNotFoundException("Page", str(page_id))
 
-    # Check user is member of the organization
+    # Check user has edit permissions
     space = await space_repository.get_by_id(page.space_id)
     if space is None:
         raise EntityNotFoundException("Space", str(page.space_id))
 
-    await require_organization_member(space.organization_id, current_user, permission_service)
+    await require_edit_permission(space.organization_id, current_user, permission_service)
 
     return await use_case.execute(str(page_id), request, str(current_user.id))
 

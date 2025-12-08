@@ -31,7 +31,10 @@ from src.domain.services import PermissionService, StorageService
 from src.infrastructure.database import get_session
 from src.infrastructure.database.models import ProjectMemberModel
 from src.presentation.dependencies.auth import get_current_active_user
-from src.presentation.dependencies.permissions import require_organization_member
+from src.presentation.dependencies.permissions import (
+    require_edit_permission,
+    require_organization_member,
+)
 from src.presentation.dependencies.services import (
     get_attachment_repository,
     get_issue_repository,
@@ -121,7 +124,9 @@ async def upload_attachment(
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    await require_organization_member(project.organization_id, current_user, permission_service)
+    await require_edit_permission(
+        project.organization_id, current_user, permission_service, project_id=project.id
+    )
 
     # Read file content
     file_content = await file.read()

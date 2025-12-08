@@ -36,7 +36,10 @@ from src.domain.services import PermissionService
 from src.infrastructure.database import get_session
 from src.infrastructure.database.models import ProjectMemberModel
 from src.presentation.dependencies.auth import get_current_active_user
-from src.presentation.dependencies.permissions import require_organization_member
+from src.presentation.dependencies.permissions import (
+    require_edit_permission,
+    require_organization_member,
+)
 from src.presentation.dependencies.services import (
     get_comment_repository,
     get_issue_repository,
@@ -135,12 +138,14 @@ async def create_comment(
     if issue is None:
         raise EntityNotFoundException("Issue", str(issue_id))
 
-    # Check user is member of the organization
+    # Check user has edit permissions
     project = await project_repository.get_by_id(issue.project_id)
     if project is None:
         raise EntityNotFoundException("Project", str(issue.project_id))
 
-    await require_organization_member(project.organization_id, current_user, permission_service)
+    await require_edit_permission(
+        project.organization_id, current_user, permission_service, project_id=project.id
+    )
 
     return await use_case.execute(str(issue_id), request, str(current_user.id))
 
@@ -358,12 +363,12 @@ async def create_page_comment(
     if page is None:
         raise EntityNotFoundException("Page", str(page_id))
 
-    # Check user is member of the organization
+    # Check user has edit permissions
     space = await space_repository.get_by_id(page.space_id)
     if space is None:
         raise EntityNotFoundException("Space", str(page.space_id))
 
-    await require_organization_member(space.organization_id, current_user, permission_service)
+    await require_edit_permission(space.organization_id, current_user, permission_service)
 
     return await use_case.execute(str(page_id), request, str(current_user.id))
 
