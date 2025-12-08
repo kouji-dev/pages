@@ -87,20 +87,21 @@ def get_reset_password_use_case(
 )
 @limiter.limit("5/minute")  # Strict rate limit for registration
 async def register(
-    http_request: Request,
-    request: RegisterRequest,
+    request: Request,  # Must be named 'request' for slowapi rate limiter
+    register_data: RegisterRequest,  # Renamed from 'request' to avoid conflict
     use_case: Annotated[RegisterUserUseCase, Depends(get_register_use_case)],
 ) -> RegisterResponse:
     """Register a new user.
 
     Args:
-        request: Registration request with email, password, and name
+        request: FastAPI request object (for rate limiter)
+        register_data: Registration request with email, password, and name
         use_case: Register use case
 
     Returns:
         Registration response with user info and tokens
     """
-    return await use_case.execute(request)
+    return await use_case.execute(register_data)
 
 
 @router.post(
@@ -111,20 +112,21 @@ async def register(
 )
 @limiter.limit("10/minute")  # Rate limit for login to prevent brute force
 async def login(
-    http_request: Request,
-    request: LoginRequest,
+    request: Request,  # Must be named 'request' for slowapi rate limiter
+    login_data: LoginRequest,  # Renamed from 'request' to avoid conflict
     use_case: Annotated[LoginUserUseCase, Depends(get_login_use_case)],
 ) -> LoginResponse:
     """Login user.
 
     Args:
-        request: Login request with email and password
+        request: FastAPI request object (for rate limiter)
+        login_data: Login request with email and password
         use_case: Login use case
 
     Returns:
         Login response with user info and tokens
     """
-    return await use_case.execute(request)
+    return await use_case.execute(login_data)
 
 
 @router.post(
@@ -157,20 +159,21 @@ async def refresh_token(
 )
 @limiter.limit("3/minute")  # Strict rate limit to prevent abuse
 async def request_password_reset(
-    http_request: Request,
-    request: PasswordResetRequest,
+    request: Request,  # Must be named 'request' for slowapi rate limiter
+    reset_data: PasswordResetRequest,  # Renamed from 'request' to avoid conflict
     use_case: Annotated[RequestPasswordResetUseCase, Depends(get_request_password_reset_use_case)],
 ) -> dict[str, str]:
     """Request password reset.
 
     Args:
-        request: Password reset request with email
+        request: HTTP request object (for rate limiter)
+        reset_data: Password reset request with email
         use_case: Request password reset use case
 
     Returns:
         Success message (always, to prevent email enumeration)
     """
-    await use_case.execute(request)
+    await use_case.execute(reset_data)
     return {"message": "If the email exists, a password reset link has been sent."}
 
 

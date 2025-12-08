@@ -11,7 +11,8 @@ services:
     environment:
       - DEBUG=true
       - ENVIRONMENT=development
-      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://postgres:postgres@db:5432/pages}
+      # Force DATABASE_URL for Docker (use db service name, not localhost)
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/pages
       - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY:-dev-secret-key-change-in-production}
       - ALLOWED_ORIGINS=["http://localhost:4200"]
