@@ -96,11 +96,26 @@ async def generic_exception_handler(request: Request, exc: Exception) -> JSONRes
         path=request.url.path,
     )
 
-    # Don't expose internal error details in production
+    # Get settings to check if debug mode is enabled
+    from src.infrastructure.config import get_settings
+
+    settings = get_settings()
+    error_details: dict[str, str | dict[str, str] | list[str]] = {
+        "error": "InternalServerError",
+        "message": "An unexpected error occurred",
+    }
+
+    # Include error details in debug mode
+    if settings.debug:
+        error_details["details"] = {
+            "exception_type": type(exc).__name__,
+            "message": str(exc),
+        }
+        import traceback
+
+        error_details["traceback"] = traceback.format_exc().split("\n")
+
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={
-            "error": "InternalServerError",
-            "message": "An unexpected error occurred",
-        },
+        content=error_details,
     )

@@ -78,5 +78,8 @@ def generate_unique_filename(original_name: str, attachment_id: UUID) -> str:
     extension = original_path.suffix
 
     # Generate unique filename using attachment ID and hash of original name
-    name_hash = hashlib.md5(original_name.encode()).hexdigest()[:8]
+    # Note: MD5 is used for non-cryptographic purposes (filename generation only)
+    name_hash = hashlib.md5(original_name.encode(), usedforsecurity=False).hexdigest()[
+        :8
+    ]  # noqa: S324
     return f"{attachment_id}_{name_hash}{extension}"
