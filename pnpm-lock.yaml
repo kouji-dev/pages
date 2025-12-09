@@ -35,9 +35,60 @@ importers:
       '@angular/router':
         specifier: ^21.0.0
         version: 21.0.3(@angular/common@21.0.3(@angular/core@21.0.3(@angular/compiler@21.0.3)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@21.0.3(@angular/compiler@21.0.3)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/platform-browser@21.0.3(@angular/animations@21.0.3(@angular/core@21.0.3(@angular/compiler@21.0.3)(rxjs@7.8.2)(zone.js@0.15.1)))(@angular/common@21.0.3(@angular/core@21.0.3(@angular/compiler@21.0.3)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@21.0.3(@angular/compiler@21.0.3)(rxjs@7.8.2)(zone.js@0.15.1)))(rxjs@7.8.2)
+      '@lexical/clipboard':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/code':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/file':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/hashtag':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/history':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/html':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/link':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/list':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/mark':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/overflow':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/plain-text':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/rich-text':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/selection':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/table':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/text':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/utils':
+        specifier: 0.28.0
+        version: 0.28.0
       echarts:
         specifier: ^5.5.0
         version: 5.6.0
+      lexical:
+        specifier: 0.28.0
+        version: 0.28.0
       lucide-angular:
         specifier: ^0.555.0
         version: 0.555.0(@angular/common@21.0.3(@angular/core@21.0.3(@angular/compiler@21.0.3)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@21.0.3(@angular/compiler@21.0.3)(rxjs@7.8.2)(zone.js@0.15.1))
@@ -126,12 +177,66 @@ importers:
 
   libraries/shared-ui:
     dependencies:
+      '@angular/cdk':
+        specifier: ^21.0.0
+        version: 21.0.2(@angular/common@21.0.3(@angular/core@21.0.3(@angular/compiler@21.0.3)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@21.0.3(@angular/compiler@21.0.3)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2)
       '@angular/common':
         specifier: ^21.0.0
         version: 21.0.3(@angular/core@21.0.3(@angular/compiler@21.0.3)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2)
       '@angular/core':
         specifier: ^21.0.0
         version: 21.0.3(@angular/compiler@21.0.3)(rxjs@7.8.2)(zone.js@0.15.1)
+      '@lexical/clipboard':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/code':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/file':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/hashtag':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/history':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/html':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/link':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/list':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/mark':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/overflow':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/plain-text':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/rich-text':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/selection':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/table':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/text':
+        specifier: 0.28.0
+        version: 0.28.0
+      '@lexical/utils':
+        specifier: 0.28.0
+        version: 0.28.0
+      lexical:
+        specifier: 0.28.0
+        version: 0.28.0
       tailwindcss:
         specifier: ^4.0.0
         version: 4.1.17
@@ -1670,6 +1775,54 @@ packages:
 
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
+
+  '@lexical/clipboard@0.28.0':
+    resolution: {integrity: sha512-LYqion+kAwFQJStA37JAEMxTL/m1WlZbotDfM/2WuONmlO0yWxiyRDI18oeCwhBD6LQQd9c3Ccxp9HFwUG1AVw==}
+
+  '@lexical/code@0.28.0':
+    resolution: {integrity: sha512-9LOKSWdRhxqAKRq5yveNC21XKtW4h2rmFNTucwMWZ9vLu9xteOHEwZdO1Qv82PFUmgCpAhg6EntmnZu9xD3K7Q==}
+
+  '@lexical/file@0.28.0':
+    resolution: {integrity: sha512-rqUJV1FjvmzXN7/QoyPFYvKcSGxDG1sQdEaKCyug0tsGqsMzT8t6+SRsqKxvulZ9/dbFwEuPU0wH/vw5EKshzg==}
+
+  '@lexical/hashtag@0.28.0':
+    resolution: {integrity: sha512-zcqX9Qna4lj96bAUfwSQSVEhYQ0O5erSjrIhOVqEgeQ5ubz0EvqnnMbbwNHIb2n6jzSwAvpD/3UZJZtolh+zVg==}
+
+  '@lexical/history@0.28.0':
+    resolution: {integrity: sha512-CHzDxaGDn6qCFFhU0YKP1B8sgEb++0Ksqsj6BfDL/6TMxoLNQwRQhP3BUNNXl1kvUhxTQZgk3b9MjJZRaFKG9Q==}
+
+  '@lexical/html@0.28.0':
+    resolution: {integrity: sha512-ayb0FPxr55Ko99/d9ewbfrApul4L0z+KpU2ZG03im7EvUPVLyIGLx4S0QguMDvQh0Vu+eJ7/EESuonDs5BCe3A==}
+
+  '@lexical/link@0.28.0':
+    resolution: {integrity: sha512-T5VKxpOnML5DcXv2lW3Le0vjNlcbdohZjS9f6PAvm6eX8EzBKDpLQCopr1/0KGdlLd1QrzQsykQrdU7ieC4LRg==}
+
+  '@lexical/list@0.28.0':
+    resolution: {integrity: sha512-3a8QcZ75n2TLxP+xkSPJ2V15jsysMLMe0YoObG+ew/sioVelIU8GciYsWBo5GgQmwSzJNQJeK5cJ9p1b71z2cg==}
+
+  '@lexical/mark@0.28.0':
+    resolution: {integrity: sha512-v5PzmTACsJrw3GvNZy2rgPxrNn9InLvLFoKqrSlNhhyvYNIAcuC4KVy00LKLja43Gw/fuB3QwKohYfAtM3yR3g==}
+
+  '@lexical/overflow@0.28.0':
+    resolution: {integrity: sha512-ppmhHXEZVicBm05w9EVflzwFavTVNAe4q0bkabWUeW0IoCT3Vg2A3JT7PC9ypmp+mboUD195foFEr1BBSv1Y8Q==}
+
+  '@lexical/plain-text@0.28.0':
+    resolution: {integrity: sha512-Jj2dCMDEfRuVetfDKcUes8J5jvAfZrLnILFlHxnu7y+lC+7R/NR403DYb3NJ8H7+lNiH1K15+U2K7ewbjxS6KQ==}
+
+  '@lexical/rich-text@0.28.0':
+    resolution: {integrity: sha512-y+vUWI+9uFupIb9UvssKU/DKcT9dFUZuQBu7utFkLadxCNyXQHeRjxzjzmvFiM3DBV0guPUDGu5VS5TPnIA+OA==}
+
+  '@lexical/selection@0.28.0':
+    resolution: {integrity: sha512-AJDi67Nsexyejzp4dEQSVoPov4P+FJ0t1v6DxUU+YmcvV56QyJQi6ue0i/xd8unr75ZufzLsAC0cDJJCEI7QDA==}
+
+  '@lexical/table@0.28.0':
+    resolution: {integrity: sha512-HMPCwXdj0sRWdlDzsHcNWRgbeKbEhn3L8LPhFnTq7q61gZ4YW2umdmuvQFKnIBcKq49drTH8cUwZoIwI8+AEEw==}
+
+  '@lexical/text@0.28.0':
+    resolution: {integrity: sha512-PT/A2RZv+ktn7SG/tJkOpGlYE6zjOND59VtRHnV/xciZ+jEJVaqAHtWjhbWibAIZQAkv/O7UouuDqzDaNTSGAA==}
+
+  '@lexical/utils@0.28.0':
+    resolution: {integrity: sha512-Qw00DjkS1nRK7DLSgqJpJ77Ti2AuiOQ6m5eM38YojoWXkVmoxqKAUMaIbVNVKqjFgrQvKFF46sXxIJPbUQkB0w==}
 
   '@listr2/prompt-adapter-inquirer@3.0.5':
     resolution: {integrity: sha512-WELs+hj6xcilkloBXYf9XXK8tYEnKsgLj01Xl5ONUJpKjmT5hGVUzNUS5tooUxs7pGMrw+jFD/41WpqW4V3LDA==}
@@ -4205,6 +4358,9 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
+  lexical@0.28.0:
+    resolution: {integrity: sha512-dLE3O1PZg0TlZxRQo9YDpjCjDUj8zluGyBO9MHdjo21qZmMUNrxQPeCRt8fn2s5l4HKYFQ1YNgl7k1pOJB/vZQ==}
+
   license-webpack-plugin@4.0.2:
     resolution: {integrity: sha512-771TFWFD70G1wLTC4oU2Cw4qvtmNrIw+wRvBtn+okgHl7slJVi7zfNcdmqDL72BojM30VNJ2UHylr1o77U37Jw==}
     peerDependencies:
@@ -4910,6 +5066,10 @@ packages:
   pretty-format@27.5.1:
     resolution: {integrity: sha512-Qb1gy5OrP5+zDf2Bvnzdl3jsTf1qXVMazbvCoKhtKqVs4/YK4ozX4gKQJJVyNe+cajNPn0KoC0MC3FUmaHWEmQ==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
+
+  prismjs@1.30.0:
+    resolution: {integrity: sha512-DEvV2ZF2r2/63V+tK8hQvrR2ZGn10srHbXviTlcv7Kpzw8jWiNTqbVgjO3IY8RxrrOUF8VPMQQFysYYYv0YZxw==}
+    engines: {node: '>=6'}
 
   proc-log@5.0.0:
     resolution: {integrity: sha512-Azwzvl90HaF0aCz1JrDdXQykFakSSNPaPoiZ9fm5qJIMHioDZEi7OAdRwSm6rSoPtY3Qutnm3L7ogmg3dc+wbQ==}
@@ -7615,6 +7775,95 @@ snapshots:
 
   '@leichtgewicht/ip-codec@2.0.5': {}
 
+  '@lexical/clipboard@0.28.0':
+    dependencies:
+      '@lexical/html': 0.28.0
+      '@lexical/list': 0.28.0
+      '@lexical/selection': 0.28.0
+      '@lexical/utils': 0.28.0
+      lexical: 0.28.0
+
+  '@lexical/code@0.28.0':
+    dependencies:
+      '@lexical/utils': 0.28.0
+      lexical: 0.28.0
+      prismjs: 1.30.0
+
+  '@lexical/file@0.28.0':
+    dependencies:
+      lexical: 0.28.0
+
+  '@lexical/hashtag@0.28.0':
+    dependencies:
+      '@lexical/utils': 0.28.0
+      lexical: 0.28.0
+
+  '@lexical/history@0.28.0':
+    dependencies:
+      '@lexical/utils': 0.28.0
+      lexical: 0.28.0
+
+  '@lexical/html@0.28.0':
+    dependencies:
+      '@lexical/selection': 0.28.0
+      '@lexical/utils': 0.28.0
+      lexical: 0.28.0
+
+  '@lexical/link@0.28.0':
+    dependencies:
+      '@lexical/utils': 0.28.0
+      lexical: 0.28.0
+
+  '@lexical/list@0.28.0':
+    dependencies:
+      '@lexical/selection': 0.28.0
+      '@lexical/utils': 0.28.0
+      lexical: 0.28.0
+
+  '@lexical/mark@0.28.0':
+    dependencies:
+      '@lexical/utils': 0.28.0
+      lexical: 0.28.0
+
+  '@lexical/overflow@0.28.0':
+    dependencies:
+      lexical: 0.28.0
+
+  '@lexical/plain-text@0.28.0':
+    dependencies:
+      '@lexical/clipboard': 0.28.0
+      '@lexical/selection': 0.28.0
+      '@lexical/utils': 0.28.0
+      lexical: 0.28.0
+
+  '@lexical/rich-text@0.28.0':
+    dependencies:
+      '@lexical/clipboard': 0.28.0
+      '@lexical/selection': 0.28.0
+      '@lexical/utils': 0.28.0
+      lexical: 0.28.0
+
+  '@lexical/selection@0.28.0':
+    dependencies:
+      lexical: 0.28.0
+
+  '@lexical/table@0.28.0':
+    dependencies:
+      '@lexical/clipboard': 0.28.0
+      '@lexical/utils': 0.28.0
+      lexical: 0.28.0
+
+  '@lexical/text@0.28.0':
+    dependencies:
+      lexical: 0.28.0
+
+  '@lexical/utils@0.28.0':
+    dependencies:
+      '@lexical/list': 0.28.0
+      '@lexical/selection': 0.28.0
+      '@lexical/table': 0.28.0
+      lexical: 0.28.0
+
   '@listr2/prompt-adapter-inquirer@3.0.5(@inquirer/prompts@7.9.0(@types/node@22.19.1))(@types/node@22.19.1)(listr2@9.0.5)':
     dependencies:
       '@inquirer/prompts': 7.9.0(@types/node@22.19.1)
@@ -10268,6 +10517,8 @@ snapshots:
       needle: 3.3.1
       source-map: 0.6.1
 
+  lexical@0.28.0: {}
+
   license-webpack-plugin@4.0.2(webpack@5.102.1(esbuild@0.26.0)):
     dependencies:
       webpack-sources: 3.3.3
@@ -11011,6 +11262,8 @@ snapshots:
       ansi-regex: 5.0.1
       ansi-styles: 5.2.0
       react-is: 17.0.2
+
+  prismjs@1.30.0: {}
 
   proc-log@5.0.0: {}
 

@@ -4,5 +4,13 @@
   "lib": {
     "entryFile": "src/public-api.ts"
   },
-  "assets": ["src/styles.css"]
+  "assets": ["src/styles.css"],
+  "allowedNonPeerDependencies": [
+    "lexical",
+    "@lexical/html",
+    "@lexical/rich-text",
+    "@lexical/list",
+    "@lexical/link",
+    "@lexical/utils"
+  ]
 }

@@ -26,3 +26,6 @@ export * from './lib/dropdown/dropdown';
 export type { DropdownPosition } from './lib/dropdown/dropdown';
 export * from './lib/table/table';
 export type { TableColumn, SortEvent } from './lib/table/table';
+export * from './lib/text-editor/text-editor';
+export * from './lib/sidenav/sidenav';
+export type { SidenavItem } from './lib/sidenav/sidenav';

@@ -13,7 +13,7 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { Button, LoadingState, ErrorState } from 'shared-ui';
+import { LoadingState, ErrorState } from 'shared-ui';
 import { IssueService, IssueListItem } from '../../application/services/issue.service';
 import { IssueTypeBadge } from './issue-type-badge';
 import { IssuePriorityIndicator } from './issue-priority-indicator';
@@ -30,14 +30,7 @@ interface StatusColumn {
 @Component({
   selector: 'app-kanban-board',
   standalone: true,
-  imports: [
-    Button,
-    LoadingState,
-    ErrorState,
-    DragDropModule,
-    IssueTypeBadge,
-    IssuePriorityIndicator,
-  ],
+  imports: [LoadingState, ErrorState, DragDropModule, IssueTypeBadge, IssuePriorityIndicator],
   template: `
     <div class="kanban-board">
       <div class="kanban-board_header">

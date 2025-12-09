@@ -1,5 +1,5 @@
 import { Component, input, ChangeDetectionStrategy, computed } from '@angular/core';
-import { Icon } from 'shared-ui';
+import { Icon, IconName } from 'shared-ui';
 
 type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
 
@@ -46,14 +46,14 @@ export class IssuePriorityIndicator {
 
   readonly customLabel = input<string | undefined>(undefined);
 
-  readonly priorityIcon = computed(() => {
-    const icons: Record<IssuePriority, string> = {
-      low: 'arrow-down',
-      medium: 'minus',
-      high: 'arrow-up',
-      critical: 'alert-triangle',
+  readonly priorityIcon = computed<IconName>(() => {
+    const icons: Record<IssuePriority, IconName> = {
+      low: 'arrow-down' as IconName,
+      medium: 'minus' as IconName,
+      high: 'arrow-up' as IconName,
+      critical: 'alert-triangle' as IconName,
     };
-    return icons[this.priority()] || 'minus';
+    return icons[this.priority()] || ('minus' as IconName);
   });
 
   readonly priorityLabel = computed(() => {

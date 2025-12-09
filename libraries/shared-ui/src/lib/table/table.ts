@@ -56,7 +56,7 @@ export interface SortEvent {
                           />
                         } @else {
                           <lib-icon
-                            name="chevrons-up-down"
+                            name="arrow-up-down"
                             size="xs"
                             class="table_header-sort-icon table_header-sort-icon--inactive"
                           />
@@ -298,9 +298,9 @@ export class Table<T = any> {
   getSortIcon(columnKey: string): IconName {
     const direction = this.sortDirection();
     if (this.sortColumn() === columnKey && direction) {
-      return direction === 'asc' ? 'chevron-up' : 'chevron-down';
+      return direction === 'asc' ? ('arrow-up' as IconName) : ('arrow-down' as IconName);
     }
-    return 'chevrons-up-down';
+    return 'arrow-up-down' as IconName;
   }
 
   handleSort(column: TableColumn<T>): void {
