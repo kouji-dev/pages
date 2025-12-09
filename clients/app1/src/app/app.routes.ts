@@ -18,6 +18,7 @@ import { ResetPasswordPage } from './presentation/pages/reset-password-page.comp
 import { NotFoundComponent } from './presentation/pages/not-found.component';
 import { AuthenticatedLayout } from './presentation/layout/authenticated-layout';
 import { authGuard } from './application/guards/auth.guard';
+import { loginGuard } from './application/guards/login.guard';
 
 export const routes: Routes = [
   {
@@ -49,6 +50,7 @@ export const routes: Routes = [
   {
     path: 'login',
     component: LoginPage,
+    canActivate: [loginGuard],
     title: 'Login - Pages',
   },
   {
@@ -72,6 +74,11 @@ export const routes: Routes = [
     component: AuthenticatedLayout,
     canActivate: [authGuard],
     children: [
+      {
+        path: '',
+        redirectTo: 'projects',
+        pathMatch: 'full',
+      },
       {
         path: 'organizations',
         component: OrganizationsPage,

@@ -6,7 +6,6 @@
     "@angular/core": "^21.0.0",
     "@angular/cdk": "^21.0.0",
     "tailwindcss": "^4.0.0",
-    "lexical": "0.28.0",
     "@lexical/html": "0.28.0",
     "@lexical/history": "0.28.0",
     "@lexical/utils": "0.28.0",
@@ -22,7 +21,8 @@
     "@lexical/hashtag": "0.28.0",
     "@lexical/file": "0.28.0",
     "@lexical/code": "0.28.0",
-    "@lexical/clipboard": "0.28.0"
+    "@lexical/clipboard": "0.28.0",
+    "lexical": "0.28.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"

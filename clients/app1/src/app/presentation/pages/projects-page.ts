@@ -40,7 +40,16 @@ import { CreateProjectModal } from '../components/create-project-modal';
       </div>
 
       <div class="projects-page_content">
-        @if (projectService.isLoading()) {
+        @if (!currentOrganizationId()) {
+          <lib-empty-state
+            title="No organization selected"
+            message="Please select or create an organization to view projects."
+            icon="building"
+            actionLabel="Go to Organizations"
+            actionIcon="arrow-right"
+            (onAction)="handleGoToOrganizations()"
+          />
+        } @else if (projectService.isLoading()) {
           <lib-loading-state message="Loading projects..." />
         } @else if (projectService.hasError()) {
           <lib-error-state
@@ -149,8 +158,13 @@ export class ProjectsPage {
 
   private readonly initializeEffect = effect(
     () => {
-      // Load projects when component initializes
-      this.projectService.loadProjects();
+      const orgId = this.currentOrganizationId();
+
+      // Only load projects if we have an organization
+      // The project service will automatically use the current organization ID from OrganizationService
+      if (orgId) {
+        this.projectService.loadProjects();
+      }
     },
     { allowSignalWrites: true },
   );
@@ -173,5 +187,9 @@ export class ProjectsPage {
 
   handleRetry(): void {
     this.projectService.loadProjects();
+  }
+
+  handleGoToOrganizations(): void {
+    this.router.navigate(['/app/organizations']);
   }
 }

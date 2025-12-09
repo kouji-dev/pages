@@ -11,6 +11,34 @@ export interface Organization {
   memberCount?: number;
 }
 
+export interface OrganizationListItemResponse {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  member_count: number;
+  created_at: string;
+  updated_at?: string;
+}
+
+export interface OrganizationResponse {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  member_count: number;
+  created_at: string;
+  updated_at?: string;
+}
+
+export interface OrganizationListResponse {
+  organizations: OrganizationListItemResponse[];
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+}
+
 export interface CreateOrganizationRequest {
   name: string;
   slug: string;
@@ -25,13 +53,20 @@ export class OrganizationService {
   private readonly apiUrl = `${environment.apiUrl}/organizations`;
 
   // Organizations list resource using httpResource
-  readonly organizations = httpResource(() => this.apiUrl);
+  readonly organizations = httpResource<OrganizationListResponse>(() => this.apiUrl);
 
   // Public accessors for organizations list
   readonly organizationsList = computed(() => {
     const value = this.organizations.value();
-    return Array.isArray(value) ? value : [];
+    if (!value) return [];
+    // Handle both array response (legacy) and OrganizationListResponse
+    if (Array.isArray(value)) {
+      return value;
+    }
+    // Map OrganizationListItemResponse to Organization (snake_case to camelCase)
+    return (value.organizations || []).map((org) => this.mapToOrganization(org));
   });
+
   readonly isLoading = computed(() => this.organizations.isLoading());
   readonly error = computed(() => this.organizations.error());
   readonly hasError = computed(() => this.organizations.error() !== undefined);
@@ -39,16 +74,48 @@ export class OrganizationService {
   // Current organization ID signal
   private readonly currentOrganizationId = signal<string | null>(null);
 
+  // Public accessor for current organization ID
+  readonly currentOrganizationIdSignal = computed(() => this.currentOrganizationId());
+
   // Single organization resource using httpResource with computed URL
-  private readonly organizationResource = httpResource<Organization>(() => {
+  private readonly organizationResource = httpResource<OrganizationResponse>(() => {
     const id = this.currentOrganizationId();
     return id ? `${this.apiUrl}/${id}` : undefined;
   });
 
-  // Current organization computed from resource
+  // Current organization computed from resource (mapped to camelCase)
   readonly currentOrganization = computed(() => {
-    return this.organizationResource.value() as Organization | undefined;
+    const response = this.organizationResource.value();
+    if (!response) return undefined;
+    // Map OrganizationResponse to Organization (snake_case to camelCase)
+    return this.mapOrganizationResponseToOrganization(response);
   });
+
+  /**
+   * Map backend response (snake_case) to frontend model (camelCase)
+   */
+  private mapToOrganization(response: OrganizationListItemResponse): Organization {
+    return {
+      id: response.id,
+      name: response.name,
+      slug: response.slug,
+      description: response.description,
+      memberCount: response.member_count,
+    };
+  }
+
+  /**
+   * Map OrganizationResponse (snake_case) to Organization (camelCase)
+   */
+  private mapOrganizationResponseToOrganization(response: OrganizationResponse): Organization {
+    return {
+      id: response.id,
+      name: response.name,
+      slug: response.slug,
+      description: response.description,
+      memberCount: response.member_count,
+    };
+  }
 
   // Public accessors for current organization
   readonly isFetchingOrganization = computed(() => this.organizationResource.isLoading());
@@ -145,7 +212,7 @@ export class OrganizationService {
    * Create a new organization
    */
   async createOrganization(request: CreateOrganizationRequest): Promise<Organization> {
-    const response = await this.http.post<Organization>(this.apiUrl, request).toPromise();
+    const response = await this.http.post<OrganizationResponse>(this.apiUrl, request).toPromise();
     if (!response) {
       throw new Error('Failed to create organization: No response from server');
     }
@@ -153,14 +220,17 @@ export class OrganizationService {
     // Reload organizations to get updated list
     this.loadOrganizations();
 
-    return response;
+    // Map response to Organization (snake_case to camelCase)
+    return this.mapOrganizationResponseToOrganization(response);
   }
 
   /**
    * Update an organization
    */
   async updateOrganization(id: string, updates: Partial<Organization>): Promise<Organization> {
-    const response = await this.http.put<Organization>(`${this.apiUrl}/${id}`, updates).toPromise();
+    const response = await this.http
+      .put<OrganizationResponse>(`${this.apiUrl}/${id}`, updates)
+      .toPromise();
     if (!response) {
       throw new Error('Failed to update organization: No response from server');
     }
@@ -171,7 +241,8 @@ export class OrganizationService {
       this.organizationResource.reload();
     }
 
-    return response;
+    // Map response to Organization (snake_case to camelCase)
+    return this.mapOrganizationResponseToOrganization(response);
   }
 
   /**

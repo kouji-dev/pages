@@ -1,6 +1,9 @@
 packages:
-  - 'clients/*'
-  - 'libraries/*'
+  - clients/*
+  - libraries/*
 
-
-
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - esbuild
+  - lmdb
+  - msgpackr-extract

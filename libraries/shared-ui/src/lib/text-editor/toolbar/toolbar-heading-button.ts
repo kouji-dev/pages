@@ -1,12 +1,12 @@
 import { Component, ChangeDetectionStrategy, input, inject, computed } from '@angular/core';
 import { Button } from '../../button/button';
-import { Icon, IconName } from '../../icon/icon';
+import { IconName } from '../../icon/icon';
 import { HeadingPlugin } from '../plugins/heading-plugin';
 import { HeadingTagType } from '@lexical/rich-text';
 
 @Component({
   selector: 'lib-toolbar-heading-button',
-  imports: [Button, Icon],
+  imports: [Button],
   template: `
     <lib-button
       variant="ghost"

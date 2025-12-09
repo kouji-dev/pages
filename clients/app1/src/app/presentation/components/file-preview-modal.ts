@@ -21,7 +21,7 @@ import { AttachmentService } from '../../application/services/attachment.service
         <div class="file-preview_header">
           <div class="file-preview_header-info">
             <lib-icon [name]="iconName()" size="md" />
-            <span class="file-preview_header-name">{{ attachment()?.original_name }}</span>
+            <span class="file-preview_header-name">{{ attachment().original_name }}</span>
           </div>
         </div>
       </lib-modal-header>
@@ -30,7 +30,7 @@ import { AttachmentService } from '../../application/services/attachment.service
           @if (isImage()) {
             <img
               [src]="previewUrl()"
-              [alt]="attachment()?.original_name"
+              [alt]="attachment().original_name"
               class="file-preview_image"
             />
           } @else if (isPdf()) {
