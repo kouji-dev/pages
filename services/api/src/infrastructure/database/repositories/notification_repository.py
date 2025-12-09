@@ -187,7 +187,8 @@ class SQLAlchemyNotificationRepository(NotificationRepository):
             query = query.where(NotificationModel.read == read)
 
         result = await self._session.execute(query)
-        return result.scalar_one()
+        count: int = result.scalar_one()
+        return count
 
     async def mark_as_read(self, notification_id: UUID) -> Notification:
         """Mark notification as read.
@@ -252,7 +253,8 @@ class SQLAlchemyNotificationRepository(NotificationRepository):
                 NotificationModel.read == False,  # noqa: E712
             )
         )
-        return result.scalar_one()
+        count: int = result.scalar_one()
+        return count
 
     def _to_entity(self, model: NotificationModel) -> Notification:
         """Convert database model to domain entity.
