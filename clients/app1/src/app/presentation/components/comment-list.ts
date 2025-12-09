@@ -8,7 +8,7 @@ import {
   ViewContainerRef,
   effect,
 } from '@angular/core';
-import { Button, Modal } from 'shared-ui';
+import { Button, Modal, TextEditor } from 'shared-ui';
 import { CommentService, Comment } from '../../application/services/comment.service';
 import { CommentInput } from './comment-input';
 import { EditCommentModal } from './edit-comment-modal';
@@ -16,7 +16,7 @@ import { EditCommentModal } from './edit-comment-modal';
 @Component({
   selector: 'app-comment-list',
   standalone: true,
-  imports: [Button, CommentInput],
+  imports: [Button, CommentInput, TextEditor],
   template: `
     <div class="comment-list">
       <div class="comment-list_header">
@@ -51,7 +51,11 @@ import { EditCommentModal } from './edit-comment-modal';
                 </div>
               </div>
               <div class="comment-list_item-content">
-                {{ comment.content }}
+                <lib-text-editor
+                  [readOnly]="true"
+                  [showToolbar]="false"
+                  [initialValue]="comment.content"
+                />
               </div>
             </div>
           }
@@ -132,7 +136,21 @@ import { EditCommentModal } from './edit-comment-modal';
       .comment-list_item-content {
         @apply text-sm;
         @apply text-text-primary;
-        @apply whitespace-pre-wrap;
+      }
+
+      /* Style read-only text editor in comments to look like rendered content */
+      :host ::ng-deep .comment-list_item-content .text-editor {
+        @apply border-none;
+        @apply bg-transparent;
+      }
+
+      :host ::ng-deep .comment-list_item-content .text-editor_wrapper {
+        @apply min-h-0;
+      }
+
+      :host ::ng-deep .comment-list_item-content .text-editor_container {
+        @apply min-h-0;
+        @apply p-0;
       }
     `,
   ],

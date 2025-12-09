@@ -1,19 +1,30 @@
-import { Component, ChangeDetectionStrategy, computed, inject, input, signal } from '@angular/core';
-import { Button, Input } from 'shared-ui';
-import { ToastService } from 'shared-ui';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  computed,
+  inject,
+  input,
+  signal,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Button, TextEditor, ToastService } from 'shared-ui';
 import { CommentService } from '../../application/services/comment.service';
 
 @Component({
   selector: 'app-comment-input',
   standalone: true,
-  imports: [Button, Input],
+  imports: [Button, TextEditor, FormsModule],
   template: `
     <div class="comment-input">
-      <lib-input
-        type="textarea"
+      <lib-text-editor
+        #editor
         placeholder="Add a comment..."
-        [(model)]="content"
-        [rows]="3"
+        [showToolbar]="true"
+        [(ngModel)]="content"
+        name="comment"
+        (htmlChange)="htmlContent.set($event)"
         [errorMessage]="contentError()"
       />
       <div class="comment-input_actions">
@@ -48,25 +59,39 @@ import { CommentService } from '../../application/services/comment.service';
 export class CommentInput {
   private readonly commentService = inject(CommentService);
   private readonly toast = inject(ToastService);
+  readonly viewContainerRef = inject(ViewContainerRef);
 
   readonly issueId = input.required<string>();
 
+  @ViewChild('editor') editor?: TextEditor;
+
   readonly content = signal('');
+  readonly htmlContent = signal('');
   readonly isSubmitting = signal(false);
 
   readonly contentError = computed(() => {
-    const value = this.content();
-    if (!value.trim()) {
+    const html = this.htmlContent();
+    if (!html || html.trim() === '' || html.trim() === '<p></p>') {
       return '';
     }
-    if (value.trim().length > 10000) {
+    // Check text length (strip HTML tags for length check)
+    const textContent = this.content();
+    if (textContent.trim().length > 10000) {
       return 'Comment must be 10,000 characters or less';
     }
     return '';
   });
 
   readonly isValid = computed(() => {
-    return !this.contentError() && this.content().trim().length > 0;
+    const html = this.htmlContent();
+    const textContent = this.content();
+    return (
+      html &&
+      html.trim() !== '' &&
+      html.trim() !== '<p></p>' &&
+      textContent.trim().length > 0 &&
+      !this.contentError()
+    );
   });
 
   async handleSubmit(): Promise<void> {
@@ -77,12 +102,19 @@ export class CommentInput {
     this.isSubmitting.set(true);
 
     try {
+      // Use HTML content for rich text comments
+      const html = this.htmlContent();
       await this.commentService.createComment(this.issueId(), {
-        content: this.content().trim(),
+        content: html,
       });
 
       this.toast.success('Comment added successfully!');
       this.content.set('');
+      this.htmlContent.set('');
+      // Clear the editor
+      if (this.editor) {
+        this.editor.setHtml('');
+      }
     } catch (error) {
       console.error('Failed to create comment:', error);
       const errorMessage =

@@ -6,10 +6,12 @@ import {
   input,
   signal,
   effect,
+  ViewContainerRef,
 } from '@angular/core';
-import { Button, Icon } from 'shared-ui';
+import { Button, Icon, Modal } from 'shared-ui';
 import { AttachmentService, Attachment } from '../../application/services/attachment.service';
 import { FileUpload } from './file-upload';
+import { FilePreviewModal } from './file-preview-modal';
 
 @Component({
   selector: 'app-attachment-list',
@@ -32,7 +34,18 @@ import { FileUpload } from './file-upload';
           @for (attachment of attachments(); track attachment.id) {
             <div class="attachment-list_item">
               <div class="attachment-list_item-icon">
-                <lib-icon name="file" size="md" />
+                @if (isImage(attachment.mime_type)) {
+                  <div class="attachment-list_item-thumbnail">
+                    <img
+                      [src]="getDownloadUrl(attachment.id)"
+                      [alt]="attachment.original_name"
+                      (click)="handlePreview(attachment)"
+                      class="attachment-list_thumbnail-image"
+                    />
+                  </div>
+                } @else {
+                  <lib-icon name="file" size="md" />
+                }
               </div>
               <div class="attachment-list_item-info">
                 <div class="attachment-list_item-name">{{ attachment.original_name }}</div>
@@ -45,6 +58,11 @@ import { FileUpload } from './file-upload';
                 </div>
               </div>
               <div class="attachment-list_item-actions">
+                @if (isImage(attachment.mime_type) || attachment.mime_type === 'application/pdf') {
+                  <lib-button variant="ghost" size="sm" (clicked)="handlePreview(attachment)">
+                    Preview
+                  </lib-button>
+                }
                 <a
                   [href]="getDownloadUrl(attachment.id)"
                   target="_blank"
@@ -111,6 +129,23 @@ import { FileUpload } from './file-upload';
         @apply flex-shrink-0;
       }
 
+      .attachment-list_item-thumbnail {
+        @apply w-12 h-12;
+        @apply rounded;
+        @apply overflow-hidden;
+        @apply border;
+        @apply border-border-default;
+        @apply bg-bg-tertiary;
+        @apply cursor-pointer;
+        @apply transition-transform;
+        @apply hover:scale-105;
+      }
+
+      .attachment-list_thumbnail-image {
+        @apply w-full h-full;
+        @apply object-cover;
+      }
+
       .attachment-list_item-info {
         @apply flex-1;
         @apply flex flex-col;
@@ -140,6 +175,8 @@ import { FileUpload } from './file-upload';
 })
 export class AttachmentList {
   readonly attachmentService = inject(AttachmentService);
+  readonly modal = inject(Modal);
+  readonly viewContainerRef = inject(ViewContainerRef);
 
   readonly issueId = input.required<string>();
 
@@ -179,5 +216,16 @@ export class AttachmentList {
     } catch (error) {
       console.error('Failed to delete attachment:', error);
     }
+  }
+
+  isImage(mimeType: string): boolean {
+    return mimeType.startsWith('image/');
+  }
+
+  handlePreview(attachment: Attachment): void {
+    this.modal.open(FilePreviewModal, this.viewContainerRef, {
+      size: 'lg',
+      data: { attachment },
+    });
   }
 }

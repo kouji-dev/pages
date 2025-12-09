@@ -141,11 +141,7 @@ import { TextEditorService } from './text-editor.service';
 
       .text-editor_container--disabled {
         @apply opacity-50;
-        @apply cursor-not-allowed;
-        user-select: none;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
+        @apply cursor-not-allowed select-none;
       }
 
       .text-editor_container--error {
