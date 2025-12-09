@@ -49,6 +49,12 @@ def mock_activity_repository():
 
 
 @pytest.fixture
+def mock_notification_repository():
+    """Mock notification repository."""
+    return AsyncMock()
+
+
+@pytest.fixture
 def test_user():
     """Create a test user."""
     valid_hash = "$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4yKJeyeQUzK6M5em"
@@ -355,6 +361,7 @@ class TestUpdateIssueUseCase:
         mock_project_repository,
         mock_user_repository,
         mock_activity_repository,
+        mock_notification_repository,
         mock_session,
         test_issue,
         test_project,
@@ -382,6 +389,7 @@ class TestUpdateIssueUseCase:
             mock_project_repository,
             mock_user_repository,
             mock_activity_repository,
+            mock_notification_repository,
             mock_session,
         )
 
@@ -403,6 +411,7 @@ class TestUpdateIssueUseCase:
         mock_project_repository,
         mock_user_repository,
         mock_activity_repository,
+        mock_notification_repository,
         mock_session,
     ):
         """Test issue update fails when issue not found."""
@@ -413,6 +422,7 @@ class TestUpdateIssueUseCase:
             mock_project_repository,
             mock_user_repository,
             mock_activity_repository,
+            mock_notification_repository,
             mock_session,
         )
 

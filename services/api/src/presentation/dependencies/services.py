@@ -15,6 +15,7 @@ from src.domain.repositories import (
     InvitationRepository,
     IssueActivityRepository,
     IssueRepository,
+    NotificationRepository,
     OrganizationRepository,
     PageRepository,
     ProjectRepository,
@@ -30,6 +31,7 @@ from src.infrastructure.database.repositories import (
     SQLAlchemyInvitationRepository,
     SQLAlchemyIssueActivityRepository,
     SQLAlchemyIssueRepository,
+    SQLAlchemyNotificationRepository,
     SQLAlchemyOrganizationRepository,
     SQLAlchemyPageRepository,
     SQLAlchemyProjectRepository,
@@ -205,6 +207,20 @@ async def get_template_repository(
         SQLAlchemy implementation of TemplateRepository
     """
     return SQLAlchemyTemplateRepository(session)
+
+
+async def get_notification_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> NotificationRepository:
+    """Get notification repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of NotificationRepository
+    """
+    return SQLAlchemyNotificationRepository(session)
 
 
 async def get_search_query_service(

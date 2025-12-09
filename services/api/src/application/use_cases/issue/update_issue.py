@@ -3,16 +3,20 @@
 from uuid import UUID
 
 import structlog
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dtos.issue import IssueResponse, UpdateIssueRequest
+from src.application.services.notification_service import NotificationService
 from src.domain.exceptions import EntityNotFoundException, ValidationException
 from src.domain.repositories import (
     IssueActivityRepository,
     IssueRepository,
+    NotificationRepository,
     ProjectRepository,
     UserRepository,
 )
+from src.infrastructure.database.models import UserModel
 
 logger = structlog.get_logger()
 
@@ -26,6 +30,7 @@ class UpdateIssueUseCase:
         project_repository: ProjectRepository,
         user_repository: UserRepository,
         activity_repository: IssueActivityRepository,
+        notification_repository: NotificationRepository,
         session: AsyncSession,
     ) -> None:
         """Initialize use case with dependencies.
@@ -35,12 +40,14 @@ class UpdateIssueUseCase:
             project_repository: Project repository to get project key for issue key generation
             user_repository: User repository to verify assignee exists
             activity_repository: Issue activity repository for logging
+            notification_repository: Notification repository for creating notifications
             session: Database session (for consistency, not directly used here)
         """
         self._issue_repository = issue_repository
         self._project_repository = project_repository
         self._user_repository = user_repository
         self._activity_repository = activity_repository
+        self._notification_service = NotificationService(notification_repository)
         self._session = session
 
     async def execute(
@@ -153,6 +160,40 @@ class UpdateIssueUseCase:
                 new_value=updated_issue.status,
             )
 
+            # Notify issue assignee about status change
+            if updated_issue.assignee_id and updated_issue.assignee_id != user_id:
+                # Get user who changed status
+                changer_name = "Someone"
+                if user_id:
+                    result = await self._session.execute(
+                        select(UserModel).where(UserModel.id == user_id)
+                    )
+                    changer_model = result.scalar_one_or_none()
+                    if changer_model:
+                        changer_name = changer_model.name
+
+                try:
+                    await self._notification_service.notify_issue_status_changed(
+                        user_id=updated_issue.assignee_id,
+                        issue_id=updated_issue.id,
+                        issue_title=updated_issue.title,
+                        old_status=old_status,
+                        new_status=updated_issue.status,
+                        changed_by_name=changer_name,
+                    )
+                    logger.info(
+                        "Notification sent for status change",
+                        issue_id=str(updated_issue.id),
+                        assignee_id=str(updated_issue.assignee_id),
+                    )
+                except Exception as e:
+                    # Log error but don't fail the update if notification fails
+                    logger.warning(
+                        "Failed to send status change notification",
+                        error=str(e),
+                        issue_id=str(updated_issue.id),
+                    )
+
         if request.priority is not None and old_priority != updated_issue.priority:
             await self._activity_repository.create(
                 issue_id=updated_issue.id,
@@ -172,6 +213,38 @@ class UpdateIssueUseCase:
                 old_value=str(old_assignee_id) if old_assignee_id else None,
                 new_value=str(updated_issue.assignee_id) if updated_issue.assignee_id else None,
             )
+
+            # Notify newly assigned user
+            if updated_issue.assignee_id and updated_issue.assignee_id != old_assignee_id:
+                # Get assigner user name
+                assigner_name = "Someone"
+                if user_id:
+                    result = await self._session.execute(
+                        select(UserModel).where(UserModel.id == user_id)
+                    )
+                    assigner_model = result.scalar_one_or_none()
+                    if assigner_model:
+                        assigner_name = assigner_model.name
+
+                try:
+                    await self._notification_service.notify_issue_assigned(
+                        assignee_id=updated_issue.assignee_id,
+                        issue_id=updated_issue.id,
+                        issue_title=updated_issue.title,
+                        assigned_by_name=assigner_name,
+                    )
+                    logger.info(
+                        "Notification sent for issue assignment",
+                        issue_id=str(updated_issue.id),
+                        assignee_id=str(updated_issue.assignee_id),
+                    )
+                except Exception as e:
+                    # Log error but don't fail the update if notification fails
+                    logger.warning(
+                        "Failed to send assignment notification",
+                        error=str(e),
+                        issue_id=str(updated_issue.id),
+                    )
 
         if request.due_date is not None and old_due_date != updated_issue.due_date:
             await self._activity_repository.create(

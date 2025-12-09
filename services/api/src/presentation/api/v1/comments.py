@@ -27,6 +27,7 @@ from src.domain.exceptions import EntityNotFoundException
 from src.domain.repositories import (
     CommentRepository,
     IssueRepository,
+    NotificationRepository,
     PageRepository,
     ProjectRepository,
     SpaceRepository,
@@ -43,6 +44,7 @@ from src.presentation.dependencies.permissions import (
 from src.presentation.dependencies.services import (
     get_comment_repository,
     get_issue_repository,
+    get_notification_repository,
     get_page_repository,
     get_permission_service,
     get_project_repository,
@@ -58,10 +60,15 @@ def get_create_comment_use_case(
     comment_repository: Annotated[CommentRepository, Depends(get_comment_repository)],
     issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
     user_repository: Annotated[UserRepository, Depends(get_user_repository)],
+    notification_repository: Annotated[
+        NotificationRepository, Depends(get_notification_repository)
+    ],
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> CreateCommentUseCase:
     """Get create comment use case with dependencies."""
-    return CreateCommentUseCase(comment_repository, issue_repository, user_repository, session)
+    return CreateCommentUseCase(
+        comment_repository, issue_repository, user_repository, notification_repository, session
+    )
 
 
 def get_get_comment_use_case(
