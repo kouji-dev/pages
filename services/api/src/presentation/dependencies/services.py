@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.interfaces import TokenService
 from src.application.services.permission_service import DatabasePermissionService
+from src.application.services.search_query_service import SearchQueryService
 from src.domain.repositories import (
     AttachmentRepository,
     CommentRepository,
@@ -204,6 +205,14 @@ async def get_template_repository(
         SQLAlchemy implementation of TemplateRepository
     """
     return SQLAlchemyTemplateRepository(session)
+
+
+async def get_search_query_service(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> SearchQueryService:
+    """Get search query service (issues/pages)."""
+
+    return SearchQueryService(session)
 
 
 async def get_permission_service(
