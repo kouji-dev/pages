@@ -43,6 +43,12 @@ def mock_project_repository():
 
 
 @pytest.fixture
+def mock_notification_repository():
+    """Mock notification repository."""
+    return AsyncMock()
+
+
+@pytest.fixture
 def mock_session():
     """Mock database session."""
     return AsyncMock()
@@ -125,6 +131,7 @@ class TestCreateCommentUseCase:
             mock_comment_repository,
             mock_issue_repository,
             mock_user_repository,
+            mock_notification_repository,
             mock_session,
         )
 
@@ -145,6 +152,7 @@ class TestCreateCommentUseCase:
         mock_comment_repository,
         mock_issue_repository,
         mock_user_repository,
+        mock_notification_repository,
         mock_session,
     ):
         """Test comment creation with non-existent issue."""
@@ -154,6 +162,7 @@ class TestCreateCommentUseCase:
             mock_comment_repository,
             mock_issue_repository,
             mock_user_repository,
+            mock_notification_repository,
             mock_session,
         )
 
@@ -169,6 +178,7 @@ class TestCreateCommentUseCase:
         mock_comment_repository,
         mock_issue_repository,
         mock_user_repository,
+        mock_notification_repository,
         mock_session,
         test_issue,
     ):
@@ -180,6 +190,7 @@ class TestCreateCommentUseCase:
             mock_comment_repository,
             mock_issue_repository,
             mock_user_repository,
+            mock_notification_repository,
             mock_session,
         )
 

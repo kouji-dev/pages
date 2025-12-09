@@ -25,6 +25,7 @@ from src.domain.entities import User
 from src.domain.repositories import (
     IssueActivityRepository,
     IssueRepository,
+    NotificationRepository,
     ProjectRepository,
     UserRepository,
 )
@@ -38,6 +39,7 @@ from src.presentation.dependencies.permissions import (
 from src.presentation.dependencies.services import (
     get_issue_activity_repository,
     get_issue_repository,
+    get_notification_repository,
     get_permission_service,
     get_project_repository,
     get_user_repository,
@@ -83,11 +85,19 @@ def get_update_issue_use_case(
     project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
     user_repository: Annotated[UserRepository, Depends(get_user_repository)],
     activity_repository: Annotated[IssueActivityRepository, Depends(get_issue_activity_repository)],
+    notification_repository: Annotated[
+        NotificationRepository, Depends(get_notification_repository)
+    ],
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> UpdateIssueUseCase:
     """Get update issue use case with dependencies."""
     return UpdateIssueUseCase(
-        issue_repository, project_repository, user_repository, activity_repository, session
+        issue_repository,
+        project_repository,
+        user_repository,
+        activity_repository,
+        notification_repository,
+        session,
     )
 
 

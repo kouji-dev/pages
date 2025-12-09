@@ -5,6 +5,7 @@ from src.domain.repositories.comment_repository import CommentRepository
 from src.domain.repositories.invitation_repository import InvitationRepository
 from src.domain.repositories.issue_activity_repository import IssueActivityRepository
 from src.domain.repositories.issue_repository import IssueRepository
+from src.domain.repositories.notification_repository import NotificationRepository
 from src.domain.repositories.organization_repository import OrganizationRepository
 from src.domain.repositories.page_repository import PageRepository
 from src.domain.repositories.project_repository import ProjectRepository
@@ -24,4 +25,5 @@ __all__ = [
     "SpaceRepository",
     "PageRepository",
     "TemplateRepository",
+    "NotificationRepository",
 ]
