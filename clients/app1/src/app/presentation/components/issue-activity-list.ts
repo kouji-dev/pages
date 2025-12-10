@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, computed, inject, input, effect } from '@angular/core';
-import { LoadingState, ErrorState, EmptyState, Button, Icon } from 'shared-ui';
+import { LoadingState, ErrorState, EmptyState, Button, Icon, IconName } from 'shared-ui';
 import { IssueActivityService } from '../../application/services/issue-activity.service';
 
 @Component({
@@ -22,7 +22,6 @@ import { IssueActivityService } from '../../application/services/issue-activity.
           title="No activity yet"
           message="Activity logs will appear here when changes are made to this issue."
           icon="clock"
-          [showAction]="false"
         />
       } @else {
         <div class="activity-list_items">
@@ -228,12 +227,12 @@ export class IssueActivityList {
     return activity.user_name || activity.user_email || 'System';
   }
 
-  getActivityIcon(action: string): string {
+  getActivityIcon(action: string): IconName {
     switch (action) {
       case 'created':
         return 'plus';
       case 'updated':
-        return 'edit';
+        return 'pen';
       case 'deleted':
         return 'trash';
       case 'status_changed':
