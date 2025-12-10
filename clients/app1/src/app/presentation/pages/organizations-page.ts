@@ -7,9 +7,9 @@ import {
   signal,
   effect,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { Button, Icon, LoadingState, ErrorState, EmptyState, Modal } from 'shared-ui';
 import { OrganizationService, Organization } from '../../application/services/organization.service';
+import { NavigationService } from '../../application/services/navigation.service';
 import { OrganizationCard } from '../components/organization-card';
 import { CreateOrganizationModal } from '../components/create-organization-modal';
 
@@ -118,6 +118,7 @@ import { CreateOrganizationModal } from '../components/create-organization-modal
         @apply max-w-7xl mx-auto;
         @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3;
         @apply gap-6;
+        @apply items-stretch;
       }
     `,
   ],
@@ -125,7 +126,7 @@ import { CreateOrganizationModal } from '../components/create-organization-modal
 })
 export class OrganizationsPage {
   readonly organizationService = inject(OrganizationService);
-  readonly router = inject(Router);
+  readonly navigationService = inject(NavigationService);
   readonly modal = inject(Modal);
   readonly viewContainerRef = inject(ViewContainerRef);
 
@@ -157,7 +158,7 @@ export class OrganizationsPage {
   }
 
   handleOrganizationSettings(organization: Organization): void {
-    this.router.navigate(['/app/organizations', organization.id, 'settings']);
+    this.navigationService.navigateToOrganizationSettings(organization.id);
   }
 
   handleOrganizationLeave(organization: Organization): void {

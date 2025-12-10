@@ -517,3 +517,9 @@ body {
   min-width: 12rem;
   max-width: 20rem;
 }
+
+.lib-dropdown-panel--fit-content {
+  width: fit-content;
+  min-width: auto;
+  max-width: none;
+}

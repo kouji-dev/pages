@@ -2,6 +2,7 @@ import { Injectable, signal, inject, computed, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { httpResource } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { NavigationService } from './navigation.service';
 
 export interface Organization {
   id: string;
@@ -51,6 +52,7 @@ export interface CreateOrganizationRequest {
 export class OrganizationService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/organizations`;
+  private readonly navigationService = inject(NavigationService);
 
   // Organizations list resource using httpResource
   readonly organizations = httpResource<OrganizationListResponse>(() => this.apiUrl);
@@ -122,23 +124,43 @@ export class OrganizationService {
   readonly organizationError = computed(() => this.organizationResource.error());
   readonly hasOrganizationError = computed(() => this.organizationResource.error() !== undefined);
 
-  // Effects declared as instance variables
-  private readonly initializeCurrentOrganizationEffect = effect(() => {
-    const orgs = this.organizationsList();
-    const currentOrgId = this.getStoredCurrentOrganizationId();
+  // Effect to sync current organization with URL
+  private readonly syncOrganizationFromUrlEffect = effect(() => {
+    const urlOrgId = this.navigationService.currentOrganizationId();
 
-    if (orgs.length > 0 && !this.currentOrganizationId()) {
-      // If we have a stored organization ID, try to restore it
-      if (currentOrgId) {
-        const org = orgs.find((o) => o.id === currentOrgId);
+    if (urlOrgId) {
+      // URL has an organization ID - fetch and set it
+      const currentOrgId = this.currentOrganizationId();
+
+      // Only fetch if it's different from current
+      if (currentOrgId !== urlOrgId) {
+        const orgs = this.organizationsList();
+        const org = orgs.find((o) => o.id === urlOrgId);
+
         if (org) {
-          this.switchOrganization(currentOrgId);
-          return;
+          // Organization is already in the list, just set it
+          this.setCurrentOrganization(urlOrgId, org);
+        } else {
+          // Organization not in list, fetch it
+          this.fetchOrganization(urlOrgId);
         }
       }
+    } else {
+      // No organization in URL - try to restore from storage or use first available
+      const orgs = this.organizationsList();
+      const storedOrgId = this.getStoredCurrentOrganizationId();
 
-      // Otherwise, set the first organization as current
-      this.switchOrganization(orgs[0].id);
+      if (orgs.length > 0 && !this.currentOrganizationId()) {
+        if (storedOrgId) {
+          const org = orgs.find((o) => o.id === storedOrgId);
+          if (org) {
+            this.setCurrentOrganization(storedOrgId, org);
+            return;
+          }
+        }
+        // Otherwise, set the first organization as current
+        this.setCurrentOrganization(orgs[0].id, orgs[0]);
+      }
     }
   });
 
@@ -158,15 +180,25 @@ export class OrganizationService {
   }
 
   /**
-   * Switch to a different organization (from list)
-   * Sets the organization ID, which triggers the resource to reload automatically
+   * Set current organization without navigation
+   * Used internally and by components that need to set org before navigating
+   */
+  setCurrentOrganization(organizationId: string, organization?: Organization): void {
+    const org = organization || this.organizationsList().find((o) => o.id === organizationId);
+    if (org) {
+      this.currentOrganizationId.set(organizationId);
+      this.persistCurrentOrganizationToStorage(org);
+    }
+  }
+
+  /**
+   * Switch to a different organization (from selector)
+   * Navigates to the organization's projects page, which will trigger URL-driven sync
    */
   switchOrganization(organizationId: string): void {
-    const organization = this.organizationsList().find((org) => org.id === organizationId);
-    if (organization) {
-      this.currentOrganizationId.set(organizationId);
-      this.persistCurrentOrganizationToStorage(organization);
-    }
+    // Navigation will be handled by NavigationService
+    // The URL change will trigger syncOrganizationFromUrlEffect
+    this.navigationService.navigateToOrganizationProjects(organizationId);
   }
 
   /**

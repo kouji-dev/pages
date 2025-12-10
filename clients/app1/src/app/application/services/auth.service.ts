@@ -194,6 +194,7 @@ export class AuthService {
           avatarUrl: response.user.avatar_url || undefined,
           isVerified: response.user.is_verified,
         });
+        this.isAuthenticated.set(true);
       }),
       map((response) => ({
         id: response.user.id,

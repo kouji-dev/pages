@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { httpResource } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { NavigationService } from './navigation.service';
 
 export interface Issue {
   id: string;
@@ -60,6 +61,7 @@ export interface CreateIssueRequest {
 export interface UpdateIssueRequest {
   title?: string;
   description?: string;
+  type?: 'task' | 'bug' | 'story' | 'epic';
   status?: 'todo' | 'in_progress' | 'done' | 'cancelled';
   priority?: 'low' | 'medium' | 'high' | 'critical';
   assignee_id?: string;
@@ -85,20 +87,20 @@ export interface ListIssuesFilters {
 export class IssueService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/issues`;
+  private readonly navigationService = inject(NavigationService);
 
-  // Current project ID for filtering issues
-  private readonly currentProjectId = signal<string | null>(null);
+  // Note: projectId and issueId are now URL-driven via NavigationService
+  // No need for internal signals
 
-  // Current issue ID for single issue view
-  private readonly currentIssueId = signal<string | null>(null);
-
-  // Issues list resource using httpResource with computed URL
+  // Issues list resource using httpResource - driven by URL organizationId and projectId
   private readonly issuesResource = httpResource<IssueListResponse>(() => {
-    const projectId = this.currentProjectId();
-    if (!projectId) return undefined;
+    const organizationId = this.navigationService.currentOrganizationId();
+    const projectId = this.navigationService.currentProjectId();
+    if (!organizationId || !projectId) return undefined;
 
     const filters = this.currentFilters();
     let params = new HttpParams()
+      .set('organization_id', organizationId)
       .set('project_id', projectId)
       .set('page', filters.page?.toString() || '1')
       .set('limit', filters.limit?.toString() || '20');
@@ -158,9 +160,9 @@ export class IssueService {
   readonly error = computed(() => this.issuesResource.error());
   readonly hasError = computed(() => this.issuesResource.error() !== undefined);
 
-  // Single issue resource using httpResource with computed URL
+  // Single issue resource using httpResource - driven by URL issueId
   private readonly issueResource = httpResource<Issue>(() => {
-    const id = this.currentIssueId();
+    const id = this.navigationService.currentIssueId();
     return id ? `${this.apiUrl}/${id}` : undefined;
   });
 
@@ -175,11 +177,11 @@ export class IssueService {
 
   /**
    * Set current project ID and load issues
+   * @deprecated Project ID is now URL-driven via NavigationService
    */
   setProject(projectId: string): void {
-    this.currentProjectId.set(projectId);
-    this.filters.update((f) => ({ ...f, project_id: projectId }));
-    // Resource will reload automatically when projectId changes
+    // Project ID is now URL-driven
+    // This method is kept for backward compatibility
   }
 
   /**
@@ -199,10 +201,12 @@ export class IssueService {
 
   /**
    * Fetch a single issue by ID using httpResource
+   * @deprecated Issue ID is now driven by URL via NavigationService
+   * The issue will be automatically fetched when URL issueId changes
    */
   fetchIssue(id: string): void {
-    this.currentIssueId.set(id);
-    // Resource will reload automatically when ID changes
+    // Issue fetching is now URL-driven via navigationService.currentIssueId()
+    // This method is kept for backward compatibility
   }
 
   /**
@@ -245,7 +249,8 @@ export class IssueService {
 
     // Reload issues list and current issue to get updated data
     this.loadIssues();
-    if (this.currentIssueId() === id) {
+    const currentIssueId = this.navigationService.currentIssueId();
+    if (currentIssueId === id) {
       this.issueResource.reload();
     }
 
@@ -261,9 +266,7 @@ export class IssueService {
     // Reload issues to get updated list
     this.loadIssues();
 
-    // If deleted issue was current, clear it
-    if (this.currentIssueId() === id) {
-      this.currentIssueId.set(null);
-    }
+    // If deleted issue was current, navigation will handle clearing it
+    // (user will be redirected or URL will change)
   }
 }

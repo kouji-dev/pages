@@ -6,9 +6,11 @@ import {
   inject,
   input,
   effect,
+  ViewChild,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter } from 'shared-ui';
-import { Button, Input } from 'shared-ui';
+import { Button, Input, TextEditor } from 'shared-ui';
 import { ToastService } from 'shared-ui';
 import { IssueService, UpdateIssueRequest, Issue } from '../../application/services/issue.service';
 
@@ -17,7 +19,16 @@ type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
 
 @Component({
   selector: 'app-edit-issue-modal',
-  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, Input],
+  imports: [
+    ModalContainer,
+    ModalHeader,
+    ModalContent,
+    ModalFooter,
+    Button,
+    Input,
+    TextEditor,
+    FormsModule,
+  ],
   template: `
     <lib-modal-container>
       <lib-modal-header>Edit Issue</lib-modal-header>
@@ -30,13 +41,17 @@ type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
             [required]="true"
             [errorMessage]="titleError()"
           />
-          <lib-input
-            label="Description"
-            type="textarea"
-            placeholder="Describe the issue in detail"
-            [(model)]="description"
-            [rows]="4"
-          />
+          <div class="edit-issue-form_field">
+            <label class="edit-issue-form_label">Description</label>
+            <lib-text-editor
+              #descriptionEditor
+              placeholder="Describe the issue in detail"
+              [(ngModel)]="description"
+              name="description"
+              (htmlChange)="descriptionHtml.set($event)"
+              [showToolbar]="true"
+            />
+          </div>
           <div class="edit-issue-form_row">
             <div class="edit-issue-form_field">
               <label class="edit-issue-form_label">Status</label>
@@ -125,18 +140,27 @@ export class EditIssueModal {
 
   readonly title = signal('');
   readonly description = signal('');
+  readonly descriptionHtml = signal('');
   readonly status = signal<IssueStatus>('todo');
   readonly priority = signal<IssuePriority>('medium');
   readonly isSubmitting = signal(false);
+
+  @ViewChild('descriptionEditor') descriptionEditor?: TextEditor;
 
   private readonly initializeEffect = effect(
     () => {
       const issue = this.issue();
       if (issue) {
         this.title.set(issue.title);
-        this.description.set(issue.description || '');
+        const desc = issue.description || '';
+        this.description.set(desc);
+        this.descriptionHtml.set(desc);
         this.status.set(issue.status);
         this.priority.set(issue.priority);
+        // Set HTML in editor if it's HTML content
+        if (this.descriptionEditor && desc) {
+          this.descriptionEditor.setHtml(desc);
+        }
       }
     },
     { allowSignalWrites: true },
@@ -171,7 +195,7 @@ export class EditIssueModal {
     try {
       const request: UpdateIssueRequest = {
         title: this.title().trim(),
-        description: this.description().trim() || undefined,
+        description: this.descriptionHtml().trim() || undefined,
         status: this.status(),
         priority: this.priority(),
       };

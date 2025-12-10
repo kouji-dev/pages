@@ -31,6 +31,7 @@ export class Dropdown {
   readonly dropdownData = input<any>();
   readonly position = input<DropdownPosition>('below');
   readonly panelClass = input('lib-dropdown-panel');
+  readonly containerClass = input<string>('');
   readonly trigger = input<'click' | 'hover'>('click');
   readonly hoverDelay = input(200);
 
@@ -121,10 +122,16 @@ export class Dropdown {
       return;
     }
 
+    const panelClasses = [this.panelClass()];
+    const containerClass = this.containerClass();
+    if (containerClass) {
+      panelClasses.push(containerClass);
+    }
+
     const config: OverlayConfig = {
       positionStrategy: this.getPositionStrategy(),
       scrollStrategy: this.overlay.scrollStrategies.close(),
-      panelClass: this.panelClass(),
+      panelClass: panelClasses,
       backdropClass: 'cdk-overlay-transparent-backdrop',
       hasBackdrop: true,
       disposeOnNavigation: true,

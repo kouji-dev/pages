@@ -1,8 +1,10 @@
 import { Component, ChangeDetectionStrategy, computed, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { Button, Input, ToastService } from 'shared-ui';
-import { firstValueFrom } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { filter, take, timeout, catchError, of, switchMap } from 'rxjs';
 import { AuthService } from '../../application/services/auth.service';
+import { NavigationService } from '../../application/services/navigation.service';
 
 @Component({
   selector: 'app-login-page',
@@ -163,7 +165,7 @@ import { AuthService } from '../../application/services/auth.service';
 })
 export class LoginPage {
   private readonly authService = inject(AuthService);
-  private readonly router = inject(Router);
+  private readonly navigationService = inject(NavigationService);
   private readonly toast = inject(ToastService);
 
   readonly email = signal('');
@@ -206,21 +208,23 @@ export class LoginPage {
 
     this.isSubmitting.set(true);
 
-    try {
-      await firstValueFrom(
-        this.authService.login({
-          email: this.email().trim(),
-          password: this.password(),
-        }),
-      );
-
-      this.toast.success('Welcome back!');
-      this.router.navigate(['/app']);
-    } catch (error) {
-      // Error is already handled by error interceptor
-      console.error('Login failed:', error);
-    } finally {
-      this.isSubmitting.set(false);
-    }
+    this.authService
+      .login({
+        email: this.email().trim(),
+        password: this.password(),
+      })
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          this.toast.success('Welcome back!');
+          // Navigate directly to organizations list
+          this.navigationService.navigateToOrganizations();
+          this.isSubmitting.set(false);
+        },
+        error: (error) => {
+          console.error('Login failed:', error);
+          this.isSubmitting.set(false);
+        },
+      });
   }
 }

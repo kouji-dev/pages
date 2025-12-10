@@ -76,7 +76,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'projects',
+        redirectTo: 'organizations',
         pathMatch: 'full',
       },
       {
@@ -85,34 +85,49 @@ export const routes: Routes = [
         title: 'Organizations - Pages',
       },
       {
-        path: 'organizations/:id/settings',
-        component: OrganizationSettingsPage,
-        title: 'Organization Settings - Pages',
+        path: 'organizations/:id',
+        children: [
+          {
+            path: '',
+            component: ProjectsPage,
+            title: 'Projects - Pages',
+          },
+          {
+            path: 'settings',
+            component: OrganizationSettingsPage,
+            title: 'Organization Settings - Pages',
+          },
+          {
+            path: 'projects',
+            component: ProjectsPage,
+            title: 'Projects - Pages',
+          },
+          {
+            path: 'projects/:projectId',
+            children: [
+              {
+                path: '',
+                component: ProjectDetailPage,
+                title: 'Project Details - Pages',
+              },
+              {
+                path: 'settings',
+                component: ProjectSettingsPage,
+                title: 'Project Settings - Pages',
+              },
+              {
+                path: 'issues/:issueId',
+                component: IssueDetailPage,
+                title: 'Issue Details - Pages',
+              },
+            ],
+          },
+        ],
       },
       {
         path: 'profile',
         component: ProfilePage,
         title: 'Profile - Pages',
-      },
-      {
-        path: 'projects',
-        component: ProjectsPage,
-        title: 'Projects - Pages',
-      },
-      {
-        path: 'projects/:id',
-        component: ProjectDetailPage,
-        title: 'Project Details - Pages',
-      },
-      {
-        path: 'projects/:id/settings',
-        component: ProjectSettingsPage,
-        title: 'Project Settings - Pages',
-      },
-      {
-        path: 'issues/:id',
-        component: IssueDetailPage,
-        title: 'Issue Details - Pages',
       },
     ],
   },

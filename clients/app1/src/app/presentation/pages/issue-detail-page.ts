@@ -7,9 +7,9 @@ import {
   ViewContainerRef,
   effect,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Button, LoadingState, ErrorState, Modal } from 'shared-ui';
+import { Button, LoadingState, ErrorState, Modal, TextEditor } from 'shared-ui';
 import { IssueService } from '../../application/services/issue.service';
+import { NavigationService } from '../../application/services/navigation.service';
 import { IssueTypeBadge } from '../components/issue-type-badge';
 import { IssueStatusBadge } from '../components/issue-status-badge';
 import { IssuePriorityIndicator } from '../components/issue-priority-indicator';
@@ -28,6 +28,7 @@ import { AttachmentList } from '../components/attachment-list';
     IssuePriorityIndicator,
     CommentList,
     AttachmentList,
+    TextEditor,
   ],
   template: `
     <div class="issue-detail-page">
@@ -73,7 +74,12 @@ import { AttachmentList } from '../components/attachment-list';
                 <h2 class="issue-detail-page_section-title">Description</h2>
                 <div class="issue-detail-page_description">
                   @if (issue()?.description) {
-                    <p>{{ issue()?.description }}</p>
+                    <lib-text-editor
+                      [initialValue]="issue()!.description"
+                      [readOnly]="true"
+                      [showToolbar]="false"
+                      class="issue-detail-page_description-editor"
+                    />
                   } @else {
                     <p class="issue-detail-page_no-description">No description provided.</p>
                   }
@@ -245,9 +251,15 @@ import { AttachmentList } from '../components/attachment-list';
       }
 
       .issue-detail-page_description {
-        @apply text-base;
-        @apply text-text-primary;
-        @apply whitespace-pre-wrap;
+        @apply flex flex-col;
+      }
+
+      .issue-detail-page_description-editor {
+        @apply border-none;
+      }
+
+      .issue-detail-page_description-editor ::ng-deep .text-editor_wrapper {
+        @apply border-none;
       }
 
       .issue-detail-page_no-description {
@@ -300,12 +312,13 @@ import { AttachmentList } from '../components/attachment-list';
 })
 export class IssueDetailPage {
   readonly issueService = inject(IssueService);
-  readonly route = inject(ActivatedRoute);
-  readonly router = inject(Router);
+  readonly navigationService = inject(NavigationService);
   readonly modal = inject(Modal);
   readonly viewContainerRef = inject(ViewContainerRef);
 
-  readonly issueId = computed(() => this.route.snapshot.paramMap.get('id') || '');
+  readonly issueId = computed(() => {
+    return this.navigationService.currentIssueId() || '';
+  });
   readonly issue = computed(() => this.issueService.currentIssue());
 
   readonly errorMessage = computed(() => {
@@ -315,16 +328,6 @@ export class IssueDetailPage {
     }
     return 'An unknown error occurred.';
   });
-
-  private readonly initializeEffect = effect(
-    () => {
-      const id = this.issueId();
-      if (id) {
-        this.issueService.fetchIssue(id);
-      }
-    },
-    { allowSignalWrites: true },
-  );
 
   handleEditIssue(): void {
     const id = this.issueId();

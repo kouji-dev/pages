@@ -10,7 +10,6 @@ import {
   ViewChild,
   TemplateRef,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import {
   Button,
   LoadingState,
@@ -23,6 +22,8 @@ import {
   SortEvent,
 } from 'shared-ui';
 import { IssueService, IssueListItem } from '../../application/services/issue.service';
+import { OrganizationService } from '../../application/services/organization.service';
+import { NavigationService } from '../../application/services/navigation.service';
 import { IssueTypeBadge } from './issue-type-badge';
 import { IssueStatusBadge } from './issue-status-badge';
 import { IssuePriorityIndicator } from './issue-priority-indicator';
@@ -212,12 +213,17 @@ import { CreateIssueModal } from './create-issue-modal';
 })
 export class IssueList {
   readonly issueService = inject(IssueService);
-  readonly router = inject(Router);
+  readonly organizationService = inject(OrganizationService);
+  readonly navigationService = inject(NavigationService);
   readonly modal = inject(Modal);
   readonly viewContainerRef = inject(ViewContainerRef);
 
   readonly projectId = input.required<string>();
   readonly searchQuery = signal('');
+
+  readonly organizationId = computed(() => {
+    return this.navigationService.currentOrganizationId() || '';
+  });
 
   @ViewChild('cellTemplate') cellTemplate!: TemplateRef<{
     $implicit: IssueListItem;
@@ -318,7 +324,11 @@ export class IssueList {
   }
 
   handleRowClick(event: { row: IssueListItem; index: number }): void {
-    this.router.navigate(['/app/issues', event.row.id]);
+    const orgId = this.organizationId();
+    const projectId = this.projectId();
+    if (orgId && projectId) {
+      this.navigationService.navigateToIssue(orgId, projectId, event.row.id);
+    }
   }
 
   handleSearch(): void {

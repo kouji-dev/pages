@@ -9,19 +9,19 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { Icon, Dropdown, Button, Modal } from 'shared-ui';
-import { Organization } from '../../application/services/organization.service';
+import { Organization, OrganizationService } from '../../application/services/organization.service';
+import { NavigationService } from '../../application/services/navigation.service';
 
 @Component({
   selector: 'app-organization-card',
-  imports: [Icon, Dropdown, RouterLink, Button],
+  imports: [Icon, Dropdown, Button],
   template: `
     <div class="org-card">
-      <a
-        [routerLink]="['/organizations', organization().id]"
+      <div
         class="org-card_link"
-        [attr.aria-label]="'View ' + organization().name"
+        [attr.aria-label]="'Switch to ' + organization().name"
+        (click)="handleCardClick()"
       >
         <div class="org-card_content">
           <div class="org-card_icon">
@@ -40,7 +40,7 @@ import { Organization } from '../../application/services/organization.service';
             </div>
           </div>
         </div>
-      </a>
+      </div>
       <div class="org-card_actions">
         <lib-button
           variant="ghost"
@@ -49,6 +49,7 @@ import { Organization } from '../../application/services/organization.service';
           leftIcon="menu"
           [libDropdown]="actionsDropdownTemplate"
           [position]="'below'"
+          [containerClass]="'lib-dropdown-panel--fit-content'"
           class="org-card_actions-button"
           #actionsDropdown="libDropdown"
         >
@@ -58,20 +59,20 @@ import { Organization } from '../../application/services/organization.service';
             <lib-button
               variant="ghost"
               size="md"
+              [iconOnly]="true"
+              leftIcon="settings"
               class="org-card_action-item"
               (clicked)="handleSettings(actionsDropdown)"
             >
-              <lib-icon name="settings" size="sm" class="org-card_action-icon" />
-              <span>Settings</span>
             </lib-button>
             <lib-button
               variant="ghost"
               size="md"
+              [iconOnly]="true"
+              leftIcon="log-out"
               class="org-card_action-item org-card_action-item--danger"
               (clicked)="handleLeave(actionsDropdown)"
             >
-              <lib-icon name="log-out" size="sm" class="org-card_action-icon" />
-              <span>Leave</span>
             </lib-button>
           </div>
         </ng-template>
@@ -85,13 +86,13 @@ import { Organization } from '../../application/services/organization.service';
       .org-card {
         @apply relative;
         @apply flex flex-col;
+        @apply h-full;
         @apply rounded-lg;
         @apply border;
         @apply border-border-default;
         @apply bg-bg-primary;
         @apply transition-all;
         @apply hover:shadow-lg;
-        min-height: 180px;
       }
 
       .org-card_link {
@@ -129,6 +130,7 @@ import { Organization } from '../../application/services/organization.service';
       .org-card_name {
         @apply text-xl font-semibold;
         @apply text-text-primary;
+        @apply truncate;
         margin: 0;
       }
 
@@ -163,17 +165,8 @@ import { Organization } from '../../application/services/organization.service';
 
       .org-card_actions-menu {
         @apply py-1;
-        min-width: 10rem;
-      }
-
-      .org-card_action-item {
-        @apply w-full;
-        @apply justify-start;
-        @apply px-4 py-2;
-      }
-
-      .org-card_action-icon {
-        @apply flex-shrink-0;
+        @apply flex flex-col;
+        @apply gap-1;
       }
 
       .org-card_action-item--danger {
@@ -188,9 +181,21 @@ import { Organization } from '../../application/services/organization.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrganizationCard {
+  private readonly organizationService = inject(OrganizationService);
+  private readonly navigationService = inject(NavigationService);
+
   readonly organization = input.required<Organization>();
   readonly onSettings = output<Organization>();
   readonly onLeave = output<Organization>();
+
+  handleCardClick(): void {
+    const org = this.organization();
+    const orgId = org.id;
+    // Set the organization as current (without navigation)
+    this.organizationService.setCurrentOrganization(orgId, org);
+    // Navigate to projects list for this organization
+    this.navigationService.navigateToOrganizationProjects(orgId);
+  }
 
   handleSettings(dropdown: Dropdown): void {
     dropdown.open.set(false);

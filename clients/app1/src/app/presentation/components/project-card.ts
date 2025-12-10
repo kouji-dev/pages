@@ -1,6 +1,8 @@
 import { Component, ChangeDetectionStrategy, input, output, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Icon, Dropdown, Button } from 'shared-ui';
+import { OrganizationService } from '../../application/services/organization.service';
+import { NavigationService } from '../../application/services/navigation.service';
 import { Project } from '../../application/services/project.service';
 
 @Component({
@@ -9,7 +11,7 @@ import { Project } from '../../application/services/project.service';
   template: `
     <div class="project-card">
       <a
-        [routerLink]="['/app/projects', project().id]"
+        [routerLink]="getProjectRoute()"
         class="project-card_link"
         [attr.aria-label]="'View ' + project().name"
       >
@@ -42,6 +44,7 @@ import { Project } from '../../application/services/project.service';
           leftIcon="menu"
           [libDropdown]="actionsDropdownTemplate"
           [position]="'below'"
+          [containerClass]="'lib-dropdown-panel--fit-content'"
           class="project-card_actions-button"
           #actionsDropdown="libDropdown"
         >
@@ -51,11 +54,11 @@ import { Project } from '../../application/services/project.service';
             <lib-button
               variant="ghost"
               size="md"
+              [iconOnly]="true"
+              leftIcon="settings"
               class="project-card_action-item"
               (clicked)="handleSettings(actionsDropdown)"
             >
-              <lib-icon name="settings" size="sm" class="project-card_action-icon" />
-              <span>Settings</span>
             </lib-button>
           </div>
         </ng-template>
@@ -160,25 +163,29 @@ import { Project } from '../../application/services/project.service';
 
       .project-card_actions-menu {
         @apply py-1;
-        min-width: 10rem;
-      }
-
-      .project-card_action-item {
-        @apply w-full;
-        @apply justify-start;
-        @apply px-4 py-2;
-      }
-
-      .project-card_action-icon {
-        @apply flex-shrink-0;
+        @apply flex flex-col;
+        @apply gap-1;
       }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectCard {
+  private readonly organizationService = inject(OrganizationService);
+  private readonly navigationService = inject(NavigationService);
+
   readonly project = input.required<Project>();
   readonly onSettings = output<Project>();
+
+  getProjectRoute(): string[] {
+    const orgId = this.organizationService.currentOrganization()?.id;
+    const projectId = this.project().id;
+    if (orgId) {
+      return this.navigationService.getProjectRoute(orgId, projectId);
+    }
+    // Fallback if no org (shouldn't happen)
+    return ['/app/organizations'];
+  }
 
   handleSettings(dropdown: Dropdown): void {
     dropdown.open.set(false);

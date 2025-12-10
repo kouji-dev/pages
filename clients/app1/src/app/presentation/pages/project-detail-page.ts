@@ -6,18 +6,28 @@ import {
   signal,
   effect,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Button, Icon, LoadingState, ErrorState } from 'shared-ui';
+import { Button, LoadingState, ErrorState } from 'shared-ui';
 import { ProjectService } from '../../application/services/project.service';
+import { OrganizationService } from '../../application/services/organization.service';
+import { NavigationService } from '../../application/services/navigation.service';
 import { ProjectMemberList } from '../components/project-member-list';
 import { IssueList } from '../components/issue-list';
 import { KanbanBoard } from '../components/kanban-board';
+import { BackToPage } from '../components/back-to-page';
 
 type TabType = 'issues' | 'board' | 'settings' | 'members';
 
 @Component({
   selector: 'app-project-detail-page',
-  imports: [Button, LoadingState, ErrorState, ProjectMemberList, IssueList, KanbanBoard],
+  imports: [
+    Button,
+    LoadingState,
+    ErrorState,
+    ProjectMemberList,
+    IssueList,
+    KanbanBoard,
+    BackToPage,
+  ],
   template: `
     <div class="project-detail-page">
       @if (projectService.isFetchingProject()) {
@@ -40,6 +50,7 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
           <div class="project-detail-page_header-content">
             <div class="project-detail-page_header-main">
               <div class="project-detail-page_header-info">
+                <app-back-to-page label="Back to Projects" (onClick)="handleBackToProjects()" />
                 <div class="project-detail-page_key">{{ project()?.key }}</div>
                 <h1 class="project-detail-page_title">{{ project()?.name }}</h1>
                 @if (project()?.description) {
@@ -51,55 +62,70 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
         </div>
 
         <div class="project-detail-page_content">
-          <div class="project-detail-page_tabs">
-            <lib-button
-              variant="ghost"
-              size="md"
-              [class.project-detail-page_tab--active]="activeTab() === 'issues'"
-              (clicked)="setActiveTab('issues')"
-            >
-              Issues
-            </lib-button>
-            <lib-button
-              variant="ghost"
-              size="md"
-              [class.project-detail-page_tab--active]="activeTab() === 'board'"
-              (clicked)="setActiveTab('board')"
-            >
-              Board
-            </lib-button>
-            <lib-button
-              variant="ghost"
-              size="md"
-              [class.project-detail-page_tab--active]="activeTab() === 'members'"
-              (clicked)="setActiveTab('members')"
-            >
-              Members
-            </lib-button>
-            <lib-button
-              variant="ghost"
-              size="md"
-              [class.project-detail-page_tab--active]="activeTab() === 'settings'"
-              (clicked)="setActiveTab('settings')"
-            >
-              Settings
-            </lib-button>
-          </div>
-
-          <div class="project-detail-page_tab-content">
-            @if (activeTab() === 'issues') {
-              <app-issue-list [projectId]="projectId()" />
-            } @else if (activeTab() === 'board') {
-              <app-kanban-board [projectId]="projectId()" />
-            } @else if (activeTab() === 'members') {
-              <app-project-member-list [projectId]="projectId()" />
-            } @else if (activeTab() === 'settings') {
-              <div class="project-detail-page_settings">
-                <lib-button variant="primary" size="md" (clicked)="handleNavigateToSettings()">
-                  Go to Settings Page
+          <div class="project-detail-page_container">
+            <div class="project-detail-page_sidebar">
+              <nav class="project-detail-page_nav">
+                <lib-button
+                  variant="ghost"
+                  size="md"
+                  [fullWidth]="true"
+                  leftIcon="file-text"
+                  [class.project-detail-page_nav-item--active]="activeTab() === 'issues'"
+                  (clicked)="setActiveTab('issues')"
+                  class="project-detail-page_nav-item"
+                >
+                  Issues
                 </lib-button>
-              </div>
-            }
+                <lib-button
+                  variant="ghost"
+                  size="md"
+                  [fullWidth]="true"
+                  leftIcon="columns2"
+                  [class.project-detail-page_nav-item--active]="activeTab() === 'board'"
+                  (clicked)="setActiveTab('board')"
+                  class="project-detail-page_nav-item"
+                >
+                  Board
+                </lib-button>
+                <lib-button
+                  variant="ghost"
+                  size="md"
+                  [fullWidth]="true"
+                  leftIcon="users"
+                  [class.project-detail-page_nav-item--active]="activeTab() === 'members'"
+                  (clicked)="setActiveTab('members')"
+                  class="project-detail-page_nav-item"
+                >
+                  Members
+                </lib-button>
+                <lib-button
+                  variant="ghost"
+                  size="md"
+                  [fullWidth]="true"
+                  leftIcon="settings"
+                  [class.project-detail-page_nav-item--active]="activeTab() === 'settings'"
+                  (clicked)="setActiveTab('settings')"
+                  class="project-detail-page_nav-item"
+                >
+                  Settings
+                </lib-button>
+              </nav>
+            </div>
+            <div class="project-detail-page_main">
+              @if (activeTab() === 'issues') {
+                <app-issue-list [projectId]="projectId()" />
+              } @else if (activeTab() === 'board') {
+                <app-kanban-board [projectId]="projectId()" />
+              } @else if (activeTab() === 'members') {
+                <app-project-member-list [projectId]="projectId()" />
+              } @else if (activeTab() === 'settings') {
+                <div class="project-detail-page_settings">
+                  <lib-button variant="primary" size="md" (clicked)="handleNavigateToSettings()">
+                    Go to Settings Page
+                  </lib-button>
+                </div>
+              }
+            </div>
           </div>
         </div>
       }
@@ -124,7 +150,7 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
       }
 
       .project-detail-page_header-content {
-        @apply max-w-7xl mx-auto;
+        @apply w-full;
       }
 
       .project-detail-page_header-main {
@@ -167,22 +193,40 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
         @apply px-4 sm:px-6 lg:px-8;
       }
 
-      .project-detail-page_tabs {
-        @apply max-w-7xl mx-auto;
-        @apply flex items-center;
+      .project-detail-page_container {
+        @apply w-full;
+        @apply grid grid-cols-1 lg:grid-cols-12;
+        @apply gap-8;
+      }
+
+      .project-detail-page_sidebar {
+        @apply lg:col-span-2;
+        @apply lg:order-first;
+      }
+
+      .project-detail-page_nav {
+        @apply flex flex-col;
         @apply gap-2;
-        @apply border-b;
+        @apply p-2;
+        @apply rounded-lg;
+        @apply border;
         @apply border-border-default;
-        @apply mb-6;
+        @apply bg-bg-secondary;
       }
 
-      .project-detail-page_tab--active {
-        @apply border-b-2;
-        @apply border-primary-500;
+      .project-detail-page_nav-item {
+        @apply justify-start;
       }
 
-      .project-detail-page_tab-content {
-        @apply max-w-7xl mx-auto;
+      .project-detail-page_nav-item--active {
+        @apply bg-bg-tertiary;
+      }
+
+      .project-detail-page_main {
+        @apply lg:col-span-10;
+        @apply lg:order-last;
+        @apply min-w-0;
+        @apply overflow-hidden;
       }
 
       .project-detail-page_placeholder {
@@ -198,10 +242,17 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
 })
 export class ProjectDetailPage {
   readonly projectService = inject(ProjectService);
-  readonly route = inject(ActivatedRoute);
-  readonly router = inject(Router);
+  readonly organizationService = inject(OrganizationService);
+  readonly navigationService = inject(NavigationService);
 
-  readonly projectId = computed(() => this.route.snapshot.paramMap.get('id') || '');
+  readonly organizationId = computed(() => {
+    return this.navigationService.currentOrganizationId() || '';
+  });
+
+  readonly projectId = computed(() => {
+    return this.navigationService.currentProjectId() || '';
+  });
+
   readonly project = computed(() => this.projectService.currentProject());
   readonly activeTab = signal<TabType>('issues');
 
@@ -215,24 +266,18 @@ export class ProjectDetailPage {
     return 'An unknown error occurred.';
   });
 
-  private readonly initializeEffect = effect(
-    () => {
-      const id = this.projectId();
-      if (id) {
-        this.projectService.fetchProject(id);
-      }
-    },
-    { allowSignalWrites: true },
-  );
+  // Project is now automatically loaded when URL projectId changes
+  // No need for manual initialization effect
 
   setActiveTab(tab: TabType): void {
     this.activeTab.set(tab);
   }
 
   handleNavigateToSettings(): void {
-    const id = this.projectId();
-    if (id) {
-      this.router.navigate(['/app/projects', id, 'settings']);
+    const orgId = this.organizationId();
+    const projectId = this.projectId();
+    if (orgId && projectId) {
+      this.navigationService.navigateToProjectSettings(orgId, projectId);
     }
   }
 
@@ -240,6 +285,13 @@ export class ProjectDetailPage {
     const id = this.projectId();
     if (id) {
       this.projectService.fetchProject(id);
+    }
+  }
+
+  handleBackToProjects(): void {
+    const orgId = this.organizationId();
+    if (orgId) {
+      this.navigationService.navigateToOrganizationProjects(orgId);
     }
   }
 }

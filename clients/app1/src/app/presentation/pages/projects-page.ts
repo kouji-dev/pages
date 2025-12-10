@@ -7,21 +7,23 @@ import {
   signal,
   effect,
 } from '@angular/core';
-import { Router } from '@angular/router';
-import { Button, LoadingState, ErrorState, EmptyState, Modal } from 'shared-ui';
+import { Button, LoadingState, ErrorState, EmptyState, Modal, Input } from 'shared-ui';
 import { ProjectService, Project } from '../../application/services/project.service';
 import { OrganizationService } from '../../application/services/organization.service';
+import { NavigationService } from '../../application/services/navigation.service';
 import { ProjectCard } from '../components/project-card';
 import { CreateProjectModal } from '../components/create-project-modal';
+import { BackToPage } from '../components/back-to-page';
 
 @Component({
   selector: 'app-projects-page',
-  imports: [Button, LoadingState, ErrorState, EmptyState, ProjectCard],
+  imports: [Button, LoadingState, ErrorState, EmptyState, ProjectCard, Input, BackToPage],
   template: `
     <div class="projects-page">
       <div class="projects-page_header">
         <div class="projects-page_header-content">
           <div>
+            <app-back-to-page label="Back to Organizations" (onClick)="handleGoToOrganizations()" />
             <h1 class="projects-page_title">Projects</h1>
             <p class="projects-page_subtitle">
               Manage your projects and track issues in one place.
@@ -32,7 +34,7 @@ import { CreateProjectModal } from '../components/create-project-modal';
             size="md"
             leftIcon="plus"
             (clicked)="handleCreateProject()"
-            [disabled]="!currentOrganizationId()"
+            [disabled]="!organizationId()"
           >
             Create Project
           </lib-button>
@@ -40,7 +42,7 @@ import { CreateProjectModal } from '../components/create-project-modal';
       </div>
 
       <div class="projects-page_content">
-        @if (!currentOrganizationId()) {
+        @if (!organizationId()) {
           <lib-empty-state
             title="No organization selected"
             message="Please select or create an organization to view projects."
@@ -58,21 +60,42 @@ import { CreateProjectModal } from '../components/create-project-modal';
             [retryLabel]="'Retry'"
             (onRetry)="handleRetry()"
           />
-        } @else if (projects().length === 0) {
-          <lib-empty-state
-            title="No projects yet"
-            message="Get started by creating your first project to manage issues and tasks."
-            icon="folder"
-            actionLabel="Create Project"
-            actionIcon="plus"
-            (onAction)="handleCreateProject()"
-          />
         } @else {
-          <div class="projects-page_grid">
-            @for (project of projects(); track project.id) {
-              <app-project-card [project]="project" (onSettings)="handleProjectSettings($event)" />
-            }
-          </div>
+          @if (allProjects().length > 0) {
+            <div class="projects-page_search">
+              <lib-input
+                placeholder="Search projects by name, key, or description..."
+                [(model)]="searchQuery"
+                leftIcon="search"
+                class="projects-page_search-input"
+              />
+            </div>
+          }
+          @if (filteredProjects().length === 0 && allProjects().length > 0) {
+            <lib-empty-state
+              title="No projects found"
+              message="Try adjusting your search terms."
+              icon="search"
+            />
+          } @else if (filteredProjects().length === 0) {
+            <lib-empty-state
+              title="No projects yet"
+              message="Get started by creating your first project to manage issues and tasks."
+              icon="folder"
+              actionLabel="Create Project"
+              actionIcon="plus"
+              (onAction)="handleCreateProject()"
+            />
+          } @else {
+            <div class="projects-page_grid">
+              @for (project of filteredProjects(); track project.id) {
+                <app-project-card
+                  [project]="project"
+                  (onSettings)="handleProjectSettings($event)"
+                />
+              }
+            </div>
+          }
         }
       </div>
     </div>
@@ -121,6 +144,15 @@ import { CreateProjectModal } from '../components/create-project-modal';
         @apply px-4 sm:px-6 lg:px-8;
       }
 
+      .projects-page_search {
+        @apply max-w-7xl mx-auto;
+        @apply mb-6;
+      }
+
+      .projects-page_search-input {
+        @apply max-w-md;
+      }
+
       .projects-page_grid {
         @apply max-w-7xl mx-auto;
         @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3;
@@ -133,19 +165,37 @@ import { CreateProjectModal } from '../components/create-project-modal';
 export class ProjectsPage {
   readonly projectService = inject(ProjectService);
   readonly organizationService = inject(OrganizationService);
-  readonly router = inject(Router);
+  readonly navigationService = inject(NavigationService);
   readonly modal = inject(Modal);
   readonly viewContainerRef = inject(ViewContainerRef);
 
-  readonly projects = computed(() => {
-    const orgId = this.currentOrganizationId();
+  readonly searchQuery = signal('');
+
+  readonly organizationId = computed(() => {
+    // URL is the source of truth - organization service will sync automatically
+    return this.navigationService.currentOrganizationId();
+  });
+
+  readonly allProjects = computed(() => {
+    const orgId = this.organizationId();
     if (!orgId) return [];
     return this.projectService.getProjectsByOrganization(orgId);
   });
 
-  readonly currentOrganizationId = computed(() => {
-    const org = this.organizationService.currentOrganization();
-    return org?.id || null;
+  readonly filteredProjects = computed(() => {
+    const projects = this.allProjects();
+    const query = this.searchQuery().toLowerCase().trim();
+
+    if (!query) {
+      return projects;
+    }
+
+    return projects.filter((project) => {
+      const nameMatch = project.name.toLowerCase().includes(query);
+      const keyMatch = project.key.toLowerCase().includes(query);
+      const descriptionMatch = project.description?.toLowerCase().includes(query) || false;
+      return nameMatch || keyMatch || descriptionMatch;
+    });
   });
 
   readonly errorMessage = computed(() => {
@@ -156,21 +206,11 @@ export class ProjectsPage {
     return 'An unknown error occurred.';
   });
 
-  private readonly initializeEffect = effect(
-    () => {
-      const orgId = this.currentOrganizationId();
-
-      // Only load projects if we have an organization
-      // The project service will automatically use the current organization ID from OrganizationService
-      if (orgId) {
-        this.projectService.loadProjects();
-      }
-    },
-    { allowSignalWrites: true },
-  );
+  // Projects are now automatically loaded when URL organizationId changes
+  // No need for manual initialization effect
 
   handleCreateProject(): void {
-    const orgId = this.currentOrganizationId();
+    const orgId = this.organizationId();
     if (!orgId) {
       return;
     }
@@ -182,7 +222,9 @@ export class ProjectsPage {
   }
 
   handleProjectSettings(project: Project): void {
-    this.router.navigate(['/app/projects', project.id, 'settings']);
+    const orgId = this.organizationId();
+    if (!orgId) return;
+    this.navigationService.navigateToProjectSettings(orgId, project.id);
   }
 
   handleRetry(): void {
@@ -190,6 +232,6 @@ export class ProjectsPage {
   }
 
   handleGoToOrganizations(): void {
-    this.router.navigate(['/app/organizations']);
+    this.navigationService.navigateToOrganizations();
   }
 }

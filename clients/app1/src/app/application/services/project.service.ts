@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { httpResource } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { OrganizationService } from './organization.service';
+import { NavigationService } from './navigation.service';
 
 export interface Project {
   id: string;
@@ -65,12 +65,12 @@ export interface ProjectListResponse {
 })
 export class ProjectService {
   private readonly http = inject(HttpClient);
-  private readonly organizationService = inject(OrganizationService);
+  private readonly navigationService = inject(NavigationService);
   private readonly apiUrl = `${environment.apiUrl}/projects`;
 
-  // Projects list resource using httpResource with computed URL
+  // Projects list resource using httpResource - driven by URL organizationId
   readonly projects = httpResource<ProjectListResponse>(() => {
-    const orgId = this.organizationService.currentOrganizationIdSignal();
+    const orgId = this.navigationService.currentOrganizationId();
     if (!orgId) return undefined; // Don't load if no organization
 
     const params = new HttpParams().set('organization_id', orgId);
@@ -108,12 +108,9 @@ export class ProjectService {
   readonly error = computed(() => this.projects.error());
   readonly hasError = computed(() => this.projects.error() !== undefined);
 
-  // Current project ID signal
-  private readonly currentProjectId = signal<string | null>(null);
-
-  // Single project resource using httpResource with computed URL
+  // Single project resource using httpResource - driven by URL projectId
   private readonly projectResource = httpResource<ProjectResponse>(() => {
-    const id = this.currentProjectId();
+    const id = this.navigationService.currentProjectId();
     return id ? `${this.apiUrl}/${id}` : undefined;
   });
 
@@ -155,22 +152,21 @@ export class ProjectService {
 
   /**
    * Fetch a single project by ID using httpResource
+   * @deprecated Project fetching is now URL-driven via navigationService.currentProjectId()
+   * The project will be automatically fetched when URL projectId changes
    */
   fetchProject(id: string): void {
-    this.currentProjectId.set(id);
-    // Resource will reload automatically when ID changes
+    // Project fetching is now URL-driven
+    // This method is kept for backward compatibility
   }
 
   /**
    * Switch to a different project (from list)
-   * Sets the project ID, which triggers the resource to reload automatically
+   * @deprecated Project switching is now URL-driven - navigate to the project URL instead
    */
   switchProject(projectId: string): void {
-    const project = this.projectsList().find((p) => p.id === projectId);
-    if (project) {
-      this.currentProjectId.set(projectId);
-      this.persistCurrentProjectToStorage(project);
-    }
+    // Project switching is now URL-driven
+    // This method is kept for backward compatibility
   }
 
   /**
@@ -248,7 +244,8 @@ export class ProjectService {
 
     // Reload projects list and current project to get updated data
     this.loadProjects();
-    if (this.currentProjectId() === id) {
+    const currentProjectId = this.navigationService.currentProjectId();
+    if (currentProjectId === id) {
       this.projectResource.reload();
     }
 
@@ -265,14 +262,7 @@ export class ProjectService {
     // Reload projects to get updated list
     this.loadProjects();
 
-    // If deleted project was current, clear it
-    if (this.currentProjectId() === id) {
-      this.currentProjectId.set(null);
-      try {
-        localStorage.removeItem('current_project_id');
-      } catch (error) {
-        console.error('Failed to remove project ID from localStorage:', error);
-      }
-    }
+    // If deleted project was current, navigation will handle clearing it
+    // (user will be redirected or URL will change)
   }
 }

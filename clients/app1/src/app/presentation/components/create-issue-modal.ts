@@ -1,6 +1,15 @@
-import { Component, ChangeDetectionStrategy, signal, computed, inject, input } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  signal,
+  computed,
+  inject,
+  input,
+  ViewChild,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter } from 'shared-ui';
-import { Button, Input } from 'shared-ui';
+import { Button, Input, TextEditor } from 'shared-ui';
 import { ToastService } from 'shared-ui';
 import { IssueService, CreateIssueRequest } from '../../application/services/issue.service';
 
@@ -10,7 +19,16 @@ type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
 
 @Component({
   selector: 'app-create-issue-modal',
-  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, Input],
+  imports: [
+    ModalContainer,
+    ModalHeader,
+    ModalContent,
+    ModalFooter,
+    Button,
+    Input,
+    TextEditor,
+    FormsModule,
+  ],
   template: `
     <lib-modal-container>
       <lib-modal-header>Create Issue</lib-modal-header>
@@ -24,14 +42,17 @@ type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
             [errorMessage]="titleError()"
             helperText="Brief description of the issue"
           />
-          <lib-input
-            label="Description"
-            type="textarea"
-            placeholder="Describe the issue in detail (optional)"
-            [(model)]="description"
-            [rows]="4"
-            helperText="Detailed description of the issue"
-          />
+          <div class="create-issue-form_field">
+            <label class="create-issue-form_label">Description</label>
+            <lib-text-editor
+              #descriptionEditor
+              placeholder="Describe the issue in detail (optional)"
+              [(ngModel)]="description"
+              name="description"
+              (htmlChange)="descriptionHtml.set($event)"
+              [showToolbar]="true"
+            />
+          </div>
           <div class="create-issue-form_row">
             <div class="create-issue-form_field">
               <label class="create-issue-form_label">Type</label>
@@ -119,9 +140,12 @@ export class CreateIssueModal {
 
   readonly title = signal('');
   readonly description = signal('');
+  readonly descriptionHtml = signal('');
   readonly type = signal<IssueType>('task');
   readonly priority = signal<IssuePriority>('medium');
   readonly isSubmitting = signal(false);
+
+  @ViewChild('descriptionEditor') descriptionEditor?: TextEditor;
 
   readonly titleError = computed(() => {
     const value = this.title();
@@ -153,7 +177,7 @@ export class CreateIssueModal {
       const request: CreateIssueRequest = {
         project_id: this.projectId(),
         title: this.title().trim(),
-        description: this.description().trim() || undefined,
+        description: this.descriptionHtml().trim() || undefined,
         type: this.type(),
         priority: this.priority(),
         status: 'todo', // Default status
@@ -167,8 +191,12 @@ export class CreateIssueModal {
       // Reset form
       this.title.set('');
       this.description.set('');
+      this.descriptionHtml.set('');
       this.type.set('task');
       this.priority.set('medium');
+      if (this.descriptionEditor) {
+        this.descriptionEditor.setHtml('');
+      }
     } catch (error) {
       console.error('Failed to create issue:', error);
       const errorMessage =

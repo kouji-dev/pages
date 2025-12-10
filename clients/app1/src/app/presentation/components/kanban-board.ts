@@ -15,9 +15,10 @@ import {
 } from '@angular/cdk/drag-drop';
 import { LoadingState, ErrorState } from 'shared-ui';
 import { IssueService, IssueListItem } from '../../application/services/issue.service';
+import { OrganizationService } from '../../application/services/organization.service';
+import { NavigationService } from '../../application/services/navigation.service';
 import { IssueTypeBadge } from './issue-type-badge';
 import { IssuePriorityIndicator } from './issue-priority-indicator';
-import { Router } from '@angular/router';
 
 type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
 
@@ -96,6 +97,8 @@ interface StatusColumn {
       .kanban-board {
         @apply flex flex-col;
         @apply gap-4;
+        @apply w-full;
+        @apply h-full;
       }
 
       .kanban-board_header {
@@ -110,21 +113,27 @@ interface StatusColumn {
 
       .kanban-board_content {
         @apply flex-1;
+        @apply w-full;
+        @apply overflow-hidden;
       }
 
       .kanban-board_columns {
-        @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4;
+        @apply grid;
+        @apply grid-cols-4;
         @apply gap-4;
+        @apply h-full;
+        @apply w-full;
         @apply overflow-x-auto;
       }
 
       .kanban-board_column {
         @apply flex flex-col;
-        @apply min-w-[250px];
+        @apply min-w-0;
         @apply bg-bg-secondary;
         @apply rounded-lg;
         @apply border;
         @apply border-border-default;
+        @apply h-full;
       }
 
       .kanban-board_column-header {
@@ -219,9 +228,14 @@ interface StatusColumn {
 })
 export class KanbanBoard {
   readonly issueService = inject(IssueService);
-  readonly router = inject(Router);
+  readonly organizationService = inject(OrganizationService);
+  readonly navigationService = inject(NavigationService);
 
   readonly projectId = input.required<string>();
+
+  readonly organizationId = computed(() => {
+    return this.navigationService.currentOrganizationId() || '';
+  });
 
   readonly issues = computed(() => this.issueService.issuesList());
 
@@ -253,16 +267,8 @@ export class KanbanBoard {
     return 'An unknown error occurred.';
   });
 
-  private readonly initializeEffect = effect(
-    () => {
-      const projectId = this.projectId();
-      if (projectId) {
-        this.issueService.setProject(projectId);
-        this.issueService.loadIssues();
-      }
-    },
-    { allowSignalWrites: true },
-  );
+  // Issues are now automatically loaded when URL organizationId and projectId change
+  // No need for manual initialization effect
 
   async handleDrop(event: CdkDragDrop<IssueListItem[]>, newStatus: IssueStatus): Promise<void> {
     const previousContainer = event.previousContainer;
@@ -300,7 +306,11 @@ export class KanbanBoard {
   }
 
   handleIssueClick(issue: IssueListItem): void {
-    this.router.navigate(['/app/issues', issue.id]);
+    const orgId = this.organizationId();
+    const projectId = this.projectId();
+    if (orgId && projectId) {
+      this.navigationService.navigateToIssue(orgId, projectId, issue.id);
+    }
   }
 
   handleRetry(): void {

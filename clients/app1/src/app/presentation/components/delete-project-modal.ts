@@ -1,9 +1,10 @@
 import { Component, ChangeDetectionStrategy, inject, input, signal, computed } from '@angular/core';
-import { Router } from '@angular/router';
 import { Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter } from 'shared-ui';
 import { Button, Input } from 'shared-ui';
 import { ToastService } from 'shared-ui';
 import { ProjectService } from '../../application/services/project.service';
+import { OrganizationService } from '../../application/services/organization.service';
+import { NavigationService } from '../../application/services/navigation.service';
 
 @Component({
   selector: 'app-delete-project-modal',
@@ -74,8 +75,9 @@ import { ProjectService } from '../../application/services/project.service';
 })
 export class DeleteProjectModal {
   private readonly projectService = inject(ProjectService);
+  private readonly organizationService = inject(OrganizationService);
   private readonly toast = inject(ToastService);
-  private readonly router = inject(Router);
+  private readonly navigationService = inject(NavigationService);
   private readonly modal = inject(Modal);
 
   readonly projectId = input.required<string>();
@@ -104,8 +106,13 @@ export class DeleteProjectModal {
       this.toast.success('Project deleted successfully!');
       this.modal.close();
 
-      // Navigate to projects list
-      this.router.navigate(['/app/projects']);
+      // Navigate to projects list for current organization
+      const orgId = this.organizationService.currentOrganization()?.id;
+      if (orgId) {
+        this.navigationService.navigateToOrganizationProjects(orgId);
+      } else {
+        this.navigationService.navigateToOrganizations();
+      }
     } catch (error) {
       console.error('Failed to delete project:', error);
       const errorMessage =
