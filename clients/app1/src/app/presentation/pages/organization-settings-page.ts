@@ -7,7 +7,6 @@ import {
   ViewContainerRef,
   effect,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Button, Input, LoadingState, ErrorState, Modal } from 'shared-ui';
 import { ToastService } from 'shared-ui';
 import { OrganizationService, Organization } from '../../application/services/organization.service';
@@ -282,8 +281,6 @@ import { AuthService } from '../../application/services/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrganizationSettingsPage {
-  private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   private readonly organizationService = inject(OrganizationService);
   private readonly navigationService = inject(NavigationService);
   readonly membersService = inject(OrganizationMembersService);
@@ -299,8 +296,7 @@ export class OrganizationSettingsPage {
   readonly isDeleting = signal(false);
 
   readonly organizationId = computed(() => {
-    const id = this.route.snapshot.paramMap.get('id');
-    return id || null;
+    return this.navigationService.currentOrganizationId();
   });
 
   // Use service's current organization (computed from resource)
@@ -380,10 +376,11 @@ export class OrganizationSettingsPage {
   });
 
   // Effects declared as instance variables (not in constructor or ngOnInit)
-  private readonly loadOrganizationEffect = effect(() => {
+  private readonly loadMembersEffect = effect(() => {
     const id = this.organizationId();
     if (id) {
-      this.organizationService.fetchOrganization(id);
+      // Organization is automatically loaded from URL via organizationResource
+      // Just load members when organization ID is available
       this.membersService.loadMembers(id);
     }
   });
@@ -427,7 +424,7 @@ export class OrganizationSettingsPage {
       .then(() => {
         this.toast.success('Organization updated successfully!');
         // Reload organization to get updated data
-        this.organizationService.fetchOrganization(org.id);
+        this.organizationService.reloadCurrentOrganization();
       })
       .catch((error) => {
         console.error('Failed to update organization:', error);
@@ -482,10 +479,8 @@ export class OrganizationSettingsPage {
   }
 
   handleRetry(): void {
-    const id = this.organizationId();
-    if (id) {
-      this.organizationService.fetchOrganization(id);
-    }
+    // Reload current organization resource
+    this.organizationService.reloadCurrentOrganization();
   }
 
   handleAddMember(): void {

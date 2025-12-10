@@ -191,9 +191,8 @@ export class OrganizationCard {
   handleCardClick(): void {
     const org = this.organization();
     const orgId = org.id;
-    // Set the organization as current (without navigation)
-    this.organizationService.setCurrentOrganization(orgId, org);
     // Navigate to projects list for this organization
+    // The organization resource will automatically load when URL changes
     this.navigationService.navigateToOrganizationProjects(orgId);
   }
 

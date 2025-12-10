@@ -1,4 +1,4 @@
-import { Injectable, signal, inject, computed, effect } from '@angular/core';
+import { Injectable, inject, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { httpResource } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
@@ -73,15 +73,10 @@ export class OrganizationService {
   readonly error = computed(() => this.organizations.error());
   readonly hasError = computed(() => this.organizations.error() !== undefined);
 
-  // Current organization ID signal
-  private readonly currentOrganizationId = signal<string | null>(null);
-
-  // Public accessor for current organization ID
-  readonly currentOrganizationIdSignal = computed(() => this.currentOrganizationId());
-
   // Single organization resource using httpResource with computed URL
+  // Organization ID is now URL-driven via NavigationService
   private readonly organizationResource = httpResource<OrganizationResponse>(() => {
-    const id = this.currentOrganizationId();
+    const id = this.navigationService.currentOrganizationId();
     return id ? `${this.apiUrl}/${id}` : undefined;
   });
 
@@ -124,45 +119,8 @@ export class OrganizationService {
   readonly organizationError = computed(() => this.organizationResource.error());
   readonly hasOrganizationError = computed(() => this.organizationResource.error() !== undefined);
 
-  // Effect to sync current organization with URL
-  private readonly syncOrganizationFromUrlEffect = effect(() => {
-    const urlOrgId = this.navigationService.currentOrganizationId();
-
-    if (urlOrgId) {
-      // URL has an organization ID - fetch and set it
-      const currentOrgId = this.currentOrganizationId();
-
-      // Only fetch if it's different from current
-      if (currentOrgId !== urlOrgId) {
-        const orgs = this.organizationsList();
-        const org = orgs.find((o) => o.id === urlOrgId);
-
-        if (org) {
-          // Organization is already in the list, just set it
-          this.setCurrentOrganization(urlOrgId, org);
-        } else {
-          // Organization not in list, fetch it
-          this.fetchOrganization(urlOrgId);
-        }
-      }
-    } else {
-      // No organization in URL - try to restore from storage or use first available
-      const orgs = this.organizationsList();
-      const storedOrgId = this.getStoredCurrentOrganizationId();
-
-      if (orgs.length > 0 && !this.currentOrganizationId()) {
-        if (storedOrgId) {
-          const org = orgs.find((o) => o.id === storedOrgId);
-          if (org) {
-            this.setCurrentOrganization(storedOrgId, org);
-            return;
-          }
-        }
-        // Otherwise, set the first organization as current
-        this.setCurrentOrganization(orgs[0].id, orgs[0]);
-      }
-    }
-  });
+  // Organization ID is now URL-driven via NavigationService
+  // No need for sync effect - the resource automatically reacts to URL changes
 
   /**
    * Reload organizations from API
@@ -172,32 +130,19 @@ export class OrganizationService {
   }
 
   /**
-   * Fetch a single organization by ID using httpResource
+   * Reload current organization from API
+   * Useful when organization data needs to be refreshed after updates
    */
-  fetchOrganization(id: string): void {
-    this.currentOrganizationId.set(id);
-    // Resource will reload automatically when ID changes
-  }
-
-  /**
-   * Set current organization without navigation
-   * Used internally and by components that need to set org before navigating
-   */
-  setCurrentOrganization(organizationId: string, organization?: Organization): void {
-    const org = organization || this.organizationsList().find((o) => o.id === organizationId);
-    if (org) {
-      this.currentOrganizationId.set(organizationId);
-      this.persistCurrentOrganizationToStorage(org);
-    }
+  reloadCurrentOrganization(): void {
+    this.organizationResource.reload();
   }
 
   /**
    * Switch to a different organization (from selector)
-   * Navigates to the organization's projects page, which will trigger URL-driven sync
+   * Navigates to the organization's projects page
+   * The organization resource will automatically reload when the URL changes
    */
   switchOrganization(organizationId: string): void {
-    // Navigation will be handled by NavigationService
-    // The URL change will trigger syncOrganizationFromUrlEffect
     this.navigationService.navigateToOrganizationProjects(organizationId);
   }
 
@@ -215,29 +160,6 @@ export class OrganizationService {
    */
   getOrganizations(): typeof this.organizationsList {
     return this.organizationsList;
-  }
-
-  /**
-   * Persist current organization to localStorage
-   */
-  private persistCurrentOrganizationToStorage(organization: Organization): void {
-    try {
-      localStorage.setItem('current_organization_id', organization.id);
-    } catch (error) {
-      console.error('Failed to persist organization to localStorage:', error);
-    }
-  }
-
-  /**
-   * Get stored current organization ID from localStorage
-   */
-  private getStoredCurrentOrganizationId(): string | null {
-    try {
-      return localStorage.getItem('current_organization_id');
-    } catch (error) {
-      console.error('Failed to load organization ID from localStorage:', error);
-      return null;
-    }
   }
 
   /**
@@ -269,7 +191,8 @@ export class OrganizationService {
 
     // Reload organizations list and current organization to get updated data
     this.loadOrganizations();
-    if (this.currentOrganizationId() === id) {
+    const currentOrgId = this.navigationService.currentOrganizationId();
+    if (currentOrgId === id) {
       this.organizationResource.reload();
     }
 
@@ -287,12 +210,14 @@ export class OrganizationService {
     this.loadOrganizations();
 
     // If deleted organization was current, switch to another one
-    if (this.currentOrganizationId() === id) {
+    const currentOrgId = this.navigationService.currentOrganizationId();
+    if (currentOrgId === id) {
       const orgs = this.organizationsList();
       if (orgs.length > 0) {
         this.switchOrganization(orgs[0].id);
       } else {
-        this.currentOrganizationId.set(null);
+        // Navigate to organizations list if no organizations remain
+        this.navigationService.navigateToOrganizations();
       }
     }
   }

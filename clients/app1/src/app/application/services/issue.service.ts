@@ -34,6 +34,7 @@ export interface IssueListItem {
   priority: 'low' | 'medium' | 'high' | 'critical';
   assignee_id?: string;
   reporter_id?: string;
+  due_date?: string;
   created_at: string;
   updated_at: string;
 }

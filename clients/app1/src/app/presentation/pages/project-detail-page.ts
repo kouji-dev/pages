@@ -1,11 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  computed,
-  inject,
-  signal,
-  effect,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, inject } from '@angular/core';
 import { Button, LoadingState, ErrorState } from 'shared-ui';
 import { ProjectService } from '../../application/services/project.service';
 import { OrganizationService } from '../../application/services/organization.service';
@@ -254,7 +247,15 @@ export class ProjectDetailPage {
   });
 
   readonly project = computed(() => this.projectService.currentProject());
-  readonly activeTab = signal<TabType>('issues');
+
+  // Get tab from URL query params, default to 'issues'
+  readonly activeTab = computed<TabType>(() => {
+    const tab = this.navigationService.currentTab();
+    if (tab && ['issues', 'board', 'members', 'settings'].includes(tab)) {
+      return tab as TabType;
+    }
+    return 'issues';
+  });
 
   readonly errorMessage = computed(() => {
     const error = this.projectService.projectError();
@@ -270,7 +271,8 @@ export class ProjectDetailPage {
   // No need for manual initialization effect
 
   setActiveTab(tab: TabType): void {
-    this.activeTab.set(tab);
+    // Update URL query params instead of local state
+    this.navigationService.updateQueryParams({ tab });
   }
 
   handleNavigateToSettings(): void {
