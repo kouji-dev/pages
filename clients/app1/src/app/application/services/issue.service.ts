@@ -80,6 +80,8 @@ export interface ListIssuesFilters {
   status?: 'todo' | 'in_progress' | 'done' | 'cancelled';
   type?: 'task' | 'bug' | 'story' | 'epic';
   priority?: 'low' | 'medium' | 'high' | 'critical';
+  sort_by?: 'created_at' | 'title' | 'type' | 'status' | 'priority' | 'updated_at';
+  sort_order?: 'asc' | 'desc';
 }
 
 @Injectable({
@@ -124,6 +126,12 @@ export class IssueService {
     if (filters.priority) {
       params = params.set('priority', filters.priority);
     }
+    if (filters.sort_by) {
+      params = params.set('sort_by', filters.sort_by);
+    }
+    if (filters.sort_order) {
+      params = params.set('sort_order', filters.sort_order);
+    }
 
     return `${this.apiUrl}?${params.toString()}`;
   });
@@ -136,10 +144,39 @@ export class IssueService {
 
   readonly currentFilters = computed(() => this.filters());
 
-  // Public accessors for issues list
+  // Optimistic updates state
+  private readonly optimisticIssues = signal<Map<string, IssueListItem>>(new Map());
+  private readonly optimisticIssueIds = signal<Set<string>>(new Set()); // IDs to add optimistically
+  private readonly deletedIssueIds = signal<Set<string>>(new Set()); // IDs deleted optimistically
+
+  // Public accessors for issues list (merged with optimistic updates)
   readonly issuesList = computed(() => {
     const value = this.issuesResource.value();
-    return value?.issues || [];
+    const baseIssues = value?.issues || [];
+    const optimisticMap = this.optimisticIssues();
+    const optimisticIds = this.optimisticIssueIds();
+    const deletedIds = this.deletedIssueIds();
+
+    // Start with base issues, excluding deleted ones
+    let issues = baseIssues.filter((issue) => !deletedIds.has(issue.id));
+
+    // Add optimistic issues that aren't in base list
+    optimisticIds.forEach((id) => {
+      if (!issues.find((issue) => issue.id === id)) {
+        const optimisticIssue = optimisticMap.get(id);
+        if (optimisticIssue) {
+          issues.push(optimisticIssue);
+        }
+      }
+    });
+
+    // Update existing issues with optimistic changes
+    issues = issues.map((issue) => {
+      const optimisticIssue = optimisticMap.get(issue.id);
+      return optimisticIssue || issue;
+    });
+
+    return issues;
   });
 
   readonly issuesTotal = computed(() => {
@@ -225,49 +262,161 @@ export class IssueService {
   }
 
   /**
-   * Create a new issue
+   * Create a new issue with optimistic update
    */
   async createIssue(request: CreateIssueRequest): Promise<Issue> {
-    const response = await firstValueFrom(this.http.post<Issue>(this.apiUrl, request));
-    if (!response) {
-      throw new Error('Failed to create issue: No response from server');
+    // Create optimistic issue item
+    const optimisticId = `temp-${Date.now()}`;
+    const optimisticIssue: IssueListItem = {
+      id: optimisticId,
+      project_id: request.project_id,
+      issue_number: 0, // Temporary, will be replaced by real data
+      key: 'TEMP',
+      title: request.title,
+      type: request.type || 'task',
+      status: request.status || 'todo',
+      priority: request.priority || 'medium',
+      assignee_id: request.assignee_id,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    // Add optimistically
+    this.optimisticIssues.update((map) => {
+      const newMap = new Map(map);
+      newMap.set(optimisticId, optimisticIssue);
+      return newMap;
+    });
+    this.optimisticIssueIds.update((set) => new Set(set).add(optimisticId));
+
+    try {
+      const response = await firstValueFrom(this.http.post<Issue>(this.apiUrl, request));
+      if (!response) {
+        throw new Error('Failed to create issue: No response from server');
+      }
+
+      // Remove optimistic entry
+      this.optimisticIssues.update((map) => {
+        const newMap = new Map(map);
+        newMap.delete(optimisticId);
+        return newMap;
+      });
+      this.optimisticIssueIds.update((set) => {
+        const newSet = new Set(set);
+        newSet.delete(optimisticId);
+        return newSet;
+      });
+
+      // Reload issues to get updated list with real data
+      this.loadIssues();
+
+      return response;
+    } catch (error) {
+      // Revert optimistic update on error
+      this.optimisticIssues.update((map) => {
+        const newMap = new Map(map);
+        newMap.delete(optimisticId);
+        return newMap;
+      });
+      this.optimisticIssueIds.update((set) => {
+        const newSet = new Set(set);
+        newSet.delete(optimisticId);
+        return newSet;
+      });
+      throw error;
     }
-
-    // Reload issues to get updated list
-    this.loadIssues();
-
-    return response;
   }
 
   /**
-   * Update an issue
+   * Update an issue with optimistic update
    */
   async updateIssue(id: string, updates: UpdateIssueRequest): Promise<Issue> {
-    const response = await firstValueFrom(this.http.put<Issue>(`${this.apiUrl}/${id}`, updates));
-    if (!response) {
-      throw new Error('Failed to update issue: No response from server');
+    // Get current issue from list or resource
+    const currentIssues = this.issuesResource.value()?.issues || [];
+    const currentIssue = currentIssues.find((issue) => issue.id === id);
+    const currentIssueDetail = this.issueResource.value() as Issue | undefined;
+
+    // Create optimistic update
+    if (currentIssue) {
+      const optimisticIssue: IssueListItem = {
+        ...currentIssue,
+        title: updates.title ?? currentIssue.title,
+        type: updates.type ?? currentIssue.type,
+        status: updates.status ?? currentIssue.status,
+        priority: updates.priority ?? currentIssue.priority,
+        assignee_id:
+          updates.assignee_id !== undefined ? updates.assignee_id : currentIssue.assignee_id,
+      };
+
+      this.optimisticIssues.update((map) => {
+        const newMap = new Map(map);
+        newMap.set(id, optimisticIssue);
+        return newMap;
+      });
     }
 
-    // Reload issues list and current issue to get updated data
-    this.loadIssues();
-    const currentIssueId = this.navigationService.currentIssueId();
-    if (currentIssueId === id) {
-      this.issueResource.reload();
-    }
+    try {
+      const response = await firstValueFrom(this.http.put<Issue>(`${this.apiUrl}/${id}`, updates));
+      if (!response) {
+        throw new Error('Failed to update issue: No response from server');
+      }
 
-    return response;
+      // Remove optimistic update
+      this.optimisticIssues.update((map) => {
+        const newMap = new Map(map);
+        newMap.delete(id);
+        return newMap;
+      });
+
+      // Reload issues list and current issue to get updated data
+      this.loadIssues();
+      const currentIssueId = this.navigationService.currentIssueId();
+      if (currentIssueId === id) {
+        this.issueResource.reload();
+      }
+
+      return response;
+    } catch (error) {
+      // Revert optimistic update on error
+      this.optimisticIssues.update((map) => {
+        const newMap = new Map(map);
+        newMap.delete(id);
+        return newMap;
+      });
+      throw error;
+    }
   }
 
   /**
-   * Delete an issue
+   * Delete an issue with optimistic update
    */
   async deleteIssue(id: string): Promise<void> {
-    await firstValueFrom(this.http.delete(`${this.apiUrl}/${id}`));
+    // Mark as deleted optimistically
+    this.deletedIssueIds.update((set) => new Set(set).add(id));
 
-    // Reload issues to get updated list
-    this.loadIssues();
+    try {
+      await firstValueFrom(this.http.delete(`${this.apiUrl}/${id}`));
 
-    // If deleted issue was current, navigation will handle clearing it
-    // (user will be redirected or URL will change)
+      // Remove from deleted set (reload will handle it)
+      this.deletedIssueIds.update((set) => {
+        const newSet = new Set(set);
+        newSet.delete(id);
+        return newSet;
+      });
+
+      // Reload issues to get updated list
+      this.loadIssues();
+
+      // If deleted issue was current, navigation will handle clearing it
+      // (user will be redirected or URL will change)
+    } catch (error) {
+      // Revert optimistic delete on error
+      this.deletedIssueIds.update((set) => {
+        const newSet = new Set(set);
+        newSet.delete(id);
+        return newSet;
+      });
+      throw error;
+    }
   }
 }

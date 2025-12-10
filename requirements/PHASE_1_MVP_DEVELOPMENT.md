@@ -1846,8 +1846,8 @@ This phase focuses on building the foundational features required for a function
   - [x] Issue table/list view
   - [ ] Issue card component
   - [x] Column headers (Key, Title, Type, Status, Assignee, Priority, Created)
-  - [x] Sorting functionality (UI implemented, backend integration pending)
-  - [ ] Basic filtering UI (status, assignee, type)
+  - [x] Sorting functionality (UI implemented, backend integration complete - frontend sends sort_by and sort_order parameters)
+  - [x] Basic filtering UI (status, assignee, type) - using lib-select component
   - [x] Pagination controls
   - [x] Create issue button
 - [x] Create issue detail page
@@ -1856,27 +1856,29 @@ This phase focuses on building the foundational features required for a function
   - [x] Issue description section
   - [x] Comments section
   - [x] Attachments section
-  - [ ] Activity log section
+  - [x] Activity log section - using IssueActivityList component
+  - [x] Back to Issues navigation link
 - [x] Create issue creation modal/form
   - [x] Project selector (via input)
   - [x] Issue type selector
   - [x] Title input
   - [x] Description textarea (basic, rich text pending Lexical)
   - [x] Priority selector
-  - [ ] Assignee selector (optional)
-  - [ ] Due date picker (optional)
+  - [x] Assignee selector (optional) - using lib-select component
+  - [x] Due date picker (optional)
 - [x] Create issue edit modal/form
   - [x] Edit title, description
   - [x] Change status dropdown
-  - [ ] Change assignee dropdown
+  - [x] Change assignee dropdown - using lib-select component
   - [x] Change priority dropdown
-  - [ ] Update due date
+  - [x] Update due date
 - [x] Create issue type badges (Task, Bug, Story, Epic)
 - [x] Create status badges (To Do, In Progress, Done, Cancelled)
 - [x] Create priority indicators (Low, Medium, High, Critical)
 - [x] Implement issue search functionality
 - [x] Add loading states and error handling
-- [ ] Implement optimistic updates for better UX
+- [x] Implement lib-select component for consistent dropdown UI across issue forms
+- [x] Implement optimistic updates for better UX (create, update, delete operations)
 
 **Deliverables**:
 
@@ -1973,22 +1975,22 @@ This phase focuses on building the foundational features required for a function
   - [x] Drag issue cards between columns
   - [x] Update issue status on drop
   - [x] Visual feedback during drag
-  - [ ] Optimistic updates
+  - [x] Optimistic updates
 - [x] Create issue card component for board
   - [x] Issue key and title
   - [x] Issue type badge
   - [x] Priority indicator
   - [x] Assignee indicator
-  - [ ] Due date indicator (if overdue)
-- [ ] Implement board filtering
-  - [ ] Filter by assignee
-  - [ ] Filter by issue type
-  - [ ] Filter by priority
-- [ ] Create board settings (optional for MVP)
-  - [ ] Show/hide columns
-  - [ ] Custom column order
-- [ ] Add loading states and error handling
-- [ ] Implement board persistence (save column widths, etc.)
+  - [x] Due date indicator (if overdue)
+- [x] Implement board filtering
+  - [x] Filter by assignee
+  - [x] Filter by issue type
+  - [x] Filter by priority
+- [x] Create board settings (optional for MVP)
+  - [x] Show/hide columns
+  - [x] Custom column order (persisted, UI simplified for MVP)
+- [x] Add loading states and error handling
+- [x] Implement board persistence (save column widths, etc.)
 
 **Deliverables**:
 

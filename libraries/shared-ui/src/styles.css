@@ -523,3 +523,10 @@ body {
   min-width: auto;
   max-width: none;
 }
+
+/* ========================================
+ * Select Panel Styling
+ * ======================================== */
+.cdk-overlay-pane.lib-select-panel {
+  max-width: none !important;
+}

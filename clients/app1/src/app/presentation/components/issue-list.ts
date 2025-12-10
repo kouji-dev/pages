@@ -9,6 +9,7 @@ import {
   effect,
   ViewChild,
   TemplateRef,
+  model,
 } from '@angular/core';
 import {
   Button,
@@ -20,14 +21,19 @@ import {
   Table,
   TableColumn,
   SortEvent,
+  Select,
+  SelectOption,
 } from 'shared-ui';
 import { IssueService, IssueListItem } from '../../application/services/issue.service';
 import { OrganizationService } from '../../application/services/organization.service';
 import { NavigationService } from '../../application/services/navigation.service';
+import { ProjectMembersService } from '../../application/services/project-members.service';
 import { IssueTypeBadge } from './issue-type-badge';
 import { IssueStatusBadge } from './issue-status-badge';
 import { IssuePriorityIndicator } from './issue-priority-indicator';
 import { CreateIssueModal } from './create-issue-modal';
+import { Dropdown, Icon } from 'shared-ui';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-issue-list',
@@ -41,6 +47,10 @@ import { CreateIssueModal } from './create-issue-modal';
     IssuePriorityIndicator,
     Input,
     Table,
+    Dropdown,
+    Icon,
+    Select,
+    CommonModule,
   ],
   template: `
     <div class="issue-list">
@@ -60,6 +70,60 @@ import { CreateIssueModal } from './create-issue-modal';
           (modelChange)="handleSearch()"
           class="issue-list_search"
         />
+        <div class="issue-list_filter-group">
+          <lib-button
+            variant="ghost"
+            size="sm"
+            [iconOnly]="true"
+            leftIcon="list-filter"
+            [libDropdown]="filterDropdownTemplate"
+            [position]="'below'"
+            [containerClass]="'lib-dropdown-panel--fit-content'"
+            class="issue-list_filter-button"
+            #filterDropdown="libDropdown"
+          >
+          </lib-button>
+          <ng-template #filterDropdownTemplate>
+            <div class="issue-list_filter-menu">
+              <div class="issue-list_filter-section">
+                <lib-select
+                  label="Status"
+                  [options]="statusFilterOptions()"
+                  [(model)]="statusFilterModel"
+                  [placeholder]="'All Statuses'"
+                />
+              </div>
+              <div class="issue-list_filter-section">
+                <lib-select
+                  label="Type"
+                  [options]="typeFilterOptions()"
+                  [(model)]="typeFilterModel"
+                  [placeholder]="'All Types'"
+                />
+              </div>
+              <div class="issue-list_filter-section">
+                <lib-select
+                  label="Assignee"
+                  [options]="assigneeFilterOptions()"
+                  [(model)]="assigneeFilterModel"
+                  [placeholder]="'All Assignees'"
+                />
+              </div>
+              @if (hasActiveFilters()) {
+                <div class="issue-list_filter-actions">
+                  <lib-button
+                    variant="ghost"
+                    size="sm"
+                    [fullWidth]="true"
+                    (clicked)="clearFilters(filterDropdown)"
+                  >
+                    Clear Filters
+                  </lib-button>
+                </div>
+              }
+            </div>
+          </ng-template>
+        </div>
       </div>
 
       <div class="issue-list_content">
@@ -174,6 +238,38 @@ import { CreateIssueModal } from './create-issue-modal';
         @apply max-w-md;
       }
 
+      .issue-list_filter-group {
+        @apply flex items-center;
+      }
+
+      .issue-list_filter-button {
+        @apply flex-shrink-0;
+      }
+
+      .issue-list_filter-menu {
+        @apply flex flex-col;
+        @apply gap-4;
+        @apply p-4;
+        @apply min-w-[200px];
+      }
+
+      .issue-list_filter-section {
+        @apply flex flex-col;
+        @apply gap-2;
+      }
+
+      .issue-list_filter-label {
+        @apply text-sm font-medium;
+        @apply text-text-primary;
+      }
+
+      .issue-list_filter-actions {
+        @apply flex items-center;
+        @apply pt-2;
+        @apply border-t;
+        @apply border-border-default;
+      }
+
       .issue-list_content {
         @apply flex flex-col;
         @apply gap-4;
@@ -215,14 +311,56 @@ export class IssueList {
   readonly issueService = inject(IssueService);
   readonly organizationService = inject(OrganizationService);
   readonly navigationService = inject(NavigationService);
+  readonly projectMembersService = inject(ProjectMembersService);
   readonly modal = inject(Modal);
   readonly viewContainerRef = inject(ViewContainerRef);
 
   readonly projectId = input.required<string>();
   readonly searchQuery = signal('');
+  readonly filterStatus = signal<'todo' | 'in_progress' | 'done' | 'cancelled' | null>(null);
+  readonly filterType = signal<'task' | 'bug' | 'story' | 'epic' | null>(null);
+  readonly filterAssignee = signal<string | null>(null);
+  readonly sortBy = signal<
+    'created_at' | 'title' | 'type' | 'status' | 'priority' | 'updated_at' | null
+  >(null);
+  readonly sortOrder = signal<'asc' | 'desc' | null>(null);
+
+  // Model signals for lib-select
+  readonly statusFilterModel = model<'todo' | 'in_progress' | 'done' | 'cancelled' | null>(null);
+  readonly typeFilterModel = model<'task' | 'bug' | 'story' | 'epic' | null>(null);
+  readonly assigneeFilterModel = model<string | 'unassigned' | null>(null);
+
+  // Sync model signals with regular signals
+  private readonly syncStatusFilterEffect = effect(() => {
+    this.filterStatus.set(this.statusFilterModel());
+  });
+
+  private readonly syncTypeFilterEffect = effect(() => {
+    this.filterType.set(this.typeFilterModel());
+  });
+
+  private readonly syncAssigneeFilterEffect = effect(() => {
+    this.filterAssignee.set(this.assigneeFilterModel());
+  });
 
   readonly organizationId = computed(() => {
     return this.navigationService.currentOrganizationId() || '';
+  });
+
+  readonly projectMembers = computed(() => this.projectMembersService.members());
+
+  readonly hasActiveFilters = computed(() => {
+    return (
+      this.filterStatus() !== null || this.filterType() !== null || this.filterAssignee() !== null
+    );
+  });
+
+  // Load project members when projectId changes
+  private readonly loadMembersEffect = effect(() => {
+    const id = this.projectId();
+    if (id) {
+      this.projectMembersService.loadMembers(id);
+    }
   });
 
   @ViewChild('cellTemplate') cellTemplate!: TemplateRef<{
@@ -314,13 +452,32 @@ export class IssueList {
   trackByIssueId = (issue: IssueListItem): string => issue.id;
 
   handleSort(event: SortEvent): void {
-    // For now, sorting is handled by the backend via filters
-    // We could enhance this to support client-side sorting or pass to backend
-    if (event.direction) {
-      // Backend sorting would be implemented here
-      // For now, we'll just log it
-      console.log('Sort:', event);
+    if (!event.direction) {
+      // Clear sorting if direction is null
+      this.sortBy.set(null);
+      this.sortOrder.set(null);
+    } else {
+      // Map column key to sort_by parameter
+      const sortByMap: Record<
+        string,
+        'created_at' | 'title' | 'type' | 'status' | 'priority' | 'updated_at'
+      > = {
+        key: 'created_at', // Use created_at for key sorting
+        title: 'title',
+        type: 'type',
+        status: 'status',
+        priority: 'priority',
+        created_at: 'created_at',
+        updated_at: 'updated_at',
+      };
+
+      const sortByValue = sortByMap[event.column] || 'created_at';
+      this.sortBy.set(sortByValue);
+      this.sortOrder.set(event.direction === 'asc' ? 'asc' : 'desc');
     }
+
+    // Apply filters with new sort parameters
+    this.applyFilters();
   }
 
   handleRowClick(event: { row: IssueListItem; index: number }): void {
@@ -334,6 +491,70 @@ export class IssueList {
   handleSearch(): void {
     const query = this.searchQuery().trim();
     this.issueService.setFilters({ search: query || undefined, page: 1 });
+  }
+
+  readonly statusFilterOptions = computed<
+    SelectOption<'todo' | 'in_progress' | 'done' | 'cancelled' | null>[]
+  >(() => [
+    { value: null, label: 'All Statuses' },
+    { value: 'todo', label: 'To Do' },
+    { value: 'in_progress', label: 'In Progress' },
+    { value: 'done', label: 'Done' },
+    { value: 'cancelled', label: 'Cancelled' },
+  ]);
+
+  readonly typeFilterOptions = computed<SelectOption<'task' | 'bug' | 'story' | 'epic' | null>[]>(
+    () => [
+      { value: null, label: 'All Types' },
+      { value: 'task', label: 'Task' },
+      { value: 'bug', label: 'Bug' },
+      { value: 'story', label: 'Story' },
+      { value: 'epic', label: 'Epic' },
+    ],
+  );
+
+  readonly assigneeFilterOptions = computed<SelectOption<string | 'unassigned' | null>[]>(() => {
+    const options: SelectOption<string | 'unassigned' | null>[] = [
+      { value: null, label: 'All Assignees' },
+      { value: 'unassigned', label: 'Unassigned' },
+    ];
+    return options.concat(
+      this.projectMembers().map((member) => ({
+        value: member.user_id,
+        label: member.user_name,
+      })),
+    );
+  });
+
+  // Apply filters when model signals change
+  private readonly applyFiltersEffect = effect(() => {
+    // Trigger when any filter model changes
+    this.statusFilterModel();
+    this.typeFilterModel();
+    this.assigneeFilterModel();
+    this.applyFilters();
+  });
+
+  applyFilters(): void {
+    const assigneeFilter = this.filterAssignee();
+    // Handle 'unassigned' special case - we need to filter for null assignee_id
+    // For now, we'll pass undefined and handle unassigned filtering on the backend
+    // or we can filter client-side if needed
+    this.issueService.setFilters({
+      status: this.filterStatus() || undefined,
+      type: this.filterType() || undefined,
+      assignee_id: assigneeFilter === 'unassigned' ? undefined : assigneeFilter || undefined,
+      sort_by: this.sortBy() || undefined,
+      sort_order: this.sortOrder() || undefined,
+      page: 1,
+    });
+  }
+
+  clearFilters(dropdown: Dropdown): void {
+    this.statusFilterModel.set(null);
+    this.typeFilterModel.set(null);
+    this.assigneeFilterModel.set(null);
+    dropdown.open.set(false);
   }
 
   handlePreviousPage(): void {

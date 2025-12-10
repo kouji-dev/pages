@@ -7,17 +7,23 @@ import {
   input,
   ViewChild,
   effect,
+  model,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter } from 'shared-ui';
-import { Button, Input, TextEditor } from 'shared-ui';
+import { Button, Input, TextEditor, Icon, Select, SelectOption } from 'shared-ui';
 import { ToastService } from 'shared-ui';
 import { IssueService, CreateIssueRequest } from '../../application/services/issue.service';
 import { ProjectMembersService } from '../../application/services/project-members.service';
+import {
+  getIssueTypeConfig,
+  getIssuePriorityConfig,
+  type IssueType,
+  type IssuePriority,
+} from '../helpers/issue-helpers';
 
-type IssueType = 'task' | 'bug' | 'story' | 'epic';
 type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
-type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
 
 @Component({
   selector: 'app-create-issue-modal',
@@ -29,7 +35,10 @@ type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
     Button,
     Input,
     TextEditor,
+    Icon,
+    Select,
     FormsModule,
+    CommonModule,
   ],
   template: `
     <lib-modal-container>
@@ -57,45 +66,30 @@ type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
           </div>
           <div class="create-issue-form_row">
             <div class="create-issue-form_field">
-              <label class="create-issue-form_label">Type</label>
-              <select
-                class="create-issue-form_select"
-                [value]="type()"
-                (change)="type.set($any($event.target).value)"
-              >
-                <option value="task">Task</option>
-                <option value="bug">Bug</option>
-                <option value="story">Story</option>
-                <option value="epic">Epic</option>
-              </select>
+              <lib-select
+                label="Type"
+                [options]="typeSelectOptions()"
+                [(model)]="typeModel"
+                [placeholder]="'Select type...'"
+              />
             </div>
             <div class="create-issue-form_field">
-              <label class="create-issue-form_label">Priority</label>
-              <select
-                class="create-issue-form_select"
-                [value]="priority()"
-                (change)="priority.set($any($event.target).value)"
-              >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-                <option value="critical">Critical</option>
-              </select>
+              <lib-select
+                label="Priority"
+                [options]="prioritySelectOptions()"
+                [(model)]="priorityModel"
+                [placeholder]="'Select priority...'"
+              />
             </div>
           </div>
           <div class="create-issue-form_row">
             <div class="create-issue-form_field">
-              <label class="create-issue-form_label">Assignee (optional)</label>
-              <select
-                class="create-issue-form_select"
-                [value]="assigneeId() || ''"
-                (change)="assigneeId.set($any($event.target).value || null)"
-              >
-                <option value="">Unassigned</option>
-                @for (member of projectMembers(); track member.user_id) {
-                  <option [value]="member.user_id">{{ member.user_name }}</option>
-                }
-              </select>
+              <lib-select
+                label="Assignee (optional)"
+                [options]="assigneeSelectOptions()"
+                [(model)]="assigneeModel"
+                [placeholder]="'Unassigned'"
+              />
             </div>
             <div class="create-issue-form_field">
               <label class="create-issue-form_label">Due Date (optional)</label>
@@ -145,15 +139,6 @@ type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
         @apply text-text-primary;
       }
 
-      .create-issue-form_select {
-        @apply px-3 py-2;
-        @apply border border-border-default;
-        @apply rounded-md;
-        @apply bg-bg-primary;
-        @apply text-text-primary;
-        @apply focus:outline-none focus:ring-2 focus:ring-primary-500;
-      }
-
       .create-issue-form_input {
         @apply px-3 py-2;
         @apply border border-border-default;
@@ -183,7 +168,98 @@ export class CreateIssueModal {
   readonly dueDate = signal<string | null>(null);
   readonly isSubmitting = signal(false);
 
+  // Model signals for lib-select two-way binding
+  readonly typeModel = model<IssueType>('task');
+  readonly priorityModel = model<IssuePriority>('medium');
+  readonly assigneeModel = model<string | null>(null);
+
+  // Sync model signals with regular signals
+  private readonly syncTypeEffect = effect(() => {
+    this.type.set(this.typeModel());
+  });
+
+  private readonly syncPriorityEffect = effect(() => {
+    this.priority.set(this.priorityModel());
+  });
+
+  private readonly syncAssigneeEffect = effect(() => {
+    this.assigneeId.set(this.assigneeModel());
+  });
+
   @ViewChild('descriptionEditor') descriptionEditor?: TextEditor;
+
+  readonly typeConfig = computed(() => getIssueTypeConfig(this.type()));
+  readonly priorityConfig = computed(() => getIssuePriorityConfig(this.priority()));
+
+  readonly typeIconClasses = computed(() => {
+    const config = this.typeConfig();
+    return {
+      [config.textColor]: true,
+    };
+  });
+
+  getTypeIconClasses(type: IssueType): Record<string, boolean> {
+    const config = getIssueTypeConfig(type);
+    return {
+      [config.textColor]: true,
+    };
+  }
+
+  getPriorityIconClasses(priority: IssuePriority): Record<string, boolean> {
+    const config = getIssuePriorityConfig(priority);
+    return {
+      [config.iconColor]: true,
+    };
+  }
+
+  readonly priorityIconClasses = computed(() => {
+    const config = this.priorityConfig();
+    return {
+      [config.iconColor]: true,
+    };
+  });
+
+  readonly typeOptions = computed(() => {
+    return (['task', 'bug', 'story', 'epic'] as IssueType[]).map((value) => ({
+      value,
+      config: getIssueTypeConfig(value),
+    }));
+  });
+
+  readonly priorityOptions = computed(() => {
+    return (['low', 'medium', 'high', 'critical'] as IssuePriority[]).map((value) => ({
+      value,
+      config: getIssuePriorityConfig(value),
+    }));
+  });
+
+  readonly typeSelectOptions = computed<SelectOption<IssueType>[]>(() => {
+    return this.typeOptions().map((opt) => ({
+      value: opt.value,
+      label: opt.config.label,
+      icon: opt.config.icon,
+      iconColor: opt.config.textColor,
+    }));
+  });
+
+  readonly prioritySelectOptions = computed<SelectOption<IssuePriority>[]>(() => {
+    return this.priorityOptions().map((opt) => ({
+      value: opt.value,
+      label: opt.config.label,
+      icon: opt.config.icon,
+      iconColor: opt.config.iconColor,
+    }));
+  });
+
+  readonly assigneeSelectOptions = computed<SelectOption<string | null>[]>(() => {
+    const options: SelectOption<string | null>[] = [{ value: null, label: 'Unassigned' }];
+    return options.concat(
+      this.projectMembers().map((member) => ({
+        value: member.user_id,
+        label: member.user_name,
+      })),
+    );
+  });
 
   // Load project members when projectId changes
   private readonly loadMembersEffect = effect(() => {
@@ -243,8 +319,11 @@ export class CreateIssueModal {
       this.description.set('');
       this.descriptionHtml.set('');
       this.type.set('task');
+      this.typeModel.set('task');
       this.priority.set('medium');
+      this.priorityModel.set('medium');
       this.assigneeId.set(null);
+      this.assigneeModel.set(null);
       this.dueDate.set(null);
       if (this.descriptionEditor) {
         this.descriptionEditor.setHtml('');

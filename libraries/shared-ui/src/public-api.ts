@@ -29,3 +29,5 @@ export type { TableColumn, SortEvent } from './lib/table/table';
 export * from './lib/text-editor/text-editor';
 export * from './lib/sidenav/sidenav';
 export type { SidenavItem } from './lib/sidenav/sidenav';
+export * from './lib/select/select';
+export type { SelectOption } from './lib/select/select';

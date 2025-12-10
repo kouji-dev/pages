@@ -1,15 +1,14 @@
 import { Component, input, ChangeDetectionStrategy, computed } from '@angular/core';
-import { Icon, IconName } from 'shared-ui';
-
-type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
+import { Icon } from 'shared-ui';
+import { getIssuePriorityConfig, type IssuePriority } from '../helpers/issue-helpers';
 
 @Component({
   selector: 'app-issue-priority-indicator',
   standalone: true,
   imports: [Icon],
   template: `
-    <span class="issue-priority" [class]="'issue-priority--' + priority()">
-      <lib-icon [name]="priorityIcon()" [size]="'xs'" />
+    <span class="issue-priority" [class]="badgeClasses()">
+      <lib-icon [name]="priorityConfig().icon" [size]="'xs'" [class]="iconClasses()" />
       <span>{{ priorityLabel() }}</span>
     </span>
   `,
@@ -18,24 +17,10 @@ type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
       @reference "#mainstyles";
 
       .issue-priority {
-        @apply inline-flex items-center gap-1;
-        @apply text-xs font-medium;
-      }
-
-      .issue-priority--low {
-        @apply text-gray-600;
-      }
-
-      .issue-priority--medium {
-        @apply text-blue-600;
-      }
-
-      .issue-priority--high {
-        @apply text-orange-600;
-      }
-
-      .issue-priority--critical {
-        @apply text-red-600;
+        @apply inline-flex items-center gap-1.5;
+        @apply px-2 py-1;
+        @apply text-xs font-semibold;
+        @apply rounded;
       }
     `,
   ],
@@ -46,26 +31,21 @@ export class IssuePriorityIndicator {
 
   readonly customLabel = input<string | undefined>(undefined);
 
-  readonly priorityIcon = computed<IconName>(() => {
-    const icons: Record<IssuePriority, IconName> = {
-      low: 'arrow-down' as IconName,
-      medium: 'minus' as IconName,
-      high: 'arrow-up' as IconName,
-      critical: 'alert-triangle' as IconName,
-    };
-    return icons[this.priority()] || ('minus' as IconName);
+  readonly priorityConfig = computed(() => getIssuePriorityConfig(this.priority()));
+
+  readonly badgeClasses = computed(() => {
+    const config = this.priorityConfig();
+    return `${config.bgColor} ${config.textColor}`;
+  });
+
+  readonly iconClasses = computed(() => {
+    const config = this.priorityConfig();
+    return config.iconColor;
   });
 
   readonly priorityLabel = computed(() => {
     const customLabel = this.customLabel();
     if (customLabel) return customLabel;
-
-    const labels: Record<IssuePriority, string> = {
-      low: 'Low',
-      medium: 'Medium',
-      high: 'High',
-      critical: 'Critical',
-    };
-    return labels[this.priority()] || this.priority();
+    return this.priorityConfig().label;
   });
 }

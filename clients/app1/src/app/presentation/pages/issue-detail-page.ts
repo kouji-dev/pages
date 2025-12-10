@@ -16,6 +16,8 @@ import { IssuePriorityIndicator } from '../components/issue-priority-indicator';
 import { EditIssueModal } from '../components/edit-issue-modal';
 import { CommentList } from '../components/comment-list';
 import { AttachmentList } from '../components/attachment-list';
+import { IssueActivityList } from '../components/issue-activity-list';
+import { BackToPage } from '../components/back-to-page';
 
 @Component({
   selector: 'app-issue-detail-page',
@@ -28,7 +30,9 @@ import { AttachmentList } from '../components/attachment-list';
     IssuePriorityIndicator,
     CommentList,
     AttachmentList,
+    IssueActivityList,
     TextEditor,
+    BackToPage,
   ],
   template: `
     <div class="issue-detail-page">
@@ -52,6 +56,7 @@ import { AttachmentList } from '../components/attachment-list';
           <div class="issue-detail-page_header-content">
             <div class="issue-detail-page_header-main">
               <div class="issue-detail-page_header-info">
+                <app-back-to-page label="Back to Issues" (onClick)="handleBackToIssues()" />
                 <div class="issue-detail-page_key">{{ issue()?.key }}</div>
                 <h1 class="issue-detail-page_title">{{ issue()?.title }}</h1>
                 <div class="issue-detail-page_badges">
@@ -96,7 +101,7 @@ import { AttachmentList } from '../components/attachment-list';
 
               <div class="issue-detail-page_section">
                 <h2 class="issue-detail-page_section-title">Activity</h2>
-                <p class="issue-detail-page_placeholder">Activity log will be shown here</p>
+                <app-issue-activity-list [issueId]="issueId()" />
               </div>
             </div>
             <div class="issue-detail-page_sidebar">
@@ -268,14 +273,6 @@ import { AttachmentList } from '../components/attachment-list';
         margin: 0;
       }
 
-      .issue-detail-page_placeholder {
-        @apply text-base;
-        @apply text-text-secondary;
-        @apply text-center;
-        @apply py-8;
-        margin: 0;
-      }
-
       .issue-detail-page_metadata {
         @apply flex flex-col;
         @apply gap-4;
@@ -321,6 +318,14 @@ export class IssueDetailPage {
   });
   readonly issue = computed(() => this.issueService.currentIssue());
 
+  readonly organizationId = computed(() => {
+    return this.navigationService.currentOrganizationId() || '';
+  });
+
+  readonly projectId = computed(() => {
+    return this.navigationService.currentProjectId() || '';
+  });
+
   readonly errorMessage = computed(() => {
     const error = this.issueService.issueError();
     if (error) {
@@ -350,5 +355,13 @@ export class IssueDetailPage {
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString();
+  }
+
+  handleBackToIssues(): void {
+    const orgId = this.organizationId();
+    const projectId = this.projectId();
+    if (orgId && projectId) {
+      this.navigationService.navigateToProject(orgId, projectId, 'issues');
+    }
   }
 }

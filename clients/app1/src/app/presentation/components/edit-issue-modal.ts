@@ -7,16 +7,18 @@ import {
   input,
   effect,
   ViewChild,
+  model,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter } from 'shared-ui';
-import { Button, Input, TextEditor } from 'shared-ui';
+import { Button, Input, TextEditor, Select, SelectOption } from 'shared-ui';
 import { ToastService } from 'shared-ui';
 import { IssueService, UpdateIssueRequest, Issue } from '../../application/services/issue.service';
 import { ProjectMembersService } from '../../application/services/project-members.service';
+import { getIssuePriorityConfig, type IssuePriority } from '../helpers/issue-helpers';
 
 type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
-type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
 
 @Component({
   selector: 'app-edit-issue-modal',
@@ -28,7 +30,9 @@ type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
     Button,
     Input,
     TextEditor,
+    Select,
     FormsModule,
+    CommonModule,
   ],
   template: `
     <lib-modal-container>
@@ -55,45 +59,30 @@ type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
           </div>
           <div class="edit-issue-form_row">
             <div class="edit-issue-form_field">
-              <label class="edit-issue-form_label">Status</label>
-              <select
-                class="edit-issue-form_select"
-                [value]="status()"
-                (change)="status.set($any($event.target).value)"
-              >
-                <option value="todo">To Do</option>
-                <option value="in_progress">In Progress</option>
-                <option value="done">Done</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
+              <lib-select
+                label="Status"
+                [options]="statusSelectOptions()"
+                [(model)]="statusModel"
+                [placeholder]="'Select status...'"
+              />
             </div>
             <div class="edit-issue-form_field">
-              <label class="edit-issue-form_label">Priority</label>
-              <select
-                class="edit-issue-form_select"
-                [value]="priority()"
-                (change)="priority.set($any($event.target).value)"
-              >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-                <option value="critical">Critical</option>
-              </select>
+              <lib-select
+                label="Priority"
+                [options]="prioritySelectOptions()"
+                [(model)]="priorityModel"
+                [placeholder]="'Select priority...'"
+              />
             </div>
           </div>
           <div class="edit-issue-form_row">
             <div class="edit-issue-form_field">
-              <label class="edit-issue-form_label">Assignee</label>
-              <select
-                class="edit-issue-form_select"
-                [value]="assigneeId() || ''"
-                (change)="assigneeId.set($any($event.target).value || null)"
-              >
-                <option value="">Unassigned</option>
-                @for (member of projectMembers(); track member.user_id) {
-                  <option [value]="member.user_id">{{ member.user_name }}</option>
-                }
-              </select>
+              <lib-select
+                label="Assignee"
+                [options]="assigneeSelectOptions()"
+                [(model)]="assigneeModel"
+                [placeholder]="'Unassigned'"
+              />
             </div>
             <div class="edit-issue-form_field">
               <label class="edit-issue-form_label">Due Date</label>
@@ -143,15 +132,6 @@ type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
         @apply text-text-primary;
       }
 
-      .edit-issue-form_select {
-        @apply px-3 py-2;
-        @apply border border-border-default;
-        @apply rounded-md;
-        @apply bg-bg-primary;
-        @apply text-text-primary;
-        @apply focus:outline-none focus:ring-2 focus:ring-primary-500;
-      }
-
       .edit-issue-form_input {
         @apply px-3 py-2;
         @apply border border-border-default;
@@ -182,6 +162,24 @@ export class EditIssueModal {
   readonly dueDate = signal<string | null>(null);
   readonly isSubmitting = signal(false);
 
+  // Model signals for lib-select two-way binding
+  readonly statusModel = model<IssueStatus>('todo');
+  readonly priorityModel = model<IssuePriority>('medium');
+  readonly assigneeModel = model<string | null>(null);
+
+  // Sync model signals with regular signals (model -> signal for user changes)
+  private readonly syncStatusEffect = effect(() => {
+    this.status.set(this.statusModel());
+  });
+
+  private readonly syncPriorityEffect = effect(() => {
+    this.priority.set(this.priorityModel());
+  });
+
+  private readonly syncAssigneeEffect = effect(() => {
+    this.assigneeId.set(this.assigneeModel());
+  });
+
   @ViewChild('descriptionEditor') descriptionEditor?: TextEditor;
 
   // Load project members when issue changes
@@ -194,6 +192,35 @@ export class EditIssueModal {
 
   readonly projectMembers = computed(() => this.projectMembersService.members());
 
+  readonly statusSelectOptions = computed<SelectOption<IssueStatus>[]>(() => [
+    { value: 'todo', label: 'To Do' },
+    { value: 'in_progress', label: 'In Progress' },
+    { value: 'done', label: 'Done' },
+    { value: 'cancelled', label: 'Cancelled' },
+  ]);
+
+  readonly prioritySelectOptions = computed<SelectOption<IssuePriority>[]>(() => {
+    return (['low', 'medium', 'high', 'critical'] as IssuePriority[]).map((value) => {
+      const config = getIssuePriorityConfig(value);
+      return {
+        value,
+        label: config.label,
+        icon: config.icon,
+        iconColor: config.iconColor,
+      };
+    });
+  });
+
+  readonly assigneeSelectOptions = computed<SelectOption<string | null>[]>(() => {
+    const options: SelectOption<string | null>[] = [{ value: null, label: 'Unassigned' }];
+    return options.concat(
+      this.projectMembers().map((member) => ({
+        value: member.user_id,
+        label: member.user_name,
+      })),
+    );
+  });
+
   private readonly initializeEffect = effect(
     () => {
       const issue = this.issue();
@@ -203,8 +230,11 @@ export class EditIssueModal {
         this.description.set(desc);
         this.descriptionHtml.set(desc);
         this.status.set(issue.status);
+        this.statusModel.set(issue.status);
         this.priority.set(issue.priority);
+        this.priorityModel.set(issue.priority);
         this.assigneeId.set(issue.assignee_id || null);
+        this.assigneeModel.set(issue.assignee_id || null);
         // Format due_date for date input (YYYY-MM-DD)
         if (issue.due_date) {
           const date = new Date(issue.due_date);

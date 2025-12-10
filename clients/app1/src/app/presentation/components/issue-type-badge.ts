@@ -1,13 +1,15 @@
 import { Component, input, ChangeDetectionStrategy, computed } from '@angular/core';
-
-type IssueType = 'task' | 'bug' | 'story' | 'epic';
+import { Icon } from 'shared-ui';
+import { getIssueTypeConfig, type IssueType } from '../helpers/issue-helpers';
 
 @Component({
   selector: 'app-issue-type-badge',
   standalone: true,
+  imports: [Icon],
   template: `
-    <span class="issue-type-badge" [class]="'issue-type-badge--' + type()">
-      {{ typeLabel() }}
+    <span class="issue-type-badge" [class]="badgeClasses()">
+      <lib-icon [name]="typeConfig().icon" [size]="'xs'" />
+      <span>{{ typeLabel() }}</span>
     </span>
   `,
   styles: [
@@ -15,27 +17,11 @@ type IssueType = 'task' | 'bug' | 'story' | 'epic';
       @reference "#mainstyles";
 
       .issue-type-badge {
-        @apply inline-flex items-center;
+        @apply inline-flex items-center gap-1.5;
         @apply px-2 py-1;
         @apply text-xs font-semibold;
         @apply rounded;
         @apply uppercase;
-      }
-
-      .issue-type-badge--task {
-        @apply bg-blue-100 text-blue-800;
-      }
-
-      .issue-type-badge--bug {
-        @apply bg-red-100 text-red-800;
-      }
-
-      .issue-type-badge--story {
-        @apply bg-green-100 text-green-800;
-      }
-
-      .issue-type-badge--epic {
-        @apply bg-purple-100 text-purple-800;
       }
     `,
   ],
@@ -46,16 +32,16 @@ export class IssueTypeBadge {
 
   readonly customLabel = input<string | undefined>(undefined);
 
+  readonly typeConfig = computed(() => getIssueTypeConfig(this.type()));
+
+  readonly badgeClasses = computed(() => {
+    const config = this.typeConfig();
+    return `${config.bgColor} ${config.textColor}`;
+  });
+
   readonly typeLabel = computed(() => {
     const customLabel = this.customLabel();
     if (customLabel) return customLabel;
-
-    const labels: Record<IssueType, string> = {
-      task: 'Task',
-      bug: 'Bug',
-      story: 'Story',
-      epic: 'Epic',
-    };
-    return labels[this.type()] || this.type();
+    return this.typeConfig().label;
   });
 }

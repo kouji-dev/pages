@@ -9,6 +9,7 @@ import {
   TemplateRef,
   ViewChild,
   ViewContainerRef,
+  model,
 } from '@angular/core';
 import {
   CdkDragDrop,
@@ -22,9 +23,10 @@ import {
   Button,
   Icon,
   Dropdown,
-  Input,
   Modal,
   ToastService,
+  Select,
+  SelectOption,
 } from 'shared-ui';
 import { IssueService, IssueListItem } from '../../application/services/issue.service';
 import { OrganizationService } from '../../application/services/organization.service';
@@ -40,6 +42,14 @@ interface StatusColumn {
   status: IssueStatus;
   label: string;
   issues: IssueListItem[];
+  visible: boolean;
+  width?: number;
+}
+
+interface BoardSettings {
+  columnOrder: IssueStatus[];
+  columnVisibility: Record<IssueStatus, boolean>;
+  columnWidths: Record<IssueStatus, number>;
 }
 
 @Component({
@@ -54,7 +64,7 @@ interface StatusColumn {
     Button,
     Icon,
     Dropdown,
-    Input,
+    Select,
   ],
   template: `
     <div class="kanban-board">
@@ -77,48 +87,43 @@ interface StatusColumn {
               #filterDropdown="libDropdown"
             >
             </lib-button>
+            <lib-button
+              variant="ghost"
+              size="sm"
+              [iconOnly]="true"
+              leftIcon="settings"
+              [libDropdown]="settingsDropdownTemplate"
+              [position]="'below'"
+              [containerClass]="'lib-dropdown-panel--fit-content'"
+              class="kanban-board_settings-button"
+              #settingsDropdown="libDropdown"
+            >
+            </lib-button>
             <ng-template #filterDropdownTemplate>
               <div class="kanban-board_filter-menu">
                 <div class="kanban-board_filter-section">
-                  <label class="kanban-board_filter-label">Assignee</label>
-                  <select
-                    class="kanban-board_filter-select"
-                    [value]="filterAssignee() || ''"
-                    (change)="filterAssignee.set($any($event.target).value || null)"
-                  >
-                    <option value="">All Assignees</option>
-                    @for (member of projectMembers(); track member.user_id) {
-                      <option [value]="member.user_id">{{ member.user_name }}</option>
-                    }
-                  </select>
+                  <lib-select
+                    label="Assignee"
+                    [options]="assigneeFilterOptions()"
+                    [(model)]="assigneeFilterModel"
+                    [placeholder]="'All Assignees'"
+                  />
                 </div>
                 <div class="kanban-board_filter-section">
-                  <label class="kanban-board_filter-label">Type</label>
-                  <select
-                    class="kanban-board_filter-select"
-                    [value]="filterType() || ''"
-                    (change)="filterType.set($any($event.target).value || null)"
-                  >
-                    <option value="">All Types</option>
-                    <option value="task">Task</option>
-                    <option value="bug">Bug</option>
-                    <option value="story">Story</option>
-                    <option value="epic">Epic</option>
-                  </select>
+                  <lib-select
+                    label="Type"
+                    [options]="typeFilterOptions()"
+                    [(model)]="typeFilterModel"
+                    [placeholder]="'All Types'"
+                  />
                 </div>
                 <div class="kanban-board_filter-section">
-                  <label class="kanban-board_filter-label">Priority</label>
-                  <select
-                    class="kanban-board_filter-select"
-                    [value]="filterPriority() || ''"
-                    (change)="filterPriority.set($any($event.target).value || null)"
-                  >
-                    <option value="">All Priorities</option>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="critical">Critical</option>
-                  </select>
+                  <lib-select
+                    label="Priority"
+                    [options]="priorityFilterOptions()"
+                    [(model)]="priorityFilterModel"
+                    [placeholder]="'All Priorities'"
+                  />
                 </div>
                 @if (hasActiveFilters()) {
                   <div class="kanban-board_filter-actions">
@@ -127,6 +132,30 @@ interface StatusColumn {
                     </lib-button>
                   </div>
                 }
+              </div>
+            </ng-template>
+            <ng-template #settingsDropdownTemplate>
+              <div class="kanban-board_settings-menu">
+                <div class="kanban-board_settings-section">
+                  <label class="kanban-board_settings-label">Column Visibility</label>
+                  @for (column of allColumns(); track column.status) {
+                    <label class="kanban-board_settings-checkbox">
+                      <input
+                        type="checkbox"
+                        [checked]="columnVisibility()[column.status]"
+                        (change)="
+                          toggleColumnVisibility(column.status, $any($event.target).checked)
+                        "
+                      />
+                      <span>{{ column.label }}</span>
+                    </label>
+                  }
+                </div>
+                <div class="kanban-board_settings-actions">
+                  <lib-button variant="ghost" size="sm" (clicked)="resetSettings(settingsDropdown)">
+                    Reset All
+                  </lib-button>
+                </div>
               </div>
             </ng-template>
           </div>
@@ -144,13 +173,19 @@ interface StatusColumn {
             (onRetry)="handleRetry()"
           />
         } @else {
-          <div class="kanban-board_columns" cdkDropListGroup>
-            @for (column of columns(); track column.status) {
+          <div
+            class="kanban-board_columns"
+            cdkDropListGroup
+            [style.grid-template-columns]="gridTemplateColumns()"
+          >
+            @for (column of visibleColumns(); track column.status) {
               <div
                 class="kanban-board_column"
                 cdkDropList
                 [cdkDropListData]="column.issues"
                 (cdkDropListDropped)="handleDrop($event, column.status)"
+                [style.width]="column.width ? column.width + 'px' : 'auto'"
+                [style.min-width]="column.width ? column.width + 'px' : '250px'"
               >
                 <div class="kanban-board_column-header">
                   <h3 class="kanban-board_column-title">
@@ -222,8 +257,45 @@ interface StatusColumn {
         @apply gap-2;
       }
 
-      .kanban-board_filter-button {
+      .kanban-board_filter-button,
+      .kanban-board_settings-button {
         @apply flex-shrink-0;
+      }
+
+      .kanban-board_settings-menu {
+        @apply flex flex-col;
+        @apply gap-4;
+        @apply p-4;
+        @apply min-w-[250px];
+      }
+
+      .kanban-board_settings-section {
+        @apply flex flex-col;
+        @apply gap-3;
+      }
+
+      .kanban-board_settings-label {
+        @apply text-sm font-medium;
+        @apply text-text-primary;
+      }
+
+      .kanban-board_settings-checkbox {
+        @apply flex items-center;
+        @apply gap-2;
+        @apply cursor-pointer;
+        @apply text-sm;
+        @apply text-text-primary;
+      }
+
+      .kanban-board_settings-checkbox input[type='checkbox'] {
+        @apply cursor-pointer;
+      }
+
+      .kanban-board_settings-actions {
+        @apply flex items-center;
+        @apply pt-2;
+        @apply border-t;
+        @apply border-border-default;
       }
 
       .kanban-board_filter-menu {
@@ -241,19 +313,6 @@ interface StatusColumn {
       .kanban-board_filter-label {
         @apply text-sm font-medium;
         @apply text-text-primary;
-      }
-
-      .kanban-board_filter-select {
-        @apply px-3 py-2;
-        @apply rounded-md;
-        @apply border;
-        @apply border-border-default;
-        @apply bg-bg-primary;
-        @apply text-text-primary;
-        @apply text-sm;
-        @apply focus:outline-none;
-        @apply focus:ring-2;
-        @apply focus:ring-primary-500;
       }
 
       .kanban-board_filter-actions {
@@ -277,7 +336,6 @@ interface StatusColumn {
 
       .kanban-board_columns {
         @apply grid;
-        @apply grid-cols-4;
         @apply gap-4;
         @apply h-full;
         @apply w-full;
@@ -414,10 +472,61 @@ export class KanbanBoard {
     return this.navigationService.currentOrganizationId() || '';
   });
 
+  // Board settings storage key
+  private readonly STORAGE_KEY = 'kanban_board_settings';
+
+  // Default column order
+  private readonly DEFAULT_COLUMN_ORDER: IssueStatus[] = [
+    'todo',
+    'in_progress',
+    'done',
+    'cancelled',
+  ];
+
+  // Flag to prevent saving during initial load
+  private isInitializing = true;
+
+  // Column visibility signal
+  readonly columnVisibility = signal<Record<IssueStatus, boolean>>({
+    todo: true,
+    in_progress: true,
+    done: true,
+    cancelled: true,
+  });
+
+  // Column order signal
+  readonly columnOrder = signal<IssueStatus[]>(this.DEFAULT_COLUMN_ORDER);
+
+  // Column widths signal
+  readonly columnWidths = signal<Record<IssueStatus, number>>({
+    todo: 0,
+    in_progress: 0,
+    done: 0,
+    cancelled: 0,
+  });
+
   // Filter signals
   readonly filterAssignee = signal<string | null>(null);
   readonly filterType = signal<'task' | 'bug' | 'story' | 'epic' | null>(null);
   readonly filterPriority = signal<'low' | 'medium' | 'high' | 'critical' | null>(null);
+
+  // Model signals for lib-select
+  readonly assigneeFilterModel = model<string | null>(null);
+  readonly typeFilterModel = model<'task' | 'bug' | 'story' | 'epic' | null>(null);
+  readonly priorityFilterModel = model<'low' | 'medium' | 'high' | 'critical' | null>(null);
+
+  // Sync model signals with regular signals
+  private readonly syncAssigneeFilterEffect = effect(() => {
+    this.filterAssignee.set(this.assigneeFilterModel());
+  });
+
+  private readonly syncTypeFilterEffect = effect(() => {
+    this.filterType.set(this.typeFilterModel());
+  });
+
+  private readonly syncPriorityFilterEffect = effect(() => {
+    this.filterPriority.set(this.priorityFilterModel());
+  });
 
   // Load project members for assignee filter
   readonly projectMembers = computed(() => this.projectMembersService.members());
@@ -429,6 +538,26 @@ export class KanbanBoard {
       this.projectMembersService.loadMembers(id);
     }
   });
+
+  // Load board settings from localStorage on init
+  constructor() {
+    this.loadBoardSettings();
+    this.isInitializing = false;
+
+    // Save settings to localStorage when they change (but not during initial load)
+    effect(() => {
+      if (this.isInitializing) return;
+
+      const visibility = this.columnVisibility();
+      const order = this.columnOrder();
+      const widths = this.columnWidths();
+      this.saveBoardSettings({
+        columnVisibility: visibility,
+        columnOrder: order,
+        columnWidths: widths,
+      });
+    });
+  }
 
   readonly issues = computed(() => this.issueService.issuesList());
 
@@ -458,14 +587,64 @@ export class KanbanBoard {
     );
   });
 
+  readonly assigneeFilterOptions = computed<SelectOption<string | null>[]>(() => {
+    const options: SelectOption<string | null>[] = [{ value: null, label: 'All Assignees' }];
+    return options.concat(
+      this.projectMembers().map((member) => ({
+        value: member.user_id,
+        label: member.user_name,
+      })),
+    );
+  });
+
+  readonly typeFilterOptions = computed<SelectOption<'task' | 'bug' | 'story' | 'epic' | null>[]>(
+    () => [
+      { value: null, label: 'All Types' },
+      { value: 'task', label: 'Task' },
+      { value: 'bug', label: 'Bug' },
+      { value: 'story', label: 'Story' },
+      { value: 'epic', label: 'Epic' },
+    ],
+  );
+
+  readonly priorityFilterOptions = computed<
+    SelectOption<'low' | 'medium' | 'high' | 'critical' | null>[]
+  >(() => [
+    { value: null, label: 'All Priorities' },
+    { value: 'low', label: 'Low' },
+    { value: 'medium', label: 'Medium' },
+    { value: 'high', label: 'High' },
+    { value: 'critical', label: 'Critical' },
+  ]);
+
+  // All available columns (for settings)
+  readonly allColumns = computed<StatusColumn[]>(() => {
+    return [
+      { status: 'todo', label: 'To Do', issues: [], visible: true },
+      { status: 'in_progress', label: 'In Progress', issues: [], visible: true },
+      { status: 'done', label: 'Done', issues: [], visible: true },
+      { status: 'cancelled', label: 'Cancelled', issues: [], visible: true },
+    ];
+  });
+
+  // Columns with issues grouped, respecting order and visibility
   readonly columns = computed<StatusColumn[]>(() => {
     const issues = this.filteredIssues();
-    const statusColumns: StatusColumn[] = [
-      { status: 'todo', label: 'To Do', issues: [] },
-      { status: 'in_progress', label: 'In Progress', issues: [] },
-      { status: 'done', label: 'Done', issues: [] },
-      { status: 'cancelled', label: 'Cancelled', issues: [] },
-    ];
+    const order = this.columnOrder();
+    const visibility = this.columnVisibility();
+    const widths = this.columnWidths();
+
+    // Create columns in the specified order
+    const statusColumns: StatusColumn[] = order.map((status) => {
+      const label = this.getColumnLabel(status);
+      return {
+        status,
+        label,
+        issues: [],
+        visible: visibility[status] ?? true,
+        width: widths[status] || undefined,
+      };
+    });
 
     // Group issues by status
     issues.forEach((issue) => {
@@ -476,6 +655,19 @@ export class KanbanBoard {
     });
 
     return statusColumns;
+  });
+
+  // Only visible columns
+  readonly visibleColumns = computed<StatusColumn[]>(() => {
+    return this.columns().filter((col) => col.visible);
+  });
+
+  // Grid template columns for CSS
+  readonly gridTemplateColumns = computed(() => {
+    const visibleCols = this.visibleColumns();
+    if (visibleCols.length === 0) return '1fr';
+
+    return visibleCols.map((col) => (col.width ? `${col.width}px` : '1fr')).join(' ');
   });
 
   readonly errorMessage = computed(() => {
@@ -528,9 +720,9 @@ export class KanbanBoard {
   }
 
   clearFilters(dropdown: Dropdown): void {
-    this.filterAssignee.set(null);
-    this.filterType.set(null);
-    this.filterPriority.set(null);
+    this.assigneeFilterModel.set(null);
+    this.typeFilterModel.set(null);
+    this.priorityFilterModel.set(null);
     dropdown.open.set(false);
   }
 
@@ -567,5 +759,89 @@ export class KanbanBoard {
         projectId: this.projectId(),
       },
     });
+  }
+
+  getColumnLabel(status: IssueStatus): string {
+    const labels: Record<IssueStatus, string> = {
+      todo: 'To Do',
+      in_progress: 'In Progress',
+      done: 'Done',
+      cancelled: 'Cancelled',
+    };
+    return labels[status];
+  }
+
+  toggleColumnVisibility(status: IssueStatus, visible: boolean): void {
+    this.columnVisibility.update((current) => ({
+      ...current,
+      [status]: visible,
+    }));
+  }
+
+  resetColumnOrder(): void {
+    this.columnOrder.set([...this.DEFAULT_COLUMN_ORDER]);
+  }
+
+  resetSettings(dropdown: Dropdown): void {
+    this.columnVisibility.set({
+      todo: true,
+      in_progress: true,
+      done: true,
+      cancelled: true,
+    });
+    this.columnOrder.set([...this.DEFAULT_COLUMN_ORDER]);
+    this.columnWidths.set({
+      todo: 0,
+      in_progress: 0,
+      done: 0,
+      cancelled: 0,
+    });
+    dropdown.open.set(false);
+  }
+
+  private loadBoardSettings(): void {
+    try {
+      const stored = localStorage.getItem(this.STORAGE_KEY);
+      if (stored) {
+        const settings: BoardSettings = JSON.parse(stored);
+
+        if (settings.columnVisibility) {
+          this.columnVisibility.set({
+            todo: settings.columnVisibility.todo ?? true,
+            in_progress: settings.columnVisibility.in_progress ?? true,
+            done: settings.columnVisibility.done ?? true,
+            cancelled: settings.columnVisibility.cancelled ?? true,
+          });
+        }
+
+        if (settings.columnOrder && settings.columnOrder.length === 4) {
+          // Validate that all statuses are present
+          const allStatuses: IssueStatus[] = ['todo', 'in_progress', 'done', 'cancelled'];
+          const isValid = allStatuses.every((status) => settings.columnOrder.includes(status));
+          if (isValid) {
+            this.columnOrder.set(settings.columnOrder);
+          }
+        }
+
+        if (settings.columnWidths) {
+          this.columnWidths.set({
+            todo: settings.columnWidths.todo || 0,
+            in_progress: settings.columnWidths.in_progress || 0,
+            done: settings.columnWidths.done || 0,
+            cancelled: settings.columnWidths.cancelled || 0,
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load board settings:', error);
+    }
+  }
+
+  private saveBoardSettings(settings: BoardSettings): void {
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(settings));
+    } catch (error) {
+      console.error('Failed to save board settings:', error);
+    }
   }
 }
