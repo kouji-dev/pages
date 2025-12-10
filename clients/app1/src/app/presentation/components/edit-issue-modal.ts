@@ -13,6 +13,7 @@ import { Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter } from 's
 import { Button, Input, TextEditor } from 'shared-ui';
 import { ToastService } from 'shared-ui';
 import { IssueService, UpdateIssueRequest, Issue } from '../../application/services/issue.service';
+import { ProjectMembersService } from '../../application/services/project-members.service';
 
 type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
 type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
@@ -80,6 +81,30 @@ type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
               </select>
             </div>
           </div>
+          <div class="edit-issue-form_row">
+            <div class="edit-issue-form_field">
+              <label class="edit-issue-form_label">Assignee</label>
+              <select
+                class="edit-issue-form_select"
+                [value]="assigneeId() || ''"
+                (change)="assigneeId.set($any($event.target).value || null)"
+              >
+                <option value="">Unassigned</option>
+                @for (member of projectMembers(); track member.user_id) {
+                  <option [value]="member.user_id">{{ member.user_name }}</option>
+                }
+              </select>
+            </div>
+            <div class="edit-issue-form_field">
+              <label class="edit-issue-form_label">Due Date</label>
+              <input
+                type="date"
+                class="edit-issue-form_input"
+                [value]="dueDate() || ''"
+                (change)="dueDate.set($any($event.target).value || null)"
+              />
+            </div>
+          </div>
         </form>
       </lib-modal-content>
       <lib-modal-footer>
@@ -126,6 +151,15 @@ type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
         @apply text-text-primary;
         @apply focus:outline-none focus:ring-2 focus:ring-primary-500;
       }
+
+      .edit-issue-form_input {
+        @apply px-3 py-2;
+        @apply border border-border-default;
+        @apply rounded-md;
+        @apply bg-bg-primary;
+        @apply text-text-primary;
+        @apply focus:outline-none focus:ring-2 focus:ring-primary-500;
+      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -134,6 +168,7 @@ export class EditIssueModal {
   private readonly issueService = inject(IssueService);
   private readonly toast = inject(ToastService);
   private readonly modal = inject(Modal);
+  private readonly projectMembersService = inject(ProjectMembersService);
 
   readonly issueId = input.required<string>();
   readonly issue = input.required<Issue>();
@@ -143,9 +178,21 @@ export class EditIssueModal {
   readonly descriptionHtml = signal('');
   readonly status = signal<IssueStatus>('todo');
   readonly priority = signal<IssuePriority>('medium');
+  readonly assigneeId = signal<string | null>(null);
+  readonly dueDate = signal<string | null>(null);
   readonly isSubmitting = signal(false);
 
   @ViewChild('descriptionEditor') descriptionEditor?: TextEditor;
+
+  // Load project members when issue changes
+  private readonly loadMembersEffect = effect(() => {
+    const issue = this.issue();
+    if (issue?.project_id) {
+      this.projectMembersService.loadMembers(issue.project_id);
+    }
+  });
+
+  readonly projectMembers = computed(() => this.projectMembersService.members());
 
   private readonly initializeEffect = effect(
     () => {
@@ -157,6 +204,15 @@ export class EditIssueModal {
         this.descriptionHtml.set(desc);
         this.status.set(issue.status);
         this.priority.set(issue.priority);
+        this.assigneeId.set(issue.assignee_id || null);
+        // Format due_date for date input (YYYY-MM-DD)
+        if (issue.due_date) {
+          const date = new Date(issue.due_date);
+          const formattedDate = date.toISOString().split('T')[0];
+          this.dueDate.set(formattedDate);
+        } else {
+          this.dueDate.set(null);
+        }
         // Set HTML in editor if it's HTML content
         if (this.descriptionEditor && desc) {
           this.descriptionEditor.setHtml(desc);
@@ -198,6 +254,8 @@ export class EditIssueModal {
         description: this.descriptionHtml().trim() || undefined,
         status: this.status(),
         priority: this.priority(),
+        assignee_id: this.assigneeId() || undefined,
+        due_date: this.dueDate() || undefined,
       };
 
       await this.issueService.updateIssue(this.issueId(), request);

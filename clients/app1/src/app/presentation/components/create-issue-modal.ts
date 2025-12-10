@@ -6,12 +6,14 @@ import {
   inject,
   input,
   ViewChild,
+  effect,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter } from 'shared-ui';
 import { Button, Input, TextEditor } from 'shared-ui';
 import { ToastService } from 'shared-ui';
 import { IssueService, CreateIssueRequest } from '../../application/services/issue.service';
+import { ProjectMembersService } from '../../application/services/project-members.service';
 
 type IssueType = 'task' | 'bug' | 'story' | 'epic';
 type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
@@ -81,6 +83,30 @@ type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
               </select>
             </div>
           </div>
+          <div class="create-issue-form_row">
+            <div class="create-issue-form_field">
+              <label class="create-issue-form_label">Assignee (optional)</label>
+              <select
+                class="create-issue-form_select"
+                [value]="assigneeId() || ''"
+                (change)="assigneeId.set($any($event.target).value || null)"
+              >
+                <option value="">Unassigned</option>
+                @for (member of projectMembers(); track member.user_id) {
+                  <option [value]="member.user_id">{{ member.user_name }}</option>
+                }
+              </select>
+            </div>
+            <div class="create-issue-form_field">
+              <label class="create-issue-form_label">Due Date (optional)</label>
+              <input
+                type="date"
+                class="create-issue-form_input"
+                [value]="dueDate() || ''"
+                (change)="dueDate.set($any($event.target).value || null)"
+              />
+            </div>
+          </div>
         </form>
       </lib-modal-content>
       <lib-modal-footer>
@@ -127,6 +153,15 @@ type IssuePriority = 'low' | 'medium' | 'high' | 'critical';
         @apply text-text-primary;
         @apply focus:outline-none focus:ring-2 focus:ring-primary-500;
       }
+
+      .create-issue-form_input {
+        @apply px-3 py-2;
+        @apply border border-border-default;
+        @apply rounded-md;
+        @apply bg-bg-primary;
+        @apply text-text-primary;
+        @apply focus:outline-none focus:ring-2 focus:ring-primary-500;
+      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -135,6 +170,7 @@ export class CreateIssueModal {
   private readonly issueService = inject(IssueService);
   private readonly toast = inject(ToastService);
   private readonly modal = inject(Modal);
+  private readonly projectMembersService = inject(ProjectMembersService);
 
   readonly projectId = input.required<string>();
 
@@ -143,9 +179,21 @@ export class CreateIssueModal {
   readonly descriptionHtml = signal('');
   readonly type = signal<IssueType>('task');
   readonly priority = signal<IssuePriority>('medium');
+  readonly assigneeId = signal<string | null>(null);
+  readonly dueDate = signal<string | null>(null);
   readonly isSubmitting = signal(false);
 
   @ViewChild('descriptionEditor') descriptionEditor?: TextEditor;
+
+  // Load project members when projectId changes
+  private readonly loadMembersEffect = effect(() => {
+    const id = this.projectId();
+    if (id) {
+      this.projectMembersService.loadMembers(id);
+    }
+  });
+
+  readonly projectMembers = computed(() => this.projectMembersService.members());
 
   readonly titleError = computed(() => {
     const value = this.title();
@@ -181,6 +229,8 @@ export class CreateIssueModal {
         type: this.type(),
         priority: this.priority(),
         status: 'todo', // Default status
+        assignee_id: this.assigneeId() || undefined,
+        due_date: this.dueDate() || undefined,
       };
 
       await this.issueService.createIssue(request);
@@ -194,6 +244,8 @@ export class CreateIssueModal {
       this.descriptionHtml.set('');
       this.type.set('task');
       this.priority.set('medium');
+      this.assigneeId.set(null);
+      this.dueDate.set(null);
       if (this.descriptionEditor) {
         this.descriptionEditor.setHtml('');
       }
