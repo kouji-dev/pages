@@ -8,9 +8,20 @@
   "allowedNonPeerDependencies": [
     "lexical",
     "@lexical/html",
+    "@lexical/history",
+    "@lexical/utils",
+    "@lexical/table",
+    "@lexical/selection",
+    "@lexical/text",
     "@lexical/rich-text",
+    "@lexical/plain-text",
+    "@lexical/overflow",
+    "@lexical/mark",
     "@lexical/list",
     "@lexical/link",
-    "@lexical/utils"
+    "@lexical/hashtag",
+    "@lexical/file",
+    "@lexical/code",
+    "@lexical/clipboard"
   ]
 }

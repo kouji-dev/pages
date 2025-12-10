@@ -43,7 +43,7 @@ services:
       - API_URL=${API_URL:-http://localhost:8002}
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
-    command: pnpm exec ng serve app1 --host 0.0.0.0 --port 4200 --poll 2000
+    command: pnpm exec ng serve app1 --host 0.0.0.0 --port 4200 --poll 1000
     depends_on:
       - api
     networks:
