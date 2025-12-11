@@ -11,6 +11,7 @@ from src.application.dtos.issue_activity import (
     IssueActivityListResponse,
     IssueActivityResponse,
 )
+from src.application.dtos.user import UserDTO
 from src.domain.exceptions import EntityNotFoundException
 from src.domain.repositories import IssueActivityRepository, IssueRepository
 from src.infrastructure.database.models import UserModel
@@ -91,12 +92,19 @@ class ListIssueActivitiesUseCase:
                     id=activity.id,
                     issue_id=activity.issue_id,
                     user_id=activity.user_id,
+                    user=(
+                        UserDTO(
+                            id=user.id,
+                            name=user.name,
+                            avatar_url=user.avatar_url,
+                        )
+                        if user
+                        else None
+                    ),
                     action=activity.action,
                     field_name=activity.field_name,
                     old_value=activity.old_value,
                     new_value=activity.new_value,
-                    user_name=user.name if user else None,
-                    user_email=user.email if user else None,
                     created_at=activity.created_at,
                 )
             )

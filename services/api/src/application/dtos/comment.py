@@ -1,25 +1,39 @@
-"""Comment DTOs."""
+"""Comment DTOs.
+
+Follows Clean Architecture and DDD principles:
+- Uses UserDTO for embedded user information
+- Eliminates field duplication
+- Provides rich read models for the UI
+"""
 
 from datetime import datetime
 from uuid import UUID
 
 from pydantic import BaseModel, Field, field_validator
 
+from .user import UserDTO
+
 
 class CommentResponse(BaseModel):
-    """Response DTO for comment data."""
+    """Response DTO for comment data.
+
+    Includes embedded UserDTO to provide author information without
+    requiring additional queries. This is essential for rendering
+    comment threads efficiently.
+    """
 
     id: UUID
     entity_type: str = Field(..., description="Entity type: issue or page")
     entity_id: UUID
     issue_id: UUID | None = None
     page_id: UUID | None = None
+
+    # User reference and embedded data
     user_id: UUID
+    user: UserDTO = Field(..., description="Comment author information")
+
     content: str
     is_edited: bool = Field(default=False, description="Whether the comment has been edited")
-    user_name: str = Field(..., description="User name who created the comment")
-    user_email: str = Field(..., description="User email who created the comment")
-    avatar_url: str | None = Field(None, description="User avatar URL")
     created_at: datetime
     updated_at: datetime
 
@@ -30,19 +44,23 @@ class CommentResponse(BaseModel):
 
 
 class CommentListItemResponse(BaseModel):
-    """Response DTO for comment in list view."""
+    """Response DTO for comment in list view.
+
+    Optimized for comment threads with embedded author information.
+    """
 
     id: UUID
     entity_type: str
     entity_id: UUID
     issue_id: UUID | None = None
     page_id: UUID | None = None
+
+    # User reference and embedded data
     user_id: UUID
+    user: UserDTO = Field(..., description="Comment author information")
+
     content: str
     is_edited: bool
-    user_name: str
-    user_email: str
-    avatar_url: str | None = None
     created_at: datetime
     updated_at: datetime
 

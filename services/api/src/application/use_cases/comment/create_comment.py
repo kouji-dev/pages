@@ -7,6 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dtos.comment import CommentResponse, CreateCommentRequest
+from src.application.dtos.user import UserDTO
 from src.application.services.notification_service import NotificationService
 from src.application.utils.mentions import parse_mentions
 from src.domain.entities import Comment
@@ -193,11 +194,13 @@ class CreateCommentUseCase:
             entity_id=created_comment.entity_id,
             issue_id=created_comment.issue_id,
             user_id=created_comment.user_id,
+            user=UserDTO(
+                id=user_model.id,
+                name=user_model.name,
+                avatar_url=user_model.avatar_url,
+            ),
             content=created_comment.content,
             is_edited=created_comment.is_edited,
-            user_name=user_model.name,
-            user_email=user_model.email,
-            avatar_url=user_model.avatar_url,
             created_at=created_comment.created_at,
             updated_at=created_comment.updated_at,
         )

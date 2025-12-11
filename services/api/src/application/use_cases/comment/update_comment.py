@@ -7,6 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dtos.comment import CommentResponse, UpdateCommentRequest
+from src.application.dtos.user import UserDTO
 from src.domain.exceptions import EntityNotFoundException, ValidationException
 from src.domain.repositories import CommentRepository
 from src.infrastructure.database.models import UserModel
@@ -93,11 +94,13 @@ class UpdateCommentUseCase:
             entity_id=updated_comment.entity_id,
             issue_id=updated_comment.issue_id,
             user_id=updated_comment.user_id,
+            user=UserDTO(
+                id=user_model.id,
+                name=user_model.name,
+                avatar_url=user_model.avatar_url,
+            ),
             content=updated_comment.content,
             is_edited=updated_comment.is_edited,
-            user_name=user_model.name,
-            user_email=user_model.email,
-            avatar_url=user_model.avatar_url,
             created_at=updated_comment.created_at,
             updated_at=updated_comment.updated_at,
         )

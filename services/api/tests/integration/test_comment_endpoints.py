@@ -80,8 +80,8 @@ async def test_create_comment_success(client: AsyncClient, test_user, db_session
     assert data["issue_id"] == str(issue.id)
     assert data["user_id"] == str(test_user.id)
     assert data["is_edited"] is False
-    assert data["user_name"] == test_user.name
-    assert data["user_email"] == test_user.email.value
+    assert data["user"]["id"] == str(test_user.id)
+    assert data["user"]["name"] == test_user.name
     assert "id" in data
     assert "created_at" in data
 

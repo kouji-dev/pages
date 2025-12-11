@@ -8,6 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dtos.comment import CommentListItemResponse, CommentListResponse
+from src.application.dtos.user import UserDTO
 from src.domain.exceptions import EntityNotFoundException
 from src.domain.repositories import CommentRepository, PageRepository
 from src.infrastructure.database.models import UserModel
@@ -87,11 +88,13 @@ class ListPageCommentsUseCase:
                         entity_id=comment.entity_id,
                         page_id=comment.page_id,
                         user_id=comment.user_id,
+                        user=UserDTO(
+                            id=user.id,
+                            name=user.name,
+                            avatar_url=user.avatar_url,
+                        ),
                         content=comment.content,
                         is_edited=comment.is_edited,
-                        user_name=user.name,
-                        user_email=user.email,
-                        avatar_url=user.avatar_url,
                         created_at=comment.created_at,
                         updated_at=comment.updated_at,
                     )

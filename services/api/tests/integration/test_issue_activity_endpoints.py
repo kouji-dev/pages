@@ -116,8 +116,8 @@ async def test_list_issue_activities_success(client: AsyncClient, test_user, db_
     assert updated_activity["old_value"] == "todo"
     assert updated_activity["new_value"] == "in_progress"
     assert updated_activity["user_id"] == str(test_user.id)
-    assert updated_activity["user_name"] == test_user.name
-    assert updated_activity["user_email"] == test_user.email.value
+    assert updated_activity["user"]["id"] == str(test_user.id)
+    assert updated_activity["user"]["name"] == test_user.name
 
 
 @pytest.mark.asyncio

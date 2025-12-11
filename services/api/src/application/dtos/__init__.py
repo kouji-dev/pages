@@ -74,7 +74,9 @@ from src.application.dtos.project_member import (
 from src.application.dtos.user import (
     EmailUpdateRequest,
     PasswordUpdateRequest,
-    UserResponse,
+    UserDTO,
+    UserProfileDTO,
+    UserResponse,  # Alias for backward compatibility
     UserUpdateRequest,
 )
 
@@ -89,7 +91,9 @@ __all__ = [
     "PasswordResetConfirm",
     "RefreshTokenRequest",
     # User DTOs
-    "UserResponse",
+    "UserDTO",
+    "UserProfileDTO",
+    "UserResponse",  # Alias for backward compatibility
     "UserUpdateRequest",
     "EmailUpdateRequest",
     "PasswordUpdateRequest",
