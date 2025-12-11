@@ -1798,38 +1798,39 @@ This phase focuses on building the foundational features required for a function
 **Priority**: Critical  
 **Estimated Time**: 7-10 days  
 **Dependencies**: 1.3.1, 1.1.5  
-**Assigned To**: HWIMDA2
+**Assigned To**: HWIMDA2  
+**Status**: ✅ Complete
 
 **Tasks**:
 
-- [ ] Create project list page
-  - [ ] Display projects in grid/list view
-  - [ ] Project card component
-  - [ ] Create project button/modal
-  - [ ] Search/filter projects
-- [ ] Create project detail page
-  - [ ] Project header with name, description
-  - [ ] Project tabs (Issues, Settings, Members)
-  - [ ] Project settings tab
-  - [ ] Project members tab
-- [ ] Create project creation modal/form
-  - [ ] Name input
-  - [ ] Key input (with auto-generation)
-  - [ ] Description textarea
-- [ ] Create project settings page
-  - [ ] Edit project details
-  - [ ] Delete project (with confirmation)
-- [ ] Create project member management UI
-  - [ ] Member list
-  - [ ] Add member dropdown/search
-  - [ ] Remove member functionality
-- [ ] Implement project context/provider
-- [ ] Add loading states and error handling
+- [x] Create project list page
+  - [x] Display projects in grid/list view
+  - [x] Project card component
+  - [x] Create project button/modal
+  - [x] Search/filter projects
+- [x] Create project detail page
+  - [x] Project header with name, description
+  - [x] Project tabs (Issues, Settings, Members)
+  - [x] Project settings tab
+  - [x] Project members tab
+- [x] Create project creation modal/form
+  - [x] Name input
+  - [x] Key input (with auto-generation)
+  - [x] Description textarea
+- [x] Create project settings page
+  - [x] Edit project details
+  - [x] Delete project (with confirmation)
+- [x] Create project member management UI
+  - [x] Member list
+  - [x] Add member dropdown/search
+  - [x] Remove member functionality
+- [x] Implement project context/provider
+- [x] Add loading states and error handling
 
 **Deliverables**:
 
-- Project management UI
-- Project creation and settings
+- ✅ Project management UI
+- ✅ Project creation and settings
 
 ---
 
@@ -1844,7 +1845,7 @@ This phase focuses on building the foundational features required for a function
 
 - [x] Create issue list page
   - [x] Issue table/list view
-  - [ ] Issue card component
+  - [x] Issue card component (implemented in Kanban board, table view used for list)
   - [x] Column headers (Key, Title, Type, Status, Assignee, Priority, Created)
   - [x] Sorting functionality (UI implemented, backend integration complete - frontend sends sort_by and sort_order parameters)
   - [x] Basic filtering UI (status, assignee, type) - using lib-select component
@@ -1853,6 +1854,8 @@ This phase focuses on building the foundational features required for a function
 - [x] Create issue detail page
   - [x] Issue header (key, title, status badge)
   - [x] Issue metadata sidebar (Type, Priority, Assignee, Reporter, Created date, Due date)
+    - [x] Assignee display with name (shows "Unassigned" when no assignee)
+    - [x] Reporter display with name (only shown when reporter exists)
   - [x] Issue description section
   - [x] Comments section
   - [x] Attachments section
@@ -1907,17 +1910,17 @@ This phase focuses on building the foundational features required for a function
     - [x] Integrate Lexical core package
     - [x] Create Lexical renderer service/component for displaying rich text (using TextEditor in read-only mode)
     - [x] Support HTML content rendering
-    - [ ] Handle @mentions in rendered content (pending mention plugin)
+    - [x] Handle @mentions in rendered content (mention plugin implemented and registered)
 - [x] Create comment input component
   - [x] Basic textarea editor (rich text editor using Lexical)
-  - [ ] @mention autocomplete (user picker) - pending Lexical mention plugin
+  - [x] @mention autocomplete (user picker) - MentionPlugin implemented with TextEditorMentionService
   - [x] Submit button
   - [ ] Preview mode (optional, can be added later)
   - [x] Enhance comment input with Lexical editor
     - [x] Integrate Lexical core package for Angular
     - [x] Create Lexical editor wrapper component
     - [x] Implement toolbar with formatting options (bold, italic, headings, lists, links)
-    - [ ] Add @mention autocomplete integration with Lexical (pending mention plugin)
+    - [x] Add @mention autocomplete integration with Lexical (MentionPlugin registered in TextEditor)
     - [x] Implement content serialization (HTML format)
     - [ ] Add preview mode toggle (optional)
     - [x] Handle content validation and sanitization
@@ -2394,40 +2397,33 @@ This phase focuses on building the foundational features required for a function
   - NotificationModel with table `notifications` (Alembic migration)
   - Fields: user_id, type, title, content, entity_type, entity_id, read, data (JSON)
   - Relationship: User → Notifications (one-to-many)
-  
 - **Domain Layer**:
   - Notification entity with validation and business logic
   - NotificationType enum (11 types: issue_assigned, issue_mentioned, issue_commented, issue_status_changed, issue_priority_changed, issue_due_date_changed, page_mentioned, page_commented, organization_invitation, project_invitation, generic)
   - NotificationRepository interface
-  
 - **Application Layer**:
   - DTOs: NotificationResponse, NotificationListResponse, UnreadCountResponse, MarkAsReadResponse, MarkAllAsReadResponse
   - Use cases: ListNotificationsUseCase, MarkAsReadUseCase, MarkAllAsReadUseCase, GetUnreadCountUseCase
   - NotificationService with helper methods for creating specific notification types
-  
 - **Presentation Layer**:
   - Endpoints: GET /api/v1/notifications, PUT /api/v1/notifications/{id}/read, PUT /api/v1/notifications/read-all, GET /api/v1/notifications/unread-count
   - Authentication required for all endpoints
   - Permission checks: users can only access their own notifications
-  
 - **Integration with Existing Use Cases**:
   - UpdateIssueUseCase: Automatic notifications on issue assignment and status changes
   - CreateCommentUseCase: Automatic notifications on new comments and @mentions
   - Robust error handling: notification failures don't affect main operations
-  
-- **Tests**: 
+- **Tests**:
   - 9 unit tests for notification use cases
   - 7 integration tests for API endpoints
   - 4 functional tests for E2E workflows
   - All tests passing (20/20 ✅)
   - Integration tests updated for UpdateIssueUseCase and CreateCommentUseCase
-  
 - **Code Quality**:
   - Formatted with Black
   - Validated with Ruff
   - Type checked with MyPy
   - All CI checks passing
-  
 - **Deferred Features**:
   - Email notifications (pending email service setup - SendGrid/AWS SES)
   - Background job queue (pending when email notifications are implemented)

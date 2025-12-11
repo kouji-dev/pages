@@ -297,10 +297,14 @@ async def list_project_members(
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
     page: Annotated[int, Query(ge=1, description="Page number (1-based)")] = 1,
     limit: Annotated[int, Query(ge=1, le=100, description="Number of members per page")] = 20,
+    search: Annotated[
+        str | None, Query(description="Search query (filters by name or email)")
+    ] = None,
 ) -> ProjectMemberListResponse:
     """List members of a project.
 
     Requires user to be a member of the project's organization.
+    Supports searching by user name or email.
     """
     from fastapi import HTTPException
 
@@ -312,7 +316,7 @@ async def list_project_members(
     # Verify user is a member of the organization
     await require_organization_member(project.organization_id, current_user, permission_service)
 
-    return await use_case.execute(str(project_id), page=page, limit=limit)
+    return await use_case.execute(str(project_id), page=page, limit=limit, search=search)
 
 
 @router.put(

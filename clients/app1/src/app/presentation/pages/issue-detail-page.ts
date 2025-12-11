@@ -119,16 +119,22 @@ import { BackToPage } from '../components/back-to-page';
                   <span class="issue-detail-page_metadata-label">Priority</span>
                   <app-issue-priority-indicator [priority]="issue()!.priority" />
                 </div>
-                @if (issue()?.assignee_id) {
-                  <div class="issue-detail-page_metadata-item">
-                    <span class="issue-detail-page_metadata-label">Assignee</span>
-                    <span class="issue-detail-page_metadata-value">Assigned</span>
-                  </div>
-                }
-                @if (issue()?.reporter_id) {
+                <div class="issue-detail-page_metadata-item">
+                  <span class="issue-detail-page_metadata-label">Assignee</span>
+                  <span class="issue-detail-page_metadata-value">
+                    @if (issue()?.assignee) {
+                      {{ issue()!.assignee!.name }}
+                    } @else {
+                      Unassigned
+                    }
+                  </span>
+                </div>
+                @if (issue()?.reporter) {
                   <div class="issue-detail-page_metadata-item">
                     <span class="issue-detail-page_metadata-label">Reporter</span>
-                    <span class="issue-detail-page_metadata-value">Reported</span>
+                    <span class="issue-detail-page_metadata-value">{{
+                      issue()!.reporter!.name
+                    }}</span>
                   </div>
                 }
                 @if (issue()?.due_date) {
