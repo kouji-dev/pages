@@ -92,11 +92,15 @@ class ListIssueActivitiesUseCase:
                     id=activity.id,
                     issue_id=activity.issue_id,
                     user_id=activity.user_id,
-                    user=UserDTO(
-                        id=user.id,
-                        name=user.name,
-                        avatar_url=user.avatar_url,
-                    ) if user else None,
+                    user=(
+                        UserDTO(
+                            id=user.id,
+                            name=user.name,
+                            avatar_url=user.avatar_url,
+                        )
+                        if user
+                        else None
+                    ),
                     action=activity.action,
                     field_name=activity.field_name,
                     old_value=activity.old_value,
