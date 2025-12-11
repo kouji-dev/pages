@@ -4,7 +4,7 @@ from math import ceil
 from uuid import UUID
 
 import structlog
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dtos.project_member import (
@@ -157,7 +157,7 @@ class ListProjectMembersUseCase:
         self._session = session
 
     async def execute(
-        self, project_id: str, page: int = 1, limit: int = 20
+        self, project_id: str, page: int = 1, limit: int = 20, search: str | None = None
     ) -> ProjectMemberListResponse:
         """Execute list project members.
 
@@ -165,6 +165,7 @@ class ListProjectMembersUseCase:
             project_id: Project ID
             page: Page number (1-based)
             limit: Number of members per page
+            search: Optional search query to filter by user name or email
 
         Returns:
             Member list response DTO with pagination
@@ -179,6 +180,7 @@ class ListProjectMembersUseCase:
             project_id=project_id,
             page=page,
             limit=limit,
+            search=search,
         )
 
         # Verify project exists
@@ -191,22 +193,44 @@ class ListProjectMembersUseCase:
 
         offset = (page - 1) * limit
 
-        # Count total members
-        count_result = await self._session.execute(
-            select(func.count())
-            .select_from(ProjectMemberModel)
+        # Build base query
+        base_query = (
+            select(ProjectMemberModel, UserModel)
+            .join(UserModel, ProjectMemberModel.user_id == UserModel.id)
             .where(ProjectMemberModel.project_id == project_uuid)
         )
+
+        # Add search filter if provided
+        if search:
+            search_pattern = f"%{search.lower()}%"
+            base_query = base_query.where(
+                or_(
+                    func.lower(UserModel.name).like(search_pattern),
+                    func.lower(UserModel.email).like(search_pattern),
+                )
+            )
+
+        # Count total members (with search filter if applicable)
+        count_query = (
+            select(func.count())
+            .select_from(ProjectMemberModel)
+            .join(UserModel, ProjectMemberModel.user_id == UserModel.id)
+            .where(ProjectMemberModel.project_id == project_uuid)
+        )
+        if search:
+            search_pattern = f"%{search.lower()}%"
+            count_query = count_query.where(
+                or_(
+                    func.lower(UserModel.name).like(search_pattern),
+                    func.lower(UserModel.email).like(search_pattern),
+                )
+            )
+        count_result = await self._session.execute(count_query)
         total_members: int = count_result.scalar_one()
 
         # Fetch members with user details
         members_result = await self._session.execute(
-            select(ProjectMemberModel, UserModel)
-            .join(UserModel, ProjectMemberModel.user_id == UserModel.id)
-            .where(ProjectMemberModel.project_id == project_uuid)
-            .offset(offset)
-            .limit(limit)
-            .order_by(ProjectMemberModel.created_at)
+            base_query.offset(offset).limit(limit).order_by(ProjectMemberModel.created_at)
         )
 
         members_list = []
