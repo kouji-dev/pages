@@ -1,50 +1,43 @@
-import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  computed,
+  signal,
+  effect,
+  model,
+} from '@angular/core';
+import { Select, type SelectOption } from '../../select/select';
 import { FontSizePlugin, FontSize } from '../plugins/font-size-plugin';
 
 @Component({
   selector: 'lib-toolbar-font-size-select',
-  imports: [CommonModule],
+  imports: [Select],
   template: `
-    <select
+    <lib-select
+      [options]="sizeOptions()"
+      [model]="sizeModel()"
+      (modelChange)="onSizeChange($event)"
+      [placeholder]="'Size'"
       class="toolbar-font-size-select"
-      [value]="selectedSize()"
-      (change)="onSizeChange($event)"
-      [attr.title]="'Font Size'"
-    >
-      <option value="">Default</option>
-      <option value="xs">XS</option>
-      <option value="sm">SM</option>
-      <option value="md">MD</option>
-      <option value="lg">LG</option>
-      <option value="xl">XL</option>
-    </select>
+    />
   `,
   styles: [
     `
       @reference "#theme";
 
-      .toolbar-font-size-select {
-        @apply px-2 py-1;
-        @apply text-sm;
-        @apply border border-border-default;
-        @apply rounded;
-        @apply bg-bg-primary;
-        @apply text-text-primary;
-        @apply cursor-pointer;
-        @apply focus:outline-none;
-        @apply focus:ring-2;
-        @apply focus:ring-primary-500;
-        @apply focus:border-primary-500;
-        @apply transition-colors;
-        @apply hover:border-border-hover;
-        min-width: 4rem;
-        height: 2rem;
+      :host {
+        display: inline-block;
       }
 
-      .toolbar-font-size-select:disabled {
-        @apply opacity-50;
-        @apply cursor-not-allowed;
+      .toolbar-font-size-select {
+        min-width: 5rem;
+      }
+
+      :host ::ng-deep .select-trigger {
+        @apply h-8;
+        @apply px-2;
+        @apply text-sm;
       }
     `,
   ],
@@ -53,17 +46,30 @@ import { FontSizePlugin, FontSize } from '../plugins/font-size-plugin';
 export class ToolbarFontSizeSelect {
   private readonly plugin = inject(FontSizePlugin);
 
-  readonly selectedSize = computed(() => {
-    return this.plugin.currentFontSize() || '';
-  });
+  readonly sizeOptions = signal<SelectOption<FontSize | ''>[]>([
+    { value: '', label: 'Default' },
+    { value: 'xs', label: 'XS' },
+    { value: 'sm', label: 'SM' },
+    { value: 'md', label: 'MD' },
+    { value: 'lg', label: 'LG' },
+    { value: 'xl', label: 'XL' },
+  ]);
 
-  onSizeChange(event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    const value = select.value;
+  readonly sizeModel = signal<FontSize | ''>('');
+
+  constructor() {
+    // Sync plugin's current font size to model (when selection changes)
+    effect(() => {
+      const currentSize = this.plugin.currentFontSize();
+      const modelValue = currentSize || '';
+      this.sizeModel.set(modelValue);
+    });
+  }
+
+  onSizeChange(value: FontSize | '' | null): void {
     if (value) {
       this.plugin.setFontSize(value as FontSize);
     } else {
-      // Remove font size (reset to default)
       this.plugin.removeFontSize();
     }
   }

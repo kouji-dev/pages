@@ -29,9 +29,15 @@ import {
   type SidenavItem,
 } from 'shared-ui';
 import { JsonPipe } from '@angular/common';
+import { provideAttachmentService, provideMentionListProvider } from 'shared-ui';
+import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-editor-services';
 
 @Component({
   selector: 'app-demo',
+  providers: [
+    provideAttachmentService(DemoAttachmentService),
+    provideMentionListProvider(DemoMentionListProvider),
+  ],
   imports: [
     Button,
     Icon,
@@ -890,8 +896,9 @@ import { JsonPipe } from '@angular/common';
             style="margin-bottom: 2rem; color: var(--color-text-secondary);"
           >
             A powerful rich text editor built with Lexical. Supports formatting, headings, lists,
-            links, quotes, font sizes, and more. Use the controls below to toggle between different
-            states and see all formatting options.
+            links, quotes, font sizes, and more. The editor can serialize content to both HTML and
+            JSON formats. Use the controls below to toggle between different states, switch between
+            HTML and JSON modes, and see all formatting options.
           </p>
 
           <div class="demo_grid">
@@ -932,6 +939,13 @@ import { JsonPipe } from '@angular/common';
                   <lib-button variant="ghost" size="sm" (clicked)="showToolbar.set(!showToolbar())">
                     {{ showToolbar() ? 'Hide Toolbar' : 'Show Toolbar' }}
                   </lib-button>
+                  <lib-button
+                    variant="ghost"
+                    size="sm"
+                    (clicked)="editorMode.set(editorMode() === 'html' ? 'json' : 'html')"
+                  >
+                    Switch to {{ editorMode() === 'html' ? 'JSON' : 'HTML' }} Mode
+                  </lib-button>
                   <span
                     style="margin-left: auto; display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--color-text-secondary);"
                   >
@@ -954,6 +968,7 @@ import { JsonPipe } from '@angular/common';
 
                 <!-- Editor -->
                 <lib-text-editor
+                  #demoEditor
                   [placeholder]="
                     editorDisabled()
                       ? 'Editor is disabled'
@@ -964,12 +979,13 @@ import { JsonPipe } from '@angular/common';
                   [showToolbar]="showToolbar()"
                   [disabled]="editorDisabled()"
                   [readOnly]="editorReadOnly()"
-                  [initialValue]="editorInitialValue()"
+                  [initialValue]="editorMode() === 'html' ? editorInitialValue() : undefined"
                   (htmlChange)="editorHtml.set($event)"
                   (valueChange)="editorText.set($event)"
+                  (jsonChange)="editorJson.set($event)"
                 />
 
-                <!-- HTML Output -->
+                <!-- HTML/JSON Output -->
                 <div
                   style="margin-top: 1rem; padding: 1rem; background: var(--color-bg-secondary); border-radius: 0.5rem;"
                 >
@@ -977,50 +993,46 @@ import { JsonPipe } from '@angular/common';
                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;"
                   >
                     <p style="font-size: 0.875rem; color: var(--color-text-secondary); margin: 0;">
-                      HTML Output:
+                      {{ editorMode() === 'html' ? 'HTML' : 'JSON' }} Output:
                     </p>
-                    <lib-button
-                      variant="ghost"
-                      size="sm"
-                      (clicked)="showHtmlOutput.set(!showHtmlOutput())"
-                    >
-                      {{ showHtmlOutput() ? 'Hide' : 'Show' }} HTML
-                    </lib-button>
+                    <div style="display: flex; gap: 0.5rem;">
+                      @if (editorMode() === 'html') {
+                        <lib-button
+                          variant="ghost"
+                          size="sm"
+                          (clicked)="showHtmlOutput.set(!showHtmlOutput())"
+                        >
+                          {{ showHtmlOutput() ? 'Hide' : 'Show' }} HTML
+                        </lib-button>
+                      } @else {
+                        <lib-button
+                          variant="ghost"
+                          size="sm"
+                          (clicked)="showJsonOutput.set(!showJsonOutput())"
+                        >
+                          {{ showJsonOutput() ? 'Hide' : 'Show' }} JSON
+                        </lib-button>
+                      }
+                      <lib-button
+                        variant="ghost"
+                        size="sm"
+                        (clicked)="loadFromJson()"
+                        [disabled]="!editorJson()"
+                      >
+                        Load from JSON
+                      </lib-button>
+                    </div>
                   </div>
-                  @if (showHtmlOutput()) {
+                  @if (editorMode() === 'html' && showHtmlOutput()) {
                     <pre
                       style="font-size: 0.75rem; overflow-x: auto; max-height: 200px; overflow-y: auto; margin: 0; padding: 0.5rem; background: var(--color-bg-primary); border-radius: 0.25rem;"
                       >{{ editorHtml() || '(empty)' }}</pre
                     >
-                  }
-                </div>
-
-                <!-- Rendered Output -->
-                <div
-                  style="margin-top: 1rem; padding: 1rem; border: 1px solid var(--color-border-default); border-radius: 0.5rem; min-height: 150px;"
-                >
-                  <div
-                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;"
-                  >
-                    <p style="font-size: 0.875rem; color: var(--color-text-secondary); margin: 0;">
-                      Rendered Output:
-                    </p>
-                    <lib-button
-                      variant="ghost"
-                      size="sm"
-                      (clicked)="showRenderedOutput.set(!showRenderedOutput())"
+                  } @else if (editorMode() === 'json' && showJsonOutput()) {
+                    <pre
+                      style="font-size: 0.75rem; overflow-x: auto; max-height: 200px; overflow-y: auto; margin: 0; padding: 0.5rem; background: var(--color-bg-primary); border-radius: 0.25rem;"
+                      >{{ (editorJson() | json) || '(empty)' }}</pre
                     >
-                      {{ showRenderedOutput() ? 'Hide' : 'Show' }} Preview
-                    </lib-button>
-                  </div>
-                  @if (showRenderedOutput()) {
-                    @if (editorHtml()) {
-                      <div [innerHTML]="editorHtml()"></div>
-                    } @else {
-                      <p style="color: var(--color-text-secondary); font-style: italic; margin: 0;">
-                        Type in the editor above to see rendered output here.
-                      </p>
-                    }
                   }
                 </div>
               </div>
@@ -1247,12 +1259,15 @@ export class Demo {
   // Text Editor demo values
   readonly editorHtml = signal('');
   readonly editorText = signal('');
+  readonly editorJson = signal<any | null>(null);
   readonly editorDisabled = signal(false);
   readonly editorReadOnly = signal(false);
   readonly showToolbar = signal(true);
-  readonly showHtmlOutput = signal(true);
-  readonly showRenderedOutput = signal(true);
+  readonly showHtmlOutput = signal(false);
+  readonly showJsonOutput = signal(true);
+  readonly editorMode = signal<'html' | 'json'>('json');
   readonly editorInitialValue = signal<string | undefined>(undefined);
+  readonly editorInitialJson = signal<any>(null);
 
   // Form integration
   readonly formTitle = signal('');
@@ -1294,15 +1309,39 @@ export class Demo {
   `;
 
   loadFormattedContent(): void {
-    this.editorInitialValue.set(this.formattedContentExample);
-    this.toast.info('Formatted content loaded');
+    if (this.demoEditor) {
+      // Always load as HTML first (works for both modes)
+      this.demoEditor.setHtml(this.formattedContentExample);
+      // Update the initial value for HTML mode
+      this.editorInitialValue.set(this.formattedContentExample);
+      // Get JSON for JSON mode
+      const json = this.demoEditor.getJson();
+      if (json) {
+        this.editorInitialJson.set(json);
+      }
+      const mode = this.editorMode();
+      this.toast.info(`Formatted content loaded (${mode.toUpperCase()} mode)`);
+    }
   }
 
   clearEditor(): void {
     this.editorInitialValue.set('');
+    this.editorInitialJson.set(null);
     this.editorHtml.set('');
     this.editorText.set('');
+    this.editorJson.set(null);
+    if (this.demoEditor) {
+      this.demoEditor.setHtml('');
+    }
     this.toast.info('Editor cleared');
+  }
+
+  loadFromJson(): void {
+    const json = this.editorJson();
+    if (json && this.demoEditor) {
+      this.demoEditor.setJson(json);
+      this.toast.info('Content loaded from JSON');
+    }
   }
 
   onFormSubmit(): void {
@@ -1325,6 +1364,7 @@ export class Demo {
   @ViewChild('positionDropdownTemplate') positionDropdownTemplate!: TemplateRef<any>;
   @ViewChild('iconDropdownTemplate') iconDropdownTemplate!: TemplateRef<any>;
   @ViewChild('dataDropdownTemplate') dataDropdownTemplate!: TemplateRef<any>;
+  @ViewChild('demoEditor') demoEditor!: TextEditor;
 
   toggleLoading(): void {
     this.loadingButton.update((loading) => !loading);
