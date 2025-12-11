@@ -3,11 +3,14 @@
 from uuid import UUID
 
 import structlog
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dtos.issue import IssueResponse
+from src.application.dtos.user import UserDTO
 from src.domain.exceptions import EntityNotFoundException
 from src.domain.repositories import IssueRepository, ProjectRepository
+from src.infrastructure.database.models import UserModel
 
 logger = structlog.get_logger()
 
@@ -62,7 +65,42 @@ class GetIssueUseCase:
         # Generate issue key (PROJ-123 format)
         issue_key = issue.generate_key(project.key)
 
-        # Convert to response DTO with key
+        # Load user details for reporter and assignee
+        user_ids = []
+        if issue.reporter_id:
+            user_ids.append(issue.reporter_id)
+        if issue.assignee_id:
+            user_ids.append(issue.assignee_id)
+
+        users_map = {}
+        if user_ids:
+            result = await self._session.execute(
+                select(UserModel).where(UserModel.id.in_(user_ids))
+            )
+            users = result.scalars().all()
+            users_map = {user.id: user for user in users}
+
+        # Build UserDTO for reporter
+        reporter_dto = None
+        if issue.reporter_id and issue.reporter_id in users_map:
+            reporter = users_map[issue.reporter_id]
+            reporter_dto = UserDTO(
+                id=reporter.id,
+                name=reporter.name,
+                avatar_url=reporter.avatar_url,
+            )
+
+        # Build UserDTO for assignee
+        assignee_dto = None
+        if issue.assignee_id and issue.assignee_id in users_map:
+            assignee = users_map[issue.assignee_id]
+            assignee_dto = UserDTO(
+                id=assignee.id,
+                name=assignee.name,
+                avatar_url=assignee.avatar_url,
+            )
+
+        # Convert to response DTO with key and user details
         issue_dict = {
             "id": issue.id,
             "project_id": issue.project_id,
@@ -74,7 +112,9 @@ class GetIssueUseCase:
             "status": issue.status,
             "priority": issue.priority,
             "reporter_id": issue.reporter_id,
+            "reporter": reporter_dto,
             "assignee_id": issue.assignee_id,
+            "assignee": assignee_dto,
             "due_date": issue.due_date,
             "story_points": issue.story_points,
             "created_at": issue.created_at,

@@ -503,3 +503,125 @@ async def test_issue_search_workflow(
     search_results2 = search_response2.json()["issues"]
     search_ids2 = [i["id"] for i in search_results2]
     assert issue2["id"] in search_ids2
+
+
+@pytest.mark.asyncio
+async def test_get_issue_with_reporter_and_assignee_userdto(
+    client: AsyncClient,
+    unique_email: str,
+    test_password: str,
+) -> None:
+    """Test GET /api/v1/issues/{issue_id} returns UserDTO for reporter and assignee.
+
+    This workflow validates that:
+    - Issue details include reporter with full UserDTO (id, name, avatar_url)
+    - Issue details include assignee with full UserDTO when assigned
+    - UserDTO structure is correctly embedded in the response
+    """
+    # Step 1: Create first user (reporter)
+    reporter_email = unique_email
+    reporter_data = await create_test_user(
+        client,
+        email=reporter_email,
+        password=test_password,
+        name="Reporter User",
+    )
+    reporter_client, reporter_headers, reporter_info = await authenticated_client(
+        client, reporter_data
+    )
+    reporter_id = reporter_info["id"]
+
+    # Step 2: Create organization and project
+    org = await create_test_organization(
+        reporter_client,
+        reporter_headers,
+        name="Test Org UserDTO",
+        slug="test-org-userdto",
+    )
+    project = await create_test_project(
+        reporter_client,
+        reporter_headers,
+        organization_id=org["id"],
+        name="Test Project UserDTO",
+        key="USERDTO",
+    )
+
+    # Step 3: Create second user (assignee) and add to organization
+    assignee_email = f"assignee_{unique_email}"
+    assignee_data = await create_test_user(
+        client,
+        email=assignee_email,
+        password=test_password,
+        name="Assignee User",
+    )
+    assignee_id = assignee_data["id"]
+
+    # Add assignee to organization
+    add_member_response = await reporter_client.post(
+        f"/api/v1/organizations/{org['id']}/members",
+        headers=reporter_headers,
+        json={"user_id": assignee_id, "role": "member"},
+    )
+    assert add_member_response.status_code == 201
+
+    # Step 4: Create issue as reporter
+    issue = await create_test_issue(
+        reporter_client,
+        reporter_headers,
+        project["id"],
+        "Test Issue with UserDTO",
+        "Testing reporter and assignee UserDTO structure",
+        issue_type="task",
+        status="todo",
+        priority="medium",
+    )
+    issue_id = issue["id"]
+
+    # Step 5: Assign issue to assignee
+    update_response = await reporter_client.put(
+        f"/api/v1/issues/{issue_id}",
+        headers=reporter_headers,
+        json={"assignee_id": assignee_id},
+    )
+    assert update_response.status_code == 200
+
+    # Step 6: Get issue details
+    get_response = await reporter_client.get(
+        f"/api/v1/issues/{issue_id}",
+        headers=reporter_headers,
+    )
+    assert get_response.status_code == 200
+    issue_details = get_response.json()
+
+    # Step 7: Verify reporter UserDTO structure
+    assert "reporter" in issue_details
+    assert issue_details["reporter"] is not None
+    assert "id" in issue_details["reporter"]
+    assert "name" in issue_details["reporter"]
+    assert "avatar_url" in issue_details["reporter"]
+    assert issue_details["reporter"]["id"] == reporter_id
+    assert issue_details["reporter"]["name"] == "Reporter User"
+
+    # Step 8: Verify reporter_id is also present
+    assert "reporter_id" in issue_details
+    assert issue_details["reporter_id"] == reporter_id
+
+    # Step 9: Verify assignee UserDTO structure
+    assert "assignee" in issue_details
+    assert issue_details["assignee"] is not None
+    assert "id" in issue_details["assignee"]
+    assert "name" in issue_details["assignee"]
+    assert "avatar_url" in issue_details["assignee"]
+    assert issue_details["assignee"]["id"] == assignee_id
+    assert issue_details["assignee"]["name"] == "Assignee User"
+
+    # Step 10: Verify assignee_id is also present
+    assert "assignee_id" in issue_details
+    assert issue_details["assignee_id"] == assignee_id
+
+    # Step 11: Verify basic issue data
+    assert issue_details["title"] == "Test Issue with UserDTO"
+    assert issue_details["key"] == f"USERDTO-{issue_details['issue_number']}"
+    assert issue_details["type"] == "task"
+    assert issue_details["status"] == "todo"
+    assert issue_details["priority"] == "medium"

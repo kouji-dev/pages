@@ -1,6 +1,6 @@
 """Unit tests for issue use cases."""
 
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
 import pytest
@@ -247,6 +247,16 @@ class TestGetIssueUseCase:
         mock_issue_repository.get_by_id.return_value = test_issue
         mock_project_repository.get_by_id.return_value = test_project
 
+        # Mock user query for reporter and assignee
+        mock_user = MagicMock()
+        mock_user.id = test_issue.reporter_id
+        mock_user.name = "Test User"
+        mock_user.avatar_url = None
+
+        mock_result = MagicMock()
+        mock_result.scalars.return_value.all.return_value = [mock_user]
+        mock_session.execute.return_value = mock_result
+
         use_case = GetIssueUseCase(mock_issue_repository, mock_project_repository, mock_session)
 
         result = await use_case.execute(str(test_issue.id))
@@ -254,6 +264,8 @@ class TestGetIssueUseCase:
         assert result.id == test_issue.id
         assert result.title == test_issue.title
         assert result.key == "TEST-1"  # Generated key
+        assert result.reporter is not None
+        assert result.reporter.id == test_issue.reporter_id
         mock_issue_repository.get_by_id.assert_called_once_with(test_issue.id)
 
     @pytest.mark.asyncio
