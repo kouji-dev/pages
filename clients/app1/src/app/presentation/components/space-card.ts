@@ -3,48 +3,46 @@ import { RouterLink } from '@angular/router';
 import { Icon, Button } from 'shared-ui';
 import { OrganizationService } from '../../application/services/organization.service';
 import { NavigationService } from '../../application/services/navigation.service';
-import { Project } from '../../application/services/project.service';
+import { Space } from '../../application/services/space.service';
 
 @Component({
-  selector: 'app-project-card',
+  selector: 'app-space-card',
   imports: [Icon, RouterLink, Button],
   template: `
-    <div class="project-card">
+    <div class="space-card">
       <a
-        [routerLink]="getProjectRoute()"
-        class="project-card_link"
-        [attr.aria-label]="'View ' + project().name"
+        [routerLink]="getSpaceRoute()"
+        class="space-card_link"
+        [attr.aria-label]="'View ' + space().name"
       >
-        <div class="project-card_content">
-          <div class="project-card_header">
-            <div class="project-card_icon">
-              <lib-icon name="folder" size="lg" />
+        <div class="space-card_content">
+          <div class="space-card_header">
+            <div class="space-card_icon">
+              <lib-icon name="book" size="lg" />
             </div>
+            <div class="space-card_key">{{ space().key }}</div>
           </div>
-          <div class="project-card_info">
-            <div class="project-card_title-row">
-              <div class="project-card_key">{{ project().key }}</div>
-              <h3 class="project-card_name">{{ project().name }}</h3>
-            </div>
-            @if (project().description) {
-              <p class="project-card_description">{{ project().description }}</p>
+          <div class="space-card_info">
+            <h3 class="space-card_name">{{ space().name }}</h3>
+            @if (space().description) {
+              <p class="space-card_description">{{ space().description }}</p>
             }
-            <div class="project-card_meta">
-              <div class="project-card_member-count">
-                <lib-icon name="users" size="sm" />
-                <span>{{ project().memberCount || 0 }} member(s)</span>
+            <div class="space-card_meta">
+              <div class="space-card_page-count">
+                <lib-icon name="file-text" size="sm" />
+                <span>{{ space().pageCount || 0 }} page(s)</span>
               </div>
             </div>
           </div>
         </div>
       </a>
-      <div class="project-card_actions">
+      <div class="space-card_actions">
         <lib-button
           variant="ghost"
           size="sm"
           [iconOnly]="true"
           leftIcon="settings"
-          class="project-card_action-item"
+          class="space-card_action-item"
           (clicked)="handleSettings()"
         >
         </lib-button>
@@ -55,7 +53,7 @@ import { Project } from '../../application/services/project.service';
     `
       @reference "#mainstyles";
 
-      .project-card {
+      .space-card {
         @apply relative;
         @apply flex flex-col;
         @apply rounded-lg;
@@ -67,7 +65,7 @@ import { Project } from '../../application/services/project.service';
         min-height: 180px;
       }
 
-      .project-card_link {
+      .space-card_link {
         @apply flex-1;
         @apply p-6;
         text-decoration: none;
@@ -76,21 +74,21 @@ import { Project } from '../../application/services/project.service';
         @apply transition-colors;
       }
 
-      .project-card_link:hover {
+      .space-card_link:hover {
         color: inherit;
       }
 
-      .project-card_content {
+      .space-card_content {
         @apply flex flex-col;
         @apply gap-4;
       }
 
-      .project-card_header {
-        @apply flex items-center;
+      .space-card_header {
+        @apply flex items-center justify-between;
         @apply gap-3;
       }
 
-      .project-card_icon {
+      .space-card_icon {
         @apply flex items-center justify-center;
         @apply w-12 h-12;
         @apply rounded-lg;
@@ -98,56 +96,47 @@ import { Project } from '../../application/services/project.service';
         @apply text-primary-500;
       }
 
-      .project-card_info {
-        @apply flex flex-col;
-        @apply gap-2;
-        @apply flex-1;
-      }
-
-      .project-card_title-row {
-        @apply flex items-center;
-        @apply gap-2;
-        @apply flex-wrap;
-      }
-
-      .project-card_key {
+      .space-card_key {
         @apply text-xs font-mono font-semibold;
         @apply px-2 py-1;
         @apply rounded;
         @apply bg-bg-secondary;
         @apply text-text-secondary;
-        @apply flex-shrink-0;
       }
 
-      .project-card_name {
+      .space-card_info {
+        @apply flex flex-col;
+        @apply gap-2;
+        @apply flex-1;
+      }
+
+      .space-card_name {
         @apply text-xl font-semibold;
         @apply text-text-primary;
-        @apply flex-1;
-        @apply min-w-0;
         margin: 0;
       }
 
-      .project-card_description {
+      .space-card_description {
         @apply text-sm;
         @apply text-text-secondary;
         margin: 0;
         @apply line-clamp-2;
       }
 
-      .project-card_meta {
+      .space-card_meta {
         @apply flex items-center;
         @apply gap-4;
         @apply mt-auto;
       }
 
-      .project-card_member-count {
+      .space-card_page-count {
         @apply flex items-center;
         @apply gap-2;
         @apply text-sm;
         @apply text-text-secondary;
       }
 
-      .project-card_actions {
+      .space-card_actions {
         @apply absolute;
         @apply top-4 right-4;
         @apply flex items-center;
@@ -158,24 +147,24 @@ import { Project } from '../../application/services/project.service';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectCard {
+export class SpaceCard {
   private readonly organizationService = inject(OrganizationService);
   private readonly navigationService = inject(NavigationService);
 
-  readonly project = input.required<Project>();
-  readonly onSettings = output<Project>();
+  readonly space = input.required<Space>();
+  readonly onSettings = output<Space>();
 
-  getProjectRoute(): string[] {
+  getSpaceRoute(): string[] {
     const orgId = this.organizationService.currentOrganization()?.id;
-    const projectId = this.project().id;
+    const spaceId = this.space().id;
     if (orgId) {
-      return this.navigationService.getProjectRoute(orgId, projectId);
+      return this.navigationService.getSpaceRoute(orgId, spaceId);
     }
     // Fallback if no org (shouldn't happen)
     return ['/app/organizations'];
   }
 
   handleSettings(): void {
-    this.onSettings.emit(this.project());
+    this.onSettings.emit(this.space());
   }
 }

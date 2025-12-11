@@ -7,6 +7,7 @@ import { ProjectMemberList } from '../components/project-member-list';
 import { IssueList } from '../components/issue-list';
 import { KanbanBoard } from '../components/kanban-board';
 import { BackToPage } from '../components/back-to-page';
+import { SidebarNav, SidebarNavItem } from '../components/sidebar-nav';
 
 type TabType = 'issues' | 'board' | 'settings' | 'members';
 
@@ -20,6 +21,7 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
     IssueList,
     KanbanBoard,
     BackToPage,
+    SidebarNav,
   ],
   template: `
     <div class="project-detail-page">
@@ -57,52 +59,7 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
         <div class="project-detail-page_content">
           <div class="project-detail-page_container">
             <div class="project-detail-page_sidebar">
-              <nav class="project-detail-page_nav">
-                <lib-button
-                  variant="ghost"
-                  size="md"
-                  [fullWidth]="true"
-                  leftIcon="file-text"
-                  [class.project-detail-page_nav-item--active]="activeTab() === 'issues'"
-                  (clicked)="setActiveTab('issues')"
-                  class="project-detail-page_nav-item"
-                >
-                  Issues
-                </lib-button>
-                <lib-button
-                  variant="ghost"
-                  size="md"
-                  [fullWidth]="true"
-                  leftIcon="columns2"
-                  [class.project-detail-page_nav-item--active]="activeTab() === 'board'"
-                  (clicked)="setActiveTab('board')"
-                  class="project-detail-page_nav-item"
-                >
-                  Board
-                </lib-button>
-                <lib-button
-                  variant="ghost"
-                  size="md"
-                  [fullWidth]="true"
-                  leftIcon="users"
-                  [class.project-detail-page_nav-item--active]="activeTab() === 'members'"
-                  (clicked)="setActiveTab('members')"
-                  class="project-detail-page_nav-item"
-                >
-                  Members
-                </lib-button>
-                <lib-button
-                  variant="ghost"
-                  size="md"
-                  [fullWidth]="true"
-                  leftIcon="settings"
-                  [class.project-detail-page_nav-item--active]="activeTab() === 'settings'"
-                  (clicked)="setActiveTab('settings')"
-                  class="project-detail-page_nav-item"
-                >
-                  Settings
-                </lib-button>
-              </nav>
+              <app-sidebar-nav [items]="navItems()" />
             </div>
             <div class="project-detail-page_main">
               @if (activeTab() === 'issues') {
@@ -184,35 +141,29 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
         @apply w-full;
         @apply py-8;
         @apply px-4 sm:px-6 lg:px-8;
+        @apply min-h-0;
+        @apply flex;
+        @apply flex-col;
       }
 
       .project-detail-page_container {
         @apply w-full;
+        @apply flex-1;
         @apply grid grid-cols-1 lg:grid-cols-12;
         @apply gap-8;
+        @apply min-h-0;
+        @apply h-full;
+        @apply items-stretch;
       }
 
       .project-detail-page_sidebar {
         @apply lg:col-span-2;
         @apply lg:order-first;
-      }
-
-      .project-detail-page_nav {
-        @apply flex flex-col;
-        @apply gap-2;
-        @apply p-2;
-        @apply rounded-lg;
-        @apply border;
-        @apply border-border-default;
-        @apply bg-bg-secondary;
-      }
-
-      .project-detail-page_nav-item {
-        @apply justify-start;
-      }
-
-      .project-detail-page_nav-item--active {
-        @apply bg-bg-tertiary;
+        @apply flex;
+        @apply flex-col;
+        @apply h-full;
+        @apply min-h-0;
+        @apply self-stretch;
       }
 
       .project-detail-page_main {
@@ -220,6 +171,7 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
         @apply lg:order-last;
         @apply min-w-0;
         @apply overflow-hidden;
+        @apply self-stretch;
       }
 
       .project-detail-page_placeholder {
@@ -265,6 +217,36 @@ export class ProjectDetailPage {
         : 'An error occurred while loading the project.';
     }
     return 'An unknown error occurred.';
+  });
+
+  readonly navItems = computed<SidebarNavItem[]>(() => {
+    const currentTab = this.activeTab();
+    return [
+      {
+        label: 'Issues',
+        icon: 'file-text',
+        active: currentTab === 'issues',
+        onClick: () => this.setActiveTab('issues'),
+      },
+      {
+        label: 'Board',
+        icon: 'columns2',
+        active: currentTab === 'board',
+        onClick: () => this.setActiveTab('board'),
+      },
+      {
+        label: 'Members',
+        icon: 'users',
+        active: currentTab === 'members',
+        onClick: () => this.setActiveTab('members'),
+      },
+      {
+        label: 'Settings',
+        icon: 'settings',
+        active: currentTab === 'settings',
+        onClick: () => this.setActiveTab('settings'),
+      },
+    ];
   });
 
   // Project is now automatically loaded when URL projectId changes

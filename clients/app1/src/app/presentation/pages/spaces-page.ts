@@ -5,92 +5,86 @@ import {
   inject,
   ViewContainerRef,
   signal,
-  effect,
 } from '@angular/core';
 import { Button, LoadingState, ErrorState, EmptyState, Modal, Input } from 'shared-ui';
-import { ProjectService, Project } from '../../application/services/project.service';
+import { SpaceService, Space } from '../../application/services/space.service';
 import { OrganizationService } from '../../application/services/organization.service';
 import { NavigationService } from '../../application/services/navigation.service';
-import { ProjectCard } from '../components/project-card';
-import { CreateProjectModal } from '../components/create-project-modal';
+import { SpaceCard } from '../components/space-card';
+import { CreateSpaceModal } from '../components/create-space-modal';
 
 @Component({
-  selector: 'app-projects-page',
-  imports: [Button, LoadingState, ErrorState, EmptyState, ProjectCard, Input],
+  selector: 'app-spaces-page',
+  imports: [Button, LoadingState, ErrorState, EmptyState, SpaceCard, Input],
   template: `
-    <div class="projects-page">
-      <div class="projects-page_header">
-        <div class="projects-page_header-content">
+    <div class="spaces-page">
+      <div class="spaces-page_header">
+        <div class="spaces-page_header-content">
           <div>
-            <h1 class="projects-page_title">Projects</h1>
-            <p class="projects-page_subtitle">
-              Manage your projects and track issues in one place.
-            </p>
+            <h1 class="spaces-page_title">Spaces</h1>
+            <p class="spaces-page_subtitle">Organize your documentation in dedicated spaces.</p>
           </div>
           <lib-button
             variant="primary"
             size="md"
             leftIcon="plus"
-            (clicked)="handleCreateProject()"
+            (clicked)="handleCreateSpace()"
             [disabled]="!organizationId()"
           >
-            Create Project
+            Create Space
           </lib-button>
         </div>
       </div>
 
-      <div class="projects-page_content">
+      <div class="spaces-page_content">
         @if (!organizationId()) {
           <lib-empty-state
             title="No organization selected"
-            message="Please select or create an organization to view projects."
+            message="Please select or create an organization to view spaces."
             icon="building"
             actionLabel="Go to Organizations"
             actionIcon="arrow-right"
             (onAction)="handleGoToOrganizations()"
           />
-        } @else if (projectService.isLoading()) {
-          <lib-loading-state message="Loading projects..." />
-        } @else if (projectService.hasError()) {
+        } @else if (spaceService.isLoading()) {
+          <lib-loading-state message="Loading spaces..." />
+        } @else if (spaceService.hasError()) {
           <lib-error-state
-            title="Failed to Load Projects"
+            title="Failed to Load Spaces"
             [message]="errorMessage()"
             [retryLabel]="'Retry'"
             (onRetry)="handleRetry()"
           />
         } @else {
-          @if (allProjects().length > 0) {
-            <div class="projects-page_search">
+          @if (allSpaces().length > 0) {
+            <div class="spaces-page_search">
               <lib-input
-                placeholder="Search projects by name, key, or description..."
+                placeholder="Search spaces by name, key, or description..."
                 [(model)]="searchQuery"
                 leftIcon="search"
-                class="projects-page_search-input"
+                class="spaces-page_search-input"
               />
             </div>
           }
-          @if (filteredProjects().length === 0 && allProjects().length > 0) {
+          @if (filteredSpaces().length === 0 && allSpaces().length > 0) {
             <lib-empty-state
-              title="No projects found"
+              title="No spaces found"
               message="Try adjusting your search terms."
               icon="search"
             />
-          } @else if (filteredProjects().length === 0) {
+          } @else if (filteredSpaces().length === 0) {
             <lib-empty-state
-              title="No projects yet"
-              message="Get started by creating your first project to manage issues and tasks."
-              icon="folder"
-              actionLabel="Create Project"
+              title="No spaces yet"
+              message="Get started by creating your first space to organize your documentation."
+              icon="book"
+              actionLabel="Create Space"
               actionIcon="plus"
-              (onAction)="handleCreateProject()"
+              (onAction)="handleCreateSpace()"
             />
           } @else {
-            <div class="projects-page_grid">
-              @for (project of filteredProjects(); track project.id) {
-                <app-project-card
-                  [project]="project"
-                  (onSettings)="handleProjectSettings($event)"
-                />
+            <div class="spaces-page_grid">
+              @for (space of filteredSpaces(); track space.id) {
+                <app-space-card [space]="space" (onSettings)="handleSpaceSettings($event)" />
               }
             </div>
           }
@@ -102,13 +96,13 @@ import { CreateProjectModal } from '../components/create-project-modal';
     `
       @reference "#mainstyles";
 
-      .projects-page {
+      .spaces-page {
         @apply min-h-screen;
         @apply flex flex-col;
         @apply bg-bg-primary;
       }
 
-      .projects-page_header {
+      .spaces-page_header {
         @apply w-full;
         @apply py-8;
         @apply px-4 sm:px-6 lg:px-8;
@@ -116,42 +110,42 @@ import { CreateProjectModal } from '../components/create-project-modal';
         @apply border-border-default;
       }
 
-      .projects-page_header-content {
+      .spaces-page_header-content {
         @apply max-w-7xl mx-auto;
         @apply flex items-center justify-between;
         @apply gap-4;
         @apply flex-wrap;
       }
 
-      .projects-page_title {
+      .spaces-page_title {
         @apply text-3xl font-bold;
         @apply text-text-primary;
         margin: 0 0 0.5rem 0;
       }
 
-      .projects-page_subtitle {
+      .spaces-page_subtitle {
         @apply text-base;
         @apply text-text-secondary;
         margin: 0;
       }
 
-      .projects-page_content {
+      .spaces-page_content {
         @apply flex-1;
         @apply w-full;
         @apply py-8;
         @apply px-4 sm:px-6 lg:px-8;
       }
 
-      .projects-page_search {
+      .spaces-page_search {
         @apply max-w-7xl mx-auto;
         @apply mb-6;
       }
 
-      .projects-page_search-input {
+      .spaces-page_search-input {
         @apply max-w-md;
       }
 
-      .projects-page_grid {
+      .spaces-page_grid {
         @apply max-w-7xl mx-auto;
         @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3;
         @apply gap-6;
@@ -160,8 +154,8 @@ import { CreateProjectModal } from '../components/create-project-modal';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectsPage {
-  readonly projectService = inject(ProjectService);
+export class SpacesPage {
+  readonly spaceService = inject(SpaceService);
   readonly organizationService = inject(OrganizationService);
   readonly navigationService = inject(NavigationService);
   readonly modal = inject(Modal);
@@ -170,63 +164,57 @@ export class ProjectsPage {
   readonly searchQuery = signal('');
 
   readonly organizationId = computed(() => {
-    // URL is the source of truth - organization service will sync automatically
     return this.navigationService.currentOrganizationId();
   });
 
-  readonly allProjects = computed(() => {
+  readonly allSpaces = computed(() => {
     const orgId = this.organizationId();
     if (!orgId) return [];
-    return this.projectService.getProjectsByOrganization(orgId);
+    return this.spaceService.getSpacesByOrganization(orgId);
   });
 
-  readonly filteredProjects = computed(() => {
-    const projects = this.allProjects();
+  readonly filteredSpaces = computed(() => {
+    const spaces = this.allSpaces();
     const query = this.searchQuery().toLowerCase().trim();
 
     if (!query) {
-      return projects;
+      return spaces;
     }
 
-    return projects.filter((project) => {
-      const nameMatch = project.name.toLowerCase().includes(query);
-      const keyMatch = project.key.toLowerCase().includes(query);
-      const descriptionMatch = project.description?.toLowerCase().includes(query) || false;
+    return spaces.filter((space) => {
+      const nameMatch = space.name.toLowerCase().includes(query);
+      const keyMatch = space.key.toLowerCase().includes(query);
+      const descriptionMatch = space.description?.toLowerCase().includes(query) || false;
       return nameMatch || keyMatch || descriptionMatch;
     });
   });
 
   readonly errorMessage = computed(() => {
-    const error = this.projectService.error();
+    const error = this.spaceService.error();
     if (error) {
-      return error instanceof Error ? error.message : 'An error occurred while loading projects.';
+      return error instanceof Error ? error.message : 'An error occurred while loading spaces.';
     }
     return 'An unknown error occurred.';
   });
 
-  // Projects are now automatically loaded when URL organizationId changes
-  // No need for manual initialization effect
-
-  handleCreateProject(): void {
+  handleCreateSpace(): void {
     const orgId = this.organizationId();
     if (!orgId) {
       return;
     }
-    this.modal.open(CreateProjectModal, this.viewContainerRef, {
+    this.modal.open(CreateSpaceModal, this.viewContainerRef, {
       size: 'md',
       data: { organizationId: orgId },
     });
-    // Note: CreateProjectModal already reloads projects after creation
   }
 
-  handleProjectSettings(project: Project): void {
-    const orgId = this.organizationId();
-    if (!orgId) return;
-    this.navigationService.navigateToProjectSettings(orgId, project.id);
+  handleSpaceSettings(space: Space): void {
+    // TODO: Navigate to space settings when implemented
+    console.log('Space settings:', space);
   }
 
   handleRetry(): void {
-    this.projectService.loadProjects();
+    this.spaceService.spaces.reload();
   }
 
   handleGoToOrganizations(): void {

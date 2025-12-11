@@ -198,7 +198,17 @@ interface BoardSettings {
                     <div class="kanban-board_card" cdkDrag (click)="handleIssueClick(issue)">
                       <div class="kanban-board_card-header">
                         <span class="kanban-board_card-key">{{ issue.key }}</span>
-                        <app-issue-type-badge [type]="issue.type" />
+                        <div class="kanban-board_card-header-right">
+                          <app-issue-type-badge [type]="issue.type" />
+                          <lib-button
+                            variant="ghost"
+                            [iconOnly]="true"
+                            leftIcon="pen"
+                            class="kanban-board_card-action"
+                            (clicked)="handleEditIssue($event, issue)"
+                          >
+                          </lib-button>
+                        </div>
                       </div>
                       <div class="kanban-board_card-title">{{ issue.title }}</div>
                       <div class="kanban-board_card-footer">
@@ -395,6 +405,16 @@ interface BoardSettings {
       .kanban-board_card-header {
         @apply flex items-center justify-between;
         @apply mb-2;
+        @apply gap-2;
+      }
+
+      .kanban-board_card-header-right {
+        @apply flex items-center;
+        @apply gap-1;
+      }
+
+      .kanban-board_card-action {
+        @apply flex-shrink-0;
       }
 
       .kanban-board_card-key {
@@ -532,12 +552,7 @@ export class KanbanBoard {
   readonly projectMembers = computed(() => this.projectMembersService.members());
 
   // Initialize members loading
-  private readonly initializeMembersEffect = effect(() => {
-    const id = this.projectId();
-    if (id) {
-      this.projectMembersService.loadMembers(id);
-    }
-  });
+  // Members resource automatically loads when projectId changes via navigation service
 
   // Load board settings from localStorage on init
   constructor() {
@@ -737,6 +752,12 @@ export class KanbanBoard {
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString();
+  }
+
+  handleEditIssue(event: Event, issue: IssueListItem): void {
+    event.stopPropagation();
+    // Navigate to issue detail page (same as clicking the card)
+    this.handleIssueClick(issue);
   }
 
   handleIssueClick(issue: IssueListItem): void {

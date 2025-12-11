@@ -182,13 +182,7 @@ export class EditIssueModal {
 
   @ViewChild('descriptionEditor') descriptionEditor?: TextEditor;
 
-  // Load project members when issue changes
-  private readonly loadMembersEffect = effect(() => {
-    const issue = this.issue();
-    if (issue?.project_id) {
-      this.projectMembersService.loadMembers(issue.project_id);
-    }
-  });
+  // Members resource automatically loads when projectId changes via navigation service
 
   readonly projectMembers = computed(() => this.projectMembersService.members());
 

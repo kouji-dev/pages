@@ -40,11 +40,15 @@ export class NavigationService {
     organizationId?: string;
     projectId?: string;
     issueId?: string;
+    spaceId?: string;
+    pageId?: string;
   } {
     const params: {
       organizationId?: string;
       projectId?: string;
       issueId?: string;
+      spaceId?: string;
+      pageId?: string;
     } = {};
 
     // Get the root route snapshot from router state
@@ -59,17 +63,9 @@ export class NavigationService {
 
       visited.add(route);
 
-      // Extract organizationId from 'id' param
-      // Check if the route path matches 'organizations/:id' pattern
-      if (route.paramMap.has('id') && !params.organizationId) {
-        const id = route.paramMap.get('id');
-        const path = route.routeConfig?.path || '';
-
-        // Check if this route path is 'organizations/:id'
-        // This identifies the organization route
-        if (id && path === 'organizations/:id') {
-          params.organizationId = id;
-        }
+      // Extract organizationId
+      if (route.paramMap.has('organizationId') && !params.organizationId) {
+        params.organizationId = route.paramMap.get('organizationId') || undefined;
       }
 
       // Extract projectId
@@ -80,6 +76,16 @@ export class NavigationService {
       // Extract issueId
       if (route.paramMap.has('issueId') && !params.issueId) {
         params.issueId = route.paramMap.get('issueId') || undefined;
+      }
+
+      // Extract spaceId
+      if (route.paramMap.has('spaceId') && !params.spaceId) {
+        params.spaceId = route.paramMap.get('spaceId') || undefined;
+      }
+
+      // Extract pageId
+      if (route.paramMap.has('pageId') && !params.pageId) {
+        params.pageId = route.paramMap.get('pageId') || undefined;
       }
 
       // Traverse children only (DFS from root to leaves)
@@ -155,6 +161,20 @@ export class NavigationService {
   });
 
   /**
+   * Get current space ID from route
+   */
+  readonly currentSpaceId = computed(() => {
+    return this.routeParams()?.spaceId || null;
+  });
+
+  /**
+   * Get current page ID from route
+   */
+  readonly currentPageId = computed(() => {
+    return this.routeParams()?.pageId || null;
+  });
+
+  /**
    * Get current tab from query params
    */
   readonly currentTab = computed(() => {
@@ -192,7 +212,7 @@ export class NavigationService {
    * Navigate to organization's projects
    */
   navigateToOrganizationProjects(organizationId: string): void {
-    this.router.navigate(['/app/organizations', organizationId]);
+    this.router.navigate(['/app/organizations', organizationId, 'projects']);
   }
 
   /**
@@ -238,7 +258,7 @@ export class NavigationService {
    * Get route for organization's projects
    */
   getOrganizationProjectsRoute(organizationId: string): string[] {
-    return ['/app/organizations', organizationId];
+    return ['/app/organizations', organizationId, 'projects'];
   }
 
   /**
@@ -279,5 +299,54 @@ export class NavigationService {
    */
   getIssueRoute(organizationId: string, projectId: string, issueId: string): string[] {
     return ['/app/organizations', organizationId, 'projects', projectId, 'issues', issueId];
+  }
+
+  /**
+   * Navigate to organization's spaces
+   */
+  navigateToOrganizationSpaces(organizationId: string): void {
+    this.router.navigate(['/app/organizations', organizationId, 'spaces']);
+  }
+
+  /**
+   * Navigate to space detail
+   */
+  navigateToSpace(organizationId: string, spaceId: string): void {
+    this.router.navigate(['/app/organizations', organizationId, 'spaces', spaceId]);
+  }
+
+  /**
+   * Navigate to page detail
+   */
+  navigateToPage(organizationId: string, spaceId: string, pageId: string): void {
+    this.router.navigate([
+      '/app/organizations',
+      organizationId,
+      'spaces',
+      spaceId,
+      'pages',
+      pageId,
+    ]);
+  }
+
+  /**
+   * Get route for organization's spaces
+   */
+  getOrganizationSpacesRoute(organizationId: string): string[] {
+    return ['/app/organizations', organizationId, 'spaces'];
+  }
+
+  /**
+   * Get route for space detail
+   */
+  getSpaceRoute(organizationId: string, spaceId: string): string[] {
+    return ['/app/organizations', organizationId, 'spaces', spaceId];
+  }
+
+  /**
+   * Get route for page detail
+   */
+  getPageRoute(organizationId: string, spaceId: string, pageId: string): string[] {
+    return ['/app/organizations', organizationId, 'spaces', spaceId, 'pages', pageId];
   }
 }

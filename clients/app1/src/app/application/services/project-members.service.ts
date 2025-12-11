@@ -1,8 +1,9 @@
 import { Injectable, signal, inject, computed } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { httpResource } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { NavigationService } from './navigation.service';
 
 export interface ProjectMember {
   user_id: string;
@@ -36,15 +37,19 @@ export interface UpdateProjectMemberRoleRequest {
 })
 export class ProjectMembersService {
   private readonly http = inject(HttpClient);
+  private readonly navigationService = inject(NavigationService);
 
   // Base URL pattern for project members (includes /members)
   private readonly membersApiUrl = (projectId: string): string =>
     `${environment.apiUrl}/projects/${projectId}/members`;
 
-  // Current project ID signal for members
-  private readonly currentProjectId = signal<string | null>(null);
+  // Current project ID from navigation service
+  private readonly currentProjectId = computed(() => {
+    return this.navigationService.currentProjectId();
+  });
 
   // Members resource using httpResource with computed URL
+  // Automatically updates when currentProjectId changes
   private readonly membersResource = httpResource<ProjectMemberList>(() => {
     const id = this.currentProjectId();
     return id ? this.membersApiUrl(id) : undefined;
@@ -60,11 +65,42 @@ export class ProjectMembersService {
   readonly hasError = computed(() => this.membersResource.error() !== undefined);
 
   /**
-   * Load members for a project
+   * Reload members for the current project
    */
-  loadMembers(projectId: string): void {
-    this.currentProjectId.set(projectId);
-    // Resource will reload automatically when ID changes
+  reloadMembers(): void {
+    this.membersResource.reload();
+  }
+
+  /**
+   * Search project members by query
+   * @param projectId Project ID (optional, uses current project from navigation if not provided)
+   * @param query Search query (name or email). If empty, returns all members.
+   * @param limit Maximum number of results (default: 20)
+   */
+  async searchProjectMembers(
+    projectId?: string,
+    query: string = '',
+    limit: number = 20,
+  ): Promise<ProjectMember[]> {
+    const targetProjectId = projectId || this.currentProjectId();
+    if (!targetProjectId) {
+      throw new Error('No project ID available for searching members');
+    }
+
+    let params = new HttpParams().set('page', '1').set('limit', limit.toString());
+
+    // Only add search parameter if query is not empty
+    if (query.trim()) {
+      params = params.set('search', query.trim());
+    }
+
+    const response = await firstValueFrom(
+      this.http.get<ProjectMemberList>(this.membersApiUrl(targetProjectId), {
+        params,
+      }),
+    );
+
+    return response?.members || [];
   }
 
   /**

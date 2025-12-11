@@ -546,3 +546,50 @@ body {
 .cdk-overlay-pane.lib-select-panel {
   max-width: none !important;
 }
+
+/* ========================================
+ * Custom Scrollbar Styling
+ * Smaller scrollbars with theme-aware colors
+ * ======================================== */
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gray-400);
+  border-radius: 3px;
+  transition: background-color var(--transition-base);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-500);
+}
+
+/* Dark theme scrollbar - Webkit */
+[data-theme='dark'] ::-webkit-scrollbar-thumb,
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--color-gray-600);
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb:hover,
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-500);
+}
+
+/* Firefox - Apply to all elements */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-gray-400) transparent;
+}
+
+[data-theme='dark'] *,
+.dark * {
+  scrollbar-color: var(--color-gray-600) transparent;
+}

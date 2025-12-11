@@ -354,13 +354,7 @@ export class IssueList {
     );
   });
 
-  // Load project members when projectId changes
-  private readonly loadMembersEffect = effect(() => {
-    const id = this.projectId();
-    if (id) {
-      this.projectMembersService.loadMembers(id);
-    }
-  });
+  // Members resource automatically loads when projectId changes via navigation service
 
   @ViewChild('cellTemplate') cellTemplate!: TemplateRef<{
     $implicit: IssueListItem;
