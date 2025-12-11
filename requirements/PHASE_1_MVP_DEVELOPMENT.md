@@ -2011,34 +2011,35 @@ This phase focuses on building the foundational features required for a function
 **Priority**: High  
 **Estimated Time**: 5-7 days  
 **Dependencies**: 1.2.2, 1.1.4  
-**Assigned To**: HWIMDA1
+**Assigned To**: HWIMDA1  
+**Status**: ✅ Complete
 
 **Tasks**:
 
-- [ ] Create space creation endpoint (POST /api/spaces)
-  - [ ] Validate space name and key uniqueness within organization
-  - [ ] Create space record
-  - [ ] Set default permissions
-- [ ] Create space retrieval endpoint (GET /api/spaces/:id)
-  - [ ] Include page count
-  - [ ] Include recent pages
-- [ ] Create space list endpoint (GET /api/spaces)
-  - [ ] Filter by organization
-  - [ ] Search by name/key
-  - [ ] Pagination support
-- [ ] Create space update endpoint (PUT /api/spaces/:id)
-  - [ ] Permission check (space admin)
-  - [ ] Update name, description
-- [ ] Create space deletion endpoint (DELETE /api/spaces/:id)
-  - [ ] Permission check (space admin)
-  - [ ] Cascade delete or archive pages
-- [ ] Implement space-level permissions
-- [ ] Write space API tests
+- [x] Create space creation endpoint (POST /api/spaces)
+  - [x] Validate space name and key uniqueness within organization
+  - [x] Create space record
+  - [x] Set default permissions (via organization membership)
+- [x] Create space retrieval endpoint (GET /api/spaces/:id)
+  - [x] Include page count
+  - [x] Include recent pages (up to 5, ordered by updated_at DESC)
+- [x] Create space list endpoint (GET /api/spaces)
+  - [x] Filter by organization
+  - [x] Search by name/key
+  - [x] Pagination support
+- [x] Create space update endpoint (PUT /api/spaces/:id)
+  - [x] Permission check (organization admin)
+  - [x] Update name, description
+- [x] Create space deletion endpoint (DELETE /api/spaces/:id)
+  - [x] Permission check (organization admin)
+  - [x] Cascade delete or archive pages (soft delete with cascade)
+- [x] Implement space-level permissions (via organization membership)
+- [x] Write space API tests
 
 **Deliverables**:
 
-- Space CRUD APIs
-- Space permissions
+- ✅ Space CRUD APIs
+- ✅ Space permissions (via organization membership)
 
 ---
 

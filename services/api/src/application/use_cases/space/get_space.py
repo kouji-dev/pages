@@ -6,6 +6,7 @@ import structlog
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.application.dtos.page import PageListItemResponse
 from src.application.dtos.space import SpaceResponse
 from src.domain.exceptions import EntityNotFoundException
 from src.domain.repositories import SpaceRepository
@@ -26,7 +27,7 @@ class GetSpaceUseCase:
 
         Args:
             space_repository: Space repository
-            session: Database session for counting pages
+            session: Database session for counting pages and fetching recent pages
         """
         self._space_repository = space_repository
         self._session = session
@@ -38,7 +39,7 @@ class GetSpaceUseCase:
             space_id: Space ID
 
         Returns:
-            Space response DTO with page count
+            Space response DTO with page count and recent pages
 
         Raises:
             EntityNotFoundException: If space not found
@@ -53,10 +54,35 @@ class GetSpaceUseCase:
             raise EntityNotFoundException("Space", space_id)
 
         # Count pages
-        result = await self._session.execute(
+        count_result = await self._session.execute(
             select(func.count()).select_from(PageModel).where(PageModel.space_id == space_uuid)
         )
-        page_count: int = result.scalar_one()
+        page_count: int = count_result.scalar_one()
+
+        # Get recent pages (up to 5, ordered by updated_at DESC)
+        recent_pages_result = await self._session.execute(
+            select(PageModel)
+            .where(PageModel.space_id == space_uuid)
+            .order_by(PageModel.updated_at.desc())
+            .limit(5)
+        )
+        recent_pages_models = recent_pages_result.scalars().all()
+
+        recent_pages = [
+            PageListItemResponse(
+                id=page.id,
+                space_id=page.space_id,
+                title=page.title,
+                slug=page.slug,
+                parent_id=page.parent_id,
+                created_by=page.created_by,
+                updated_by=page.updated_by,
+                position=page.position,
+                created_at=page.created_at,
+                updated_at=page.updated_at,
+            )
+            for page in recent_pages_models
+        ]
 
         return SpaceResponse(
             id=space.id,
@@ -66,6 +92,7 @@ class GetSpaceUseCase:
             description=space.description,
             settings=space.settings,
             page_count=page_count,
+            recent_pages=recent_pages,
             created_at=space.created_at,
             updated_at=space.updated_at,
         )
