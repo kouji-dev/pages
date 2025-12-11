@@ -1,20 +1,18 @@
 import { Component, ChangeDetectionStrategy, input, inject, computed } from '@angular/core';
 import { Button } from '../../button/button';
-import { Icon } from '../../icon/icon';
 import { ListPlugin } from '../plugins/list-plugin';
 
 @Component({
   selector: 'lib-toolbar-list-button',
-  imports: [Button, Icon],
+  imports: [Button],
   template: `
     <lib-button
       variant="ghost"
       size="sm"
       (clicked)="insertList()"
       [attr.title]="type() === 'ul' ? 'Bullet List' : 'Numbered List'"
-    >
-      <lib-icon [name]="iconName()" size="sm" />
-    </lib-button>
+      [leftIcon]="iconName()"
+    />
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

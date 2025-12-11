@@ -525,6 +525,20 @@ body {
 }
 
 /* ========================================
+ * Typeahead Menu Panel Styling
+ * ======================================== */
+.te-typeahead-menu-panel {
+  @apply rounded-lg;
+  @apply shadow-lg;
+  @apply border;
+  @apply bg-bg-primary;
+  @apply border-border-default;
+  padding: 0.25rem;
+  max-height: 20rem;
+  overflow-y: auto;
+}
+
+/* ========================================
  * Select Panel Styling
  * ======================================== */
 .cdk-overlay-pane.lib-select-panel {

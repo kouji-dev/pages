@@ -1,20 +1,18 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Button } from '../../button/button';
-import { Icon } from '../../icon/icon';
 import { RichTextPlugin } from '../plugins/rich-text-plugin';
 
 @Component({
   selector: 'lib-toolbar-strikethrough-button',
-  imports: [Button, Icon],
+  imports: [Button],
   template: `
     <lib-button
       variant="ghost"
       size="sm"
       (clicked)="formatStrikethrough()"
       [attr.title]="'Strikethrough'"
-    >
-      <lib-icon name="strikethrough" size="sm" />
-    </lib-button>
+      leftIcon="strikethrough"
+    />
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

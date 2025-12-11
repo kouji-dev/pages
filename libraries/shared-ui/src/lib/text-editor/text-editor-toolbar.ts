@@ -11,6 +11,8 @@ import { ToolbarQuoteButton } from './toolbar/toolbar-quote-button';
 import { ToolbarUndoButton } from './toolbar/toolbar-undo-button';
 import { ToolbarRedoButton } from './toolbar/toolbar-redo-button';
 import { ToolbarFontSizeSelect } from './toolbar/toolbar-font-size-select';
+import { ToolbarAttachmentButton } from './toolbar/toolbar-attachment-button';
+import { ToolbarImageButton } from './toolbar/toolbar-image-button';
 
 @Component({
   selector: 'lib-text-editor-toolbar',
@@ -27,6 +29,8 @@ import { ToolbarFontSizeSelect } from './toolbar/toolbar-font-size-select';
     ToolbarUndoButton,
     ToolbarRedoButton,
     ToolbarFontSizeSelect,
+    ToolbarAttachmentButton,
+    ToolbarImageButton,
   ],
   template: `
     @if (showToolbar()) {
@@ -53,6 +57,8 @@ import { ToolbarFontSizeSelect } from './toolbar/toolbar-font-size-select';
         <div class="text-editor_toolbar-group">
           <lib-toolbar-quote-button />
           <lib-toolbar-link-button />
+          <lib-toolbar-image-button />
+          <lib-toolbar-attachment-button />
         </div>
         <div class="text-editor_toolbar-separator"></div>
         <div class="text-editor_toolbar-group">

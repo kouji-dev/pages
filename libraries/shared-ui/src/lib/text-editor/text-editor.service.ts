@@ -1,5 +1,14 @@
 import { Injectable, signal, ViewContainerRef } from '@angular/core';
-import { LexicalEditor, createEditor, $getRoot, RootNode, ParagraphNode, TextNode } from 'lexical';
+import {
+  LexicalEditor,
+  createEditor,
+  $getRoot,
+  RootNode,
+  ParagraphNode,
+  TextNode,
+  SerializedEditorState,
+  SerializedLexicalNode,
+} from 'lexical';
 import { $generateNodesFromDOM, $generateHtmlFromNodes } from '@lexical/html';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { ListNode, ListItemNode } from '@lexical/list';
@@ -14,6 +23,9 @@ import { ListPlugin } from './plugins/list-plugin';
 import { LinkPlugin } from './plugins/link-plugin';
 import { RichTextPlugin } from './plugins/rich-text-plugin';
 import { HeadingPlugin } from './plugins/heading-plugin';
+import { AttachmentNode } from './nodes/attachment-node';
+import { ImageNode } from './nodes/image-node';
+import { MentionNode } from './nodes/mention-node';
 
 /**
  * Service that holds the current LexicalEditor instance.
@@ -74,6 +86,10 @@ export class TextEditorService {
         HashtagNode,
         // Mark node
         MarkNode,
+        // Custom nodes
+        AttachmentNode,
+        ImageNode,
+        MentionNode,
       ],
       onError: (error: Error) => {
         console.error('Lexical editor error:', error);
@@ -207,6 +223,25 @@ export class TextEditorService {
    */
   hasEditor(): boolean {
     return this._editor() !== null;
+  }
+
+  /**
+   * Get editor state as JSON
+   */
+  getJSON(): SerializedEditorState<SerializedLexicalNode> | null {
+    const editor = this._editor();
+    if (!editor) return null;
+    return editor.getEditorState().toJSON();
+  }
+
+  /**
+   * Set editor state from JSON
+   */
+  setJSON(json: SerializedEditorState<SerializedLexicalNode>): void {
+    const editor = this._editor();
+    if (!editor) return;
+    const editorState = editor.parseEditorState(json);
+    editor.setEditorState(editorState);
   }
 
   /**

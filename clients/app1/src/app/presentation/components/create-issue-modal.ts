@@ -35,7 +35,6 @@ type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
     Button,
     Input,
     TextEditor,
-    Icon,
     Select,
     FormsModule,
     CommonModule,

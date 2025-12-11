@@ -48,7 +48,6 @@ import { CommonModule } from '@angular/common';
     Input,
     Table,
     Dropdown,
-    Icon,
     Select,
     CommonModule,
   ],

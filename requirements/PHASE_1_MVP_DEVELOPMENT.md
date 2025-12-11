@@ -1903,29 +1903,29 @@ This phase focuses on building the foundational features required for a function
   - [x] Edit comment functionality (via modal)
   - [x] Delete comment functionality
   - [x] Show edited indicator
-  - [ ] Enhance comment display with Lexical renderer
-    - [ ] Integrate Lexical core package
-    - [ ] Create Lexical renderer service/component for displaying rich text
-    - [ ] Support HTML/Markdown content rendering
-    - [ ] Handle @mentions in rendered content
+  - [x] Enhance comment display with Lexical renderer
+    - [x] Integrate Lexical core package
+    - [x] Create Lexical renderer service/component for displaying rich text (using TextEditor in read-only mode)
+    - [x] Support HTML content rendering
+    - [ ] Handle @mentions in rendered content (pending mention plugin)
 - [x] Create comment input component
-  - [x] Basic textarea editor (rich text editor pending Lexical)
-  - [ ] @mention autocomplete (user picker)
+  - [x] Basic textarea editor (rich text editor using Lexical)
+  - [ ] @mention autocomplete (user picker) - pending Lexical mention plugin
   - [x] Submit button
-  - [ ] Preview mode (optional)
-  - [ ] Enhance comment input with Lexical editor
-    - [ ] Integrate Lexical core package for Angular
-    - [ ] Create Lexical editor wrapper component
-    - [ ] Implement toolbar with formatting options (bold, italic, headings, lists, links)
-    - [ ] Add @mention autocomplete integration with Lexical
-    - [ ] Implement content serialization (HTML/JSON format)
-    - [ ] Add preview mode toggle
-    - [ ] Handle content validation and sanitization
+  - [ ] Preview mode (optional, can be added later)
+  - [x] Enhance comment input with Lexical editor
+    - [x] Integrate Lexical core package for Angular
+    - [x] Create Lexical editor wrapper component
+    - [x] Implement toolbar with formatting options (bold, italic, headings, lists, links)
+    - [ ] Add @mention autocomplete integration with Lexical (pending mention plugin)
+    - [x] Implement content serialization (HTML format)
+    - [ ] Add preview mode toggle (optional)
+    - [x] Handle content validation and sanitization
 - [x] Enhance edit comment modal (basic version)
-  - [x] Basic textarea editor (Lexical editor pending)
+  - [x] Basic textarea editor (using Lexical editor)
   - [x] Pre-populate editor with existing comment content
-  - [ ] Maintain formatting during edit (pending Lexical)
-  - [ ] Support same formatting options as comment input (pending Lexical)
+  - [x] Maintain formatting during edit (Lexical preserves HTML formatting)
+  - [x] Support same formatting options as comment input (using same TextEditor component)
 - [x] Create comment list component
   - [x] Display comments in chronological order
   - [ ] Threaded comments (optional, can be Phase 2)
@@ -1933,22 +1933,22 @@ This phase focuses on building the foundational features required for a function
   - [x] Display attachment cards with file name, size, uploader
   - [x] Download button
   - [x] Delete button (with permission check)
-  - [ ] Image preview thumbnails
+  - [x] Image preview thumbnails
 - [x] Create file upload component
-  - [ ] Drag and drop zone
+  - [x] Drag and drop zone
   - [x] File picker button
   - [x] Upload progress indicator
-  - [ ] Multiple file upload support
+  - [x] Multiple file upload support
   - [x] File type validation
   - [x] File size validation
-- [ ] Implement file preview modal (for images, PDFs)
+- [x] Implement file preview modal (for images, PDFs)
 - [x] Add loading states and error handling
-- [ ] Lexical integration setup
-  - [ ] Install and configure Lexical core package
-  - [ ] Create Angular service wrappers for Lexical APIs
-  - [ ] Set up content storage format (HTML or JSON)
-  - [ ] Implement content sanitization utilities (XSS prevention)
-  - [ ] Create shared Lexical utilities/helpers
+- [x] Lexical integration setup
+  - [x] Install and configure Lexical core package
+  - [x] Create Angular service wrappers for Lexical APIs (TextEditorService)
+  - [x] Set up content storage format (HTML format)
+  - [x] Implement content sanitization utilities (XSS prevention via HTML sanitization)
+  - [x] Create shared Lexical utilities/helpers (TextEditor component with plugins)
 
 **Deliverables**:
 

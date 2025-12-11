@@ -17,7 +17,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { $getRoot, LexicalEditor } from 'lexical';
+import { $getRoot, LexicalEditor, SerializedEditorState, SerializedLexicalNode } from 'lexical';
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
 import { TEXT_EDITOR_PLUGINS } from './text-editor.tokens';
 import { HistoryPlugin } from './plugins/history-plugin';
@@ -26,8 +26,13 @@ import { LinkPlugin } from './plugins/link-plugin';
 import { RichTextPlugin } from './plugins/rich-text-plugin';
 import { HeadingPlugin } from './plugins/heading-plugin';
 import { FontSizePlugin } from './plugins/font-size-plugin';
+import { AttachmentPlugin } from './plugins/attachment-plugin';
+import { ImagePlugin } from './plugins/image-plugin';
+import { DecoratorsPlugin } from './plugins/decorators-plugin';
 import { TextEditorToolbar } from './text-editor-toolbar';
 import { TextEditorService } from './text-editor.service';
+import { MentionPlugin } from './plugins/mention-plugin';
+import { TypeaheadMenuPlugin } from './plugins/typeahead-menu-plugin';
 
 @Component({
   selector: 'lib-text-editor',
@@ -40,12 +45,22 @@ import { TextEditorService } from './text-editor.service';
     RichTextPlugin,
     HeadingPlugin,
     FontSizePlugin,
+    AttachmentPlugin,
+    ImagePlugin,
+    DecoratorsPlugin,
+    MentionPlugin,
+    TypeaheadMenuPlugin,
     { provide: TEXT_EDITOR_PLUGINS, useExisting: HistoryPlugin, multi: true },
     { provide: TEXT_EDITOR_PLUGINS, useExisting: ListPlugin, multi: true },
     { provide: TEXT_EDITOR_PLUGINS, useExisting: LinkPlugin, multi: true },
     { provide: TEXT_EDITOR_PLUGINS, useExisting: RichTextPlugin, multi: true },
     { provide: TEXT_EDITOR_PLUGINS, useExisting: HeadingPlugin, multi: true },
     { provide: TEXT_EDITOR_PLUGINS, useExisting: FontSizePlugin, multi: true },
+    { provide: TEXT_EDITOR_PLUGINS, useExisting: AttachmentPlugin, multi: true },
+    { provide: TEXT_EDITOR_PLUGINS, useExisting: ImagePlugin, multi: true },
+    { provide: TEXT_EDITOR_PLUGINS, useExisting: DecoratorsPlugin, multi: true },
+    { provide: TEXT_EDITOR_PLUGINS, useExisting: MentionPlugin, multi: true },
+    { provide: TEXT_EDITOR_PLUGINS, useExisting: TypeaheadMenuPlugin, multi: true },
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => TextEditor),
@@ -281,6 +296,7 @@ export class TextEditor implements ControlValueAccessor, AfterViewInit {
 
   readonly valueChange = output<string>();
   readonly htmlChange = output<string>();
+  readonly jsonChange = output<SerializedEditorState<SerializedLexicalNode>>();
   readonly disabledChange = output<boolean>();
 
   // ControlValueAccessor implementation
@@ -329,8 +345,13 @@ export class TextEditor implements ControlValueAccessor, AfterViewInit {
       this.plugins,
       this.initialValue(),
       (html, text) => {
+        const editor = this.editorService.editor;
+        const json = editor ? editor.getEditorState().toJSON() : null;
         this.htmlChange.emit(html);
         this.valueChange.emit(text);
+        if (json) {
+          this.jsonChange.emit(json);
+        }
         // Notify form control of value change
         this.onChange(html);
       },
@@ -367,6 +388,14 @@ export class TextEditor implements ControlValueAccessor, AfterViewInit {
       const nodes = $generateNodesFromDOM(editor, dom);
       root.append(...nodes);
     });
+  }
+
+  getJson(): SerializedEditorState<SerializedLexicalNode> | null {
+    return this.editorService.getJSON();
+  }
+
+  setJson(json: SerializedEditorState<SerializedLexicalNode>): void {
+    this.editorService.setJSON(json);
   }
 
   // ControlValueAccessor implementation
