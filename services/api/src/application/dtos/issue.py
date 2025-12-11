@@ -1,13 +1,28 @@
-"""Issue DTOs."""
+"""Issue DTOs.
+
+Follows Clean Architecture and DDD principles:
+- Aggregates user information via UserDTO to avoid N+1 queries
+- Maintains referential integrity with IDs while providing display data
+- Separates read models (Response) from write models (Request)
+"""
 
 from datetime import date, datetime
 from uuid import UUID
 
 from pydantic import BaseModel, Field, field_validator
 
+from .user import UserDTO
+
 
 class IssueResponse(BaseModel):
-    """Response DTO for issue data."""
+    """Response DTO for issue data.
+
+    Includes embedded UserDTO for assignee and reporter to avoid additional
+    client-side queries. The IDs are maintained for referential integrity
+    and updates, while the embedded DTOs provide display data.
+
+    This follows the CQRS pattern: optimized read model with denormalized data.
+    """
 
     id: UUID
     project_id: UUID
@@ -18,8 +33,15 @@ class IssueResponse(BaseModel):
     type: str = Field(..., description="Issue type: task, bug, story, epic")
     status: str = Field(..., description="Issue status: todo, in_progress, done, cancelled")
     priority: str = Field(..., description="Issue priority: low, medium, high, critical")
+
+    # Referential IDs for updates and relations
     reporter_id: UUID | None = None
     assignee_id: UUID | None = None
+
+    # Embedded DTOs for display (avoiding N+1 queries)
+    reporter: UserDTO | None = None
+    assignee: UserDTO | None = None
+
     due_date: date | None = None
     story_points: int | None = None
     created_at: datetime
@@ -32,7 +54,12 @@ class IssueResponse(BaseModel):
 
 
 class IssueListItemResponse(BaseModel):
-    """Response DTO for issue in list view."""
+    """Response DTO for issue in list view.
+
+    Optimized for list rendering with embedded user data.
+    Particularly important for Kanban boards and issue lists where
+    we need to display assignee avatars and names without additional queries.
+    """
 
     id: UUID
     project_id: UUID
@@ -42,8 +69,15 @@ class IssueListItemResponse(BaseModel):
     type: str
     status: str
     priority: str
+
+    # Referential IDs
     assignee_id: UUID | None = None
     reporter_id: UUID | None = None
+
+    # Embedded DTOs for display
+    assignee: UserDTO | None = None
+    reporter: UserDTO | None = None
+
     created_at: datetime
     updated_at: datetime
 

@@ -1,4 +1,10 @@
-"""User DTOs."""
+"""User DTOs.
+
+Follows Clean Architecture and DDD principles:
+- UserDTO: Minimal representation for relations and display (Value Object concept)
+- UserProfileDTO: Complete user profile for authentication context (Aggregate Root)
+- Separation of concerns between read models and write models
+"""
 
 from datetime import datetime
 from uuid import UUID
@@ -6,8 +12,40 @@ from uuid import UUID
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
-class UserResponse(BaseModel):
-    """Response DTO for user data."""
+class UserDTO(BaseModel):
+    """Minimal user representation for display and relations.
+
+    Used in:
+    - Issue assignee/reporter
+    - Comment author
+    - Activity actor
+    - Any context where basic user info is needed
+
+    This follows the DDD Value Object pattern - immutable, lightweight,
+    and focused on a specific use case (display).
+    """
+
+    id: UUID
+    name: str
+    avatar_url: str | None = None
+
+    class Config:
+        """Pydantic config."""
+
+        from_attributes = True
+
+
+class UserProfileDTO(BaseModel):
+    """Complete user profile for authenticated context.
+
+    Used in:
+    - GET /api/users/me endpoint
+    - User settings pages
+    - Admin user management
+
+    This follows the DDD Aggregate Root pattern - contains complete
+    user information with all necessary fields for the user context.
+    """
 
     id: UUID
     email: str
@@ -22,6 +60,10 @@ class UserResponse(BaseModel):
         """Pydantic config."""
 
         from_attributes = True
+
+
+# Alias for backward compatibility
+UserResponse = UserProfileDTO
 
 
 class UserUpdateRequest(BaseModel):

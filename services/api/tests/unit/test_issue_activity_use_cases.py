@@ -110,6 +110,7 @@ class TestListIssueActivitiesUseCase:
         user_model.id = test_user.id
         user_model.name = test_user.name
         user_model.email = test_user.email.value
+        user_model.avatar_url = None
 
         mock_result = MagicMock()
         mock_result.scalars.return_value.all.return_value = [user_model]
@@ -131,8 +132,8 @@ class TestListIssueActivitiesUseCase:
         assert len(result.activities) == 1
         assert result.activities[0].action == "created"
         assert result.activities[0].user_id == test_user.id
-        assert result.activities[0].user_name == test_user.name
-        assert result.activities[0].user_email == test_user.email.value
+        assert result.activities[0].user is not None
+        assert result.activities[0].user.name == test_user.name
 
         # Verify calls
         mock_issue_repository.get_by_id.assert_called_once_with(test_issue.id)
@@ -198,6 +199,7 @@ class TestListIssueActivitiesUseCase:
         user_model.id = test_user.id
         user_model.name = test_user.name
         user_model.email = test_user.email.value
+        user_model.avatar_url = None
 
         mock_result = MagicMock()
         mock_result.scalars.return_value.all.return_value = [user_model]
@@ -255,8 +257,7 @@ class TestListIssueActivitiesUseCase:
         # Assertions
         assert len(result.activities) == 1
         assert result.activities[0].user_id is None
-        assert result.activities[0].user_name is None
-        assert result.activities[0].user_email is None
+        assert result.activities[0].user is None
 
     @pytest.mark.asyncio
     async def test_list_activities_empty(
