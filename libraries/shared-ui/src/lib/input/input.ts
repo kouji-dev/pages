@@ -185,13 +185,14 @@ export type InputType =
         @apply px-3 py-2;
         @apply text-base;
         @apply border rounded-md;
-        @apply bg-white;
+        @apply bg-bg-primary;
         @apply transition-colors;
         @apply focus:outline-none;
         @apply text-text-primary;
         @apply border-border-default;
         @apply font-sans;
         min-height: 2.5rem;
+        color: var(--color-text-primary);
       }
 
       .input--textarea {

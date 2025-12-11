@@ -52,6 +52,30 @@ poetry install
 poetry run uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
+### Database Seeding
+
+To seed the database with development data (test users, organizations, projects, etc.):
+
+```bash
+# Run seed script
+poetry run seed
+
+# Or directly with Python
+poetry run python scripts/seed.py
+```
+
+The seed script will:
+
+- Create 3 test users (admin@pages.dev, dev@pages.dev, test@pages.dev)
+- Create 1 organization (pages-dev)
+- Create 1 project (PAGES)
+- Create 5 sample issues
+- Create 1 documentation space with 4 pages
+
+**Note:** All test users have the password `TestPass123!`
+
+The script will skip seeding if data already exists in the database.
+
 ### Running Tests
 
 ```bash
@@ -111,4 +135,3 @@ ALLOWED_ORIGINS=http://localhost:4200
 ## License
 
 MIT License
-

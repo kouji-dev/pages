@@ -1,7 +1,19 @@
 import { Injectable, signal, inject, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, map, of, tap, throwError } from 'rxjs';
+import {
+  Observable,
+  catchError,
+  map,
+  of,
+  tap,
+  throwError,
+  firstValueFrom,
+  timeout,
+  filter,
+  take,
+} from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { environment } from '../../../environments/environment';
 import { UserProfileService } from './user-profile.service';
 
@@ -103,6 +115,18 @@ export class AuthService {
   // Authentication state signal
   readonly isAuthenticated = signal(false);
 
+  // Initialization promise - resolves when initializeAuth is complete
+  private readonly initializedPromise: Promise<void>;
+  private resolveInitialized!: () => void;
+
+  /**
+   * Get the initialization promise
+   * This promise resolves when initializeAuth has completed
+   */
+  get initialized(): Promise<void> {
+    return this.initializedPromise;
+  }
+
   // Update isAuthenticated when currentUser changes
   private readonly authStateEffect = effect(() => {
     const user = this.currentUser();
@@ -136,18 +160,63 @@ export class AuthService {
   });
 
   constructor() {
+    // Create initialization promise
+    this.initializedPromise = new Promise<void>((resolve) => {
+      this.resolveInitialized = resolve;
+    });
+
     // Load user from token on initialization
     this.initializeAuth();
   }
 
   /**
    * Initialize authentication state from stored tokens
+   * This method completes the initialization promise when done
    */
-  private initializeAuth(): void {
-    const accessToken = this.getAccessToken();
-    if (accessToken) {
-      // Load user profile from API - the effect will handle updating currentUser
-      this.userProfileService.loadProfile();
+  private async initializeAuth(): Promise<void> {
+    try {
+      const accessToken = this.getAccessToken();
+      if (accessToken) {
+        // Load user profile from API - the effect will handle updating currentUser
+        this.userProfileService.loadProfile();
+
+        // Wait for profile to load (or error) with timeout
+        const isLoading = this.userProfileService.isLoading;
+        const hasError = this.userProfileService.hasError;
+        const profile = this.userProfileService.getProfile();
+
+        // Wait for loading to complete (either success or error)
+        // Check if already loaded or if we need to wait
+        if (isLoading()) {
+          // Currently loading - wait for it to complete
+          try {
+            await firstValueFrom(
+              toObservable(isLoading).pipe(
+                filter((loading) => !loading), // Wait until not loading
+                take(1),
+                timeout(5000), // 5 second timeout
+              ),
+            );
+          } catch (timeoutError) {
+            // Timeout loading profile - clear tokens (user is not authenticated)
+            this.clearTokens();
+            this.resolveInitialized();
+            return;
+          }
+        }
+
+        // Check if there was an error loading profile
+        if (hasError() && !profile()) {
+          // Profile load failed - clear tokens (user is not authenticated)
+          this.clearTokens();
+        }
+      }
+      // Resolve promise - initialization is complete (even if it failed)
+      this.resolveInitialized();
+    } catch (error) {
+      // Unexpected error - clear tokens and still resolve (initialization is complete)
+      this.clearTokens();
+      this.resolveInitialized();
     }
   }
 
@@ -194,6 +263,7 @@ export class AuthService {
           avatarUrl: response.user.avatar_url || undefined,
           isVerified: response.user.is_verified,
         });
+        this.isAuthenticated.set(true);
       }),
       map((response) => ({
         id: response.user.id,

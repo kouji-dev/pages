@@ -7,16 +7,17 @@ import {
   ViewContainerRef,
   effect,
 } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Button, Icon, Input, LoadingState, ErrorState, Modal } from 'shared-ui';
+import { Button, Input, LoadingState, ErrorState, Modal } from 'shared-ui';
 import { ToastService } from 'shared-ui';
 import { OrganizationService, Organization } from '../../application/services/organization.service';
+import { NavigationService } from '../../application/services/navigation.service';
 import { DeleteOrganizationModal } from '../components/delete-organization-modal';
 import { MemberList } from '../components/member-list';
 import { AddMemberModal } from '../components/add-member-modal';
 import { ChangeRoleModal } from '../components/change-role-modal';
 import { PendingInvitations } from '../components/pending-invitations';
 import { InviteMemberModal } from '../components/invite-member-modal';
+import { BackToPage } from '../components/back-to-page';
 import {
   OrganizationMembersService,
   OrganizationMember,
@@ -29,25 +30,13 @@ import { AuthService } from '../../application/services/auth.service';
 
 @Component({
   selector: 'app-organization-settings-page',
-  imports: [
-    Button,
-    Icon,
-    Input,
-    LoadingState,
-    ErrorState,
-    RouterLink,
-    MemberList,
-    PendingInvitations,
-  ],
+  imports: [Button, Input, LoadingState, ErrorState, MemberList, PendingInvitations, BackToPage],
   template: `
     <div class="org-settings-page">
       <div class="org-settings-page_header">
         <div class="org-settings-page_header-content">
           <div>
-            <a routerLink="/app/organizations" class="org-settings-page_back-link">
-              <lib-icon name="arrow-left" size="sm" />
-              <span>Back to Organizations</span>
-            </a>
+            <app-back-to-page label="Back to Organizations" [route]="['/app/organizations']" />
             <h1 class="org-settings-page_title">Organization Settings</h1>
             @if (organization()) {
               <p class="org-settings-page_subtitle">{{ organization()!.name }}</p>
@@ -197,15 +186,6 @@ import { AuthService } from '../../application/services/auth.service';
         @apply max-w-4xl mx-auto;
       }
 
-      .org-settings-page_back-link {
-        @apply inline-flex items-center gap-2;
-        @apply text-sm font-medium mb-4;
-        @apply text-primary-500;
-        text-decoration: none;
-        @apply transition-colors;
-        @apply hover:opacity-80;
-      }
-
       .org-settings-page_title {
         @apply text-3xl font-bold mb-2;
         @apply text-text-primary;
@@ -301,9 +281,8 @@ import { AuthService } from '../../application/services/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrganizationSettingsPage {
-  private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   private readonly organizationService = inject(OrganizationService);
+  private readonly navigationService = inject(NavigationService);
   readonly membersService = inject(OrganizationMembersService);
   readonly invitationsService = inject(OrganizationInvitationsService);
   private readonly authService = inject(AuthService);
@@ -317,8 +296,7 @@ export class OrganizationSettingsPage {
   readonly isDeleting = signal(false);
 
   readonly organizationId = computed(() => {
-    const id = this.route.snapshot.paramMap.get('id');
-    return id || null;
+    return this.navigationService.currentOrganizationId();
   });
 
   // Use service's current organization (computed from resource)
@@ -398,10 +376,11 @@ export class OrganizationSettingsPage {
   });
 
   // Effects declared as instance variables (not in constructor or ngOnInit)
-  private readonly loadOrganizationEffect = effect(() => {
+  private readonly loadMembersEffect = effect(() => {
     const id = this.organizationId();
     if (id) {
-      this.organizationService.fetchOrganization(id);
+      // Organization is automatically loaded from URL via organizationResource
+      // Just load members when organization ID is available
       this.membersService.loadMembers(id);
     }
   });
@@ -445,7 +424,7 @@ export class OrganizationSettingsPage {
       .then(() => {
         this.toast.success('Organization updated successfully!');
         // Reload organization to get updated data
-        this.organizationService.fetchOrganization(org.id);
+        this.organizationService.reloadCurrentOrganization();
       })
       .catch((error) => {
         console.error('Failed to update organization:', error);
@@ -492,7 +471,7 @@ export class OrganizationSettingsPage {
     try {
       await this.organizationService.deleteOrganization(organizationId);
       this.toast.success('Organization deleted successfully!');
-      this.router.navigate(['/app/organizations']);
+      this.navigationService.navigateToOrganizations();
     } catch (error) {
       console.error('Failed to delete organization:', error);
       this.toast.error('Failed to delete organization. Please try again.');
@@ -500,10 +479,8 @@ export class OrganizationSettingsPage {
   }
 
   handleRetry(): void {
-    const id = this.organizationId();
-    if (id) {
-      this.organizationService.fetchOrganization(id);
-    }
+    // Reload current organization resource
+    this.organizationService.reloadCurrentOrganization();
   }
 
   handleAddMember(): void {

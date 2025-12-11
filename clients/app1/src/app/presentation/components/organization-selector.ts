@@ -51,7 +51,7 @@ import { CreateOrganizationModal } from './create-organization-modal';
           <div class="org-selector_header">
             <div class="org-selector_header-title">Organizations</div>
             <a
-              routerLink="/organizations"
+              routerLink="/app/organizations"
               class="org-selector_header-link"
               (click)="closeMenu(dropdown)"
             >
@@ -65,6 +65,7 @@ import { CreateOrganizationModal } from './create-organization-modal';
               <lib-button
                 variant="ghost"
                 size="md"
+                [fullWidth]="true"
                 class="org-selector_item"
                 [class.org-selector_item--active]="isCurrentOrganization(org.id)"
                 (clicked)="selectOrganization(org.id, dropdown)"
@@ -89,6 +90,7 @@ import { CreateOrganizationModal } from './create-organization-modal';
             <lib-button
               variant="ghost"
               size="md"
+              [fullWidth]="true"
               class="org-selector_action"
               (clicked)="handleCreateOrganization(dropdown)"
             >
@@ -183,26 +185,24 @@ import { CreateOrganizationModal } from './create-organization-modal';
       }
 
       .org-selector_list {
+        @apply flex flex-col;
         @apply py-1;
         max-height: 16rem;
         @apply overflow-y-auto;
       }
 
       .org-selector_item {
-        @apply w-full;
         @apply justify-start;
         text-align: left;
       }
 
       .org-selector_item .button {
-        @apply w-full;
         @apply justify-start;
         text-align: left;
       }
 
       .org-selector_item .button_content {
         @apply flex items-center gap-3;
-        @apply w-full;
       }
 
       .org-selector_item--active {
@@ -241,13 +241,11 @@ import { CreateOrganizationModal } from './create-organization-modal';
       }
 
       .org-selector_action {
-        @apply w-full;
         @apply justify-start;
         @apply text-primary-500;
       }
 
       .org-selector_action .button {
-        @apply w-full;
         @apply justify-start;
         @apply text-primary-500;
       }
@@ -272,10 +270,7 @@ export class OrganizationSelector {
 
   readonly isLoading = this.organizationService.isLoading;
   readonly currentOrganization = this.organizationService.currentOrganization;
-  readonly organizations = computed(() => {
-    const value = this.organizationService.organizations.value();
-    return Array.isArray(value) ? value : [];
-  });
+  readonly organizations = this.organizationService.organizationsList;
 
   readonly currentOrgName = computed(() => {
     const org = this.currentOrganization();

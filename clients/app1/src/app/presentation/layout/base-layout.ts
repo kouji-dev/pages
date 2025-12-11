@@ -242,9 +242,7 @@ import { RouterOutlet } from '@angular/router';
       }
 
       .layout_main-content {
-        @apply mx-auto;
-        width: 100%;
-        max-width: 62.5rem; /* 1000px - wide but readable */
+        @apply w-full;
         padding: 2rem;
         @apply lg:px-24; /* ~96px sides on desktop (Notion style) */
         @apply lg:py-8;

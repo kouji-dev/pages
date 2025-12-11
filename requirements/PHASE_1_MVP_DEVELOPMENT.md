@@ -1842,41 +1842,43 @@ This phase focuses on building the foundational features required for a function
 
 **Tasks**:
 
-- [ ] Create issue list page
-  - [ ] Issue table/list view
+- [x] Create issue list page
+  - [x] Issue table/list view
   - [ ] Issue card component
-  - [ ] Column headers (Key, Title, Type, Status, Assignee, Priority, Created)
-  - [ ] Sorting functionality
-  - [ ] Basic filtering UI (status, assignee, type)
-  - [ ] Pagination controls
-  - [ ] Create issue button
-- [ ] Create issue detail page
-  - [ ] Issue header (key, title, status badge)
-  - [ ] Issue metadata sidebar (Type, Priority, Assignee, Reporter, Created date, Due date)
-  - [ ] Issue description section
-  - [ ] Comments section
-  - [ ] Attachments section
-  - [ ] Activity log section
-- [ ] Create issue creation modal/form
-  - [ ] Project selector
-  - [ ] Issue type selector
-  - [ ] Title input
-  - [ ] Description textarea (rich text or markdown)
-  - [ ] Priority selector
-  - [ ] Assignee selector (optional)
-  - [ ] Due date picker (optional)
-- [ ] Create issue edit modal/form
-  - [ ] Edit title, description
-  - [ ] Change status dropdown
-  - [ ] Change assignee dropdown
-  - [ ] Change priority dropdown
-  - [ ] Update due date
-- [ ] Create issue type badges (Task, Bug, Story)
-- [ ] Create status badges (To Do, In Progress, Done)
-- [ ] Create priority indicators (Low, Medium, High, Critical)
-- [ ] Implement issue search functionality
-- [ ] Add loading states and error handling
-- [ ] Implement optimistic updates for better UX
+  - [x] Column headers (Key, Title, Type, Status, Assignee, Priority, Created)
+  - [x] Sorting functionality (UI implemented, backend integration complete - frontend sends sort_by and sort_order parameters)
+  - [x] Basic filtering UI (status, assignee, type) - using lib-select component
+  - [x] Pagination controls
+  - [x] Create issue button
+- [x] Create issue detail page
+  - [x] Issue header (key, title, status badge)
+  - [x] Issue metadata sidebar (Type, Priority, Assignee, Reporter, Created date, Due date)
+  - [x] Issue description section
+  - [x] Comments section
+  - [x] Attachments section
+  - [x] Activity log section - using IssueActivityList component
+  - [x] Back to Issues navigation link
+- [x] Create issue creation modal/form
+  - [x] Project selector (via input)
+  - [x] Issue type selector
+  - [x] Title input
+  - [x] Description textarea (basic, rich text pending Lexical)
+  - [x] Priority selector
+  - [x] Assignee selector (optional) - using lib-select component
+  - [x] Due date picker (optional)
+- [x] Create issue edit modal/form
+  - [x] Edit title, description
+  - [x] Change status dropdown
+  - [x] Change assignee dropdown - using lib-select component
+  - [x] Change priority dropdown
+  - [x] Update due date
+- [x] Create issue type badges (Task, Bug, Story, Epic)
+- [x] Create status badges (To Do, In Progress, Done, Cancelled)
+- [x] Create priority indicators (Low, Medium, High, Critical)
+- [x] Implement issue search functionality
+- [x] Add loading states and error handling
+- [x] Implement lib-select component for consistent dropdown UI across issue forms
+- [x] Implement optimistic updates for better UX (create, update, delete operations)
 
 **Deliverables**:
 
@@ -1889,45 +1891,70 @@ This phase focuses on building the foundational features required for a function
 #### 1.3.7 Project Management Frontend - Comments & Attachments
 
 **Priority**: High  
-**Estimated Time**: 7-10 days  
+**Estimated Time**: 10-14 days (increased due to Lexical integration)  
 **Dependencies**: 1.3.3, 1.3.4, 1.3.6  
 **Assigned To**: HWIMDA2
 
 **Tasks**:
 
-- [ ] Create comment component
-  - [ ] Display comment author, timestamp
-  - [ ] Display comment content (with markdown/rich text)
-  - [ ] Edit comment functionality (inline)
-  - [ ] Delete comment functionality
-  - [ ] Show edited indicator
-- [ ] Create comment input component
-  - [ ] Rich text editor or markdown editor
-  - [ ] @mention autocomplete (user picker)
-  - [ ] Submit button
-  - [ ] Preview mode (optional)
-- [ ] Create comment list component
-  - [ ] Display comments in chronological order
+- [x] Create comment component
+  - [x] Display comment author, timestamp
+  - [x] Display comment content (basic text, rich text pending Lexical)
+  - [x] Edit comment functionality (via modal)
+  - [x] Delete comment functionality
+  - [x] Show edited indicator
+  - [x] Enhance comment display with Lexical renderer
+    - [x] Integrate Lexical core package
+    - [x] Create Lexical renderer service/component for displaying rich text (using TextEditor in read-only mode)
+    - [x] Support HTML content rendering
+    - [ ] Handle @mentions in rendered content (pending mention plugin)
+- [x] Create comment input component
+  - [x] Basic textarea editor (rich text editor using Lexical)
+  - [ ] @mention autocomplete (user picker) - pending Lexical mention plugin
+  - [x] Submit button
+  - [ ] Preview mode (optional, can be added later)
+  - [x] Enhance comment input with Lexical editor
+    - [x] Integrate Lexical core package for Angular
+    - [x] Create Lexical editor wrapper component
+    - [x] Implement toolbar with formatting options (bold, italic, headings, lists, links)
+    - [ ] Add @mention autocomplete integration with Lexical (pending mention plugin)
+    - [x] Implement content serialization (HTML format)
+    - [ ] Add preview mode toggle (optional)
+    - [x] Handle content validation and sanitization
+- [x] Enhance edit comment modal (basic version)
+  - [x] Basic textarea editor (using Lexical editor)
+  - [x] Pre-populate editor with existing comment content
+  - [x] Maintain formatting during edit (Lexical preserves HTML formatting)
+  - [x] Support same formatting options as comment input (using same TextEditor component)
+- [x] Create comment list component
+  - [x] Display comments in chronological order
   - [ ] Threaded comments (optional, can be Phase 2)
-- [ ] Create attachment list component
-  - [ ] Display attachment cards with file name, size, uploader
-  - [ ] Download button
-  - [ ] Delete button (with permission check)
-  - [ ] Image preview thumbnails
-- [ ] Create file upload component
-  - [ ] Drag and drop zone
-  - [ ] File picker button
-  - [ ] Upload progress indicator
-  - [ ] Multiple file upload support
-  - [ ] File type validation
-  - [ ] File size validation
-- [ ] Implement file preview modal (for images, PDFs)
-- [ ] Add loading states and error handling
+- [x] Create attachment list component
+  - [x] Display attachment cards with file name, size, uploader
+  - [x] Download button
+  - [x] Delete button (with permission check)
+  - [x] Image preview thumbnails
+- [x] Create file upload component
+  - [x] Drag and drop zone
+  - [x] File picker button
+  - [x] Upload progress indicator
+  - [x] Multiple file upload support
+  - [x] File type validation
+  - [x] File size validation
+- [x] Implement file preview modal (for images, PDFs)
+- [x] Add loading states and error handling
+- [x] Lexical integration setup
+  - [x] Install and configure Lexical core package
+  - [x] Create Angular service wrappers for Lexical APIs (TextEditorService)
+  - [x] Set up content storage format (HTML format)
+  - [x] Implement content sanitization utilities (XSS prevention via HTML sanitization)
+  - [x] Create shared Lexical utilities/helpers (TextEditor component with plugins)
 
 **Deliverables**:
 
-- Comment UI components
+- Comment UI components with Lexical rich text support
 - File attachment UI components
+- Lexical editor integration for comments
 
 ---
 
@@ -1940,30 +1967,30 @@ This phase focuses on building the foundational features required for a function
 
 **Tasks**:
 
-- [ ] Create Kanban board component
-  - [ ] Board layout (columns for statuses)
-  - [ ] Column headers (status name, issue count)
-  - [ ] Issue cards in columns
-- [ ] Implement drag and drop functionality
-  - [ ] Drag issue cards between columns
-  - [ ] Update issue status on drop
-  - [ ] Visual feedback during drag
-  - [ ] Optimistic updates
-- [ ] Create issue card component for board
-  - [ ] Issue key and title
-  - [ ] Issue type badge
-  - [ ] Priority indicator
-  - [ ] Assignee avatar
-  - [ ] Due date indicator (if overdue)
-- [ ] Implement board filtering
-  - [ ] Filter by assignee
-  - [ ] Filter by issue type
-  - [ ] Filter by priority
-- [ ] Create board settings (optional for MVP)
-  - [ ] Show/hide columns
-  - [ ] Custom column order
-- [ ] Add loading states and error handling
-- [ ] Implement board persistence (save column widths, etc.)
+- [x] Create Kanban board component
+  - [x] Board layout (columns for statuses)
+  - [x] Column headers (status name, issue count)
+  - [x] Issue cards in columns
+- [x] Implement drag and drop functionality
+  - [x] Drag issue cards between columns
+  - [x] Update issue status on drop
+  - [x] Visual feedback during drag
+  - [x] Optimistic updates
+- [x] Create issue card component for board
+  - [x] Issue key and title
+  - [x] Issue type badge
+  - [x] Priority indicator
+  - [x] Assignee indicator
+  - [x] Due date indicator (if overdue)
+- [x] Implement board filtering
+  - [x] Filter by assignee
+  - [x] Filter by issue type
+  - [x] Filter by priority
+- [x] Create board settings (optional for MVP)
+  - [x] Show/hide columns
+  - [x] Custom column order (persisted, UI simplified for MVP)
+- [x] Add loading states and error handling
+- [x] Implement board persistence (save column widths, etc.)
 
 **Deliverables**:
 

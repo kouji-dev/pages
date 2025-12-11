@@ -1,5 +1,14 @@
-import { Component, ChangeDetectionStrategy, input, TemplateRef } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  input,
+  output,
+  signal,
+  computed,
+  TemplateRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Icon, IconName } from '../icon/icon';
 
 export interface TableColumn<T = any> {
   key: string;
@@ -9,9 +18,16 @@ export interface TableColumn<T = any> {
   sortable?: boolean;
 }
 
+export type SortDirection = 'asc' | 'desc' | null;
+
+export interface SortEvent {
+  column: string;
+  direction: SortDirection;
+}
+
 @Component({
   selector: 'lib-table',
-  imports: [CommonModule],
+  imports: [CommonModule, Icon],
   template: `
     <div class="table">
       <div class="table_container">
@@ -23,9 +39,31 @@ export interface TableColumn<T = any> {
                   class="table_header"
                   [class.table_header--center]="column.align === 'center'"
                   [class.table_header--right]="column.align === 'right'"
+                  [class.table_header--sortable]="column.sortable"
+                  [class.table_header--sorted]="isColumnSorted(column.key)"
                   [style.width]="column.width"
+                  (click)="handleSort(column)"
                 >
-                  {{ column.label }}
+                  <div class="table_header-content">
+                    <span>{{ column.label }}</span>
+                    @if (column.sortable) {
+                      <div class="table_header-sort">
+                        @if (isColumnSorted(column.key)) {
+                          <lib-icon
+                            [name]="getSortIcon(column.key)"
+                            size="xs"
+                            class="table_header-sort-icon"
+                          />
+                        } @else {
+                          <lib-icon
+                            name="arrow-up-down"
+                            size="xs"
+                            class="table_header-sort-icon table_header-sort-icon--inactive"
+                          />
+                        }
+                      </div>
+                    }
+                  </div>
                 </th>
               }
               @if (hasActions()) {
@@ -35,7 +73,12 @@ export interface TableColumn<T = any> {
           </thead>
           <tbody class="table_body">
             @for (row of data(); track trackByFn()(row); let idx = $index) {
-              <tr class="table_row table_row--body" [class.table_row--hover]="hoverable()">
+              <tr
+                class="table_row table_row--body"
+                [class.table_row--hover]="hoverable()"
+                [class.table_row--clickable]="clickable()"
+                (click)="handleRowClick(row, idx, $event)"
+              >
                 @for (column of columns(); track column.key) {
                   <td
                     class="table_cell"
@@ -129,6 +172,10 @@ export interface TableColumn<T = any> {
         @apply bg-bg-secondary;
       }
 
+      .table_row--clickable {
+        @apply cursor-pointer;
+      }
+
       .table_row--empty {
         @apply border-b-0;
       }
@@ -147,6 +194,33 @@ export interface TableColumn<T = any> {
 
       .table_header--right {
         @apply text-right;
+      }
+
+      .table_header--sortable {
+        @apply cursor-pointer;
+        @apply select-none;
+        @apply hover:bg-bg-hover;
+        @apply transition-colors;
+      }
+
+      .table_header--sorted {
+        @apply bg-bg-secondary;
+      }
+
+      .table_header-content {
+        @apply flex items-center gap-2;
+      }
+
+      .table_header-sort {
+        @apply flex items-center;
+      }
+
+      .table_header-sort-icon {
+        @apply flex-shrink-0;
+      }
+
+      .table_header-sort-icon--inactive {
+        @apply opacity-40;
       }
 
       .table_header--actions {
@@ -195,10 +269,87 @@ export class Table<T = any> {
   readonly hoverable = input(true);
   readonly emptyMessage = input('No data available');
   readonly hasActions = input(false);
+  readonly clickable = input(false);
   readonly cellTemplate =
     input<TemplateRef<{ $implicit: T; column: TableColumn<T>; index: number }>>();
   readonly actionsTemplate = input<TemplateRef<{ $implicit: T; index: number }>>();
   readonly emptyTemplate = input<TemplateRef<void>>();
+
+  // Row click output
+  readonly rowClick = output<{ row: T; index: number }>();
+
+  // Sorting state
+  private readonly sortColumn = signal<string | null>(null);
+  private readonly sortDirection = signal<SortDirection>(null);
+
+  // Output event for sorting
+  readonly sort = output<SortEvent>();
+
+  readonly currentSort = computed(() => {
+    const column = this.sortColumn();
+    const direction = this.sortDirection();
+    return column && direction ? { column, direction } : null;
+  });
+
+  isColumnSorted(columnKey: string): boolean {
+    return this.sortColumn() === columnKey && this.sortDirection() !== null;
+  }
+
+  getSortIcon(columnKey: string): IconName {
+    const direction = this.sortDirection();
+    if (this.sortColumn() === columnKey && direction) {
+      return direction === 'asc' ? ('arrow-up' as IconName) : ('arrow-down' as IconName);
+    }
+    return 'arrow-up-down' as IconName;
+  }
+
+  handleSort(column: TableColumn<T>): void {
+    if (!column.sortable) {
+      return;
+    }
+
+    const currentColumn = this.sortColumn();
+    const currentDirection = this.sortDirection();
+
+    if (currentColumn === column.key) {
+      // Cycle through: asc -> desc -> null
+      if (currentDirection === 'asc') {
+        this.sortDirection.set('desc');
+      } else if (currentDirection === 'desc') {
+        this.sortDirection.set(null);
+        this.sortColumn.set(null);
+      }
+    } else {
+      // New column, start with asc
+      this.sortColumn.set(column.key);
+      this.sortDirection.set('asc');
+    }
+
+    const direction = this.sortDirection();
+    if (direction) {
+      this.sort.emit({ column: column.key, direction });
+    } else {
+      this.sort.emit({ column: '', direction: null });
+    }
+  }
+
+  handleRowClick(row: T, index: number, event?: Event): void {
+    if (!this.clickable()) {
+      return;
+    }
+    // Don't trigger row click if clicking on a sortable header or button
+    if (event) {
+      const target = event.target as HTMLElement;
+      if (
+        target.closest('.table_header--sortable') ||
+        target.closest('button') ||
+        target.closest('a')
+      ) {
+        return;
+      }
+    }
+    this.rowClick.emit({ row, index });
+  }
 
   getCellValue(row: T, key: string): string {
     const value = (row as any)[key];

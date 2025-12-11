@@ -45,6 +45,23 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           }
           break;
 
+        case 422: // Unprocessable Entity
+          // For projects endpoint, suppress error if it's about missing organization
+          // (the UI will handle showing appropriate message)
+          if (req.url.includes('/projects') && !req.url.includes('/projects/')) {
+            // This is a list projects request - likely missing organization_id
+            // Don't show toast, let the component handle it
+            console.warn(
+              'Projects request validation error (likely missing organization):',
+              req.url,
+            );
+          } else {
+            // For other 422 errors, show the error message
+            const errorMessage = errorHandler.extractErrorMessage(error);
+            errorHandler.handleError(error, errorMessage);
+          }
+          break;
+
         case 500: // Internal Server Error
         case 502: // Bad Gateway
         case 503: // Service Unavailable

@@ -7,6 +7,10 @@ import { OrganizationsPage } from './presentation/pages/organizations-page';
 import { OrganizationSettingsPage } from './presentation/pages/organization-settings-page';
 import { InvitationAcceptancePage } from './presentation/pages/invitation-acceptance-page';
 import { ProfilePage } from './presentation/pages/profile-page';
+import { ProjectsPage } from './presentation/pages/projects-page';
+import { ProjectDetailPage } from './presentation/pages/project-detail-page';
+import { ProjectSettingsPage } from './presentation/pages/project-settings-page';
+import { IssueDetailPage } from './presentation/pages/issue-detail-page';
 import { LoginPage } from './presentation/pages/login-page.component';
 import { RegisterPage } from './presentation/pages/register-page.component';
 import { ForgotPasswordPage } from './presentation/pages/forgot-password-page.component';
@@ -14,6 +18,7 @@ import { ResetPasswordPage } from './presentation/pages/reset-password-page.comp
 import { NotFoundComponent } from './presentation/pages/not-found.component';
 import { AuthenticatedLayout } from './presentation/layout/authenticated-layout';
 import { authGuard } from './application/guards/auth.guard';
+import { loginGuard } from './application/guards/login.guard';
 
 export const routes: Routes = [
   {
@@ -45,6 +50,7 @@ export const routes: Routes = [
   {
     path: 'login',
     component: LoginPage,
+    canActivate: [loginGuard],
     title: 'Login - Pages',
   },
   {
@@ -69,14 +75,54 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       {
+        path: '',
+        redirectTo: 'organizations',
+        pathMatch: 'full',
+      },
+      {
         path: 'organizations',
         component: OrganizationsPage,
         title: 'Organizations - Pages',
       },
       {
-        path: 'organizations/:id/settings',
-        component: OrganizationSettingsPage,
-        title: 'Organization Settings - Pages',
+        path: 'organizations/:id',
+        children: [
+          {
+            path: '',
+            component: ProjectsPage,
+            title: 'Projects - Pages',
+          },
+          {
+            path: 'settings',
+            component: OrganizationSettingsPage,
+            title: 'Organization Settings - Pages',
+          },
+          {
+            path: 'projects',
+            component: ProjectsPage,
+            title: 'Projects - Pages',
+          },
+          {
+            path: 'projects/:projectId',
+            children: [
+              {
+                path: '',
+                component: ProjectDetailPage,
+                title: 'Project Details - Pages',
+              },
+              {
+                path: 'settings',
+                component: ProjectSettingsPage,
+                title: 'Project Settings - Pages',
+              },
+              {
+                path: 'issues/:issueId',
+                component: IssueDetailPage,
+                title: 'Issue Details - Pages',
+              },
+            ],
+          },
+        ],
       },
       {
         path: 'profile',

@@ -4,10 +4,28 @@
   "peerDependencies": {
     "@angular/common": "^21.0.0",
     "@angular/core": "^21.0.0",
+    "@angular/cdk": "^21.0.0",
     "tailwindcss": "^4.0.0"
   },
   "dependencies": {
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "@lexical/html": "^0.38.2",
+    "@lexical/history": "^0.38.2",
+    "@lexical/utils": "^0.38.2",
+    "@lexical/table": "^0.38.2",
+    "@lexical/selection": "^0.38.2",
+    "@lexical/text": "^0.38.2",
+    "@lexical/rich-text": "^0.38.2",
+    "@lexical/plain-text": "^0.38.2",
+    "@lexical/overflow": "^0.38.2",
+    "@lexical/mark": "^0.38.2",
+    "@lexical/list": "^0.38.2",
+    "@lexical/link": "^0.38.2",
+    "@lexical/hashtag": "^0.38.2",
+    "@lexical/file": "^0.38.2",
+    "@lexical/code": "^0.38.2",
+    "@lexical/clipboard": "^0.38.2",
+    "lexical": "^0.38.2"
   },
   "imports": {
     "#theme": "./src/styles.css"

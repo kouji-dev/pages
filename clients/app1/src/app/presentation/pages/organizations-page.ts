@@ -3,13 +3,13 @@ import {
   ChangeDetectionStrategy,
   computed,
   inject,
-  OnInit,
   ViewContainerRef,
   signal,
+  effect,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { Button, Icon, LoadingState, ErrorState, EmptyState, Modal } from 'shared-ui';
 import { OrganizationService, Organization } from '../../application/services/organization.service';
+import { NavigationService } from '../../application/services/navigation.service';
 import { OrganizationCard } from '../components/organization-card';
 import { CreateOrganizationModal } from '../components/create-organization-modal';
 
@@ -118,14 +118,15 @@ import { CreateOrganizationModal } from '../components/create-organization-modal
         @apply max-w-7xl mx-auto;
         @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3;
         @apply gap-6;
+        @apply items-stretch;
       }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OrganizationsPage implements OnInit {
+export class OrganizationsPage {
   readonly organizationService = inject(OrganizationService);
-  readonly router = inject(Router);
+  readonly navigationService = inject(NavigationService);
   readonly modal = inject(Modal);
   readonly viewContainerRef = inject(ViewContainerRef);
 
@@ -141,10 +142,13 @@ export class OrganizationsPage implements OnInit {
     return 'An unknown error occurred.';
   });
 
-  ngOnInit(): void {
-    // Load organizations when component initializes
-    this.organizationService.loadOrganizations();
-  }
+  private readonly initializeEffect = effect(
+    () => {
+      // Load organizations when component initializes
+      this.organizationService.loadOrganizations();
+    },
+    { allowSignalWrites: true },
+  );
 
   handleCreateOrganization(): void {
     this.modal.open(CreateOrganizationModal, this.viewContainerRef, {
@@ -154,7 +158,7 @@ export class OrganizationsPage implements OnInit {
   }
 
   handleOrganizationSettings(organization: Organization): void {
-    this.router.navigate(['/app/organizations', organization.id, 'settings']);
+    this.navigationService.navigateToOrganizationSettings(organization.id);
   }
 
   handleOrganizationLeave(organization: Organization): void {

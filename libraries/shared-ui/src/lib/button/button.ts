@@ -17,6 +17,7 @@ import { Icon, IconName } from '../icon/icon';
       [class.button--lg]="size() === 'lg'"
       [class.button--disabled]="disabled() || loading()"
       [class.button--icon-only]="iconOnly()"
+      [class.button--full-width]="fullWidth()"
       [disabled]="!link() && (disabled() || loading())"
       [type]="link() ? 'button' : type()"
       (click)="onClick($event)"
@@ -73,6 +74,15 @@ import { Icon, IconName } from '../icon/icon';
         @apply rounded-md; /* Notion-style rounded corners */
         position: relative; /* For absolute positioned link */
         /* Default styles will be overridden by variant classes */
+      }
+
+      /* Full width button */
+      .button--full-width {
+        @apply flex w-full;
+      }
+
+      .button--full-width .button_content {
+        width: 100%;
       }
 
       .button:focus-visible {
@@ -219,6 +229,7 @@ export class Button {
   disabled = input(false);
   loading = input(false);
   iconOnly = input(false);
+  fullWidth = input(false);
   type = input<'button' | 'submit' | 'reset'>('button');
   leftIcon = input<IconName | null>(null);
   rightIcon = input<IconName | null>(null);
@@ -257,6 +268,13 @@ export class Button {
     }
     // If link is provided, let the link handle navigation
     if (this.link()) {
+      return;
+    }
+    // For submit buttons, don't prevent default - let the form handle submission
+    if (this.type() === 'submit') {
+      // Still emit the clicked event for handlers that want to listen to it
+      this.clicked.emit(event);
+      // Don't prevent default - allow form submission to proceed
       return;
     }
     this.clicked.emit(event);
