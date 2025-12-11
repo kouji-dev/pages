@@ -13,10 +13,13 @@ import { CommonModule } from '@angular/common';
     `
       @reference "#theme";
 
+      :host {
+        @apply flex-auto overflow-y-auto;
+      }
+
       .modal-content {
         @apply px-6 py-4;
         @apply flex-1;
-        @apply overflow-y-auto;
         @apply min-h-0;
         @apply text-text-primary;
       }

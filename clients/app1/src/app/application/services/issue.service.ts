@@ -5,6 +5,12 @@ import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { NavigationService } from './navigation.service';
 
+export interface IssueUser {
+  id: string;
+  name: string;
+  avatar_url?: string | null;
+}
+
 export interface Issue {
   id: string;
   project_id: string;
@@ -17,6 +23,8 @@ export interface Issue {
   priority: 'low' | 'medium' | 'high' | 'critical';
   reporter_id?: string;
   assignee_id?: string;
+  reporter?: IssueUser | null;
+  assignee?: IssueUser | null;
   due_date?: string;
   story_points?: number;
   created_at: string;
