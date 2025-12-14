@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Icon, Button } from 'shared-ui';
+import { Icon, Button, IconName } from 'shared-ui';
 import { NotificationService, Notification } from '../../application/services/notification.service';
 import { NavigationService } from '../../application/services/navigation.service';
 
@@ -244,8 +244,8 @@ export class NotificationDropdown {
   /**
    * Get icon name for notification type
    */
-  getNotificationIcon(type: string): string {
-    const iconMap: Record<string, string> = {
+  getNotificationIcon(type: string): IconName {
+    const iconMap: Record<string, IconName> = {
       issue_assigned: 'user-check',
       issue_mentioned: 'at-sign',
       issue_commented: 'message-circle',

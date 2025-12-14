@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Icon, Button } from 'shared-ui';
+import { Icon, Button, IconName } from 'shared-ui';
 import {
   SearchService,
   SearchResultItem,
@@ -24,7 +24,7 @@ import { debounceTime, Subject } from 'rxjs';
 interface GroupedResults {
   type: EntityType;
   label: string;
-  icon: string;
+  icon: IconName;
   items: SearchResultItem[];
 }
 
@@ -273,7 +273,7 @@ export class SearchDropdown {
     spaces: SearchResultItem[];
   }): void {
     const groups: GroupedResults[] = [];
-    const entityConfig: Record<EntityType, { label: string; icon: string }> = {
+    const entityConfig: Record<EntityType, { label: string; icon: IconName }> = {
       issue: { label: 'Issues', icon: 'file-text' },
       page: { label: 'Pages', icon: 'book' },
       organization: { label: 'Organizations', icon: 'building' },
