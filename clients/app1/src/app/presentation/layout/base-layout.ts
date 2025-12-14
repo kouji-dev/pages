@@ -112,7 +112,7 @@ import { RouterOutlet } from '@angular/router';
       .layout_header-left {
         @apply flex items-center;
         gap: 1rem;
-        flex: 1;
+        flex: 0 0 auto;
         min-width: 0;
       }
 
@@ -154,10 +154,16 @@ import { RouterOutlet } from '@angular/router';
       /* Global Search (Center) */
       .layout_search {
         @apply flex items-center justify-center;
-        flex: 1;
-        max-width: 600px;
+        flex: 1 1 auto;
+        min-width: 0;
+        max-width: none; /* Remove max-width constraint */
         margin: 0 1rem;
         @apply hidden lg:flex;
+        width: 100%;
+      }
+
+      .layout_search > * {
+        @apply w-full;
       }
 
       /* Header Right Actions */

@@ -61,6 +61,7 @@ export type InputType =
             (input)="onInput($event)"
             (focus)="onFocus($event)"
             (blur)="onBlur($event)"
+            (click)="onClick($event)"
             >{{ model() }}</textarea
           >
         } @else {
@@ -85,6 +86,7 @@ export type InputType =
             (input)="onInput($event)"
             (focus)="onFocus($event)"
             (blur)="onBlur($event)"
+            (click)="onClick($event)"
           />
         }
 
@@ -382,6 +384,7 @@ export class Input {
   // Outputs
   focused = output<FocusEvent>();
   blurred = output<FocusEvent>();
+  clicked = output<MouseEvent>();
 
   // Internal state
   readonly showPassword = signal(false);
@@ -426,6 +429,10 @@ export class Input {
 
   onBlur(event: FocusEvent): void {
     this.blurred.emit(event);
+  }
+
+  onClick(event: MouseEvent): void {
+    this.clicked.emit(event);
   }
 
   togglePasswordVisibility(): void {
