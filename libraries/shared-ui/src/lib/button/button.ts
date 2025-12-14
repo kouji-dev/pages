@@ -5,6 +5,9 @@ import { Icon, IconName } from '../icon/icon';
 @Component({
   selector: 'lib-button',
   imports: [Icon, RouterLink],
+  host: {
+    '[class.button-host--full-width]': 'fullWidth()',
+  },
   template: `
     <button
       class="button"
@@ -77,6 +80,11 @@ import { Icon, IconName } from '../icon/icon';
       }
 
       /* Full width button */
+      :host.button-host--full-width {
+        @apply flex w-full;
+        display: block;
+      }
+
       .button--full-width {
         @apply flex w-full;
       }

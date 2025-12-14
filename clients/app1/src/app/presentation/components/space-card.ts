@@ -20,10 +20,12 @@ import { Space } from '../../application/services/space.service';
             <div class="space-card_icon">
               <lib-icon name="book" size="lg" />
             </div>
-            <div class="space-card_key">{{ space().key }}</div>
           </div>
           <div class="space-card_info">
-            <h3 class="space-card_name">{{ space().name }}</h3>
+            <div class="space-card_title-row">
+              <div class="space-card_key">{{ space().key }}</div>
+              <h3 class="space-card_name">{{ space().name }}</h3>
+            </div>
             @if (space().description) {
               <p class="space-card_description">{{ space().description }}</p>
             }
@@ -84,7 +86,7 @@ import { Space } from '../../application/services/space.service';
       }
 
       .space-card_header {
-        @apply flex items-center justify-between;
+        @apply flex items-center;
         @apply gap-3;
       }
 
@@ -96,23 +98,32 @@ import { Space } from '../../application/services/space.service';
         @apply text-primary-500;
       }
 
-      .space-card_key {
-        @apply text-xs font-mono font-semibold;
-        @apply px-2 py-1;
-        @apply rounded;
-        @apply bg-bg-secondary;
-        @apply text-text-secondary;
-      }
-
       .space-card_info {
         @apply flex flex-col;
         @apply gap-2;
         @apply flex-1;
       }
 
+      .space-card_title-row {
+        @apply flex items-center;
+        @apply gap-2;
+        @apply flex-wrap;
+      }
+
+      .space-card_key {
+        @apply text-xs font-mono font-semibold;
+        @apply px-2 py-1;
+        @apply rounded;
+        @apply bg-bg-secondary;
+        @apply text-text-secondary;
+        @apply flex-shrink-0;
+      }
+
       .space-card_name {
         @apply text-xl font-semibold;
         @apply text-text-primary;
+        @apply flex-1;
+        @apply min-w-0;
         margin: 0;
       }
 
@@ -165,6 +176,10 @@ export class SpaceCard {
   }
 
   handleSettings(): void {
-    this.onSettings.emit(this.space());
+    const orgId = this.organizationService.currentOrganization()?.id;
+    const spaceId = this.space().id;
+    if (orgId) {
+      this.navigationService.navigateToSpaceSettings(orgId, spaceId);
+    }
   }
 }

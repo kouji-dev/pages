@@ -9,74 +9,72 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Button, Input, LoadingState, ErrorState, Modal, ToastService } from 'shared-ui';
-import { ProjectService } from '../../application/services/project.service';
+import { SpaceService } from '../../application/services/space.service';
 import { NavigationService } from '../../application/services/navigation.service';
-import { DeleteProjectModal } from '../components/delete-project-modal';
+import { DeleteSpaceModal } from '../components/delete-space-modal';
 import { BackToPage } from '../components/back-to-page';
 
 @Component({
-  selector: 'app-project-settings-page',
+  selector: 'app-space-settings-page',
   imports: [Button, Input, LoadingState, ErrorState, BackToPage],
   template: `
-    <div class="project-settings-page">
-      <div class="project-settings-page_header">
-        <div class="project-settings-page_header-content">
+    <div class="space-settings-page">
+      <div class="space-settings-page_header">
+        <div class="space-settings-page_header-content">
           <div>
-            <app-back-to-page label="Back to Project" (onClick)="handleBackToProject()" />
-            <h1 class="project-settings-page_title">Project Settings</h1>
-            <p class="project-settings-page_subtitle">
-              Manage your project details and configuration.
-            </p>
+            <app-back-to-page label="Back to Space" (onClick)="handleBackToSpace()" />
+            <h1 class="space-settings-page_title">Space Settings</h1>
+            <p class="space-settings-page_subtitle">Manage your space details and configuration.</p>
           </div>
         </div>
       </div>
 
-      <div class="project-settings-page_content">
-        @if (projectService.isFetchingProject()) {
-          <lib-loading-state message="Loading project..." />
-        } @else if (projectService.hasProjectError()) {
+      <div class="space-settings-page_content">
+        @if (spaceService.isFetchingSpace()) {
+          <lib-loading-state message="Loading space..." />
+        } @else if (spaceService.hasSpaceError()) {
           <lib-error-state
-            title="Failed to Load Project"
+            title="Failed to Load Space"
             [message]="errorMessage()"
             [retryLabel]="'Retry'"
             (onRetry)="handleRetry()"
           />
-        } @else if (!project()) {
+        } @else if (!space()) {
           <lib-error-state
-            title="Project Not Found"
-            message="The project you're looking for doesn't exist or you don't have access to it."
+            title="Space Not Found"
+            message="The space you're looking for doesn't exist or you don't have access to it."
             [showRetry]="false"
           />
         } @else {
-          <div class="project-settings-page_container">
-            <!-- Project Details Section -->
-            <div class="project-settings-page_section">
-              <h2 class="project-settings-page_section-title">Project Details</h2>
-              <form class="project-settings-page_form" (ngSubmit)="handleSaveProject()">
+          <div class="space-settings-page_container">
+            <!-- Space Details Section -->
+            <div class="space-settings-page_section">
+              <h2 class="space-settings-page_section-title">Space Details</h2>
+              <form class="space-settings-page_form" (ngSubmit)="handleSaveSpace()">
                 <lib-input
-                  label="Project Name"
-                  placeholder="Enter project name"
+                  label="Space Name"
+                  placeholder="Enter space name"
                   [(model)]="name"
                   [required]="true"
                   [errorMessage]="nameError()"
-                  helperText="The display name for your project"
+                  helperText="The display name for your space"
                 />
                 <lib-input
-                  label="Project Key"
-                  placeholder="PROJ"
+                  label="Space Key"
+                  placeholder="SPACE"
                   [(model)]="key"
                   [readonly]="true"
-                  helperText="Project key cannot be changed after creation"
+                  helperText="Space key cannot be changed after creation"
                 />
                 <lib-input
                   label="Description"
                   type="textarea"
-                  placeholder="Describe your project (optional)"
+                  placeholder="Describe your space (optional)"
                   [(model)]="description"
                   [rows]="4"
-                  helperText="Optional description of your project"
+                  helperText="Optional description of your space"
                 />
-                <div class="project-settings-page_form-actions">
+                <div class="space-settings-page_form-actions">
                   <lib-button
                     variant="primary"
                     type="submit"
@@ -97,22 +95,23 @@ import { BackToPage } from '../components/back-to-page';
             </div>
 
             <!-- Danger Zone Section -->
-            <div class="project-settings-page_section project-settings-page_section--danger">
-              <h2 class="project-settings-page_section-title">Danger Zone</h2>
-              <div class="project-settings-page_danger-content">
+            <div class="space-settings-page_section space-settings-page_section--danger">
+              <h2 class="space-settings-page_section-title">Danger Zone</h2>
+              <div class="space-settings-page_danger-content">
                 <div>
-                  <h3 class="project-settings-page_danger-title">Delete Project</h3>
-                  <p class="project-settings-page_danger-description">
-                    Once you delete a project, there is no going back. Please be certain.
+                  <h3 class="space-settings-page_danger-title">Delete Space</h3>
+                  <p class="space-settings-page_danger-description">
+                    Once you delete a space, there is no going back. All pages in this space will
+                    also be deleted. Please be certain.
                   </p>
                 </div>
                 <lib-button
                   variant="danger"
                   size="md"
-                  (clicked)="handleDeleteProject()"
+                  (clicked)="handleDeleteSpace()"
                   [disabled]="isDeleting()"
                 >
-                  Delete Project
+                  Delete Space
                 </lib-button>
               </div>
             </div>
@@ -125,13 +124,13 @@ import { BackToPage } from '../components/back-to-page';
     `
       @reference "#mainstyles";
 
-      .project-settings-page {
+      .space-settings-page {
         @apply min-h-screen;
         @apply flex flex-col;
         @apply bg-bg-primary;
       }
 
-      .project-settings-page_header {
+      .space-settings-page_header {
         @apply w-full;
         @apply py-8;
         @apply px-4 sm:px-6 lg:px-8;
@@ -139,36 +138,36 @@ import { BackToPage } from '../components/back-to-page';
         @apply border-border-default;
       }
 
-      .project-settings-page_header-content {
+      .space-settings-page_header-content {
         @apply max-w-7xl mx-auto;
       }
 
-      .project-settings-page_title {
+      .space-settings-page_title {
         @apply text-3xl font-bold mb-2;
         @apply text-text-primary;
         margin: 0;
       }
 
-      .project-settings-page_subtitle {
+      .space-settings-page_subtitle {
         @apply text-base;
         @apply text-text-secondary;
         margin: 0;
       }
 
-      .project-settings-page_content {
+      .space-settings-page_content {
         @apply flex-1;
         @apply w-full;
         @apply py-8;
         @apply px-4 sm:px-6 lg:px-8;
       }
 
-      .project-settings-page_container {
+      .space-settings-page_container {
         @apply max-w-4xl mx-auto;
         @apply flex flex-col;
         @apply gap-8;
       }
 
-      .project-settings-page_section {
+      .space-settings-page_section {
         @apply flex flex-col;
         @apply gap-6;
         @apply p-6;
@@ -178,22 +177,22 @@ import { BackToPage } from '../components/back-to-page';
         @apply bg-bg-primary;
       }
 
-      .project-settings-page_section--danger {
+      .space-settings-page_section--danger {
         @apply border-error;
       }
 
-      .project-settings-page_section-title {
+      .space-settings-page_section-title {
         @apply text-xl font-semibold;
         @apply text-text-primary;
         margin: 0;
       }
 
-      .project-settings-page_form {
+      .space-settings-page_form {
         @apply flex flex-col;
         @apply gap-6;
       }
 
-      .project-settings-page_form-actions {
+      .space-settings-page_form-actions {
         @apply flex items-center;
         @apply gap-3;
         @apply pt-4;
@@ -201,19 +200,19 @@ import { BackToPage } from '../components/back-to-page';
         @apply border-border-default;
       }
 
-      .project-settings-page_danger-content {
+      .space-settings-page_danger-content {
         @apply flex items-center justify-between;
         @apply gap-4;
         @apply flex-wrap;
       }
 
-      .project-settings-page_danger-title {
+      .space-settings-page_danger-title {
         @apply text-lg font-semibold;
         @apply text-text-primary;
         margin: 0 0 0.5rem 0;
       }
 
-      .project-settings-page_danger-description {
+      .space-settings-page_danger-description {
         @apply text-sm;
         @apply text-text-secondary;
         margin: 0;
@@ -222,8 +221,8 @@ import { BackToPage } from '../components/back-to-page';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectSettingsPage {
-  readonly projectService = inject(ProjectService);
+export class SpaceSettingsPage {
+  readonly spaceService = inject(SpaceService);
   readonly navigationService = inject(NavigationService);
   readonly route = inject(ActivatedRoute);
   readonly router = inject(Router);
@@ -231,15 +230,13 @@ export class ProjectSettingsPage {
   readonly toast = inject(ToastService);
   readonly viewContainerRef = inject(ViewContainerRef);
 
-  readonly projectId = computed(() => {
-    return (
-      this.navigationService.currentProjectId() || this.route.snapshot.paramMap.get('id') || ''
-    );
+  readonly spaceId = computed(() => {
+    return this.navigationService.currentSpaceId() || '';
   });
   readonly organizationId = computed(() => {
     return this.navigationService.currentOrganizationId() || '';
   });
-  readonly project = computed(() => this.projectService.currentProject());
+  readonly space = computed(() => this.spaceService.currentSpace());
 
   readonly name = signal('');
   readonly key = signal('');
@@ -252,10 +249,10 @@ export class ProjectSettingsPage {
   readonly nameError = computed(() => {
     const value = this.name();
     if (!value.trim()) {
-      return 'Project name is required';
+      return 'Space name is required';
     }
     if (value.trim().length < 3) {
-      return 'Project name must be at least 3 characters';
+      return 'Space name must be at least 3 characters';
     }
     return '';
   });
@@ -272,45 +269,33 @@ export class ProjectSettingsPage {
   });
 
   readonly errorMessage = computed(() => {
-    const error = this.projectService.projectError();
+    const error = this.spaceService.spaceError();
     if (error) {
-      return error instanceof Error
-        ? error.message
-        : 'An error occurred while loading the project.';
+      return error instanceof Error ? error.message : 'An error occurred while loading the space.';
     }
     return 'An unknown error occurred.';
   });
 
   private readonly initializeFormEffect = effect(
     () => {
-      const project = this.project();
-      if (project) {
-        this.name.set(project.name);
-        this.key.set(project.key);
-        this.description.set(project.description || '');
-        this.originalName.set(project.name);
-        this.originalDescription.set(project.description || '');
+      const space = this.space();
+      if (space) {
+        this.name.set(space.name);
+        this.key.set(space.key);
+        this.description.set(space.description || '');
+        this.originalName.set(space.name);
+        this.originalDescription.set(space.description || '');
       }
     },
     { allowSignalWrites: true },
   );
 
-  private readonly initializeEffect = effect(
-    () => {
-      const id = this.projectId();
-      if (id) {
-        this.projectService.fetchProject(id);
-      }
-    },
-    { allowSignalWrites: true },
-  );
-
-  async handleSaveProject(): Promise<void> {
+  async handleSaveSpace(): Promise<void> {
     if (!this.isFormValid() || !this.hasChanges()) {
       return;
     }
 
-    const id = this.projectId();
+    const id = this.spaceId();
     if (!id) {
       return;
     }
@@ -318,17 +303,17 @@ export class ProjectSettingsPage {
     this.isSaving.set(true);
 
     try {
-      await this.projectService.updateProject(id, {
+      await this.spaceService.updateSpace(id, {
         name: this.name().trim(),
         description: this.description().trim() || undefined,
       });
       this.originalName.set(this.name().trim());
       this.originalDescription.set(this.description().trim());
-      this.toast.success('Project updated successfully!');
+      this.toast.success('Space updated successfully!');
     } catch (error) {
-      console.error('Failed to update project:', error);
+      console.error('Failed to update space:', error);
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to update project. Please try again.';
+        error instanceof Error ? error.message : 'Failed to update space. Please try again.';
       this.toast.error(errorMessage);
     } finally {
       this.isSaving.set(false);
@@ -336,38 +321,36 @@ export class ProjectSettingsPage {
   }
 
   handleReset(): void {
-    const project = this.project();
-    if (project) {
-      this.name.set(project.name);
-      this.description.set(project.description || '');
-      this.originalName.set(project.name);
-      this.originalDescription.set(project.description || '');
+    const space = this.space();
+    if (space) {
+      this.name.set(space.name);
+      this.description.set(space.description || '');
+      this.originalName.set(space.name);
+      this.originalDescription.set(space.description || '');
     }
   }
 
-  handleDeleteProject(): void {
-    const id = this.projectId();
-    if (!id) {
+  handleDeleteSpace(): void {
+    const id = this.spaceId();
+    const orgId = this.organizationId();
+    if (!id || !orgId) {
       return;
     }
 
-    this.modal.open(DeleteProjectModal, this.viewContainerRef, {
+    this.modal.open(DeleteSpaceModal, this.viewContainerRef, {
       size: 'md',
-      data: { projectId: id, projectName: this.project()?.name || 'this project' },
+      data: { spaceId: id, spaceName: this.space()?.name || 'this space', organizationId: orgId },
     });
   }
 
   handleRetry(): void {
-    const id = this.projectId();
-    if (id) {
-      this.projectService.fetchProject(id);
-    }
+    this.spaceService.reloadCurrentSpace();
   }
 
-  handleBackToProject(): void {
+  handleBackToSpace(): void {
     const orgId = this.organizationId();
     if (orgId) {
-      this.navigationService.navigateToOrganizationProjects(orgId);
+      this.navigationService.navigateToOrganizationSpaces(orgId);
     }
   }
 }

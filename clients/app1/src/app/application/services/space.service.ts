@@ -80,12 +80,19 @@ export class SpaceService {
   private readonly navigationService = inject(NavigationService);
   private readonly apiUrl = `${environment.apiUrl}/spaces`;
 
-  // Spaces list resource using httpResource - driven by URL organizationId
+  // Search query signal for filtering
+  readonly searchQuery = signal<string>('');
+
+  // Spaces list resource using httpResource - driven by URL organizationId and search query
   readonly spaces = httpResource<SpaceListResponse>(() => {
     const orgId = this.navigationService.currentOrganizationId();
     if (!orgId) return undefined; // Don't load if no organization
 
-    const params = new HttpParams().set('organization_id', orgId);
+    let params = new HttpParams().set('organization_id', orgId);
+    const search = this.searchQuery().trim();
+    if (search) {
+      params = params.set('search', search);
+    }
     return `${this.apiUrl}?${params.toString()}`;
   });
 
@@ -206,5 +213,12 @@ export class SpaceService {
     // Space ID is now URL-driven via NavigationService
     // This method is kept for backward compatibility
     // The spaceResource will automatically load when URL spaceId changes
+  }
+
+  /**
+   * Reload current space
+   */
+  reloadCurrentSpace(): void {
+    this.spaceResource.reload();
   }
 }

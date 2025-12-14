@@ -61,7 +61,8 @@ export class CommentInput {
   private readonly toast = inject(ToastService);
   readonly viewContainerRef = inject(ViewContainerRef);
 
-  readonly issueId = input.required<string>();
+  readonly issueId = input<string>();
+  readonly pageId = input<string>();
 
   @ViewChild('editor') editor?: TextEditor;
 
@@ -85,7 +86,11 @@ export class CommentInput {
   readonly isValid = computed(() => {
     const html = this.htmlContent();
     const textContent = this.content();
+    const issueId = this.issueId();
+    const pageId = this.pageId();
+
     return (
+      (issueId || pageId) &&
       html &&
       html.trim() !== '' &&
       html.trim() !== '<p></p>' &&
@@ -104,9 +109,20 @@ export class CommentInput {
     try {
       // Use HTML content for rich text comments
       const html = this.htmlContent();
-      await this.commentService.createComment(this.issueId(), {
-        content: html,
-      });
+      const issueId = this.issueId();
+      const pageId = this.pageId();
+
+      if (issueId) {
+        await this.commentService.createComment(issueId, {
+          content: html,
+        });
+      } else if (pageId) {
+        await this.commentService.createPageComment(pageId, {
+          content: html,
+        });
+      } else {
+        throw new Error('Either issueId or pageId must be provided');
+      }
 
       this.toast.success('Comment added successfully!');
       this.content.set('');

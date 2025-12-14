@@ -1,5 +1,7 @@
 import { Component, ChangeDetectionStrategy, computed, inject } from '@angular/core';
-import { Router, RouterOutlet, ActivatedRoute } from '@angular/router';
+import { Router, RouterOutlet, ActivatedRoute, NavigationEnd } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, map } from 'rxjs';
 import { NavigationService } from '../../application/services/navigation.service';
 import { BackToPage } from '../components/back-to-page';
 import { SidebarNav, SidebarNavItem } from '../components/sidebar-nav';
@@ -34,6 +36,7 @@ import { SidebarNav, SidebarNavItem } from '../components/sidebar-nav';
         @apply min-h-screen;
         @apply flex flex-col;
         @apply bg-bg-primary;
+        height: 100vh;
       }
 
       .organization-layout_container {
@@ -41,15 +44,16 @@ import { SidebarNav, SidebarNavItem } from '../components/sidebar-nav';
         @apply flex-1;
         @apply w-full;
         @apply min-h-0;
+        @apply h-full;
       }
 
       .organization-layout_sidebar {
-        @apply w-64;
+        width: 256px; /* Fixed width: w-64 = 16rem = 256px */
+        height: 100vh; /* Fixed height: full viewport height */
         @apply flex-shrink-0;
         @apply border-r;
         @apply border-border-default;
         @apply flex flex-col;
-        @apply h-full;
         @apply min-h-0;
       }
 
@@ -57,12 +61,6 @@ import { SidebarNav, SidebarNavItem } from '../components/sidebar-nav';
         @apply flex-1;
         @apply min-w-0;
         @apply overflow-auto;
-      }
-
-      @media (max-width: 768px) {
-        .organization-layout_sidebar {
-          @apply w-48;
-        }
       }
     `,
   ],
@@ -73,30 +71,37 @@ export class OrganizationLayout {
   private readonly route = inject(ActivatedRoute);
   readonly navigationService = inject(NavigationService);
 
+  // Make router URL reactive using toSignal
+  private readonly currentUrl = toSignal(
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map(() => this.router.url),
+    ),
+    { initialValue: this.router.url },
+  );
+
   readonly organizationId = computed(() => {
     return this.navigationService.currentOrganizationId();
   });
 
   readonly isProjectsActive = computed(() => {
-    const url = this.router.url;
+    const url = this.currentUrl();
     const orgId = this.organizationId();
     if (!orgId) return false;
 
-    // Check if we're exactly on the projects list route
-    // Detail pages will have additional path segments, so exact match works
+    // Projects is active when on projects list or any project detail/settings page
     const projectsPattern = `/app/organizations/${orgId}/projects`;
-    return url === projectsPattern;
+    return url === projectsPattern || url.startsWith(`${projectsPattern}/`);
   });
 
   readonly isSpacesActive = computed(() => {
-    const url = this.router.url;
+    const url = this.currentUrl();
     const orgId = this.organizationId();
     if (!orgId) return false;
 
-    // Check if we're exactly on the spaces list route
-    // Detail pages will have additional path segments, so exact match works
+    // Spaces is active when on spaces list or any space detail/settings page
     const spacesPattern = `/app/organizations/${orgId}/spaces`;
-    return url === spacesPattern;
+    return url === spacesPattern || url.startsWith(`${spacesPattern}/`);
   });
 
   readonly navItems = computed<SidebarNavItem[]>(() => {

@@ -46,18 +46,33 @@ export class CommentService {
 
   // Current issue ID for filtering comments
   private readonly currentIssueId = signal<string | null>(null);
+  // Current page ID for filtering comments
+  private readonly currentPageId = signal<string | null>(null);
+  // Entity type: 'issue' or 'page'
+  private readonly entityType = signal<'issue' | 'page' | null>(null);
 
   // Comments list resource using httpResource with computed URL
   private readonly commentsResource = httpResource<CommentListResponse>(() => {
     const issueId = this.currentIssueId();
-    if (!issueId) return undefined;
+    const pageId = this.currentPageId();
+    const type = this.entityType();
+
+    if (!type) return undefined;
+
+    const entityId = type === 'issue' ? issueId : pageId;
+    if (!entityId) return undefined;
 
     const page = this.currentPage();
     const limit = 50; // Default limit
 
     const params = new HttpParams().set('page', page.toString()).set('limit', limit.toString());
 
-    return `${API_URL}/issues/${issueId}/comments?${params.toString()}`;
+    const endpoint =
+      type === 'issue'
+        ? `${API_URL}/issues/${entityId}/comments`
+        : `${API_URL}/pages/${entityId}/comments`;
+
+    return `${endpoint}?${params.toString()}`;
   });
 
   // Current page signal
@@ -85,8 +100,21 @@ export class CommentService {
    */
   setIssue(issueId: string): void {
     this.currentIssueId.set(issueId);
+    this.currentPageId.set(null);
+    this.entityType.set('issue');
     this.page.set(1);
     // Resource will reload automatically when issueId changes
+  }
+
+  /**
+   * Set current page ID and load comments
+   */
+  setPage(pageId: string): void {
+    this.currentPageId.set(pageId);
+    this.currentIssueId.set(null);
+    this.entityType.set('page');
+    this.page.set(1);
+    // Resource will reload automatically when pageId changes
   }
 
   /**
@@ -97,11 +125,28 @@ export class CommentService {
   }
 
   /**
-   * Create a new comment
+   * Create a new comment for an issue
    */
   async createComment(issueId: string, request: CreateCommentRequest): Promise<Comment> {
     const response = await firstValueFrom(
       this.http.post<Comment>(`${API_URL}/issues/${issueId}/comments`, request),
+    );
+    if (!response) {
+      throw new Error('Failed to create comment: No response from server');
+    }
+
+    // Reload comments to get updated list
+    this.loadComments();
+
+    return response;
+  }
+
+  /**
+   * Create a new comment for a page
+   */
+  async createPageComment(pageId: string, request: CreateCommentRequest): Promise<Comment> {
+    const response = await firstValueFrom(
+      this.http.post<Comment>(`${API_URL}/pages/${pageId}/comments`, request),
     );
     if (!response) {
       throw new Error('Failed to create comment: No response from server');

@@ -237,7 +237,9 @@ export class NavigationService {
    * Navigate to project settings
    */
   navigateToProjectSettings(organizationId: string, projectId: string): void {
-    this.router.navigate(['/app/organizations', organizationId, 'projects', projectId, 'settings']);
+    this.router.navigate(['/app/organizations', organizationId, 'projects', projectId], {
+      queryParams: { tab: 'settings' },
+    });
   }
 
   /**
@@ -313,6 +315,10 @@ export class NavigationService {
    */
   navigateToSpace(organizationId: string, spaceId: string): void {
     this.router.navigate(['/app/organizations', organizationId, 'spaces', spaceId]);
+  }
+
+  navigateToSpaceSettings(organizationId: string, spaceId: string): void {
+    this.router.navigate(['/app/organizations', organizationId, 'spaces', spaceId, 'settings']);
   }
 
   /**

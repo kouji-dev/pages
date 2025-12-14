@@ -4,7 +4,6 @@ import {
   computed,
   inject,
   ViewContainerRef,
-  signal,
 } from '@angular/core';
 import { Button, LoadingState, ErrorState, EmptyState, Modal, Input } from 'shared-ui';
 import { SpaceService, Space } from '../../application/services/space.service';
@@ -56,34 +55,34 @@ import { CreateSpaceModal } from '../components/create-space-modal';
             (onRetry)="handleRetry()"
           />
         } @else {
-          @if (allSpaces().length > 0) {
-            <div class="spaces-page_search">
-              <lib-input
-                placeholder="Search spaces by name, key, or description..."
-                [(model)]="searchQuery"
-                leftIcon="search"
-                class="spaces-page_search-input"
+          <div class="spaces-page_search">
+            <lib-input
+              placeholder="Search spaces by name or key..."
+              [(model)]="spaceService.searchQuery"
+              leftIcon="search"
+              class="spaces-page_search-input"
+            />
+          </div>
+          @if (allSpaces().length === 0) {
+            @if (spaceService.searchQuery().trim()) {
+              <lib-empty-state
+                title="No spaces found"
+                message="Try adjusting your search terms."
+                icon="search"
               />
-            </div>
-          }
-          @if (filteredSpaces().length === 0 && allSpaces().length > 0) {
-            <lib-empty-state
-              title="No spaces found"
-              message="Try adjusting your search terms."
-              icon="search"
-            />
-          } @else if (filteredSpaces().length === 0) {
-            <lib-empty-state
-              title="No spaces yet"
-              message="Get started by creating your first space to organize your documentation."
-              icon="book"
-              actionLabel="Create Space"
-              actionIcon="plus"
-              (onAction)="handleCreateSpace()"
-            />
+            } @else {
+              <lib-empty-state
+                title="No spaces yet"
+                message="Get started by creating your first space to organize your documentation."
+                icon="book"
+                actionLabel="Create Space"
+                actionIcon="plus"
+                (onAction)="handleCreateSpace()"
+              />
+            }
           } @else {
             <div class="spaces-page_grid">
-              @for (space of filteredSpaces(); track space.id) {
+              @for (space of allSpaces(); track space.id) {
                 <app-space-card [space]="space" (onSettings)="handleSpaceSettings($event)" />
               }
             </div>
@@ -161,8 +160,6 @@ export class SpacesPage {
   readonly modal = inject(Modal);
   readonly viewContainerRef = inject(ViewContainerRef);
 
-  readonly searchQuery = signal('');
-
   readonly organizationId = computed(() => {
     return this.navigationService.currentOrganizationId();
   });
@@ -171,22 +168,6 @@ export class SpacesPage {
     const orgId = this.organizationId();
     if (!orgId) return [];
     return this.spaceService.getSpacesByOrganization(orgId);
-  });
-
-  readonly filteredSpaces = computed(() => {
-    const spaces = this.allSpaces();
-    const query = this.searchQuery().toLowerCase().trim();
-
-    if (!query) {
-      return spaces;
-    }
-
-    return spaces.filter((space) => {
-      const nameMatch = space.name.toLowerCase().includes(query);
-      const keyMatch = space.key.toLowerCase().includes(query);
-      const descriptionMatch = space.description?.toLowerCase().includes(query) || false;
-      return nameMatch || keyMatch || descriptionMatch;
-    });
   });
 
   readonly errorMessage = computed(() => {
@@ -209,8 +190,10 @@ export class SpacesPage {
   }
 
   handleSpaceSettings(space: Space): void {
-    // TODO: Navigate to space settings when implemented
-    console.log('Space settings:', space);
+    const orgId = this.organizationId();
+    if (orgId) {
+      this.navigationService.navigateToSpaceSettings(orgId, space.id);
+    }
   }
 
   handleRetry(): void {

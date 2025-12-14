@@ -1,13 +1,23 @@
-import { Component, ChangeDetectionStrategy, computed, inject } from '@angular/core';
-import { Button, LoadingState, ErrorState } from 'shared-ui';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  computed,
+  inject,
+  ViewContainerRef,
+} from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { LoadingState, ErrorState, Modal, Button } from 'shared-ui';
 import { SpaceService } from '../../application/services/space.service';
 import { OrganizationService } from '../../application/services/organization.service';
 import { NavigationService } from '../../application/services/navigation.service';
 import { BackToPage } from '../components/back-to-page';
+import { PageList } from '../components/page-list';
+import { PagesTree } from '../components/pages-tree';
+import { CreatePageModal } from '../components/create-page-modal';
 
 @Component({
   selector: 'app-space-detail-page',
-  imports: [Button, LoadingState, ErrorState, BackToPage],
+  imports: [RouterOutlet, LoadingState, ErrorState, BackToPage, PageList, PagesTree, Button],
   template: `
     <div class="space-detail-page">
       @if (spaceService.isFetchingSpace()) {
@@ -28,14 +38,24 @@ import { BackToPage } from '../components/back-to-page';
       } @else {
         <div class="space-detail-page_header">
           <div class="space-detail-page_header-content">
+            <app-back-to-page label="Back to Spaces" (onClick)="handleBackToSpaces()" />
             <div class="space-detail-page_header-main">
               <div class="space-detail-page_header-info">
-                <app-back-to-page label="Back to Spaces" (onClick)="handleBackToSpaces()" />
                 <div class="space-detail-page_key">{{ space()?.key }}</div>
                 <h1 class="space-detail-page_title">{{ space()?.name }}</h1>
                 @if (space()?.description) {
                   <p class="space-detail-page_description">{{ space()?.description }}</p>
                 }
+              </div>
+              <div class="space-detail-page_header-actions">
+                <lib-button
+                  variant="primary"
+                  size="sm"
+                  (clicked)="handleCreatePage()"
+                  leftIcon="plus"
+                >
+                  Create Page
+                </lib-button>
               </div>
             </div>
           </div>
@@ -43,54 +63,41 @@ import { BackToPage } from '../components/back-to-page';
 
         <div class="space-detail-page_content">
           <div class="space-detail-page_container">
-            <div class="space-detail-page_main">
-              <div class="space-detail-page_section">
-                <h2 class="space-detail-page_section-title">Pages</h2>
-                <p class="space-detail-page_placeholder">
-                  Page management will be available in Phase 1.4.6
-                </p>
-              </div>
-
-              @if (space()?.recentPages && space()!.recentPages!.length > 0) {
-                <div class="space-detail-page_section">
-                  <h2 class="space-detail-page_section-title">Recent Pages</h2>
-                  <div class="space-detail-page_recent-pages">
-                    @for (page of space()!.recentPages; track page.id) {
-                      <div class="space-detail-page_recent-page">
-                        <h3 class="space-detail-page_recent-page-title">{{ page.title }}</h3>
-                        <p class="space-detail-page_recent-page-meta">
-                          Updated {{ formatDate(page.updatedAt) }}
-                        </p>
-                      </div>
-                    }
-                  </div>
-                </div>
-              }
-            </div>
             <div class="space-detail-page_sidebar">
-              <div class="space-detail-page_metadata">
-                <h3 class="space-detail-page_metadata-title">Details</h3>
-                <div class="space-detail-page_metadata-item">
-                  <span class="space-detail-page_metadata-label">Pages</span>
-                  <span class="space-detail-page_metadata-value">{{
-                    space()!.pageCount || 0
-                  }}</span>
-                </div>
-                <div class="space-detail-page_metadata-item">
-                  <span class="space-detail-page_metadata-label">Created</span>
-                  <span class="space-detail-page_metadata-value">{{
-                    formatDate(space()!.createdAt!)
-                  }}</span>
-                </div>
-                @if (space()?.updatedAt) {
-                  <div class="space-detail-page_metadata-item">
-                    <span class="space-detail-page_metadata-label">Updated</span>
-                    <span class="space-detail-page_metadata-value">{{
-                      formatDate(space()!.updatedAt!)
-                    }}</span>
+              <app-pages-tree [spaceId]="spaceId()" />
+            </div>
+            <div class="space-detail-page_main">
+              @if (showDefaultContent()) {
+                <!-- Default content when no page is selected -->
+                <div class="space-detail-page_default-content">
+                  <div class="space-detail-page_section">
+                    <h2 class="space-detail-page_section-title">Pages</h2>
+                    <app-page-list [spaceId]="spaceId()" />
                   </div>
-                }
-              </div>
+
+                  @if (space()?.recentPages && space()!.recentPages!.length > 0) {
+                    <div class="space-detail-page_section">
+                      <h2 class="space-detail-page_section-title">Recent Pages</h2>
+                      <div class="space-detail-page_recent-pages">
+                        @for (page of space()!.recentPages; track page.id) {
+                          <div
+                            class="space-detail-page_recent-page"
+                            (click)="handlePageClick(page)"
+                          >
+                            <h3 class="space-detail-page_recent-page-title">{{ page.title }}</h3>
+                            <p class="space-detail-page_recent-page-meta">
+                              Updated {{ formatDate(page.updatedAt) }}
+                            </p>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <!-- Page detail content when a page is selected -->
+                <router-outlet />
+              }
             </div>
           </div>
         </div>
@@ -109,25 +116,34 @@ import { BackToPage } from '../components/back-to-page';
 
       .space-detail-page_header {
         @apply w-full;
-        @apply py-8;
+        @apply py-6;
         @apply px-4 sm:px-6 lg:px-8;
         @apply border-b;
         @apply border-border-default;
       }
 
       .space-detail-page_header-content {
-        @apply max-w-7xl mx-auto;
+        @apply w-full;
       }
 
       .space-detail-page_header-main {
-        @apply flex items-start justify-between;
+        @apply flex items-center justify-between;
         @apply gap-4;
         @apply flex-wrap;
       }
 
       .space-detail-page_header-info {
-        @apply flex flex-col;
+        @apply flex items-center;
+        @apply gap-4;
+        @apply flex-wrap;
+        @apply flex-1;
+        @apply min-w-0;
+      }
+
+      .space-detail-page_header-actions {
+        @apply flex items-center;
         @apply gap-2;
+        @apply flex-shrink-0;
       }
 
       .space-detail-page_key {
@@ -138,41 +154,54 @@ import { BackToPage } from '../components/back-to-page';
         @apply text-text-secondary;
         @apply inline-block;
         @apply w-fit;
+        @apply flex-shrink-0;
       }
 
       .space-detail-page_title {
-        @apply text-3xl font-bold;
+        @apply text-2xl font-bold;
         @apply text-text-primary;
         margin: 0;
+        @apply flex-shrink-0;
       }
 
       .space-detail-page_description {
-        @apply text-base;
+        @apply text-sm;
         @apply text-text-secondary;
         margin: 0;
+        @apply flex-shrink-0;
       }
 
       .space-detail-page_content {
         @apply flex-1;
         @apply w-full;
-        @apply py-8;
-        @apply px-4 sm:px-6 lg:px-8;
+        @apply flex;
+        @apply min-h-0;
       }
 
       .space-detail-page_container {
-        @apply max-w-7xl mx-auto;
-        @apply grid grid-cols-1 lg:grid-cols-3;
-        @apply gap-8;
-      }
-
-      .space-detail-page_main {
-        @apply lg:col-span-2;
-        @apply flex flex-col;
-        @apply gap-6;
+        @apply w-full;
+        @apply flex;
+        @apply flex-1;
+        @apply min-h-0;
       }
 
       .space-detail-page_sidebar {
-        @apply lg:col-span-1;
+        width: 256px; /* Fixed width: same as project sidebar */
+        @apply flex-shrink-0;
+        @apply border-r;
+        @apply border-border-default;
+        @apply flex flex-col;
+        @apply h-full;
+        @apply min-h-0;
+        @apply bg-bg-secondary;
+      }
+
+      .space-detail-page_main {
+        @apply flex-1;
+        @apply min-w-0;
+        @apply overflow-auto;
+        @apply py-8;
+        @apply px-4 sm:px-6 lg:px-8;
       }
 
       .space-detail-page_section {
@@ -205,6 +234,9 @@ import { BackToPage } from '../components/back-to-page';
         @apply border;
         @apply border-border-default;
         @apply bg-bg-secondary;
+        @apply cursor-pointer;
+        @apply transition-colors;
+        @apply hover:bg-bg-tertiary;
       }
 
       .space-detail-page_recent-page-title {
@@ -218,37 +250,6 @@ import { BackToPage } from '../components/back-to-page';
         @apply text-text-secondary;
         margin: 0;
       }
-
-      .space-detail-page_metadata {
-        @apply flex flex-col;
-        @apply gap-4;
-        @apply p-6;
-        @apply rounded-lg;
-        @apply border;
-        @apply border-border-default;
-        @apply bg-bg-secondary;
-      }
-
-      .space-detail-page_metadata-title {
-        @apply text-lg font-semibold;
-        @apply text-text-primary;
-        margin: 0 0 1rem 0;
-      }
-
-      .space-detail-page_metadata-item {
-        @apply flex flex-col;
-        @apply gap-2;
-      }
-
-      .space-detail-page_metadata-label {
-        @apply text-sm font-medium;
-        @apply text-text-secondary;
-      }
-
-      .space-detail-page_metadata-value {
-        @apply text-sm;
-        @apply text-text-primary;
-      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -257,6 +258,8 @@ export class SpaceDetailPage {
   readonly spaceService = inject(SpaceService);
   readonly organizationService = inject(OrganizationService);
   readonly navigationService = inject(NavigationService);
+  readonly modal = inject(Modal);
+  readonly viewContainerRef = inject(ViewContainerRef);
 
   readonly spaceId = computed(() => {
     return this.navigationService.currentSpaceId() || '';
@@ -265,6 +268,14 @@ export class SpaceDetailPage {
 
   readonly organizationId = computed(() => {
     return this.navigationService.currentOrganizationId() || '';
+  });
+
+  readonly pageId = computed(() => {
+    return this.navigationService.currentPageId();
+  });
+
+  readonly showDefaultContent = computed(() => {
+    return !this.pageId();
   });
 
   readonly errorMessage = computed(() => {
@@ -292,5 +303,26 @@ export class SpaceDetailPage {
     if (orgId) {
       this.navigationService.navigateToOrganizationSpaces(orgId);
     }
+  }
+
+  handlePageClick(page: { id: string }): void {
+    const orgId = this.organizationId();
+    const spaceId = this.spaceId();
+
+    if (orgId && spaceId && page.id) {
+      this.navigationService.navigateToPage(orgId, spaceId, page.id);
+    }
+  }
+
+  handleCreatePage(): void {
+    const spaceId = this.spaceId();
+    if (!spaceId) {
+      return;
+    }
+
+    this.modal.open(CreatePageModal, this.viewContainerRef, {
+      size: 'lg',
+      data: { spaceId },
+    });
   }
 }

@@ -2166,26 +2166,27 @@ This phase focuses on building the foundational features required for a function
 **Priority**: High  
 **Estimated Time**: 5-7 days  
 **Dependencies**: 1.4.1, 1.1.5  
-**Assigned To**: HWIMDA2
+**Assigned To**: HWIMDA2  
+**Status**: ✅ Complete
 
 **Tasks**:
 
-- [ ] Create space list page
-  - [ ] Display spaces in grid/list view
-  - [ ] Space card component
-  - [ ] Create space button/modal
-  - [ ] Search/filter spaces
-- [ ] Create space detail page
-  - [ ] Space header
-  - [ ] Space navigation (pages tree)
-  - [ ] Page list view
-- [ ] Create space creation modal/form
-- [ ] Create space settings page
-- [ ] Add loading states and error handling
+- [x] Create space list page
+  - [x] Display spaces in grid/list view
+  - [x] Space card component
+  - [x] Create space button/modal
+  - [x] Search/filter spaces (backend search)
+- [x] Create space detail page
+  - [x] Space header
+  - [x] Space navigation (pages tree)
+  - [x] Page list view
+- [x] Create space creation modal/form
+- [x] Create space settings page
+- [x] Add loading states and error handling
 
 **Deliverables**:
 
-- Space management UI
+- ✅ Space management UI
 
 ---
 
@@ -2194,49 +2195,49 @@ This phase focuses on building the foundational features required for a function
 **Priority**: Critical  
 **Estimated Time**: 10-14 days  
 **Dependencies**: 1.4.2, 1.4.4, 1.1.5  
-**Assigned To**: BATATA2
+**Assigned To**: BATATA2  
+**Status**: ✅ Complete
 
 **Tasks**:
 
-- [ ] Choose and integrate rich text editor (Tiptap, Slate, Draft.js, or similar)
-- [ ] Create page editor component
-  - [ ] Title input
-  - [ ] Rich text editor toolbar
-  - [ ] Editor content area
-  - [ ] Formatting options (bold, italic, headings, lists, links, etc.)
-- [ ] Implement markdown support (optional)
+- [x] Choose and integrate rich text editor (Lexical)
+- [x] Create page editor component
+  - [x] Title input
+  - [x] Rich text editor toolbar
+  - [x] Editor content area
+  - [x] Formatting options (bold, italic, headings, lists, links, etc.)
+- [ ] Implement markdown support (optional - deferred)
   - [ ] Markdown syntax highlighting
   - [ ] Markdown preview
   - [ ] Markdown shortcuts
-- [ ] Create page view/display component
-  - [ ] Render rich text content
-  - [ ] Display page metadata (author, last updated)
-  - [ ] Display breadcrumbs
-- [ ] Create page creation page
-  - [ ] Space selector
-  - [ ] Parent page selector (for hierarchy)
-  - [ ] Template selector (if using templates)
-  - [ ] Page editor
-  - [ ] Save/publish button
-- [ ] Create page edit page
-  - [ ] Load existing page content
-  - [ ] Edit mode toggle
-  - [ ] Auto-save draft (optional for MVP)
-  - [ ] Save changes button
-- [ ] Create page detail/view page
-  - [ ] Display page content
-  - [ ] Edit button (with permission check)
-  - [ ] Page actions menu
-- [ ] Implement page hierarchy UI
-  - [ ] Page tree sidebar
-  - [ ] Parent page selector
-  - [ ] Breadcrumb navigation
-- [ ] Add loading states and error handling
+- [x] Create page view/display component
+  - [x] Render rich text content
+  - [x] Display page metadata (author, last updated)
+  - [x] Display breadcrumbs (removed per user request)
+- [x] Create page creation modal
+  - [x] Parent page selector (for hierarchy)
+  - [ ] Template selector (optional - deferred)
+  - [x] Page editor
+  - [x] Save/publish button
+- [x] Create page edit page
+  - [x] Load existing page content
+  - [x] Edit mode toggle
+  - [ ] Auto-save draft (optional for MVP - deferred)
+  - [x] Save changes button
+- [x] Create page detail/view page
+  - [x] Display page content
+  - [x] Edit button (with permission check)
+  - [x] Page actions menu
+- [x] Implement page hierarchy UI
+  - [x] Page tree sidebar
+  - [x] Parent page selector
+  - [x] Breadcrumb navigation (removed per user request)
+- [x] Add loading states and error handling
 
 **Deliverables**:
 
-- Rich text page editor
-- Page creation and editing UI
+- ✅ Rich text page editor
+- ✅ Page creation and editing UI
 
 ---
 
@@ -2245,20 +2246,21 @@ This phase focuses on building the foundational features required for a function
 **Priority**: High  
 **Estimated Time**: 3-5 days  
 **Dependencies**: 1.4.3, 1.4.6  
-**Assigned To**: HWIMDA2
+**Assigned To**: HWIMDA2  
+**Status**: ✅ Complete
 
 **Tasks**:
 
-- [ ] Reuse comment components from issue comments (1.3.7)
-  - [ ] Adapt for page context
-  - [ ] Display comments on page detail view
-- [ ] Add comment section to page view
-- [ ] Implement inline commenting (optional, can be Phase 2)
-- [ ] Add loading states and error handling
+- [x] Reuse comment components from issue comments (1.3.7)
+  - [x] Adapt for page context
+  - [x] Display comments on page detail view
+- [x] Add comment section to page view
+- [ ] Implement inline commenting (optional, can be Phase 2 - deferred)
+- [x] Add loading states and error handling
 
 **Deliverables**:
 
-- Page comments UI
+- ✅ Page comments UI
 
 ---
 

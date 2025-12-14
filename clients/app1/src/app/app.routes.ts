@@ -9,10 +9,11 @@ import { InvitationAcceptancePage } from './presentation/pages/invitation-accept
 import { ProfilePage } from './presentation/pages/profile-page';
 import { ProjectsPage } from './presentation/pages/projects-page';
 import { ProjectDetailPage } from './presentation/pages/project-detail-page';
-import { ProjectSettingsPage } from './presentation/pages/project-settings-page';
 import { IssueDetailPage } from './presentation/pages/issue-detail-page';
 import { SpacesPage } from './presentation/pages/spaces-page';
 import { SpaceDetailPage } from './presentation/pages/space-detail-page';
+import { SpaceSettingsPage } from './presentation/pages/space-settings-page';
+import { PageDetailPage } from './presentation/pages/page-detail-page';
 import { LoginPage } from './presentation/pages/login-page.component';
 import { RegisterPage } from './presentation/pages/register-page.component';
 import { ForgotPasswordPage } from './presentation/pages/forgot-password-page.component';
@@ -116,7 +117,18 @@ export const routes: Routes = [
       {
         path: 'organizations/:organizationId/spaces/:spaceId',
         component: SpaceDetailPage,
-        title: 'Space Details - Pages',
+        children: [
+          {
+            path: 'pages/:pageId',
+            component: PageDetailPage,
+            title: 'Page Details - Pages',
+          },
+        ],
+      },
+      {
+        path: 'organizations/:organizationId/spaces/:spaceId/settings',
+        component: SpaceSettingsPage,
+        title: 'Space Settings - Pages',
       },
       {
         path: 'organizations/:organizationId/projects/:projectId',
@@ -125,11 +137,6 @@ export const routes: Routes = [
             path: '',
             component: ProjectDetailPage,
             title: 'Project Details - Pages',
-          },
-          {
-            path: 'settings',
-            component: ProjectSettingsPage,
-            title: 'Project Settings - Pages',
           },
           {
             path: 'issues/:issueId',
