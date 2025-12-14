@@ -2344,26 +2344,46 @@ This phase focuses on building the foundational features required for a function
 **Priority**: Medium  
 **Estimated Time**: 5-7 days  
 **Dependencies**: 1.5.1, 1.1.5  
-**Assigned To**: BATATA2
+**Assigned To**: BATATA2  
+**Status**: ✅ Complete (MVP - Dropdown Implementation)
 
 **Tasks**:
 
-- [ ] Create search bar component (in header)
-  - [ ] Search input with icon
-  - [ ] Keyboard shortcut (Cmd/Ctrl+K)
-- [ ] Create search results page
+- [x] Create search bar component (in header)
+  - [x] Search input with icon
+  - [x] Keyboard shortcut (Cmd/Ctrl+K)
+- [x] Create search dropdown component (MVP implementation)
+  - [x] Display results grouped by type (Issues, Pages, Organizations, Projects, Spaces)
+  - [x] Highlight search terms in results
+  - [x] Navigate to related entities on click
+  - [x] Loading states and error handling
+  - [x] Debounced search (300ms)
+  - [x] Global search across all entity types
+- [ ] Create search results page (full page view - deferred)
   - [ ] Display results grouped by type (Issues, Pages)
   - [ ] Result cards with preview
-  - [ ] Highlight search terms
   - [ ] Pagination
-- [ ] Implement search autocomplete/suggestions (optional)
-- [ ] Add recent searches (optional)
-- [ ] Add loading states and error handling
+- [ ] Implement search autocomplete/suggestions (optional - deferred)
+- [ ] Add recent searches (optional - deferred)
 
 **Deliverables**:
 
-- Search UI
-- Search results page
+- [x] Search UI (dropdown implementation)
+- [ ] Search results page (deferred - can be added later)
+
+**Note**: ✅ **COMPLETED** - Search dropdown implemented with:
+
+- **Components**: `SearchBar` (header component with keyboard shortcut), `SearchDropdown` (results dropdown)
+- **Service**: `SearchService` with global search across all entity types
+- **Features**:
+  - Keyboard shortcut (Cmd/Ctrl+K) to open search
+  - Debounced search (300ms) for performance
+  - Results grouped by entity type with icons
+  - Search term highlighting in titles and snippets
+  - Navigation to related entities (issues, pages, organizations, projects, spaces)
+  - Loading states, error handling, and empty states
+  - Context-aware search (uses current organization/project/space context)
+- **Deferred**: Full search results page, autocomplete suggestions, recent searches (can be added in Phase 2)
 
 ---
 
@@ -2453,35 +2473,66 @@ This phase focuses on building the foundational features required for a function
 **Priority**: High  
 **Estimated Time**: 5-7 days  
 **Dependencies**: 1.6.1, 1.1.5  
-**Assigned To**: HWIMDA2
+**Assigned To**: HWIMDA2  
+**Status**: ✅ Complete (MVP - Dropdown Implementation)
 
 **Tasks**:
 
-- [ ] Create notification bell icon component (in header)
-  - [ ] Unread count badge
-  - [ ] Click to open dropdown
-- [ ] Create notification dropdown component
-  - [ ] List recent notifications
-  - [ ] Group by date
-  - [ ] Mark as read on click
-  - [ ] Link to related issue/page
-- [ ] Create notifications page
-  - [ ] Full notification list
+- [x] Create notification bell icon component (in header)
+  - [x] Unread count badge (displays "99+" for counts > 99)
+  - [x] Click to open dropdown
+  - [x] Integrated into authenticated layout header
+- [x] Create notification dropdown component
+  - [x] List recent notifications (up to 20 per page)
+  - [x] Display relative time (e.g., "5m ago", "2h ago")
+  - [x] Mark as read on click
+  - [x] Link to related issue/page (basic navigation)
+  - [x] Mark all as read button
+  - [x] Visual indicators for unread notifications
+  - [x] Notification icons based on type
+  - [x] Pagination support (shows "View all" button when multiple pages)
+- [x] Implement real-time notifications (polling - MVP approach)
+  - [x] Polling mechanism (30-second interval)
+  - [x] Update notification count automatically
+  - [x] Start/stop polling lifecycle management
+- [x] Add loading states and error handling
+  - [x] Loading spinner during fetch
+  - [x] Error state with retry button
+  - [x] Empty state when no notifications
+- [ ] Group notifications by date (deferred - shows relative time instead)
+- [ ] Create notifications page (full page view - deferred)
+  - [ ] Full notification list with pagination
   - [ ] Filter by read/unread
-  - [ ] Mark all as read button
-- [ ] Implement real-time notifications (WebSocket - optional for MVP, can use polling)
+  - [ ] Better date grouping
+- [ ] Implement WebSocket real-time notifications (deferred to Phase 2)
   - [ ] WebSocket connection setup
   - [ ] Receive new notifications in real-time
   - [ ] Update notification count
-- [ ] Create email notification preferences page
+- [ ] Create email notification preferences page (deferred - pending email service)
   - [ ] Toggle notification types
   - [ ] Save preferences
-- [ ] Add loading states and error handling
 
 **Deliverables**:
 
-- Notification UI
-- Real-time notification updates (or polling)
+- [x] Notification UI (bell icon + dropdown)
+- [x] Real-time notification updates (polling - 30s interval)
+
+**Note**: ✅ **COMPLETED** - Notifications frontend implemented with:
+
+- **Components**: `NotificationBell` (header component), `NotificationDropdown` (results dropdown)
+- **Service**: `NotificationService` with polling for unread count (30s interval)
+- **Features**:
+  - Notification bell with unread count badge in header
+  - Dropdown with recent notifications (20 per page)
+  - Mark as read on click, mark all as read button
+  - Navigation to related entities (issues, pages)
+  - Notification icons based on type (11 different types)
+  - Relative time formatting ("Just now", "5m ago", "2h ago", etc.)
+  - Visual indicators for unread notifications
+  - Polling for real-time updates (30-second interval)
+  - Loading states, error handling, and empty states
+  - CDK Overlay for dropdown positioning and dismissal
+- **Deferred**: Full notifications page, date grouping, WebSocket real-time (Phase 2), email preferences (pending email service)
 
 ---
 
