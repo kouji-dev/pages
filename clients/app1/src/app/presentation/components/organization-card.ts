@@ -9,13 +9,13 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { Icon, Dropdown, Button, Modal } from 'shared-ui';
+import { Icon, Button, Modal } from 'shared-ui';
 import { Organization, OrganizationService } from '../../application/services/organization.service';
 import { NavigationService } from '../../application/services/navigation.service';
 
 @Component({
   selector: 'app-organization-card',
-  imports: [Icon, Dropdown, Button],
+  imports: [Icon, Button],
   template: `
     <div class="org-card">
       <div
@@ -46,36 +46,20 @@ import { NavigationService } from '../../application/services/navigation.service
           variant="ghost"
           size="sm"
           [iconOnly]="true"
-          leftIcon="menu"
-          [libDropdown]="actionsDropdownTemplate"
-          [position]="'below'"
-          [containerClass]="'lib-dropdown-panel--fit-content'"
-          class="org-card_actions-button"
-          #actionsDropdown="libDropdown"
+          leftIcon="settings"
+          class="org-card_action-item"
+          (clicked)="handleSettings()"
         >
         </lib-button>
-        <ng-template #actionsDropdownTemplate>
-          <div class="org-card_actions-menu">
-            <lib-button
-              variant="ghost"
-              size="md"
-              [iconOnly]="true"
-              leftIcon="settings"
-              class="org-card_action-item"
-              (clicked)="handleSettings(actionsDropdown)"
-            >
-            </lib-button>
-            <lib-button
-              variant="ghost"
-              size="md"
-              [iconOnly]="true"
-              leftIcon="log-out"
-              class="org-card_action-item org-card_action-item--danger"
-              (clicked)="handleLeave(actionsDropdown)"
-            >
-            </lib-button>
-          </div>
-        </ng-template>
+        <lib-button
+          variant="ghost"
+          size="sm"
+          [iconOnly]="true"
+          leftIcon="log-out"
+          class="org-card_action-item org-card_action-item--danger"
+          (clicked)="handleLeave()"
+        >
+        </lib-button>
       </div>
     </div>
   `,
@@ -157,16 +141,9 @@ import { NavigationService } from '../../application/services/navigation.service
       .org-card_actions {
         @apply absolute;
         @apply top-4 right-4;
-      }
-
-      .org-card_actions-button {
-        @apply z-10;
-      }
-
-      .org-card_actions-menu {
-        @apply py-1;
-        @apply flex flex-col;
+        @apply flex items-center;
         @apply gap-1;
+        @apply z-10;
       }
 
       .org-card_action-item--danger {
@@ -196,13 +173,11 @@ export class OrganizationCard {
     this.navigationService.navigateToOrganizationProjects(orgId);
   }
 
-  handleSettings(dropdown: Dropdown): void {
-    dropdown.open.set(false);
+  handleSettings(): void {
     this.onSettings.emit(this.organization());
   }
 
-  handleLeave(dropdown: Dropdown): void {
-    dropdown.open.set(false);
+  handleLeave(): void {
     this.onLeave.emit(this.organization());
   }
 }

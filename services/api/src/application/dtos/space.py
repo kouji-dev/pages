@@ -6,6 +6,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, field_validator
 
+from src.application.dtos.page import PageListItemResponse
+
 
 class SpaceResponse(BaseModel):
     """Response DTO for space data."""
@@ -17,6 +19,9 @@ class SpaceResponse(BaseModel):
     description: str | None = None
     settings: dict[str, Any] | None = None
     page_count: int = Field(0, description="Number of pages in the space")
+    recent_pages: list[PageListItemResponse] = Field(
+        default_factory=list, description="Recent pages in the space (up to 5)"
+    )
     created_at: datetime
     updated_at: datetime
 

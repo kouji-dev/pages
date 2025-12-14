@@ -54,9 +54,9 @@ import { BackToPage } from '../components/back-to-page';
       } @else {
         <div class="issue-detail-page_header">
           <div class="issue-detail-page_header-content">
+            <app-back-to-page label="Back to Issues" (onClick)="handleBackToIssues()" />
             <div class="issue-detail-page_header-main">
               <div class="issue-detail-page_header-info">
-                <app-back-to-page label="Back to Issues" (onClick)="handleBackToIssues()" />
                 <div class="issue-detail-page_key">{{ issue()?.key }}</div>
                 <h1 class="issue-detail-page_title">{{ issue()?.title }}</h1>
                 <div class="issue-detail-page_badges">

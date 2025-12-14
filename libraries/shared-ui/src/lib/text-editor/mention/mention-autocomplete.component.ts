@@ -9,11 +9,13 @@ import type { MentionOption } from '../interfaces/mention-list-provider.interfac
   template: `
     @if (options().length > 0) {
       @for (option of options(); track option.id; let i = $index) {
-        <button
-          type="button"
+        <lib-button
+          variant="ghost"
+          size="sm"
+          [fullWidth]="true"
           class="te-mention-autocomplete_item"
           [class.te-mention-autocomplete_item--selected]="i === selectedIndex()"
-          (click)="selectOption.emit(option)"
+          (clicked)="selectOption.emit(option)"
         >
           @if (option.avatarUrl) {
             <img
@@ -27,7 +29,7 @@ import type { MentionOption } from '../interfaces/mention-list-provider.interfac
             </div>
           }
           <span class="te-mention-autocomplete_label">{{ option.label }}</span>
-        </button>
+        </lib-button>
       }
     } @else {
       <div class="te-mention-autocomplete_empty">
@@ -40,15 +42,8 @@ import type { MentionOption } from '../interfaces/mention-list-provider.interfac
       @reference "#theme";
 
       .te-mention-autocomplete_item {
-        @apply w-full;
-        @apply flex items-center gap-2;
-        @apply px-3 py-2;
+        @apply justify-start;
         @apply text-left;
-        @apply bg-transparent;
-        @apply border-none;
-        @apply cursor-pointer;
-        @apply hover:bg-bg-hover;
-        @apply transition-colors;
       }
 
       .te-mention-autocomplete_item--selected {

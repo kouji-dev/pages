@@ -328,15 +328,7 @@ export class ProjectMemberList {
     return this.members().some((member) => this.canManageMember(member));
   });
 
-  private readonly initializeEffect = effect(
-    () => {
-      const id = this.projectId();
-      if (id) {
-        this.membersService.loadMembers(id);
-      }
-    },
-    { allowSignalWrites: true },
-  );
+  // Members resource automatically loads when projectId changes via navigation service
 
   trackByMemberId = (member: ProjectMember): string => member.user_id;
 
@@ -415,9 +407,6 @@ export class ProjectMemberList {
   }
 
   handleRetry(): void {
-    const id = this.projectId();
-    if (id) {
-      this.membersService.loadMembers(id);
-    }
+    this.membersService.reloadMembers();
   }
 }

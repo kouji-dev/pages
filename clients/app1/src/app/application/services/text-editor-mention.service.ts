@@ -1,43 +1,26 @@
-import { Injectable, inject, computed } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import type { TextEditorMentionListProviderInterface, MentionOption } from 'shared-ui';
-import { NavigationService } from './navigation.service';
-import { ProjectMembersApiService } from './project-members-api.service';
+import { ProjectMembersService } from './project-members.service';
 
 /**
  * Implementation of TextEditorMentionListProviderInterface for the text editor
- * Uses ProjectMembersApiService to search for mention suggestions via API
+ * Uses ProjectMembersService to search for mention suggestions via API
  */
 @Injectable({
   providedIn: 'root',
 })
 export class TextEditorMentionService implements TextEditorMentionListProviderInterface {
-  private readonly projectMembersApi = inject(ProjectMembersApiService);
-  private readonly navigationService = inject(NavigationService);
-
-  // Get current project ID
-  private readonly projectId = computed(() => {
-    return this.navigationService.currentProjectId();
-  });
+  private readonly projectMembersService = inject(ProjectMembersService);
 
   async searchMentions(query: string): Promise<MentionOption[]> {
-    const projectId = this.projectId();
-    if (!projectId) {
-      // If no project context, return empty array
-      return [];
-    }
-
     const trimmedQuery = query.trim();
 
-    // If query is empty, return empty array (don't load all members)
-    // The user should type something to search
-    if (!trimmedQuery) {
-      return [];
-    }
-
     try {
-      // Call API to search members (backend needs to support 'search' parameter)
-      const members = await this.projectMembersApi.searchProjectMembers(
-        projectId,
+      // Call API to search members
+      // If query is empty, API will return all members (search parameter is optional)
+      // ProjectMembersService will use current project from navigation service
+      const members = await this.projectMembersService.searchProjectMembers(
+        undefined, // Use current project from navigation
         trimmedQuery,
         20, // Limit to 20 results for mentions
       );

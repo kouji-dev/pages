@@ -9,14 +9,18 @@ import { InvitationAcceptancePage } from './presentation/pages/invitation-accept
 import { ProfilePage } from './presentation/pages/profile-page';
 import { ProjectsPage } from './presentation/pages/projects-page';
 import { ProjectDetailPage } from './presentation/pages/project-detail-page';
-import { ProjectSettingsPage } from './presentation/pages/project-settings-page';
 import { IssueDetailPage } from './presentation/pages/issue-detail-page';
+import { SpacesPage } from './presentation/pages/spaces-page';
+import { SpaceDetailPage } from './presentation/pages/space-detail-page';
+import { SpaceSettingsPage } from './presentation/pages/space-settings-page';
+import { PageDetailPage } from './presentation/pages/page-detail-page';
 import { LoginPage } from './presentation/pages/login-page.component';
 import { RegisterPage } from './presentation/pages/register-page.component';
 import { ForgotPasswordPage } from './presentation/pages/forgot-password-page.component';
 import { ResetPasswordPage } from './presentation/pages/reset-password-page.component';
 import { NotFoundComponent } from './presentation/pages/not-found.component';
 import { AuthenticatedLayout } from './presentation/layout/authenticated-layout';
+import { OrganizationLayout } from './presentation/layout/organization-layout';
 import { authGuard } from './application/guards/auth.guard';
 import { loginGuard } from './application/guards/login.guard';
 
@@ -85,17 +89,13 @@ export const routes: Routes = [
         title: 'Organizations - Pages',
       },
       {
-        path: 'organizations/:id',
+        path: 'organizations/:organizationId',
+        component: OrganizationLayout,
         children: [
           {
             path: '',
-            component: ProjectsPage,
-            title: 'Projects - Pages',
-          },
-          {
-            path: 'settings',
-            component: OrganizationSettingsPage,
-            title: 'Organization Settings - Pages',
+            redirectTo: 'projects',
+            pathMatch: 'full',
           },
           {
             path: 'projects',
@@ -103,24 +103,45 @@ export const routes: Routes = [
             title: 'Projects - Pages',
           },
           {
-            path: 'projects/:projectId',
-            children: [
-              {
-                path: '',
-                component: ProjectDetailPage,
-                title: 'Project Details - Pages',
-              },
-              {
-                path: 'settings',
-                component: ProjectSettingsPage,
-                title: 'Project Settings - Pages',
-              },
-              {
-                path: 'issues/:issueId',
-                component: IssueDetailPage,
-                title: 'Issue Details - Pages',
-              },
-            ],
+            path: 'spaces',
+            component: SpacesPage,
+            title: 'Spaces - Pages',
+          },
+        ],
+      },
+      {
+        path: 'organizations/:organizationId/settings',
+        component: OrganizationSettingsPage,
+        title: 'Organization Settings - Pages',
+      },
+      {
+        path: 'organizations/:organizationId/spaces/:spaceId',
+        component: SpaceDetailPage,
+        children: [
+          {
+            path: 'pages/:pageId',
+            component: PageDetailPage,
+            title: 'Page Details - Pages',
+          },
+        ],
+      },
+      {
+        path: 'organizations/:organizationId/spaces/:spaceId/settings',
+        component: SpaceSettingsPage,
+        title: 'Space Settings - Pages',
+      },
+      {
+        path: 'organizations/:organizationId/projects/:projectId',
+        children: [
+          {
+            path: '',
+            component: ProjectDetailPage,
+            title: 'Project Details - Pages',
+          },
+          {
+            path: 'issues/:issueId',
+            component: IssueDetailPage,
+            title: 'Issue Details - Pages',
           },
         ],
       },

@@ -260,13 +260,7 @@ export class CreateIssueModal {
     );
   });
 
-  // Load project members when projectId changes
-  private readonly loadMembersEffect = effect(() => {
-    const id = this.projectId();
-    if (id) {
-      this.projectMembersService.loadMembers(id);
-    }
-  });
+  // Members resource automatically loads when projectId changes via navigation service
 
   readonly projectMembers = computed(() => this.projectMembersService.members());
 

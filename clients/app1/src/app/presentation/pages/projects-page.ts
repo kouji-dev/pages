@@ -13,17 +13,15 @@ import { OrganizationService } from '../../application/services/organization.ser
 import { NavigationService } from '../../application/services/navigation.service';
 import { ProjectCard } from '../components/project-card';
 import { CreateProjectModal } from '../components/create-project-modal';
-import { BackToPage } from '../components/back-to-page';
 
 @Component({
   selector: 'app-projects-page',
-  imports: [Button, LoadingState, ErrorState, EmptyState, ProjectCard, Input, BackToPage],
+  imports: [Button, LoadingState, ErrorState, EmptyState, ProjectCard, Input],
   template: `
     <div class="projects-page">
       <div class="projects-page_header">
         <div class="projects-page_header-content">
           <div>
-            <app-back-to-page label="Back to Organizations" (onClick)="handleGoToOrganizations()" />
             <h1 class="projects-page_title">Projects</h1>
             <p class="projects-page_subtitle">
               Manage your projects and track issues in one place.

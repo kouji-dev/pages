@@ -23,7 +23,7 @@ import { EditCommentModal } from './edit-comment-modal';
         <h3 class="comment-list_title">Comments</h3>
       </div>
 
-      <app-comment-input [issueId]="issueId()" />
+      <app-comment-input [issueId]="issueId()" [pageId]="pageId()" />
 
       <div class="comment-list_items">
         @if (commentService.isLoading()) {
@@ -161,15 +161,21 @@ export class CommentList {
   readonly modal = inject(Modal);
   readonly viewContainerRef = inject(ViewContainerRef);
 
-  readonly issueId = input.required<string>();
+  readonly issueId = input<string>();
+  readonly pageId = input<string>();
 
   readonly comments = computed(() => this.commentService.commentsList());
 
   private readonly initializeEffect = effect(
     () => {
       const issueId = this.issueId();
+      const pageId = this.pageId();
+
       if (issueId) {
         this.commentService.setIssue(issueId);
+        this.commentService.loadComments();
+      } else if (pageId) {
+        this.commentService.setPage(pageId);
         this.commentService.loadComments();
       }
     },
