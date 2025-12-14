@@ -13,7 +13,7 @@ import {
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Icon, Button, IconName } from 'shared-ui';
-import { TranslateModule, TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   SearchService,
   SearchResultItem,
@@ -31,7 +31,7 @@ interface GroupedResults {
 
 @Component({
   selector: 'app-search-dropdown',
-  imports: [CommonModule, Icon, Button, TranslateModule, TranslatePipe],
+  imports: [CommonModule, Icon, Button, TranslatePipe],
   template: `
     <div class="search-dropdown" #dropdownContainer>
       @if (isLoading()) {

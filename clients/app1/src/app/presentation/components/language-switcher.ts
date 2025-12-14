@@ -1,12 +1,12 @@
 import { Component, ChangeDetectionStrategy, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Icon, Button } from 'shared-ui';
 import { LanguageService, SupportedLanguage } from '../../application/services/language.service';
 
 @Component({
   selector: 'app-language-switcher',
-  imports: [CommonModule, TranslateModule, TranslatePipe, Icon, Button],
+  imports: [CommonModule, TranslatePipe, Icon, Button],
   template: `
     <div class="language-switcher">
       <button

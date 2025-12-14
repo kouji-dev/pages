@@ -10,13 +10,13 @@ import {
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Icon, Button, IconName } from 'shared-ui';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { NotificationService, Notification } from '../../application/services/notification.service';
 import { NavigationService } from '../../application/services/navigation.service';
 
 @Component({
   selector: 'app-notification-dropdown',
-  imports: [CommonModule, Icon, Button, TranslateModule, TranslatePipe],
+  imports: [CommonModule, Icon, Button, TranslatePipe],
   template: `
     <div class="notification-dropdown">
       <div class="notification-dropdown_header">
