@@ -30,6 +30,7 @@
   --color-pages-brown: #64473a; /* Notion's brown - warm brown */
   --color-pages-orange: #d9730d; /* Notion's orange - warm orange */
   --color-pages-yellow: #dfab01; /* Notion's yellow - warm yellow */
+  --color-pages-highlight: #dfab01; /* Pages highlight color - warm yellow */
   --color-pages-green: #0f7b6c; /* Notion's green - teal green */
   --color-pages-blue: #0b6e99; /* Notion's blue - muted blue */
   --color-pages-purple: #6940a5; /* Notion's purple - deep purple */
@@ -42,6 +43,7 @@
   --color-pages-brown-bg: #f4f1ed; /* Notion's brown bg - warm beige */
   --color-pages-orange-bg: #faebdd; /* Notion's orange bg - warm peachy */
   --color-pages-yellow-bg: #faf3dd; /* Notion's yellow bg - warm cream */
+  --color-pages-highlight-bg: #faf3dd; /* Pages highlight background - warm cream */
   --color-pages-green-bg: #ddedea; /* Notion's green bg - soft mint */
   --color-pages-blue-bg: #ddedf0; /* Notion's blue bg - soft sky blue */
   --color-pages-purple-bg: #eae4f2; /* Notion's purple bg - soft lavender */
@@ -358,13 +360,31 @@
   --color-border-divider: #454545;
 
   /* ========================================
+   * Dark Theme - Pages Text Colors
+   * ======================================== */
+  --color-pages-yellow: #f5c842; /* Lighter yellow for better visibility in dark theme */
+  --color-pages-highlight: #f5c842; /* Pages highlight color - lighter yellow for dark theme */
+
+  /* ========================================
    * Dark Theme - Pages Background Colors
    * ======================================== */
   --color-pages-default-bg: #1a1a1a;
   --color-pages-gray-bg: #3a3a3a;
   --color-pages-brown-bg: #3a3a3a;
   --color-pages-orange-bg: #3a3a3a;
-  --color-pages-yellow-bg: #3a3a3a;
+  --color-pages-yellow-bg: rgba(223, 171, 1, 0.25); /* Yellow with opacity for dark theme */
+  --color-pages-highlight-bg: rgba(
+    223,
+    171,
+    1,
+    0.25
+  ); /* Pages highlight background - yellow with opacity for dark theme */
+  --color-pages-highlight-bg: rgba(
+    223,
+    171,
+    1,
+    0.25
+  ); /* Pages highlight background - yellow with opacity for dark theme */
   --color-pages-green-bg: rgba(15, 123, 108, 0.2);
   --color-pages-blue-bg: rgba(11, 110, 153, 0.2);
   --color-pages-purple-bg: rgba(105, 64, 165, 0.2);
@@ -543,6 +563,10 @@ body {
 /* ========================================
  * Select Panel Styling
  * ======================================== */
+.cdk-overlay-pane.search-dropdown-overlay {
+  @apply max-w-full;
+}
+
 .cdk-overlay-pane.lib-select-panel {
   max-width: none !important;
 }

@@ -44,20 +44,27 @@ import { NavigationService } from '../../application/services/navigation.service
         @apply text-sm;
         @apply text-text-secondary;
         @apply transition-all;
-        @apply hover:bg-bg-tertiary;
-        @apply hover:text-text-primary;
+        @apply duration-150;
         @apply border-none;
         @apply bg-transparent;
         @apply cursor-pointer;
         @apply flex items-center;
         @apply gap-2;
         @apply relative;
+        @apply hover:bg-bg-hover;
+        @apply hover:text-text-primary;
+        @apply active:bg-bg-active;
+        @apply active:scale-[0.98];
       }
 
       .pages-tree-item--active .pages-tree-item_button {
-        @apply bg-bg-tertiary;
+        @apply bg-bg-selected;
         @apply text-text-primary;
         @apply font-medium;
+      }
+
+      .pages-tree-item--active .pages-tree-item_button:hover {
+        @apply bg-bg-selected;
       }
 
       .pages-tree-item--active .pages-tree-item_button::before {
