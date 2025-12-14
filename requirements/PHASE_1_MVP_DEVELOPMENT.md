@@ -2634,11 +2634,111 @@ This phase focuses on building the foundational features required for a function
 
 ---
 
-## Phase 1.8: Mobile Responsive & Polish (Weeks 20-22)
+## Phase 1.8: Localization & Internationalization (Weeks 20-22)
+
+### Dependencies: 1.1.5, 1.3.2, 1.4.2
+
+#### 1.8.1 Localization Backend
+
+**Priority**: High  
+**Estimated Time**: 5-7 days  
+**Dependencies**: 1.1.4, 1.3.2  
+**Assigned To**: BATATA1
+
+**Tasks**:
+
+- [ ] Set up i18n infrastructure
+  - [ ] Choose i18n library (gettext, babel, or custom)
+  - [ ] Create translation storage system
+  - [ ] Set up translation file structure
+- [ ] Create language detection middleware
+  - [ ] Detect language from Accept-Language header
+  - [ ] Support language query parameter
+  - [ ] Store user language preference
+- [ ] Create language management endpoints
+  - [ ] List supported languages (GET /api/languages)
+  - [ ] Get user language preference (GET /api/user/language)
+  - [ ] Update user language preference (PUT /api/user/language)
+- [ ] Implement translation system for backend messages
+  - [ ] Error messages translation
+  - [ ] Validation messages translation
+  - [ ] Email template translations
+- [ ] Add language field to user model
+  - [ ] Migration to add language column
+  - [ ] Default language setting
+- [ ] Create translation management utilities
+  - [ ] Translation key extraction
+  - [ ] Translation file generation
+  - [ ] Translation validation
+
+**Deliverables**:
+
+- Language detection and preference system
+- Translation infrastructure
+- Backend message translations
+
+---
+
+#### 1.8.2 Localization Frontend
+
+**Priority**: High  
+**Estimated Time**: 7-10 days  
+**Dependencies**: 1.8.1, 1.1.5  
+**Assigned To**: BATATA2, HWIMDA2 (shared)
+
+**Tasks**:
+
+- [ ] Set up Angular i18n
+  - [ ] Install and configure @angular/localize
+  - [ ] Configure i18n build process
+  - [ ] Set up translation file structure (JSON/XLIFF)
+- [ ] Create language service
+  - [ ] Language detection (browser, user preference, default)
+  - [ ] Language switching functionality
+  - [ ] Translation loading and caching
+- [ ] Create language switcher component
+  - [ ] Language dropdown/selector UI
+  - [ ] Display current language
+  - [ ] Integrate into header/user menu
+- [ ] Extract all text strings for translation
+  - [ ] Replace hardcoded strings with i18n markers
+  - [ ] Add translation keys to all components
+  - [ ] Handle pluralization
+  - [ ] Handle date/time formatting
+  - [ ] Handle number/currency formatting
+- [ ] Create translation files for initial languages
+  - [ ] English (en) - base language
+  - [ ] Add at least 2-3 additional languages (e.g., French, Spanish, German)
+- [ ] Implement RTL (Right-to-Left) support (if needed)
+  - [ ] CSS direction handling
+  - [ ] Layout adjustments for RTL languages
+- [ ] Update all components with i18n
+  - [ ] Forms and validation messages
+  - [ ] Error messages and notifications
+  - [ ] Page titles and headings
+  - [ ] Button labels and tooltips
+  - [ ] Table headers and pagination
+- [ ] Test language switching
+  - [ ] Verify all text updates correctly
+  - [ ] Verify date/time formats change
+  - [ ] Verify number formats change
+  - [ ] Test with different languages
+
+**Deliverables**:
+
+- Fully localized frontend application
+- Language switcher UI
+- Multi-language support (minimum 3 languages)
+
+**Note**: Initial implementation should support at least English + 2-3 additional languages. More languages can be added incrementally.
+
+---
+
+## Phase 1.9: Mobile Responsive & Polish (Weeks 22-24)
 
 ### Dependencies: All previous phases
 
-#### 1.8.1 Mobile Responsive Design
+#### 1.9.1 Mobile Responsive Design
 
 **Priority**: High  
 **Estimated Time**: 10-14 days  
@@ -2672,7 +2772,7 @@ This phase focuses on building the foundational features required for a function
 
 ---
 
-#### 1.8.2 Performance Optimization
+#### 1.9.2 Performance Optimization
 
 **Priority**: Medium  
 **Estimated Time**: 5-7 days  
@@ -2706,7 +2806,7 @@ This phase focuses on building the foundational features required for a function
 
 ---
 
-#### 1.8.3 Error Handling & User Feedback
+#### 1.9.3 Error Handling & User Feedback
 
 **Priority**: High  
 **Estimated Time**: 5-7 days  
@@ -2732,11 +2832,11 @@ This phase focuses on building the foundational features required for a function
 
 ---
 
-## Phase 1.9: Testing & QA (Weeks 22-24)
+## Phase 1.10: Testing & QA (Weeks 24-26)
 
 ### Dependencies: All previous phases
 
-#### 1.9.1 Backend Testing
+#### 1.10.1 Backend Testing
 
 **Priority**: Critical  
 **Estimated Time**: 10-14 days  
@@ -2769,7 +2869,7 @@ This phase focuses on building the foundational features required for a function
 
 ---
 
-#### 1.9.2 Frontend Testing
+#### 1.10.2 Frontend Testing
 
 **Priority**: High  
 **Estimated Time**: 10-14 days  
@@ -2802,11 +2902,11 @@ This phase focuses on building the foundational features required for a function
 
 ---
 
-## Phase 1.10: Deployment & Launch Preparation (Weeks 24-26)
+## Phase 1.11: Deployment & Launch Preparation (Weeks 26-28)
 
 ### Dependencies: All previous phases
 
-#### 1.10.1 Infrastructure Setup
+#### 1.11.1 Infrastructure Setup
 
 **Priority**: Critical  
 **Estimated Time**: 10-14 days  
@@ -2847,7 +2947,7 @@ This phase focuses on building the foundational features required for a function
 
 ---
 
-#### 1.10.2 Security & Compliance
+#### 1.11.2 Security & Compliance
 
 **Priority**: Critical  
 **Estimated Time**: 7-10 days  
@@ -2875,7 +2975,7 @@ This phase focuses on building the foundational features required for a function
 
 ---
 
-#### 1.10.3 Documentation & Launch Materials
+#### 1.11.3 Documentation & Launch Materials
 
 **Priority**: High  
 **Estimated Time**: 7-10 days  
@@ -2904,7 +3004,7 @@ This phase focuses on building the foundational features required for a function
 
 ## Summary
 
-**Total Estimated Timeline**: 26 weeks (6 months)
+**Total Estimated Timeline**: 28 weeks (~6.5 months)
 
 **Key Milestones**:
 
@@ -2914,9 +3014,10 @@ This phase focuses on building the foundational features required for a function
 - Week 14: Documentation core complete
 - Week 18: Notifications complete
 - Week 20: Integrations complete
-- Week 22: Mobile responsive complete
-- Week 24: Testing complete
-- Week 26: Launch ready
+- Week 22: Localization complete
+- Week 24: Mobile responsive complete
+- Week 26: Testing complete
+- Week 28: Launch ready
 
 **Team Size Recommendations**:
 
