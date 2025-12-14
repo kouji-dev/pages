@@ -1,25 +1,18 @@
 import { ApplicationConfig, provideAppInitializer, inject } from '@angular/core';
-import { provideHttpClient, withInterceptors, HttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { provideAttachmentService, provideMentionListProvider } from 'shared-ui';
 
 import { routes } from './app.routes';
 import { authInterceptor } from './infrastructure/interceptors/auth.interceptor';
 import { errorInterceptor } from './infrastructure/interceptors/error.interceptor';
+import { HttpLoaderFactory } from './infrastructure/i18n/http-loader.factory';
 import { ThemeService } from './application/services/theme.service';
 import { LanguageService } from './application/services/language.service';
 import { TextEditorAttachmentService } from './application/services/text-editor-attachment.service';
 import { TextEditorMentionService } from './application/services/text-editor-mention.service';
-
-// Factory function for TranslateHttpLoader
-export function HttpLoaderFactory(http: HttpClient): TranslateLoader {
-  // TranslateHttpLoader implements TranslateLoader interface
-  // Type assertion needed due to Observable<Object> vs Observable<TranslationObject> type mismatch
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json') as unknown as TranslateLoader;
-}
 
 export const appConfig: ApplicationConfig = {
   providers: [
