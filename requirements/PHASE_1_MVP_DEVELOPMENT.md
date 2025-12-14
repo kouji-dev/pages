@@ -2688,49 +2688,64 @@ This phase focuses on building the foundational features required for a function
 
 **Tasks**:
 
-- [ ] Set up Angular i18n
-  - [ ] Install and configure @angular/localize
-  - [ ] Configure i18n build process
-  - [ ] Set up translation file structure (JSON/XLIFF)
-- [ ] Create language service
+- [ ] Set up ngx-translate/core
+  - [ ] Install @ngx-translate/core package
+  - [ ] Install @ngx-translate/http-loader (for loading translation files)
+  - [ ] Configure TranslateModule in app configuration
+  - [ ] Set up translation file structure (JSON format)
+  - [ ] Configure default language and fallback language
+- [ ] Create language service wrapper
   - [ ] Language detection (browser, user preference, default)
-  - [ ] Language switching functionality
+  - [ ] Language switching functionality using TranslateService
+  - [ ] Integration with backend language preference API
   - [ ] Translation loading and caching
 - [ ] Create language switcher component
   - [ ] Language dropdown/selector UI
-  - [ ] Display current language
+  - [ ] Display current language flag/name
   - [ ] Integrate into header/user menu
+  - [ ] Use TranslateService for language switching
 - [ ] Extract all text strings for translation
-  - [ ] Replace hardcoded strings with i18n markers
+  - [ ] Replace hardcoded strings with translate pipe or TranslateService
   - [ ] Add translation keys to all components
-  - [ ] Handle pluralization
-  - [ ] Handle date/time formatting
-  - [ ] Handle number/currency formatting
+  - [ ] Handle pluralization using ngx-translate pluralization
+  - [ ] Handle date/time formatting (using Angular DatePipe with locale)
+  - [ ] Handle number/currency formatting (using Angular DecimalPipe/CurrencyPipe with locale)
 - [ ] Create translation files for initial languages
-  - [ ] English (en) - base language
-  - [ ] Add at least 2-3 additional languages (e.g., French, Spanish, German)
+  - [ ] English (en) - base language (assets/i18n/en.json)
+  - [ ] Add at least 2-3 additional languages (e.g., French (fr), Spanish (es), German (de))
+  - [ ] Organize translation keys by feature/module
+  - [ ] Validate translation completeness
 - [ ] Implement RTL (Right-to-Left) support (if needed)
   - [ ] CSS direction handling
   - [ ] Layout adjustments for RTL languages
+  - [ ] Detect RTL languages and apply appropriate styles
 - [ ] Update all components with i18n
   - [ ] Forms and validation messages
   - [ ] Error messages and notifications
   - [ ] Page titles and headings
   - [ ] Button labels and tooltips
   - [ ] Table headers and pagination
+  - [ ] Modal dialogs and confirmations
+- [ ] Configure locale for Angular pipes
+  - [ ] Set up LOCALE_ID provider
+  - [ ] Configure date/time locale
+  - [ ] Configure number/currency locale
 - [ ] Test language switching
   - [ ] Verify all text updates correctly
   - [ ] Verify date/time formats change
   - [ ] Verify number formats change
   - [ ] Test with different languages
+  - [ ] Test RTL layout (if applicable)
+  - [ ] Verify language preference persists
 
 **Deliverables**:
 
-- Fully localized frontend application
-- Language switcher UI
+- Fully localized frontend application using ngx-translate/core
+- Language switcher UI component
 - Multi-language support (minimum 3 languages)
+- Translation files organized by feature
 
-**Note**: Initial implementation should support at least English + 2-3 additional languages. More languages can be added incrementally.
+**Note**: Using [ngx-translate/core](https://github.com/ngx-translate/core) library for Angular 16-20. Initial implementation should support at least English + 2-3 additional languages. More languages can be added incrementally by adding new JSON translation files.
 
 ---
 
