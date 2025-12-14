@@ -567,6 +567,10 @@ body {
   @apply max-w-full;
 }
 
+.cdk-overlay-pane.notification-dropdown-overlay {
+  @apply max-w-full;
+}
+
 .cdk-overlay-pane.lib-select-panel {
   max-width: none !important;
 }
