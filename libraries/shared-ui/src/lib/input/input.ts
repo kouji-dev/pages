@@ -7,8 +7,10 @@ import {
   signal,
   booleanAttribute,
   ChangeDetectionStrategy,
+  inject,
 } from '@angular/core';
 import { Icon, IconName } from '../icon/icon';
+import { SharedUiTranslateService } from '../i18n/shared-ui-translate.service';
 
 export type InputType =
   | 'text'
@@ -32,7 +34,11 @@ export type InputType =
         <label [for]="inputId()" class="input-label">
           {{ label() }}
           @if (required()) {
-            <span class="input-label-required" aria-label="required">*</span>
+            <span
+              class="input-label-required"
+              [attr.aria-label]="translateService.instant('input.required')"
+              >*</span
+            >
           }
         </label>
       }
@@ -95,7 +101,7 @@ export type InputType =
             <button
               type="button"
               class="input-number-spinner-button input-number-spinner-button--up"
-              [attr.aria-label]="'Increment'"
+              [attr.aria-label]="translateService.instant('input.increment')"
               (click)="incrementNumber($event)"
               tabindex="-1"
             >
@@ -104,7 +110,7 @@ export type InputType =
             <button
               type="button"
               class="input-number-spinner-button input-number-spinner-button--down"
-              [attr.aria-label]="'Decrement'"
+              [attr.aria-label]="translateService.instant('input.decrement')"
               (click)="decrementNumber($event)"
               tabindex="-1"
             >
@@ -117,7 +123,11 @@ export type InputType =
           <button
             type="button"
             class="input-icon input-icon--right input-password-toggle"
-            [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+            [attr.aria-label]="
+              showPassword()
+                ? translateService.instant('input.hidePassword')
+                : translateService.instant('input.showPassword')
+            "
             (click)="togglePasswordVisibility()"
             tabindex="-1"
           >

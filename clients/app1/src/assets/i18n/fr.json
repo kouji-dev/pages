@@ -1,0 +1,115 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "actions": "Actions",
+    "noResults": "Aucun résultat trouvé",
+    "retry": "Réessayer"
+  },
+  "auth": {
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "register": "S'inscrire",
+    "email": "Email",
+    "password": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié ?",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "rememberMe": "Se souvenir de moi",
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "dontHaveAccount": "Vous n'avez pas de compte ?",
+    "invalidCredentials": "Email ou mot de passe invalide",
+    "passwordResetSent": "Email de réinitialisation envoyé",
+    "passwordResetSuccess": "Le mot de passe a été réinitialisé avec succès"
+  },
+  "navigation": {
+    "organizations": "Organisations",
+    "projects": "Projets",
+    "spaces": "Espaces",
+    "issues": "Problèmes",
+    "pages": "Pages",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "notifications": "Notifications"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllAsRead": "Tout marquer comme lu",
+    "noNotifications": "Aucune notification",
+    "failedToLoad": "Échec du chargement des notifications",
+    "viewAll": "Voir toutes les notifications",
+    "justNow": "À l'instant",
+    "minutesAgo": "Il y a {{count}} min",
+    "hoursAgo": "Il y a {{count}} h",
+    "daysAgo": "Il y a {{count}} j"
+  },
+  "search": {
+    "placeholder": "Rechercher des problèmes et des pages...",
+    "searching": "Recherche...",
+    "noResults": "Aucun résultat trouvé",
+    "startTyping": "Commencez à taper pour rechercher...",
+    "issues": "Problèmes",
+    "pages": "Pages",
+    "organizations": "Organisations",
+    "projects": "Projets",
+    "spaces": "Espaces"
+  },
+  "language": {
+    "english": "English",
+    "french": "Français",
+    "switchLanguage": "Changer de langue"
+  },
+  "shared-ui": {
+    "input": {
+      "increment": "Incrémenter",
+      "decrement": "Décrémenter",
+      "showPassword": "Afficher le mot de passe",
+      "hidePassword": "Masquer le mot de passe",
+      "required": "requis"
+    },
+    "textEditor": {
+      "placeholder": "Saisir du texte...",
+      "linkUrl": "URL du lien",
+      "linkText": "Texte du lien",
+      "addLink": "Ajouter un lien",
+      "cancel": "Annuler",
+      "removeLink": "Supprimer le lien",
+      "editLink": "Modifier le lien"
+    },
+    "modal": {
+      "close": "Fermer"
+    },
+    "table": {
+      "noData": "Aucune donnée disponible",
+      "loading": "Chargement...",
+      "error": "Erreur lors du chargement des données"
+    },
+    "emptyState": {
+      "noData": "Aucune donnée disponible",
+      "description": "Il n'y a aucune donnée à afficher pour le moment."
+    },
+    "errorState": {
+      "error": "Une erreur s'est produite",
+      "description": "Une erreur s'est produite lors du chargement de ce contenu.",
+      "retry": "Réessayer"
+    },
+    "loadingState": {
+      "loading": "Chargement...",
+      "pleaseWait": "Veuillez patienter pendant le chargement du contenu."
+    }
+  }
+}

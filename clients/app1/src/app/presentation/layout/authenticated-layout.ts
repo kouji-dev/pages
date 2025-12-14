@@ -5,10 +5,19 @@ import { OrganizationSelector } from '../components/organization-selector';
 import { ThemeToggle } from '../components/theme-toggle';
 import { SearchBar } from '../components/search-bar';
 import { NotificationBell } from '../components/notification-bell';
+import { LanguageSwitcher } from '../components/language-switcher';
 
 @Component({
   selector: 'app-authenticated-layout',
-  imports: [BaseLayout, UserMenu, OrganizationSelector, ThemeToggle, SearchBar, NotificationBell],
+  imports: [
+    BaseLayout,
+    UserMenu,
+    OrganizationSelector,
+    ThemeToggle,
+    SearchBar,
+    NotificationBell,
+    LanguageSwitcher,
+  ],
   styles: [
     `
       @reference "#mainstyles";
@@ -37,7 +46,8 @@ import { NotificationBell } from '../components/notification-bell';
       </div>
 
       <!-- Quick actions slot -->
-      <div slot="quick-actions">
+      <div slot="quick-actions" style="display: flex; align-items: center; gap: 0.5rem;">
+        <app-language-switcher />
         <app-theme-toggle />
       </div>
 

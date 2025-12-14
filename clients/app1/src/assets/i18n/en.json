@@ -1,0 +1,115 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "actions": "Actions",
+    "noResults": "No results found",
+    "retry": "Retry"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot Password?",
+    "resetPassword": "Reset Password",
+    "confirmPassword": "Confirm Password",
+    "rememberMe": "Remember me",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "invalidCredentials": "Invalid email or password",
+    "passwordResetSent": "Password reset email sent",
+    "passwordResetSuccess": "Password has been reset successfully"
+  },
+  "navigation": {
+    "organizations": "Organizations",
+    "projects": "Projects",
+    "spaces": "Spaces",
+    "issues": "Issues",
+    "pages": "Pages",
+    "profile": "Profile",
+    "settings": "Settings",
+    "notifications": "Notifications"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllAsRead": "Mark all as read",
+    "noNotifications": "No notifications",
+    "failedToLoad": "Failed to load notifications",
+    "viewAll": "View all notifications",
+    "justNow": "Just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago"
+  },
+  "search": {
+    "placeholder": "Search issues and pages...",
+    "searching": "Searching...",
+    "noResults": "No results found",
+    "startTyping": "Start typing to search...",
+    "issues": "Issues",
+    "pages": "Pages",
+    "organizations": "Organizations",
+    "projects": "Projects",
+    "spaces": "Spaces"
+  },
+  "language": {
+    "english": "English",
+    "french": "Français",
+    "switchLanguage": "Switch Language"
+  },
+  "shared-ui": {
+    "input": {
+      "increment": "Increment",
+      "decrement": "Decrement",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "required": "required"
+    },
+    "textEditor": {
+      "placeholder": "Enter text...",
+      "linkUrl": "Link URL",
+      "linkText": "Link text",
+      "addLink": "Add link",
+      "cancel": "Cancel",
+      "removeLink": "Remove link",
+      "editLink": "Edit link"
+    },
+    "modal": {
+      "close": "Close"
+    },
+    "table": {
+      "noData": "No data available",
+      "loading": "Loading...",
+      "error": "Error loading data"
+    },
+    "emptyState": {
+      "noData": "No data available",
+      "description": "There is no data to display at this time."
+    },
+    "errorState": {
+      "error": "Something went wrong",
+      "description": "An error occurred while loading this content.",
+      "retry": "Try again"
+    },
+    "loadingState": {
+      "loading": "Loading...",
+      "pleaseWait": "Please wait while we load the content."
+    }
+  }
+}

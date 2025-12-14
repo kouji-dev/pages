@@ -1,0 +1,41 @@
+{
+  "shared-ui": {
+    "input": {
+      "increment": "Increment",
+      "decrement": "Decrement",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "required": "required"
+    },
+    "textEditor": {
+      "placeholder": "Enter text...",
+      "linkUrl": "Link URL",
+      "linkText": "Link text",
+      "addLink": "Add link",
+      "cancel": "Cancel",
+      "removeLink": "Remove link",
+      "editLink": "Edit link"
+    },
+    "modal": {
+      "close": "Close"
+    },
+    "table": {
+      "noData": "No data available",
+      "loading": "Loading...",
+      "error": "Error loading data"
+    },
+    "emptyState": {
+      "noData": "No data available",
+      "description": "There is no data to display at this time."
+    },
+    "errorState": {
+      "error": "Something went wrong",
+      "description": "An error occurred while loading this content.",
+      "retry": "Try again"
+    },
+    "loadingState": {
+      "loading": "Loading...",
+      "pleaseWait": "Please wait while we load the content."
+    }
+  }
+}

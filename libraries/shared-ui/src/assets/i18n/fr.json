@@ -1,0 +1,41 @@
+{
+  "shared-ui": {
+    "input": {
+      "increment": "Incrémenter",
+      "decrement": "Décrémenter",
+      "showPassword": "Afficher le mot de passe",
+      "hidePassword": "Masquer le mot de passe",
+      "required": "requis"
+    },
+    "textEditor": {
+      "placeholder": "Saisir du texte...",
+      "linkUrl": "URL du lien",
+      "linkText": "Texte du lien",
+      "addLink": "Ajouter un lien",
+      "cancel": "Annuler",
+      "removeLink": "Supprimer le lien",
+      "editLink": "Modifier le lien"
+    },
+    "modal": {
+      "close": "Fermer"
+    },
+    "table": {
+      "noData": "Aucune donnée disponible",
+      "loading": "Chargement...",
+      "error": "Erreur lors du chargement des données"
+    },
+    "emptyState": {
+      "noData": "Aucune donnée disponible",
+      "description": "Il n'y a aucune donnée à afficher pour le moment."
+    },
+    "errorState": {
+      "error": "Une erreur s'est produite",
+      "description": "Une erreur s'est produite lors du chargement de ce contenu.",
+      "retry": "Réessayer"
+    },
+    "loadingState": {
+      "loading": "Chargement...",
+      "pleaseWait": "Veuillez patienter pendant le chargement du contenu."
+    }
+  }
+}
