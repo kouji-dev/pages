@@ -33,7 +33,7 @@ import { TextEditorToolbar } from './text-editor-toolbar';
 import { TextEditorService } from './text-editor.service';
 import { MentionPlugin } from './plugins/mention-plugin';
 import { TypeaheadMenuPlugin } from './plugins/typeahead-menu-plugin';
-import { SharedUiTranslateService } from '../i18n/shared-ui-translate.service';
+import { TranslateService } from '../i18n/translate.service';
 
 @Component({
   selector: 'lib-text-editor',
@@ -285,7 +285,7 @@ export class TextEditor implements ControlValueAccessor, AfterViewInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly plugins = inject(TEXT_EDITOR_PLUGINS, { optional: true }) || [];
   private readonly viewContainerRef = inject(ViewContainerRef);
-  private readonly translateService = inject(SharedUiTranslateService);
+  private readonly translateService = inject(TranslateService);
 
   @ViewChild('editorContainer', { static: false }) editorContainer!: ElementRef<HTMLDivElement>;
 

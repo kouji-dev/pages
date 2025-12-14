@@ -10,7 +10,7 @@ import {
   inject,
 } from '@angular/core';
 import { Icon, IconName } from '../icon/icon';
-import { SharedUiTranslateService } from '../i18n/shared-ui-translate.service';
+import { TranslateService } from '../i18n/translate.service';
 
 export type InputType =
   | 'text'
@@ -366,7 +366,7 @@ export type InputType =
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Input {
-  readonly translateService = inject(SharedUiTranslateService);
+  readonly translateService = inject(TranslateService);
 
   // Model for two-way binding
   model = model<string>('');
