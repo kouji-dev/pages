@@ -2359,17 +2359,12 @@ This phase focuses on building the foundational features required for a function
   - [x] Loading states and error handling
   - [x] Debounced search (300ms)
   - [x] Global search across all entity types
-- [ ] Create search results page (full page view - deferred)
-  - [ ] Display results grouped by type (Issues, Pages)
-  - [ ] Result cards with preview
-  - [ ] Pagination
 - [ ] Implement search autocomplete/suggestions (optional - deferred)
 - [ ] Add recent searches (optional - deferred)
 
 **Deliverables**:
 
 - [x] Search UI (dropdown implementation)
-- [ ] Search results page (deferred - can be added later)
 
 **Note**: ✅ **COMPLETED** - Search dropdown implemented with:
 
@@ -2500,10 +2495,6 @@ This phase focuses on building the foundational features required for a function
   - [x] Error state with retry button
   - [x] Empty state when no notifications
 - [ ] Group notifications by date (deferred - shows relative time instead)
-- [ ] Create notifications page (full page view - deferred)
-  - [ ] Full notification list with pagination
-  - [ ] Filter by read/unread
-  - [ ] Better date grouping
 - [ ] Implement WebSocket real-time notifications (deferred to Phase 2)
   - [ ] WebSocket connection setup
   - [ ] Receive new notifications in real-time
@@ -2532,7 +2523,7 @@ This phase focuses on building the foundational features required for a function
   - Polling for real-time updates (30-second interval)
   - Loading states, error handling, and empty states
   - CDK Overlay for dropdown positioning and dismissal
-- **Deferred**: Full notifications page, date grouping, WebSocket real-time (Phase 2), email preferences (pending email service)
+- **Deferred**: Date grouping, WebSocket real-time (Phase 2), email preferences (pending email service)
 
 ---
 
