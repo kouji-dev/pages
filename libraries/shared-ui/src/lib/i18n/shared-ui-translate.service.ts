@@ -57,7 +57,7 @@ export class SharedUiTranslateService {
   /**
    * Stream of default language changes
    */
-  get onDefaultLangChange(): Observable<string> {
+  get onDefaultLangChange(): Observable<any> {
     if (!this.translateService) {
       return new Observable((observer) => {
         observer.complete();

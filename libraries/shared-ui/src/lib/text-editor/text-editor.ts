@@ -75,7 +75,7 @@ import { SharedUiTranslateService } from '../i18n/shared-ui-translate.service';
         <div
           #editorContainer
           class="text-editor_container text-editor_content"
-          [attr.data-placeholder]="placeholder()"
+          [attr.data-placeholder]="computedPlaceholder()"
           [contentEditable]="editable()"
           [class.text-editor_container--disabled]="isDisabled()"
           [class.text-editor_container--error]="errorMessage()"
@@ -289,12 +289,13 @@ export class TextEditor implements ControlValueAccessor, AfterViewInit {
 
   @ViewChild('editorContainer', { static: false }) editorContainer!: ElementRef<HTMLDivElement>;
 
-  readonly placeholderInput = input<string>('');
+  readonly placeholder = input<string>('');
 
-  readonly placeholder = computed(() => {
-    const customPlaceholder = this.placeholderInput();
+  readonly computedPlaceholder = computed(() => {
+    const customPlaceholder = this.placeholder();
     return customPlaceholder || this.translateService.instant('textEditor.placeholder');
   });
+
   readonly disabled = input<boolean>(false);
   readonly readOnly = input<boolean>(false);
   readonly errorMessage = input<string | undefined>(undefined);

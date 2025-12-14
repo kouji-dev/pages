@@ -10,16 +10,17 @@ import {
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Icon, Button, IconName } from 'shared-ui';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { NotificationService, Notification } from '../../application/services/notification.service';
 import { NavigationService } from '../../application/services/navigation.service';
 
 @Component({
   selector: 'app-notification-dropdown',
-  imports: [CommonModule, Icon, Button],
+  imports: [CommonModule, Icon, Button, TranslateModule, TranslatePipe],
   template: `
     <div class="notification-dropdown">
       <div class="notification-dropdown_header">
-        <h3 class="notification-dropdown_title">Notifications</h3>
+        <h3 class="notification-dropdown_title">{{ 'notifications.title' | translate }}</h3>
         @if (unreadCount() > 0) {
           <lib-button
             variant="ghost"
@@ -27,7 +28,7 @@ import { NavigationService } from '../../application/services/navigation.service
             (clicked)="handleMarkAllAsRead()"
             [disabled]="isMarkingAllAsRead()"
           >
-            Mark all as read
+            {{ 'notifications.markAllAsRead' | translate }}
           </lib-button>
         }
       </div>
@@ -36,18 +37,22 @@ import { NavigationService } from '../../application/services/navigation.service
         @if (isLoading()) {
           <div class="notification-dropdown_loading">
             <lib-icon name="loader" size="md" class="notification-dropdown_loading-icon" />
-            <span class="notification-dropdown_loading-text">Loading...</span>
+            <span class="notification-dropdown_loading-text">{{
+              'common.loading' | translate
+            }}</span>
           </div>
         } @else if (hasError()) {
           <div class="notification-dropdown_error">
             <lib-icon name="circle-alert" size="md" />
-            <span>Failed to load notifications</span>
-            <lib-button variant="ghost" size="sm" (clicked)="handleRetry()">Retry</lib-button>
+            <span>{{ 'notifications.failedToLoad' | translate }}</span>
+            <lib-button variant="ghost" size="sm" (clicked)="handleRetry()">{{
+              'common.retry' | translate
+            }}</lib-button>
           </div>
         } @else if (notifications().length === 0) {
           <div class="notification-dropdown_empty">
             <lib-icon name="bell" size="md" />
-            <span>No notifications</span>
+            <span>{{ 'notifications.noNotifications' | translate }}</span>
           </div>
         } @else {
           <div class="notification-dropdown_list">
@@ -85,7 +90,7 @@ import { NavigationService } from '../../application/services/navigation.service
       @if (notifications().length > 0 && totalPages() > 1) {
         <div class="notification-dropdown_footer">
           <lib-button variant="ghost" size="sm" [fullWidth]="true" (clicked)="handleViewAll()">
-            View all notifications
+            {{ 'notifications.viewAll' | translate }}
           </lib-button>
         </div>
       }

@@ -34,11 +34,7 @@ export type InputType =
         <label [for]="inputId()" class="input-label">
           {{ label() }}
           @if (required()) {
-            <span
-              class="input-label-required"
-              [attr.aria-label]="translateService.instant('input.required')"
-              >*</span
-            >
+            <span class="input-label-required" [attr.aria-label]="requiredLabel()">*</span>
           }
         </label>
       }
@@ -101,7 +97,7 @@ export type InputType =
             <button
               type="button"
               class="input-number-spinner-button input-number-spinner-button--up"
-              [attr.aria-label]="translateService.instant('input.increment')"
+              [attr.aria-label]="incrementLabel()"
               (click)="incrementNumber($event)"
               tabindex="-1"
             >
@@ -110,7 +106,7 @@ export type InputType =
             <button
               type="button"
               class="input-number-spinner-button input-number-spinner-button--down"
-              [attr.aria-label]="translateService.instant('input.decrement')"
+              [attr.aria-label]="decrementLabel()"
               (click)="decrementNumber($event)"
               tabindex="-1"
             >
@@ -123,11 +119,7 @@ export type InputType =
           <button
             type="button"
             class="input-icon input-icon--right input-password-toggle"
-            [attr.aria-label]="
-              showPassword()
-                ? translateService.instant('input.hidePassword')
-                : translateService.instant('input.showPassword')
-            "
+            [attr.aria-label]="showPassword() ? hidePasswordLabel() : showPasswordLabel()"
             (click)="togglePasswordVisibility()"
             tabindex="-1"
           >
@@ -374,6 +366,8 @@ export type InputType =
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Input {
+  readonly translateService = inject(SharedUiTranslateService);
+
   // Model for two-way binding
   model = model<string>('');
 
@@ -422,6 +416,13 @@ export class Input {
     }
     return this.type();
   });
+
+  // Computed translation strings
+  readonly incrementLabel = computed(() => this.translateService.instant('input.increment'));
+  readonly decrementLabel = computed(() => this.translateService.instant('input.decrement'));
+  readonly showPasswordLabel = computed(() => this.translateService.instant('input.showPassword'));
+  readonly hidePasswordLabel = computed(() => this.translateService.instant('input.hidePassword'));
+  readonly requiredLabel = computed(() => this.translateService.instant('input.required'));
 
   // Internal state
   private inputElement = signal<HTMLInputElement | HTMLTextAreaElement | null>(null);

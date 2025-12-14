@@ -16,7 +16,9 @@ import { TextEditorMentionService } from './application/services/text-editor-men
 
 // Factory function for TranslateHttpLoader
 export function HttpLoaderFactory(http: HttpClient): TranslateLoader {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+  // TranslateHttpLoader implements TranslateLoader interface
+  // Type assertion needed due to Observable<Object> vs Observable<TranslationObject> type mismatch
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json') as unknown as TranslateLoader;
 }
 
 export const appConfig: ApplicationConfig = {

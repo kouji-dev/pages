@@ -13,6 +13,7 @@ import {
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Icon, Button, IconName } from 'shared-ui';
+import { TranslateModule, TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   SearchService,
   SearchResultItem,
@@ -30,18 +31,18 @@ interface GroupedResults {
 
 @Component({
   selector: 'app-search-dropdown',
-  imports: [CommonModule, Icon, Button],
+  imports: [CommonModule, Icon, Button, TranslateModule, TranslatePipe],
   template: `
     <div class="search-dropdown" #dropdownContainer>
       @if (isLoading()) {
         <div class="search-dropdown_loading">
           <lib-icon name="loader" size="md" class="search-dropdown_loading-icon" />
-          <span class="search-dropdown_loading-text">Searching...</span>
+          <span class="search-dropdown_loading-text">{{ 'search.searching' | translate }}</span>
         </div>
       } @else if (groupedResults().length === 0 && query().trim().length > 0) {
         <div class="search-dropdown_empty">
           <lib-icon name="search" size="md" />
-          <span>No results found</span>
+          <span>{{ 'search.noResults' | translate }}</span>
         </div>
       } @else if (groupedResults().length > 0) {
         <div class="search-dropdown_results">
@@ -49,7 +50,9 @@ interface GroupedResults {
             <div class="search-dropdown_group">
               <div class="search-dropdown_group-header">
                 <lib-icon [name]="group.icon" size="sm" />
-                <span class="search-dropdown_group-title">{{ group.label }}</span>
+                <span class="search-dropdown_group-title">{{
+                  getGroupLabel(group.type) | translate
+                }}</span>
                 <span class="search-dropdown_group-count">({{ group.items.length }})</span>
               </div>
               <div class="search-dropdown_group-items">
@@ -82,7 +85,7 @@ interface GroupedResults {
       } @else {
         <div class="search-dropdown_empty">
           <lib-icon name="search" size="md" />
-          <span>Start typing to search...</span>
+          <span>{{ 'search.startTyping' | translate }}</span>
         </div>
       }
     </div>
@@ -210,6 +213,7 @@ export class SearchDropdown {
   private readonly router = inject(Router);
   private readonly searchService = inject(SearchService);
   private readonly navigationService = inject(NavigationService);
+  private readonly translateService = inject(TranslateService);
 
   @ViewChild('dropdownContainer', { static: false }) dropdownContainer?: ElementRef<HTMLDivElement>;
 
@@ -358,6 +362,20 @@ export class SearchDropdown {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  /**
+   * Get translation key for group label
+   */
+  getGroupLabel(type: EntityType): string {
+    const labelMap: Record<EntityType, string> = {
+      issue: 'search.issues',
+      page: 'search.pages',
+      organization: 'search.organizations',
+      project: 'search.projects',
+      space: 'search.spaces',
+    };
+    return labelMap[type] || '';
   }
 
   /**
