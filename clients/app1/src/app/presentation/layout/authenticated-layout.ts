@@ -4,10 +4,11 @@ import { UserMenu } from '../components/user-menu';
 import { OrganizationSelector } from '../components/organization-selector';
 import { ThemeToggle } from '../components/theme-toggle';
 import { SearchBar } from '../components/search-bar';
+import { NotificationBell } from '../components/notification-bell';
 
 @Component({
   selector: 'app-authenticated-layout',
-  imports: [BaseLayout, UserMenu, OrganizationSelector, ThemeToggle, SearchBar],
+  imports: [BaseLayout, UserMenu, OrganizationSelector, ThemeToggle, SearchBar, NotificationBell],
   styles: [
     `
       @reference "#mainstyles";
@@ -42,7 +43,7 @@ import { SearchBar } from '../components/search-bar';
 
       <!-- Notifications slot -->
       <div slot="notifications">
-        <!-- Notifications will be added here -->
+        <app-notification-bell />
       </div>
 
       <!-- User menu slot -->
