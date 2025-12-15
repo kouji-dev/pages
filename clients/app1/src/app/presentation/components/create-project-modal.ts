@@ -11,43 +11,44 @@ import { Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter } from 's
 import { Button, Input } from 'shared-ui';
 import { ToastService } from 'shared-ui';
 import { ProjectService } from '../../application/services/project.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-create-project-modal',
-  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, Input],
+  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, Input, TranslatePipe],
   template: `
     <lib-modal-container>
-      <lib-modal-header>Create Project</lib-modal-header>
+      <lib-modal-header>{{ 'projects.modals.createProject' | translate }}</lib-modal-header>
       <lib-modal-content>
         <form class="create-project-form" (ngSubmit)="handleSubmit()">
           <lib-input
-            label="Project Name"
-            placeholder="Enter project name"
+            [label]="'projects.modals.projectName' | translate"
+            [placeholder]="'projects.modals.projectNamePlaceholder' | translate"
             [(model)]="name"
             [required]="true"
             [errorMessage]="nameError()"
-            helperText="Choose a name for your project"
+            [helperText]="'projects.modals.projectNameHelper' | translate"
           />
           <lib-input
-            label="Project Key"
-            placeholder="PROJ"
+            [label]="'projects.modals.projectKey' | translate"
+            [placeholder]="'projects.modals.projectKeyPlaceholder' | translate"
             [(model)]="key"
             [errorMessage]="keyError()"
-            helperText="Short identifier (auto-generated from name, max 10 characters, uppercase)"
+            [helperText]="'projects.modals.projectKeyHelper' | translate"
           />
           <lib-input
-            label="Description"
+            [label]="'projects.modals.description' | translate"
             type="textarea"
-            placeholder="Describe your project (optional)"
+            [placeholder]="'projects.modals.descriptionPlaceholder' | translate"
             [(model)]="description"
             [rows]="3"
-            helperText="Optional description of your project"
+            [helperText]="'projects.modals.descriptionHelper' | translate"
           />
         </form>
       </lib-modal-content>
       <lib-modal-footer>
         <lib-button variant="secondary" (clicked)="handleCancel()" [disabled]="isSubmitting()">
-          Cancel
+          {{ 'common.cancel' | translate }}
         </lib-button>
         <lib-button
           variant="primary"
@@ -55,7 +56,7 @@ import { ProjectService } from '../../application/services/project.service';
           [loading]="isSubmitting()"
           [disabled]="!isValid()"
         >
-          Create Project
+          {{ 'projects.modals.createProject' | translate }}
         </lib-button>
       </lib-modal-footer>
     </lib-modal-container>
@@ -75,6 +76,7 @@ export class CreateProjectModal {
   private readonly projectService = inject(ProjectService);
   private readonly toast = inject(ToastService);
   private readonly modal = inject(Modal);
+  private readonly translateService = inject(TranslateService);
 
   readonly organizationId = input.required<string>();
 
@@ -86,10 +88,10 @@ export class CreateProjectModal {
   readonly nameError = computed(() => {
     const value = this.name();
     if (!value.trim()) {
-      return 'Project name is required';
+      return this.translateService.instant('projects.modals.nameRequired');
     }
     if (value.trim().length < 3) {
-      return 'Project name must be at least 3 characters';
+      return this.translateService.instant('projects.modals.nameMinLength');
     }
     return '';
   });
@@ -102,13 +104,13 @@ export class CreateProjectModal {
     // Key format validation: uppercase letters and numbers only, max 10 chars
     const keyPattern = /^[A-Z0-9]+$/;
     if (!keyPattern.test(value)) {
-      return 'Key can only contain uppercase letters and numbers';
+      return this.translateService.instant('projects.modals.keyInvalidFormat');
     }
     if (value.length > 10) {
-      return 'Key must be 10 characters or less';
+      return this.translateService.instant('projects.modals.keyMaxLength');
     }
     if (value.length < 2) {
-      return 'Key must be at least 2 characters';
+      return this.translateService.instant('projects.modals.keyMinLength');
     }
     return '';
   });
@@ -177,7 +179,7 @@ export class CreateProjectModal {
         organization_id: this.organizationId(),
       });
 
-      this.toast.success('Project created successfully!');
+      this.toast.success(this.translateService.instant('projects.modals.createSuccess'));
       this.modal.close();
 
       // Reset form
@@ -191,7 +193,9 @@ export class CreateProjectModal {
     } catch (error) {
       console.error('Failed to create project:', error);
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to create project. Please try again.';
+        error instanceof Error
+          ? error.message
+          : this.translateService.instant('projects.modals.createError');
       this.toast.error(errorMessage);
     } finally {
       this.isSubmitting.set(false);

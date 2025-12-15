@@ -5,10 +5,11 @@ import { filter, map } from 'rxjs';
 import { NavigationService } from '../../application/services/navigation.service';
 import { BackToPage } from '../components/back-to-page';
 import { SidebarNav, SidebarNavItem } from '../components/sidebar-nav';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-organization-layout',
-  imports: [RouterOutlet, SidebarNav, BackToPage],
+  imports: [RouterOutlet, SidebarNav, BackToPage, TranslatePipe],
   template: `
     <div class="organization-layout">
       <div class="organization-layout_container">
@@ -16,7 +17,7 @@ import { SidebarNav, SidebarNavItem } from '../components/sidebar-nav';
           <app-sidebar-nav [items]="navItems()">
             <div header>
               <app-back-to-page
-                label="Back to Organizations"
+                [label]="'organizations.backToOrganizations' | translate"
                 (onClick)="handleGoToOrganizations()"
               />
             </div>
@@ -70,6 +71,7 @@ export class OrganizationLayout {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   readonly navigationService = inject(NavigationService);
+  private readonly translateService = inject(TranslateService);
 
   // Make router URL reactive using toSignal
   private readonly currentUrl = toSignal(
@@ -107,13 +109,13 @@ export class OrganizationLayout {
   readonly navItems = computed<SidebarNavItem[]>(() => {
     return [
       {
-        label: 'Projects',
+        label: this.translateService.instant('navigation.projects'),
         icon: 'folder',
         active: this.isProjectsActive(),
         onClick: () => this.handleNavigateToProjects(),
       },
       {
-        label: 'Spaces',
+        label: this.translateService.instant('navigation.spaces'),
         icon: 'book',
         active: this.isSpacesActive(),
         onClick: () => this.handleNavigateToSpaces(),

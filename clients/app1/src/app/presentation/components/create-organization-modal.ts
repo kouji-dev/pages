@@ -11,44 +11,47 @@ import { Button, Input } from 'shared-ui';
 import { ToastService } from 'shared-ui';
 import { OrganizationService } from '../../application/services/organization.service';
 import { Router } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-create-organization-modal',
-  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, Input],
+  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, Input, TranslatePipe],
   template: `
     <lib-modal-container>
-      <lib-modal-header>Create Organization</lib-modal-header>
+      <lib-modal-header>{{
+        'organizations.modals.createOrganization' | translate
+      }}</lib-modal-header>
       <lib-modal-content>
         <form class="create-org-form" (ngSubmit)="handleSubmit()">
           <lib-input
-            label="Organization Name"
-            placeholder="Enter organization name"
+            [label]="'organizations.modals.organizationName' | translate"
+            [placeholder]="'organizations.modals.organizationNamePlaceholder' | translate"
             [(model)]="name"
             [required]="true"
             [errorMessage]="nameError()"
-            helperText="Choose a name for your organization"
+            [helperText]="'organizations.modals.organizationNameHelper' | translate"
           />
           <lib-input
-            label="Slug"
-            placeholder="organization-slug"
+            [label]="'organizations.modals.slug' | translate"
+            [placeholder]="'organizations.modals.slugPlaceholder' | translate"
             [(model)]="slug"
             [required]="true"
             [errorMessage]="slugError()"
-            helperText="URL-friendly identifier (lowercase, hyphens only)"
+            [helperText]="'organizations.modals.slugHelper' | translate"
           />
           <lib-input
-            label="Description"
+            [label]="'organizations.modals.description' | translate"
             type="textarea"
-            placeholder="Describe your organization (optional)"
+            [placeholder]="'organizations.modals.descriptionPlaceholder' | translate"
             [(model)]="description"
             [rows]="3"
-            helperText="Optional description of your organization"
+            [helperText]="'organizations.modals.descriptionHelper' | translate"
           />
         </form>
       </lib-modal-content>
       <lib-modal-footer>
         <lib-button variant="secondary" (clicked)="handleCancel()" [disabled]="isSubmitting()">
-          Cancel
+          {{ 'common.cancel' | translate }}
         </lib-button>
         <lib-button
           variant="primary"
@@ -56,7 +59,7 @@ import { Router } from '@angular/router';
           [loading]="isSubmitting()"
           [disabled]="!isValid()"
         >
-          Create Organization
+          {{ 'organizations.modals.createOrganization' | translate }}
         </lib-button>
       </lib-modal-footer>
     </lib-modal-container>
@@ -77,6 +80,7 @@ export class CreateOrganizationModal {
   private readonly toast = inject(ToastService);
   private readonly router = inject(Router);
   private readonly modal = inject(Modal);
+  private readonly translateService = inject(TranslateService);
 
   readonly name = signal('');
   readonly slug = signal('');
@@ -86,10 +90,10 @@ export class CreateOrganizationModal {
   readonly nameError = computed(() => {
     const value = this.name();
     if (!value.trim()) {
-      return 'Organization name is required';
+      return this.translateService.instant('organizations.modals.nameRequired');
     }
     if (value.trim().length < 3) {
-      return 'Organization name must be at least 3 characters';
+      return this.translateService.instant('organizations.modals.nameMinLength');
     }
     return '';
   });
@@ -97,15 +101,15 @@ export class CreateOrganizationModal {
   readonly slugError = computed(() => {
     const value = this.slug();
     if (!value.trim()) {
-      return 'Slug is required';
+      return this.translateService.instant('organizations.modals.slugRequired');
     }
     // Slug format validation: lowercase, letters, numbers, hyphens only
     const slugPattern = /^[a-z0-9-]+$/;
     if (!slugPattern.test(value)) {
-      return 'Slug can only contain lowercase letters, numbers, and hyphens';
+      return this.translateService.instant('organizations.modals.slugInvalidFormat');
     }
     if (value.length < 3) {
-      return 'Slug must be at least 3 characters';
+      return this.translateService.instant('organizations.modals.slugMinLength');
     }
     // TODO: Add async uniqueness check when backend API is ready
     return '';
@@ -173,7 +177,7 @@ export class CreateOrganizationModal {
         description: this.description().trim() || undefined,
       });
 
-      this.toast.success('Organization created successfully!');
+      this.toast.success(this.translateService.instant('organizations.modals.createSuccess'));
       this.modal.close();
 
       // Reset form
@@ -196,7 +200,7 @@ export class CreateOrganizationModal {
       // this.router.navigate(['/organizations', newOrg.id]);
     } catch (error) {
       console.error('Failed to create organization:', error);
-      this.toast.error('Failed to create organization. Please try again.');
+      this.toast.error(this.translateService.instant('organizations.modals.createError'));
     } finally {
       this.isSubmitting.set(false);
     }

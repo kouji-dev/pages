@@ -1,7 +1,8 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, inject } from '@angular/core';
 import { Button, Icon, IconName } from 'shared-ui';
 import { PublicNav } from '../components/public-nav';
 import { Footer } from '../components/footer';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 interface Feature {
   icon: IconName;
@@ -18,23 +19,24 @@ interface FeatureCategory {
 
 @Component({
   selector: 'app-features-page',
-  imports: [Button, Icon, PublicNav, Footer],
+  imports: [Button, Icon, PublicNav, Footer, TranslatePipe],
   template: `
     <div class="features-page">
       <app-public-nav />
       <!-- Header Section -->
       <section class="features-page_header">
         <div class="features-page_header-container">
-          <h1 class="features-page_title">Everything You Need to Build Better Together</h1>
+          <h1 class="features-page_title">{{ 'public.featuresPage.header.title' | translate }}</h1>
           <p class="features-page_subtitle">
-            Pages combines powerful project management and documentation tools in one seamless
-            platform.
+            {{ 'public.featuresPage.header.subtitle' | translate }}
           </p>
           <div class="features-page_header-actions">
-            <lib-button variant="primary" size="lg" [link]="['/register']">Get Started</lib-button>
-            <lib-button variant="secondary" size="lg" [link]="['/pricing']"
-              >View Pricing</lib-button
-            >
+            <lib-button variant="primary" size="lg" [link]="['/register']">{{
+              'public.featuresPage.header.getStarted' | translate
+            }}</lib-button>
+            <lib-button variant="secondary" size="lg" [link]="['/pricing']">{{
+              'public.featuresPage.header.viewPricing' | translate
+            }}</lib-button>
           </div>
         </div>
       </section>
@@ -75,13 +77,13 @@ interface FeatureCategory {
       <!-- CTA Section -->
       <section class="features-page_cta">
         <div class="features-page_cta-container">
-          <h2 class="features-page_cta-title">Ready to Get Started?</h2>
+          <h2 class="features-page_cta-title">{{ 'public.featuresPage.cta.title' | translate }}</h2>
           <p class="features-page_cta-description">
-            Join thousands of teams already using Pages to build better together.
+            {{ 'public.featuresPage.cta.description' | translate }}
           </p>
-          <lib-button variant="primary" size="lg" [link]="['/register']"
-            >Start Free Trial</lib-button
-          >
+          <lib-button variant="primary" size="lg" [link]="['/register']">{{
+            'public.featuresPage.cta.startFreeTrial' | translate
+          }}</lib-button>
         </div>
       </section>
       <app-footer />
@@ -263,156 +265,310 @@ interface FeatureCategory {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FeaturesPage {
-  readonly featureCategories: FeatureCategory[] = [
+  private readonly translateService = inject(TranslateService);
+
+  readonly featureCategories = computed<FeatureCategory[]>(() => [
     {
-      title: 'Project Management',
-      description: 'Powerful tools to organize, track, and manage your projects.',
+      title: this.translateService.instant(
+        'public.featuresPage.categories.projectManagement.title',
+      ),
+      description: this.translateService.instant(
+        'public.featuresPage.categories.projectManagement.description',
+      ),
       features: [
         {
           icon: 'square-check',
-          title: 'Issue Tracking',
-          description: 'Create, assign, and track issues with custom workflows.',
+          title: this.translateService.instant(
+            'public.featuresPage.categories.projectManagement.features.issueTracking.title',
+          ),
+          description: this.translateService.instant(
+            'public.featuresPage.categories.projectManagement.features.issueTracking.description',
+          ),
           details: [
-            'Custom issue types (Task, Bug, Story, Epic)',
-            'Priority levels and due dates',
-            'Issue linking and dependencies',
-            'Subtasks and bulk operations',
+            this.translateService.instant(
+              'public.featuresPage.categories.projectManagement.features.issueTracking.details.customTypes',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.projectManagement.features.issueTracking.details.priorityDates',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.projectManagement.features.issueTracking.details.linking',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.projectManagement.features.issueTracking.details.subtasks',
+            ),
           ],
         },
         {
           icon: 'layout-grid',
-          title: 'Agile Boards',
-          description: 'Scrum and Kanban boards for flexible project management.',
+          title: this.translateService.instant(
+            'public.featuresPage.categories.projectManagement.features.agileBoards.title',
+          ),
+          description: this.translateService.instant(
+            'public.featuresPage.categories.projectManagement.features.agileBoards.description',
+          ),
           details: [
-            'Drag-and-drop board views',
-            'Sprint planning and tracking',
-            'Backlog management',
-            'Burndown charts and velocity reports',
+            this.translateService.instant(
+              'public.featuresPage.categories.projectManagement.features.agileBoards.details.dragDrop',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.projectManagement.features.agileBoards.details.sprintPlanning',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.projectManagement.features.agileBoards.details.backlog',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.projectManagement.features.agileBoards.details.charts',
+            ),
           ],
         },
         {
           icon: 'git-branch',
-          title: 'Workflows',
-          description: "Customizable workflows to match your team's processes.",
+          title: this.translateService.instant(
+            'public.featuresPage.categories.projectManagement.features.workflows.title',
+          ),
+          description: this.translateService.instant(
+            'public.featuresPage.categories.projectManagement.features.workflows.description',
+          ),
           details: [
-            'Custom workflow states',
-            'Automated transitions',
-            'Conditional logic',
-            'Post-functions and validators',
+            this.translateService.instant(
+              'public.featuresPage.categories.projectManagement.features.workflows.details.states',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.projectManagement.features.workflows.details.transitions',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.projectManagement.features.workflows.details.logic',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.projectManagement.features.workflows.details.functions',
+            ),
           ],
         },
         {
           icon: 'trending-up',
-          title: 'Reporting & Analytics',
-          description: "Real-time insights into your project's progress.",
+          title: this.translateService.instant(
+            'public.featuresPage.categories.projectManagement.features.reporting.title',
+          ),
+          description: this.translateService.instant(
+            'public.featuresPage.categories.projectManagement.features.reporting.description',
+          ),
           details: [
-            'Custom dashboards',
-            'Velocity and burndown reports',
-            'Time tracking reports',
-            'Export to PDF/CSV',
+            this.translateService.instant(
+              'public.featuresPage.categories.projectManagement.features.reporting.details.dashboards',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.projectManagement.features.reporting.details.velocity',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.projectManagement.features.reporting.details.timeTracking',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.projectManagement.features.reporting.details.export',
+            ),
           ],
         },
       ],
     },
     {
-      title: 'Documentation',
-      description: 'Create, organize, and collaborate on documentation.',
+      title: this.translateService.instant('public.featuresPage.categories.documentation.title'),
+      description: this.translateService.instant(
+        'public.featuresPage.categories.documentation.description',
+      ),
       features: [
         {
           icon: 'file-text',
-          title: 'Rich Text Editor',
-          description: 'Powerful editor with formatting, media, and collaboration.',
+          title: this.translateService.instant(
+            'public.featuresPage.categories.documentation.features.richTextEditor.title',
+          ),
+          description: this.translateService.instant(
+            'public.featuresPage.categories.documentation.features.richTextEditor.description',
+          ),
           details: [
-            'WYSIWYG editing',
-            'Markdown support',
-            'Media embeds',
-            'Real-time collaboration',
+            this.translateService.instant(
+              'public.featuresPage.categories.documentation.features.richTextEditor.details.wysiwyg',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.documentation.features.richTextEditor.details.markdown',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.documentation.features.richTextEditor.details.media',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.documentation.features.richTextEditor.details.collaboration',
+            ),
           ],
         },
         {
           icon: 'folder-tree',
-          title: 'Page Hierarchy',
-          description: 'Organize pages in a flexible tree structure.',
+          title: this.translateService.instant(
+            'public.featuresPage.categories.documentation.features.pageHierarchy.title',
+          ),
+          description: this.translateService.instant(
+            'public.featuresPage.categories.documentation.features.pageHierarchy.description',
+          ),
           details: [
-            'Nested page structure',
-            'Drag-and-drop organization',
-            'Page templates',
-            'Quick navigation',
+            this.translateService.instant(
+              'public.featuresPage.categories.documentation.features.pageHierarchy.details.nested',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.documentation.features.pageHierarchy.details.dragDrop',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.documentation.features.pageHierarchy.details.templates',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.documentation.features.pageHierarchy.details.navigation',
+            ),
           ],
         },
         {
           icon: 'search',
-          title: 'Advanced Search',
-          description: 'Find anything instantly across your workspace.',
+          title: this.translateService.instant(
+            'public.featuresPage.categories.documentation.features.advancedSearch.title',
+          ),
+          description: this.translateService.instant(
+            'public.featuresPage.categories.documentation.features.advancedSearch.description',
+          ),
           details: [
-            'Full-text search',
-            'Filter by tags, author, date',
-            'Saved searches',
-            'Search in attachments',
+            this.translateService.instant(
+              'public.featuresPage.categories.documentation.features.advancedSearch.details.fullText',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.documentation.features.advancedSearch.details.filters',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.documentation.features.advancedSearch.details.saved',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.documentation.features.advancedSearch.details.attachments',
+            ),
           ],
         },
         {
           icon: 'users',
-          title: 'Team Collaboration',
-          description: 'Work together with comments, mentions, and notifications.',
+          title: this.translateService.instant(
+            'public.featuresPage.categories.documentation.features.teamCollaboration.title',
+          ),
+          description: this.translateService.instant(
+            'public.featuresPage.categories.documentation.features.teamCollaboration.description',
+          ),
           details: [
-            'Comments and discussions',
-            '@mentions and notifications',
-            'Page watching',
-            'Activity feed',
+            this.translateService.instant(
+              'public.featuresPage.categories.documentation.features.teamCollaboration.details.comments',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.documentation.features.teamCollaboration.details.mentions',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.documentation.features.teamCollaboration.details.watching',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.documentation.features.teamCollaboration.details.activity',
+            ),
           ],
         },
       ],
     },
     {
-      title: 'Platform Features',
-      description: 'Everything you need to scale your team and organization.',
+      title: this.translateService.instant('public.featuresPage.categories.platformFeatures.title'),
+      description: this.translateService.instant(
+        'public.featuresPage.categories.platformFeatures.description',
+      ),
       features: [
         {
           icon: 'shield',
-          title: 'Security & Permissions',
-          description: 'Enterprise-grade security with fine-grained permissions.',
+          title: this.translateService.instant(
+            'public.featuresPage.categories.platformFeatures.features.security.title',
+          ),
+          description: this.translateService.instant(
+            'public.featuresPage.categories.platformFeatures.features.security.description',
+          ),
           details: [
-            'Role-based access control',
-            'SSO and SAML support',
-            'Audit logs',
-            'Two-factor authentication',
+            this.translateService.instant(
+              'public.featuresPage.categories.platformFeatures.features.security.details.rbac',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.platformFeatures.features.security.details.sso',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.platformFeatures.features.security.details.audit',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.platformFeatures.features.security.details.twoFactor',
+            ),
           ],
         },
         {
           icon: 'plug',
-          title: 'Integrations',
-          description: 'Connect with the tools your team already uses.',
+          title: this.translateService.instant(
+            'public.featuresPage.categories.platformFeatures.features.integrations.title',
+          ),
+          description: this.translateService.instant(
+            'public.featuresPage.categories.platformFeatures.features.integrations.description',
+          ),
           details: [
-            'REST API and webhooks',
-            'GitHub, GitLab, Slack',
-            'Custom integrations',
-            'Marketplace apps',
+            this.translateService.instant(
+              'public.featuresPage.categories.platformFeatures.features.integrations.details.api',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.platformFeatures.features.integrations.details.services',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.platformFeatures.features.integrations.details.custom',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.platformFeatures.features.integrations.details.marketplace',
+            ),
           ],
         },
         {
           icon: 'smartphone',
-          title: 'Mobile Apps',
-          description: 'Access your work on the go with native mobile apps.',
+          title: this.translateService.instant(
+            'public.featuresPage.categories.platformFeatures.features.mobileApps.title',
+          ),
+          description: this.translateService.instant(
+            'public.featuresPage.categories.platformFeatures.features.mobileApps.description',
+          ),
           details: [
-            'iOS and Android apps',
-            'Offline access',
-            'Push notifications',
-            'Mobile-optimized views',
+            this.translateService.instant(
+              'public.featuresPage.categories.platformFeatures.features.mobileApps.details.platforms',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.platformFeatures.features.mobileApps.details.offline',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.platformFeatures.features.mobileApps.details.notifications',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.platformFeatures.features.mobileApps.details.optimized',
+            ),
           ],
         },
         {
           icon: 'zap',
-          title: 'Performance',
-          description: 'Lightning-fast performance, even with large workspaces.',
+          title: this.translateService.instant(
+            'public.featuresPage.categories.platformFeatures.features.performance.title',
+          ),
+          description: this.translateService.instant(
+            'public.featuresPage.categories.platformFeatures.features.performance.description',
+          ),
           details: [
-            'Fast page loads',
-            'Real-time updates',
-            'Optimized for large teams',
-            'Global CDN',
+            this.translateService.instant(
+              'public.featuresPage.categories.platformFeatures.features.performance.details.fast',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.platformFeatures.features.performance.details.realtime',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.platformFeatures.features.performance.details.scale',
+            ),
+            this.translateService.instant(
+              'public.featuresPage.categories.platformFeatures.features.performance.details.cdn',
+            ),
           ],
         },
       ],
     },
-  ];
+  ]);
 }

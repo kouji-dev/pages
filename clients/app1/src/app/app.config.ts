@@ -8,7 +8,7 @@ import { provideAttachmentService, provideMentionListProvider } from 'shared-ui'
 import { routes } from './app.routes';
 import { authInterceptor } from './infrastructure/interceptors/auth.interceptor';
 import { errorInterceptor } from './infrastructure/interceptors/error.interceptor';
-import { HttpLoaderFactory } from './infrastructure/i18n/http-loader.factory';
+import { MultiLoaderFactory } from './infrastructure/i18n/multi-loader.factory';
 import { ThemeService } from './application/services/theme.service';
 import { LanguageService } from './application/services/language.service';
 import { TextEditorAttachmentService } from './application/services/text-editor-attachment.service';
@@ -24,11 +24,12 @@ export const appConfig: ApplicationConfig = {
       ]),
     ),
     provideRouter(routes),
-    // ngx-translate configuration
+    // ngx-translate configuration with multiple loaders
+    // Loads app translations from assets/i18n and library translations from assets/shared-ui/i18n
     provideTranslateService({
       loader: {
         provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
+        useFactory: MultiLoaderFactory,
         deps: [HttpClient],
       },
       fallbackLang: 'en',

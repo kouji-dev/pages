@@ -5,34 +5,33 @@ import { ToastService } from 'shared-ui';
 import { ProjectService } from '../../application/services/project.service';
 import { OrganizationService } from '../../application/services/organization.service';
 import { NavigationService } from '../../application/services/navigation.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-delete-project-modal',
-  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, Input],
+  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, Input, TranslatePipe],
   template: `
     <lib-modal-container>
-      <lib-modal-header>Delete Project</lib-modal-header>
+      <lib-modal-header>{{ 'projects.modals.deleteProject' | translate }}</lib-modal-header>
       <lib-modal-content>
         <div class="delete-project-modal_content">
           <p class="delete-project-modal_warning">
-            Are you sure you want to delete <strong>{{ projectName() }}</strong
-            >? This action cannot be undone.
+            {{ 'projects.modals.deleteWarning' | translate: { name: projectName() } }}
           </p>
           <p class="delete-project-modal_description">
-            All issues, comments, and attachments associated with this project will be permanently
-            deleted.
+            {{ 'projects.modals.deleteDescription' | translate }}
           </p>
           <lib-input
-            label="Type project name to confirm"
-            placeholder="Enter project name"
+            [label]="'projects.modals.deleteConfirmLabel' | translate"
+            [placeholder]="'projects.modals.deleteConfirmPlaceholder' | translate"
             [(model)]="confirmationName"
-            helperText="Type the project name to confirm deletion"
+            [helperText]="'projects.modals.deleteConfirmHelper' | translate"
           />
         </div>
       </lib-modal-content>
       <lib-modal-footer>
         <lib-button variant="secondary" (clicked)="handleCancel()" [disabled]="isDeleting()">
-          Cancel
+          {{ 'common.cancel' | translate }}
         </lib-button>
         <lib-button
           variant="danger"
@@ -40,7 +39,7 @@ import { NavigationService } from '../../application/services/navigation.service
           [loading]="isDeleting()"
           [disabled]="!isConfirmed()"
         >
-          Delete Project
+          {{ 'projects.modals.deleteProject' | translate }}
         </lib-button>
       </lib-modal-footer>
     </lib-modal-container>
@@ -79,6 +78,7 @@ export class DeleteProjectModal {
   private readonly toast = inject(ToastService);
   private readonly navigationService = inject(NavigationService);
   private readonly modal = inject(Modal);
+  private readonly translateService = inject(TranslateService);
 
   readonly projectId = input.required<string>();
   readonly projectName = input.required<string>();
@@ -103,7 +103,7 @@ export class DeleteProjectModal {
 
     try {
       await this.projectService.deleteProject(this.projectId());
-      this.toast.success('Project deleted successfully!');
+      this.toast.success(this.translateService.instant('projects.modals.deleteSuccess'));
       this.modal.close();
 
       // Navigate to projects list for current organization
@@ -116,7 +116,9 @@ export class DeleteProjectModal {
     } catch (error) {
       console.error('Failed to delete project:', error);
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to delete project. Please try again.';
+        error instanceof Error
+          ? error.message
+          : this.translateService.instant('projects.modals.deleteError');
       this.toast.error(errorMessage);
     } finally {
       this.isDeleting.set(false);

@@ -1,6 +1,7 @@
-import { Component, input, ChangeDetectionStrategy, computed } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy, computed, inject } from '@angular/core';
 import { Icon } from 'shared-ui';
 import { getIssueTypeConfig, type IssueType } from '../helpers/issue-helpers';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-issue-type-badge',
@@ -28,6 +29,8 @@ import { getIssueTypeConfig, type IssueType } from '../helpers/issue-helpers';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IssueTypeBadge {
+  private readonly translateService = inject(TranslateService);
+
   readonly type = input.required<IssueType>();
 
   readonly customLabel = input<string | undefined>(undefined);
@@ -42,6 +45,7 @@ export class IssueTypeBadge {
   readonly typeLabel = computed(() => {
     const customLabel = this.customLabel();
     if (customLabel) return customLabel;
-    return this.typeConfig().label;
+    const typeKey = this.type();
+    return this.translateService.instant(`issues.type.${typeKey}`);
   });
 }

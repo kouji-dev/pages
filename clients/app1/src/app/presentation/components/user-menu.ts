@@ -9,10 +9,11 @@ import {
 import { RouterLink } from '@angular/router';
 import { Icon, Dropdown } from 'shared-ui';
 import { AuthService } from '../../application/services/auth.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-user-menu',
-  imports: [Icon, RouterLink, Dropdown],
+  imports: [Icon, RouterLink, Dropdown, TranslatePipe],
   template: `
     <div class="user-menu">
       <button
@@ -21,7 +22,7 @@ import { AuthService } from '../../application/services/auth.service';
         [libDropdown]="dropdownTemplate"
         [position]="'below'"
         [attr.aria-expanded]="dropdown.open()"
-        aria-label="User menu"
+        [attr.aria-label]="'userMenu.ariaLabel' | translate"
         #dropdown="libDropdown"
       >
         <div class="user-menu_avatar">
@@ -66,11 +67,11 @@ import { AuthService } from '../../application/services/auth.service';
           <nav class="user-menu_nav">
             <a routerLink="/app/profile" class="user-menu_item" (click)="closeMenu(dropdown)">
               <lib-icon name="user" size="sm" class="user-menu_item-icon" />
-              <span>Profile</span>
+              <span>{{ 'navigation.profile' | translate }}</span>
             </a>
             <a routerLink="/settings" class="user-menu_item" (click)="closeMenu(dropdown)">
               <lib-icon name="settings" size="sm" class="user-menu_item-icon" />
-              <span>Settings</span>
+              <span>{{ 'navigation.settings' | translate }}</span>
             </a>
           </nav>
           <div class="user-menu_divider"></div>
@@ -81,7 +82,7 @@ import { AuthService } from '../../application/services/auth.service';
               (click)="handleLogout(dropdown)"
             >
               <lib-icon name="log-out" size="sm" class="user-menu_item-icon" />
-              <span>Logout</span>
+              <span>{{ 'auth.logout' | translate }}</span>
             </button>
           </div>
         </div>

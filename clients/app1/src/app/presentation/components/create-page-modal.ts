@@ -12,37 +12,47 @@ import { Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter } from 's
 import { Button, Input, Select, SelectOption, ToastService } from 'shared-ui';
 import { PageService, Page } from '../../application/services/page.service';
 import { NavigationService } from '../../application/services/navigation.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-create-page-modal',
-  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, Input, Select],
+  imports: [
+    ModalContainer,
+    ModalHeader,
+    ModalContent,
+    ModalFooter,
+    Button,
+    Input,
+    Select,
+    TranslatePipe,
+  ],
   template: `
     <lib-modal-container>
-      <lib-modal-header>Create Page</lib-modal-header>
+      <lib-modal-header>{{ 'pages.modals.createPage' | translate }}</lib-modal-header>
       <lib-modal-content>
         <form class="create-page-form" (ngSubmit)="handleSubmit()">
           <lib-input
-            label="Page Title"
-            placeholder="Enter page title"
+            [label]="'pages.modals.pageTitle' | translate"
+            [placeholder]="'pages.modals.pageTitlePlaceholder' | translate"
             [(model)]="title"
             [required]="true"
             [errorMessage]="titleError()"
-            helperText="Choose a title for your page"
+            [helperText]="'pages.modals.pageTitleHelper' | translate"
           />
           <div class="create-page-form_field">
             <lib-select
-              label="Parent Page (optional)"
+              [label]="'pages.modals.parentPage' | translate"
               [options]="parentPageOptions()"
               [(model)]="parentPageModel"
-              [placeholder]="'None (root page)'"
-              helperText="Select a parent page to create a child page"
+              [placeholder]="'pages.modals.parentPagePlaceholder' | translate"
+              [helperText]="'pages.modals.parentPageHelper' | translate"
             />
           </div>
         </form>
       </lib-modal-content>
       <lib-modal-footer>
         <lib-button variant="secondary" (clicked)="handleCancel()" [disabled]="isSubmitting()">
-          Cancel
+          {{ 'common.cancel' | translate }}
         </lib-button>
         <lib-button
           variant="primary"
@@ -50,7 +60,7 @@ import { NavigationService } from '../../application/services/navigation.service
           [loading]="isSubmitting()"
           [disabled]="!isValid()"
         >
-          Create Page
+          {{ 'pages.modals.createPage' | translate }}
         </lib-button>
       </lib-modal-footer>
     </lib-modal-container>
@@ -80,6 +90,7 @@ export class CreatePageModal {
   private readonly navigationService = inject(NavigationService);
   private readonly toast = inject(ToastService);
   private readonly modal = inject(Modal);
+  private readonly translateService = inject(TranslateService);
 
   readonly spaceId = input.required<string>();
 
@@ -102,7 +113,9 @@ export class CreatePageModal {
 
   readonly parentPageOptions = computed<SelectOption<string | null>[]>(() => {
     const tree = this.pageTree();
-    const options: SelectOption<string | null>[] = [{ value: null, label: 'None (root page)' }];
+    const options: SelectOption<string | null>[] = [
+      { value: null, label: this.translateService.instant('pages.modals.parentPagePlaceholder') },
+    ];
 
     // Flatten page tree recursively for parent selector
     const flattenPages = (pageList: Page[], level = 0): void => {
@@ -126,10 +139,10 @@ export class CreatePageModal {
   readonly titleError = computed(() => {
     const value = this.title();
     if (!value || value.trim() === '') {
-      return 'Page title is required';
+      return this.translateService.instant('pages.modals.titleRequired');
     }
     if (value.length > 255) {
-      return 'Page title must be 255 characters or less';
+      return this.translateService.instant('pages.modals.titleMaxLength');
     }
     return '';
   });
@@ -162,7 +175,7 @@ export class CreatePageModal {
         parentId: this.parentId() || undefined,
       });
 
-      this.toast.success('Page created successfully!');
+      this.toast.success(this.translateService.instant('pages.modals.createSuccess'));
       this.modal.close();
 
       // Navigate to the newly created page
@@ -173,7 +186,9 @@ export class CreatePageModal {
     } catch (error) {
       console.error('Failed to create page:', error);
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to create page. Please try again.';
+        error instanceof Error
+          ? error.message
+          : this.translateService.instant('pages.modals.createError');
       this.toast.error(errorMessage);
     } finally {
       this.isSubmitting.set(false);

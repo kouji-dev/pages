@@ -1,45 +1,41 @@
 import { Component, ChangeDetectionStrategy, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Icon, Button } from 'shared-ui';
+import { Button } from 'shared-ui';
 import { LanguageService, SupportedLanguage } from '../../application/services/language.service';
 
 @Component({
   selector: 'app-language-switcher',
-  imports: [CommonModule, TranslatePipe, Icon, Button],
+  imports: [CommonModule, TranslatePipe, Button],
   template: `
     <div class="language-switcher">
-      <button
-        type="button"
-        class="language-switcher_button"
-        (click)="toggleDropdown()"
+      <lib-button
+        variant="ghost"
+        size="md"
+        leftIcon="globe"
+        [rightIcon]="isDropdownOpen() ? 'chevron-up' : 'chevron-down'"
+        (clicked)="toggleDropdown()"
         [attr.aria-label]="'language.switchLanguage' | translate"
         [attr.aria-expanded]="isDropdownOpen()"
+        class="language-switcher_button"
       >
-        <lib-icon name="globe" size="md" class="language-switcher_icon" />
-        <span class="language-switcher_current">{{ currentLanguageName() }}</span>
-        <lib-icon
-          name="chevron-down"
-          size="sm"
-          class="language-switcher_chevron"
-          [class.language-switcher_chevron--open]="isDropdownOpen()"
-        />
-      </button>
+        {{ currentLanguageName() }}
+      </lib-button>
 
       @if (isDropdownOpen()) {
         <div class="language-switcher_dropdown">
           @for (lang of supportedLanguages(); track lang.code) {
-            <button
-              type="button"
-              class="language-switcher_item"
+            <lib-button
+              variant="ghost"
+              size="md"
+              [rightIcon]="lang.code === currentLanguage() ? 'check' : null"
               [class.language-switcher_item--active]="lang.code === currentLanguage()"
-              (click)="selectLanguage(lang.code)"
+              (clicked)="selectLanguage(lang.code)"
+              [fullWidth]="true"
+              class="language-switcher_item"
             >
-              <span class="language-switcher_item-name">{{ lang.name }}</span>
-              @if (lang.code === currentLanguage()) {
-                <lib-icon name="check" size="sm" class="language-switcher_item-check" />
-              }
-            </button>
+              {{ lang.name }}
+            </lib-button>
           }
         </div>
       }
@@ -54,36 +50,7 @@ import { LanguageService, SupportedLanguage } from '../../application/services/l
       }
 
       .language-switcher_button {
-        @apply flex items-center;
-        @apply gap-2;
-        @apply px-3 py-2;
-        @apply rounded-md;
-        @apply border border-border-default;
-        @apply bg-bg-primary;
-        @apply text-text-primary;
-        @apply cursor-pointer;
-        @apply transition-colors;
-        @apply hover:bg-bg-hover;
-        @apply active:bg-bg-active;
-      }
-
-      .language-switcher_icon {
-        @apply flex-shrink-0;
-      }
-
-      .language-switcher_current {
-        @apply text-sm;
-        @apply font-medium;
-        @apply min-w-[60px];
-      }
-
-      .language-switcher_chevron {
-        @apply flex-shrink-0;
-        @apply transition-transform;
-      }
-
-      .language-switcher_chevron--open {
-        @apply rotate-180;
+        @apply min-w-[100px];
       }
 
       .language-switcher_dropdown {
@@ -98,33 +65,15 @@ import { LanguageService, SupportedLanguage } from '../../application/services/l
         @apply shadow-lg;
         @apply z-50;
         @apply overflow-hidden;
+        @apply flex flex-col;
       }
 
       .language-switcher_item {
-        @apply flex items-center justify-between;
-        @apply w-full;
-        @apply px-4 py-3;
-        @apply text-left;
-        @apply bg-transparent;
-        @apply border-none;
-        @apply text-text-primary;
-        @apply cursor-pointer;
-        @apply transition-colors;
-        @apply hover:bg-bg-hover;
+        @apply justify-start;
       }
 
       .language-switcher_item--active {
         @apply bg-bg-secondary;
-      }
-
-      .language-switcher_item-name {
-        @apply text-sm;
-        @apply font-medium;
-      }
-
-      .language-switcher_item-check {
-        @apply flex-shrink-0;
-        @apply text-primary-500;
       }
     `,
   ],

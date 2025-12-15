@@ -1,16 +1,17 @@
 import { Component, ChangeDetectionStrategy, computed, inject, signal } from '@angular/core';
 import { Button, Input, ToastService } from 'shared-ui';
 import { UserProfileService } from '../../application/services/user-profile.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-change-password-form',
   standalone: true,
-  imports: [Button, Input],
+  imports: [Button, Input, TranslatePipe],
   template: `
     <div class="change-password-form">
-      <h2 class="change-password-form_title">Change Password</h2>
+      <h2 class="change-password-form_title">{{ 'profile.changePassword.title' | translate }}</h2>
       <p class="change-password-form_description">
-        Update your password to keep your account secure.
+        {{ 'profile.changePassword.description' | translate }}
       </p>
       <form
         class="change-password-form_form"
@@ -18,19 +19,19 @@ import { UserProfileService } from '../../application/services/user-profile.serv
         (submit)="$event.preventDefault()"
       >
         <lib-input
-          label="Current Password"
+          [label]="'profile.changePassword.currentPassword' | translate"
           type="password"
-          placeholder="Enter your current password"
+          [placeholder]="'profile.changePassword.currentPasswordPlaceholder' | translate"
           [(model)]="currentPassword"
           [required]="true"
           [errorMessage]="currentPasswordError()"
           [showPasswordToggle]="true"
-          helperText="Enter your current password to verify your identity"
+          [helperText]="'profile.changePassword.currentPasswordHelper' | translate"
         />
         <lib-input
-          label="New Password"
+          [label]="'profile.changePassword.newPassword' | translate"
           type="password"
-          placeholder="Enter your new password"
+          [placeholder]="'profile.changePassword.newPasswordPlaceholder' | translate"
           [(model)]="newPassword"
           [required]="true"
           [errorMessage]="newPasswordError()"
@@ -38,14 +39,14 @@ import { UserProfileService } from '../../application/services/user-profile.serv
           [helperText]="passwordStrengthText()"
         />
         <lib-input
-          label="Confirm New Password"
+          [label]="'profile.changePassword.confirmPassword' | translate"
           type="password"
-          placeholder="Confirm your new password"
+          [placeholder]="'profile.changePassword.confirmPasswordPlaceholder' | translate"
           [(model)]="confirmPassword"
           [required]="true"
           [errorMessage]="confirmPasswordError()"
           [showPasswordToggle]="true"
-          helperText="Re-enter your new password to confirm"
+          [helperText]="'profile.changePassword.confirmPasswordHelper' | translate"
         />
         <div class="change-password-form_actions">
           <lib-button
@@ -54,10 +55,10 @@ import { UserProfileService } from '../../application/services/user-profile.serv
             [loading]="isSubmitting()"
             [disabled]="!isFormValid()"
           >
-            Update Password
+            {{ 'profile.changePassword.updatePassword' | translate }}
           </lib-button>
           <lib-button variant="secondary" (clicked)="handleReset()" [disabled]="isSubmitting()">
-            Reset
+            {{ 'common.reset' | translate }}
           </lib-button>
         </div>
       </form>
@@ -103,6 +104,7 @@ import { UserProfileService } from '../../application/services/user-profile.serv
 export class ChangePasswordForm {
   readonly userProfileService = inject(UserProfileService);
   readonly toast = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   readonly currentPassword = signal('');
   readonly newPassword = signal('');
@@ -112,7 +114,7 @@ export class ChangePasswordForm {
   readonly currentPasswordError = computed(() => {
     const value = this.currentPassword();
     if (!value.trim()) {
-      return 'Current password is required';
+      return this.translateService.instant('profile.changePassword.currentPasswordRequired');
     }
     return '';
   });
@@ -120,19 +122,19 @@ export class ChangePasswordForm {
   readonly newPasswordError = computed(() => {
     const value = this.newPassword();
     if (!value.trim()) {
-      return 'New password is required';
+      return this.translateService.instant('profile.changePassword.newPasswordRequired');
     }
     if (value.length < 8) {
-      return 'Password must be at least 8 characters long';
+      return this.translateService.instant('auth.passwordMinLength');
     }
     if (!/[A-Z]/.test(value)) {
-      return 'Password must contain at least one uppercase letter';
+      return this.translateService.instant('auth.passwordUppercase');
     }
     if (!/[a-z]/.test(value)) {
-      return 'Password must contain at least one lowercase letter';
+      return this.translateService.instant('auth.passwordLowercase');
     }
     if (!/[0-9]/.test(value)) {
-      return 'Password must contain at least one number';
+      return this.translateService.instant('auth.passwordNumber');
     }
     return '';
   });
@@ -141,10 +143,10 @@ export class ChangePasswordForm {
     const value = this.confirmPassword();
     const newPasswordValue = this.newPassword();
     if (!value.trim()) {
-      return 'Please confirm your new password';
+      return this.translateService.instant('profile.changePassword.confirmPasswordRequired');
     }
     if (value !== newPasswordValue) {
-      return 'Passwords do not match';
+      return this.translateService.instant('auth.passwordsDoNotMatch');
     }
     return '';
   });
@@ -152,12 +154,12 @@ export class ChangePasswordForm {
   readonly passwordStrengthText = computed(() => {
     const value = this.newPassword();
     if (!value) {
-      return 'Password must be at least 8 characters with uppercase, lowercase, and number';
+      return this.translateService.instant('profile.changePassword.passwordRequirements');
     }
     if (this.newPasswordError()) {
       return this.newPasswordError();
     }
-    return 'Password strength: Good';
+    return this.translateService.instant('profile.changePassword.passwordStrengthGood');
   });
 
   readonly isFormValid = computed(() => {
@@ -183,12 +185,14 @@ export class ChangePasswordForm {
         current_password: this.currentPassword(),
         new_password: this.newPassword(),
       });
-      this.toast.success('Password updated successfully!');
+      this.toast.success(this.translateService.instant('profile.changePassword.updateSuccess'));
       this.handleReset();
     } catch (error) {
       console.error('Failed to update password:', error);
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to update password. Please try again.';
+        error instanceof Error
+          ? error.message
+          : this.translateService.instant('profile.changePassword.updateError');
       this.toast.error(errorMessage);
     } finally {
       this.isSubmitting.set(false);

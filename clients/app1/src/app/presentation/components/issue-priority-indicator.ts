@@ -1,6 +1,7 @@
-import { Component, input, ChangeDetectionStrategy, computed } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy, computed, inject } from '@angular/core';
 import { Icon } from 'shared-ui';
 import { getIssuePriorityConfig, type IssuePriority } from '../helpers/issue-helpers';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-issue-priority-indicator',
@@ -27,6 +28,8 @@ import { getIssuePriorityConfig, type IssuePriority } from '../helpers/issue-hel
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IssuePriorityIndicator {
+  private readonly translateService = inject(TranslateService);
+
   readonly priority = input.required<IssuePriority>();
 
   readonly customLabel = input<string | undefined>(undefined);
@@ -46,6 +49,7 @@ export class IssuePriorityIndicator {
   readonly priorityLabel = computed(() => {
     const customLabel = this.customLabel();
     if (customLabel) return customLabel;
-    return this.priorityConfig().label;
+    const priorityKey = this.priority();
+    return this.translateService.instant(`issues.priority.${priorityKey}`);
   });
 }

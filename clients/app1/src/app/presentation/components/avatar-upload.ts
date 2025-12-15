@@ -9,15 +9,16 @@ import {
 } from '@angular/core';
 import { Button, Icon, ToastService } from 'shared-ui';
 import { UserProfileService } from '../../application/services/user-profile.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-avatar-upload',
   standalone: true,
-  imports: [Button, Icon],
+  imports: [Button, Icon, TranslatePipe],
   template: `
     <div class="avatar-upload">
-      <h2 class="avatar-upload_title">Avatar</h2>
-      <p class="avatar-upload_description">Upload a profile picture to personalize your account.</p>
+      <h2 class="avatar-upload_title">{{ 'profile.avatar.title' | translate }}</h2>
+      <p class="avatar-upload_description">{{ 'profile.avatar.description' | translate }}</p>
 
       <div class="avatar-upload_content">
         <div class="avatar-upload_preview">
@@ -27,7 +28,9 @@ import { UserProfileService } from '../../application/services/user-profile.serv
               @if (isUploading()) {
                 <div class="avatar-upload_preview-overlay">
                   <lib-icon name="loader" size="lg" animation="spin" />
-                  <span class="avatar-upload_preview-overlay-text">Uploading...</span>
+                  <span class="avatar-upload_preview-overlay-text">{{
+                    'profile.avatar.uploading' | translate
+                  }}</span>
                 </div>
               }
             </div>
@@ -60,7 +63,10 @@ import { UserProfileService } from '../../application/services/user-profile.serv
               [disabled]="isUploading() || isDeleting()"
               leftIcon="upload"
             >
-              {{ hasAvatar() ? 'Change Avatar' : 'Upload Avatar' }}
+              {{
+                (hasAvatar() ? 'profile.avatar.changeAvatar' : 'profile.avatar.uploadAvatar')
+                  | translate
+              }}
             </lib-button>
           </label>
 
@@ -72,7 +78,7 @@ import { UserProfileService } from '../../application/services/user-profile.serv
               (clicked)="handleRemoveAvatar()"
               leftIcon="trash"
             >
-              Remove Avatar
+              {{ 'profile.avatar.removeAvatar' | translate }}
             </lib-button>
           }
         </div>
@@ -86,7 +92,7 @@ import { UserProfileService } from '../../application/services/user-profile.serv
 
         <div class="avatar-upload_info">
           <lib-icon name="info" size="sm" />
-          <span>Accepted formats: JPG, PNG, GIF. Maximum file size: 5MB.</span>
+          <span>{{ 'profile.avatar.acceptedFormats' | translate }}</span>
         </div>
       </div>
     </div>
@@ -211,6 +217,7 @@ import { UserProfileService } from '../../application/services/user-profile.serv
 export class AvatarUpload {
   readonly userProfileService = inject(UserProfileService);
   readonly toast = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
@@ -258,7 +265,7 @@ export class AvatarUpload {
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      this.fileError.set('Please select an image file');
+      this.fileError.set(this.translateService.instant('profile.avatar.errors.notImage'));
       this.resetFileInput();
       return;
     }
@@ -266,7 +273,7 @@ export class AvatarUpload {
     // Validate file size (5MB = 5 * 1024 * 1024 bytes)
     const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
-      this.fileError.set('File size must be less than 5MB');
+      this.fileError.set(this.translateService.instant('profile.avatar.errors.fileTooLarge'));
       this.resetFileInput();
       return;
     }
@@ -281,7 +288,7 @@ export class AvatarUpload {
       this.uploadAvatar(file);
     };
     reader.onerror = () => {
-      this.fileError.set('Failed to read file. Please try again.');
+      this.fileError.set(this.translateService.instant('profile.avatar.errors.readError'));
       this.resetFileInput();
     };
     reader.readAsDataURL(file);
@@ -293,7 +300,7 @@ export class AvatarUpload {
 
     try {
       await this.userProfileService.uploadAvatar(file);
-      this.toast.success('Avatar uploaded successfully!');
+      this.toast.success(this.translateService.instant('profile.avatar.uploadSuccess'));
       // Clear preview URL after successful upload (will use the new avatar URL from server)
       this.previewUrl.set(null);
       this.selectedFile.set(null);
@@ -301,7 +308,9 @@ export class AvatarUpload {
     } catch (error) {
       console.error('Failed to upload avatar:', error);
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to upload avatar. Please try again.';
+        error instanceof Error
+          ? error.message
+          : this.translateService.instant('profile.avatar.errors.uploadError');
       this.fileError.set(errorMessage);
       this.toast.error(errorMessage);
       // Keep preview so user can retry
@@ -311,7 +320,7 @@ export class AvatarUpload {
   }
 
   async handleRemoveAvatar(): Promise<void> {
-    if (!confirm('Are you sure you want to remove your avatar?')) {
+    if (!confirm(this.translateService.instant('profile.avatar.removeConfirm'))) {
       return;
     }
 
@@ -320,14 +329,16 @@ export class AvatarUpload {
 
     try {
       await this.userProfileService.deleteAvatar();
-      this.toast.success('Avatar removed successfully!');
+      this.toast.success(this.translateService.instant('profile.avatar.removeSuccess'));
       this.previewUrl.set(null);
       this.selectedFile.set(null);
       this.resetFileInput();
     } catch (error) {
       console.error('Failed to remove avatar:', error);
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to remove avatar. Please try again.';
+        error instanceof Error
+          ? error.message
+          : this.translateService.instant('profile.avatar.errors.removeError');
       this.fileError.set(errorMessage);
       this.toast.error(errorMessage);
     } finally {

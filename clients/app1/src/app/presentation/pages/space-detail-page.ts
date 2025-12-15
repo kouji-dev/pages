@@ -14,31 +14,44 @@ import { BackToPage } from '../components/back-to-page';
 import { PageList } from '../components/page-list';
 import { PagesTree } from '../components/pages-tree';
 import { CreatePageModal } from '../components/create-page-modal';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-space-detail-page',
-  imports: [RouterOutlet, LoadingState, ErrorState, BackToPage, PageList, PagesTree, Button],
+  imports: [
+    RouterOutlet,
+    LoadingState,
+    ErrorState,
+    BackToPage,
+    PageList,
+    PagesTree,
+    Button,
+    TranslatePipe,
+  ],
   template: `
     <div class="space-detail-page">
       @if (spaceService.isFetchingSpace()) {
-        <lib-loading-state message="Loading space..." />
+        <lib-loading-state [message]="'spaces.loadingSpace' | translate" />
       } @else if (spaceService.hasSpaceError()) {
         <lib-error-state
-          title="Failed to Load Space"
+          [title]="'spaces.failedToLoad' | translate"
           [message]="errorMessage()"
-          [retryLabel]="'Retry'"
+          [retryLabel]="'common.retry' | translate"
           (onRetry)="handleRetry()"
         />
       } @else if (!space()) {
         <lib-error-state
-          title="Space Not Found"
-          message="The space you're looking for doesn't exist or you don't have access to it."
+          [title]="'spaces.notFound' | translate"
+          [message]="'spaces.notFoundDescription' | translate"
           [showRetry]="false"
         />
       } @else {
         <div class="space-detail-page_header">
           <div class="space-detail-page_header-content">
-            <app-back-to-page label="Back to Spaces" (onClick)="handleBackToSpaces()" />
+            <app-back-to-page
+              [label]="'spaces.backToSpaces' | translate"
+              (onClick)="handleBackToSpaces()"
+            />
             <div class="space-detail-page_header-main">
               <div class="space-detail-page_header-info">
                 <div class="space-detail-page_key">{{ space()?.key }}</div>
@@ -54,7 +67,7 @@ import { CreatePageModal } from '../components/create-page-modal';
                   (clicked)="handleCreatePage()"
                   leftIcon="plus"
                 >
-                  Create Page
+                  {{ 'pages.createPage' | translate }}
                 </lib-button>
               </div>
             </div>
@@ -71,13 +84,15 @@ import { CreatePageModal } from '../components/create-page-modal';
                 <!-- Default content when no page is selected -->
                 <div class="space-detail-page_default-content">
                   <div class="space-detail-page_section">
-                    <h2 class="space-detail-page_section-title">Pages</h2>
+                    <h2 class="space-detail-page_section-title">{{ 'pages.title' | translate }}</h2>
                     <app-page-list [spaceId]="spaceId()" />
                   </div>
 
                   @if (space()?.recentPages && space()!.recentPages!.length > 0) {
                     <div class="space-detail-page_section">
-                      <h2 class="space-detail-page_section-title">Recent Pages</h2>
+                      <h2 class="space-detail-page_section-title">
+                        {{ 'pages.recentPages' | translate }}
+                      </h2>
                       <div class="space-detail-page_recent-pages">
                         @for (page of space()!.recentPages; track page.id) {
                           <div
@@ -86,7 +101,7 @@ import { CreatePageModal } from '../components/create-page-modal';
                           >
                             <h3 class="space-detail-page_recent-page-title">{{ page.title }}</h3>
                             <p class="space-detail-page_recent-page-meta">
-                              Updated {{ formatDate(page.updatedAt) }}
+                              {{ 'pages.updated' | translate }} {{ formatDate(page.updatedAt) }}
                             </p>
                           </div>
                         }
@@ -260,6 +275,7 @@ export class SpaceDetailPage {
   readonly navigationService = inject(NavigationService);
   readonly modal = inject(Modal);
   readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly translateService = inject(TranslateService);
 
   readonly spaceId = computed(() => {
     return this.navigationService.currentSpaceId() || '';
@@ -281,9 +297,11 @@ export class SpaceDetailPage {
   readonly errorMessage = computed(() => {
     const error = this.spaceService.spaceError();
     if (error) {
-      return error instanceof Error ? error.message : 'An error occurred while loading the space.';
+      return error instanceof Error
+        ? error.message
+        : this.translateService.instant('spaces.loadError');
     }
-    return 'An unknown error occurred.';
+    return this.translateService.instant('common.unknownError');
   });
 
   handleRetry(): void {

@@ -27,17 +27,32 @@ import {
   OrganizationInvitation,
 } from '../../application/services/organization-invitations.service';
 import { AuthService } from '../../application/services/auth.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-organization-settings-page',
-  imports: [Button, Input, LoadingState, ErrorState, MemberList, PendingInvitations, BackToPage],
+  imports: [
+    Button,
+    Input,
+    LoadingState,
+    ErrorState,
+    MemberList,
+    PendingInvitations,
+    BackToPage,
+    TranslatePipe,
+  ],
   template: `
     <div class="org-settings-page">
       <div class="org-settings-page_header">
         <div class="org-settings-page_header-content">
           <div>
-            <app-back-to-page label="Back to Organizations" [route]="['/app/organizations']" />
-            <h1 class="org-settings-page_title">Organization Settings</h1>
+            <app-back-to-page
+              [label]="'organizations.backToOrganizations' | translate"
+              [route]="['/app/organizations']"
+            />
+            <h1 class="org-settings-page_title">
+              {{ 'organizations.settings.title' | translate }}
+            </h1>
             @if (organization()) {
               <p class="org-settings-page_subtitle">{{ organization()!.name }}</p>
             }
@@ -47,41 +62,43 @@ import { AuthService } from '../../application/services/auth.service';
 
       <div class="org-settings-page_content">
         @if (isLoading()) {
-          <lib-loading-state message="Loading organization..." />
+          <lib-loading-state [message]="'organizations.loadingOrganization' | translate" />
         } @else if (error()) {
           <lib-error-state
-            title="Failed to Load Organization"
+            [title]="'organizations.failedToLoad' | translate"
             [message]="errorMessage()"
-            [retryLabel]="'Retry'"
+            [retryLabel]="'common.retry' | translate"
             (onRetry)="handleRetry()"
           />
         } @else if (!organization()) {
           <lib-error-state
-            title="Organization Not Found"
-            message="The organization you're looking for doesn't exist or you don't have access to it."
+            [title]="'organizations.notFound' | translate"
+            [message]="'organizations.notFoundDescription' | translate"
             [showRetry]="false"
           />
         } @else {
           <div class="org-settings-page_container">
             <!-- Organization Details Form -->
             <div class="org-settings-page_section">
-              <h2 class="org-settings-page_section-title">Organization Details</h2>
+              <h2 class="org-settings-page_section-title">
+                {{ 'organizations.settings.details' | translate }}
+              </h2>
               <form class="org-settings-page_form" (ngSubmit)="handleSave()">
                 <lib-input
-                  label="Organization Name"
-                  placeholder="Enter organization name"
+                  [label]="'organizations.settings.name' | translate"
+                  [placeholder]="'organizations.settings.namePlaceholder' | translate"
                   [(model)]="name"
                   [required]="true"
                   [errorMessage]="nameError()"
-                  helperText="The display name for your organization"
+                  [helperText]="'organizations.settings.nameHelper' | translate"
                 />
                 <lib-input
-                  label="Description"
+                  [label]="'organizations.settings.description' | translate"
                   type="textarea"
-                  placeholder="Describe your organization (optional)"
+                  [placeholder]="'organizations.settings.descriptionPlaceholder' | translate"
                   [(model)]="description"
                   [rows]="4"
-                  helperText="Optional description of your organization"
+                  [helperText]="'organizations.settings.descriptionHelper' | translate"
                 />
                 <div class="org-settings-page_form-actions">
                   <lib-button
@@ -90,14 +107,14 @@ import { AuthService } from '../../application/services/auth.service';
                     [loading]="isSaving()"
                     [disabled]="!isFormValid() || !hasChanges()"
                   >
-                    Save Changes
+                    {{ 'common.saveChanges' | translate }}
                   </lib-button>
                   <lib-button
                     variant="secondary"
                     (clicked)="handleReset()"
                     [disabled]="!hasChanges() || isSaving()"
                   >
-                    Cancel
+                    {{ 'common.cancel' | translate }}
                   </lib-button>
                 </div>
               </form>
@@ -141,13 +158,16 @@ import { AuthService } from '../../application/services/auth.service';
 
             <!-- Danger Zone -->
             <div class="org-settings-page_section org-settings-page_section--danger">
-              <h2 class="org-settings-page_section-title">Danger Zone</h2>
+              <h2 class="org-settings-page_section-title">
+                {{ 'organizations.settings.dangerZone' | translate }}
+              </h2>
               <div class="org-settings-page_danger-content">
                 <div>
-                  <h3 class="org-settings-page_danger-title">Delete Organization</h3>
+                  <h3 class="org-settings-page_danger-title">
+                    {{ 'organizations.settings.deleteTitle' | translate }}
+                  </h3>
                   <p class="org-settings-page_danger-description">
-                    Once you delete an organization, there is no going back. This will permanently
-                    delete the organization and all associated data.
+                    {{ 'organizations.settings.deleteDescription' | translate }}
                   </p>
                 </div>
                 <lib-button
@@ -155,7 +175,7 @@ import { AuthService } from '../../application/services/auth.service';
                   (clicked)="handleDeleteClick()"
                   [disabled]="isDeleting()"
                 >
-                  Delete Organization
+                  {{ 'organizations.deleteOrganization' | translate }}
                 </lib-button>
               </div>
             </div>
@@ -289,6 +309,7 @@ export class OrganizationSettingsPage {
   private readonly toast = inject(ToastService);
   private readonly modal = inject(Modal);
   private readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly translateService = inject(TranslateService);
 
   readonly name = signal('');
   readonly description = signal('');
@@ -314,10 +335,10 @@ export class OrganizationSettingsPage {
   readonly nameError = computed(() => {
     const value = this.name();
     if (!value.trim()) {
-      return 'Organization name is required';
+      return this.translateService.instant('organizations.settings.nameRequired');
     }
     if (value.trim().length < 3) {
-      return 'Organization name must be at least 3 characters';
+      return this.translateService.instant('organizations.settings.nameMinLength');
     }
     return '';
   });
@@ -342,9 +363,9 @@ export class OrganizationSettingsPage {
     if (err) {
       return err instanceof Error
         ? err.message
-        : 'An error occurred while loading the organization.';
+        : this.translateService.instant('organizations.loadError');
     }
-    return 'An unknown error occurred.';
+    return this.translateService.instant('common.unknownError');
   });
 
   readonly currentUserId = computed(() => {
@@ -422,13 +443,13 @@ export class OrganizationSettingsPage {
         description: this.description().trim() || undefined,
       })
       .then(() => {
-        this.toast.success('Organization updated successfully!');
+        this.toast.success(this.translateService.instant('organizations.updateSuccess'));
         // Reload organization to get updated data
         this.organizationService.reloadCurrentOrganization();
       })
       .catch((error) => {
         console.error('Failed to update organization:', error);
-        this.toast.error('Failed to update organization. Please try again.');
+        this.toast.error(this.translateService.instant('organizations.updateError'));
       })
       .finally(() => {
         this.isSaving.set(false);
@@ -470,11 +491,11 @@ export class OrganizationSettingsPage {
   async handleDeleteConfirm(organizationId: string): Promise<void> {
     try {
       await this.organizationService.deleteOrganization(organizationId);
-      this.toast.success('Organization deleted successfully!');
+      this.toast.success(this.translateService.instant('organizations.deleteSuccess'));
       this.navigationService.navigateToOrganizations();
     } catch (error) {
       console.error('Failed to delete organization:', error);
-      this.toast.error('Failed to delete organization. Please try again.');
+      this.toast.error(this.translateService.instant('organizations.deleteError'));
     }
   }
 
@@ -499,7 +520,7 @@ export class OrganizationSettingsPage {
       .subscribe((result) => {
         if (result?.added) {
           // Members are automatically reloaded by the service
-          this.toast.success('Member added successfully!');
+          this.toast.success(this.translateService.instant('members.addMemberSuccess'));
         }
       });
   }
@@ -521,7 +542,7 @@ export class OrganizationSettingsPage {
       .subscribe((result) => {
         if (result?.changed) {
           // Members are automatically reloaded by the service
-          this.toast.success('Member role updated successfully!');
+          this.toast.success(this.translateService.instant('members.updateRoleSuccess'));
         }
       });
   }
@@ -535,11 +556,13 @@ export class OrganizationSettingsPage {
     // TODO: Add confirmation modal before removing
     try {
       await this.membersService.removeMember(orgId, member.user_id);
-      this.toast.success(`Member "${member.user_name}" removed successfully.`);
+      this.toast.success(
+        this.translateService.instant('members.removeSuccess', { userName: member.user_name }),
+      );
       // Members are automatically reloaded by the service
     } catch (error: any) {
       console.error('Failed to remove member:', error);
-      this.toast.error(error.message || 'Failed to remove member. Please try again.');
+      this.toast.error(error.message || this.translateService.instant('members.removeError'));
     }
   }
 
@@ -566,7 +589,7 @@ export class OrganizationSettingsPage {
       .subscribe((result) => {
         if (result?.sent) {
           // Invitations are automatically reloaded by the service
-          this.toast.success('Invitation sent successfully!');
+          this.toast.success(this.translateService.instant('invitations.invitationSent'));
         }
       });
   }
@@ -574,12 +597,16 @@ export class OrganizationSettingsPage {
   async handleCancelInvitation(invitation: OrganizationInvitation): Promise<void> {
     try {
       await this.invitationsService.cancelInvitation(invitation.id);
-      this.toast.success(`Invitation to "${invitation.email}" canceled successfully.`);
+      this.toast.success(
+        this.translateService.instant('invitations.cancelSuccess', { email: invitation.email }),
+      );
       // Invitations are automatically reloaded by the service
     } catch (error: any) {
       console.error('Failed to cancel invitation:', error);
       const errorMessage =
-        error?.error?.detail || error?.message || 'Failed to cancel invitation. Please try again.';
+        error?.error?.detail ||
+        error?.message ||
+        this.translateService.instant('invitations.cancelError');
       this.toast.error(errorMessage);
     }
   }

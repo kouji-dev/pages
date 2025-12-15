@@ -35,6 +35,7 @@ import { ProjectMembersService } from '../../application/services/project-member
 import { IssueTypeBadge } from './issue-type-badge';
 import { IssuePriorityIndicator } from './issue-priority-indicator';
 import { CreateIssueModal } from './create-issue-modal';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
 
@@ -65,14 +66,15 @@ interface BoardSettings {
     Icon,
     Dropdown,
     Select,
+    TranslatePipe,
   ],
   template: `
     <div class="kanban-board">
       <div class="kanban-board_header">
-        <h2 class="kanban-board_title">Kanban Board</h2>
+        <h2 class="kanban-board_title">{{ 'kanban.title' | translate }}</h2>
         <div class="kanban-board_header-actions">
           <lib-button variant="primary" size="md" leftIcon="plus" (clicked)="handleCreateIssue()">
-            Create Issue
+            {{ 'kanban.createIssue' | translate }}
           </lib-button>
           <div class="kanban-board_filters">
             <lib-button
@@ -103,32 +105,32 @@ interface BoardSettings {
               <div class="kanban-board_filter-menu">
                 <div class="kanban-board_filter-section">
                   <lib-select
-                    label="Assignee"
+                    [label]="'kanban.assignee' | translate"
                     [options]="assigneeFilterOptions()"
                     [(model)]="assigneeFilterModel"
-                    [placeholder]="'All Assignees'"
+                    [placeholder]="'kanban.allAssignees' | translate"
                   />
                 </div>
                 <div class="kanban-board_filter-section">
                   <lib-select
-                    label="Type"
+                    [label]="'kanban.type' | translate"
                     [options]="typeFilterOptions()"
                     [(model)]="typeFilterModel"
-                    [placeholder]="'All Types'"
+                    [placeholder]="'kanban.allTypes' | translate"
                   />
                 </div>
                 <div class="kanban-board_filter-section">
                   <lib-select
-                    label="Priority"
+                    [label]="'kanban.priority' | translate"
                     [options]="priorityFilterOptions()"
                     [(model)]="priorityFilterModel"
-                    [placeholder]="'All Priorities'"
+                    [placeholder]="'kanban.allPriorities' | translate"
                   />
                 </div>
                 @if (hasActiveFilters()) {
                   <div class="kanban-board_filter-actions">
                     <lib-button variant="ghost" size="sm" (clicked)="clearFilters(filterDropdown)">
-                      Clear Filters
+                      {{ 'kanban.clearFilters' | translate }}
                     </lib-button>
                   </div>
                 }
@@ -137,7 +139,9 @@ interface BoardSettings {
             <ng-template #settingsDropdownTemplate>
               <div class="kanban-board_settings-menu">
                 <div class="kanban-board_settings-section">
-                  <label class="kanban-board_settings-label">Column Visibility</label>
+                  <label class="kanban-board_settings-label">{{
+                    'kanban.columnVisibility' | translate
+                  }}</label>
                   @for (column of allColumns(); track column.status) {
                     <label class="kanban-board_settings-checkbox">
                       <input
@@ -153,7 +157,7 @@ interface BoardSettings {
                 </div>
                 <div class="kanban-board_settings-actions">
                   <lib-button variant="ghost" size="sm" (clicked)="resetSettings(settingsDropdown)">
-                    Reset All
+                    {{ 'kanban.resetAll' | translate }}
                   </lib-button>
                 </div>
               </div>
@@ -164,12 +168,12 @@ interface BoardSettings {
 
       <div class="kanban-board_content">
         @if (issueService.isLoading()) {
-          <lib-loading-state message="Loading issues..." />
+          <lib-loading-state [message]="'kanban.loadingIssues' | translate" />
         } @else if (issueService.hasError()) {
           <lib-error-state
-            title="Failed to Load Issues"
+            [title]="'kanban.failedToLoad' | translate"
             [message]="errorMessage()"
-            [retryLabel]="'Retry'"
+            [retryLabel]="'common.retry' | translate"
             (onRetry)="handleRetry()"
           />
         } @else {
@@ -215,23 +219,25 @@ interface BoardSettings {
                         <div class="kanban-board_card-footer-left">
                           <app-issue-priority-indicator [priority]="issue.priority" />
                           @if (issue.assignee_id) {
-                            <span class="kanban-board_card-assignee">Assigned</span>
+                            <span class="kanban-board_card-assignee">{{
+                              'kanban.assigned' | translate
+                            }}</span>
                           }
                         </div>
                         @if (issue.due_date && isOverdue(issue.due_date)) {
                           <div
                             class="kanban-board_card-due-date"
-                            [title]="'Due: ' + formatDate(issue.due_date)"
+                            [title]="'kanban.due' | translate: { date: formatDate(issue.due_date) }"
                           >
                             <lib-icon name="calendar" size="xs" />
-                            <span>Overdue</span>
+                            <span>{{ 'kanban.overdue' | translate }}</span>
                           </div>
                         }
                       </div>
                     </div>
                   }
                   @if (column.issues.length === 0) {
-                    <div class="kanban-board_empty">No issues</div>
+                    <div class="kanban-board_empty">{{ 'kanban.noIssues' | translate }}</div>
                   }
                 </div>
               </div>
@@ -486,6 +492,7 @@ export class KanbanBoard {
   readonly modal = inject(Modal);
   readonly viewContainerRef = inject(ViewContainerRef);
   readonly toast = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
   readonly projectId = input.required<string>();
 
   readonly organizationId = computed(() => {
@@ -603,7 +610,9 @@ export class KanbanBoard {
   });
 
   readonly assigneeFilterOptions = computed<SelectOption<string | null>[]>(() => {
-    const options: SelectOption<string | null>[] = [{ value: null, label: 'All Assignees' }];
+    const options: SelectOption<string | null>[] = [
+      { value: null, label: this.translateService.instant('kanban.allAssignees') },
+    ];
     return options.concat(
       this.projectMembers().map((member) => ({
         value: member.user_id,
@@ -614,31 +623,51 @@ export class KanbanBoard {
 
   readonly typeFilterOptions = computed<SelectOption<'task' | 'bug' | 'story' | 'epic' | null>[]>(
     () => [
-      { value: null, label: 'All Types' },
-      { value: 'task', label: 'Task' },
-      { value: 'bug', label: 'Bug' },
-      { value: 'story', label: 'Story' },
-      { value: 'epic', label: 'Epic' },
+      { value: null, label: this.translateService.instant('kanban.allTypes') },
+      { value: 'task', label: this.translateService.instant('issues.type.task') },
+      { value: 'bug', label: this.translateService.instant('issues.type.bug') },
+      { value: 'story', label: this.translateService.instant('issues.type.story') },
+      { value: 'epic', label: this.translateService.instant('issues.type.epic') },
     ],
   );
 
   readonly priorityFilterOptions = computed<
     SelectOption<'low' | 'medium' | 'high' | 'critical' | null>[]
   >(() => [
-    { value: null, label: 'All Priorities' },
-    { value: 'low', label: 'Low' },
-    { value: 'medium', label: 'Medium' },
-    { value: 'high', label: 'High' },
-    { value: 'critical', label: 'Critical' },
+    { value: null, label: this.translateService.instant('kanban.allPriorities') },
+    { value: 'low', label: this.translateService.instant('issues.priority.low') },
+    { value: 'medium', label: this.translateService.instant('issues.priority.medium') },
+    { value: 'high', label: this.translateService.instant('issues.priority.high') },
+    { value: 'critical', label: this.translateService.instant('issues.priority.critical') },
   ]);
 
   // All available columns (for settings)
   readonly allColumns = computed<StatusColumn[]>(() => {
     return [
-      { status: 'todo', label: 'To Do', issues: [], visible: true },
-      { status: 'in_progress', label: 'In Progress', issues: [], visible: true },
-      { status: 'done', label: 'Done', issues: [], visible: true },
-      { status: 'cancelled', label: 'Cancelled', issues: [], visible: true },
+      {
+        status: 'todo',
+        label: this.translateService.instant('issues.status.todo'),
+        issues: [],
+        visible: true,
+      },
+      {
+        status: 'in_progress',
+        label: this.translateService.instant('issues.status.inProgress'),
+        issues: [],
+        visible: true,
+      },
+      {
+        status: 'done',
+        label: this.translateService.instant('issues.status.done'),
+        issues: [],
+        visible: true,
+      },
+      {
+        status: 'cancelled',
+        label: this.translateService.instant('issues.status.cancelled'),
+        issues: [],
+        visible: true,
+      },
     ];
   });
 
@@ -688,9 +717,11 @@ export class KanbanBoard {
   readonly errorMessage = computed(() => {
     const error = this.issueService.error();
     if (error) {
-      return error instanceof Error ? error.message : 'An error occurred while loading issues.';
+      return error instanceof Error
+        ? error.message
+        : this.translateService.instant('issues.failedToLoad');
     }
-    return 'An unknown error occurred.';
+    return this.translateService.instant('common.unknownError');
   });
 
   // Issues are now automatically loaded when URL organizationId and projectId change
@@ -720,7 +751,7 @@ export class KanbanBoard {
           await this.issueService.updateIssue(issue.id, { status: newStatus });
           // Success - UI already updated optimistically
         } catch (error) {
-          this.toast.error('Failed to update issue status');
+          this.toast.error(this.translateService.instant('issues.updateStatusError'));
 
           // Revert the move on error
           transferArrayItem(
@@ -784,10 +815,10 @@ export class KanbanBoard {
 
   getColumnLabel(status: IssueStatus): string {
     const labels: Record<IssueStatus, string> = {
-      todo: 'To Do',
-      in_progress: 'In Progress',
-      done: 'Done',
-      cancelled: 'Cancelled',
+      todo: this.translateService.instant('issues.status.todo'),
+      in_progress: this.translateService.instant('issues.status.inProgress'),
+      done: this.translateService.instant('issues.status.done'),
+      cancelled: this.translateService.instant('issues.status.cancelled'),
     };
     return labels[status];
   }

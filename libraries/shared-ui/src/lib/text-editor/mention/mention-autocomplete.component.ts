@@ -1,11 +1,10 @@
 import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
 import { Button } from '../../button/button';
-import { Icon } from '../../icon/icon';
 import type { MentionOption } from '../interfaces/mention-list-provider.interface';
 
 @Component({
   selector: 'lib-text-editor-mention-autocomplete',
-  imports: [Button, Icon],
+  imports: [Button],
   template: `
     @if (options().length > 0) {
       @for (option of options(); track option.id; let i = $index) {

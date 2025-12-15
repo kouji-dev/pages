@@ -4,16 +4,17 @@ import { Icon, Button } from 'shared-ui';
 import { OrganizationService } from '../../application/services/organization.service';
 import { NavigationService } from '../../application/services/navigation.service';
 import { Space } from '../../application/services/space.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-space-card',
-  imports: [Icon, RouterLink, Button],
+  imports: [Icon, RouterLink, Button, TranslatePipe],
   template: `
     <div class="space-card">
       <a
         [routerLink]="getSpaceRoute()"
         class="space-card_link"
-        [attr.aria-label]="'View ' + space().name"
+        [attr.aria-label]="('spaces.viewSpace' | translate) + ': ' + space().name"
       >
         <div class="space-card_content">
           <div class="space-card_header">
@@ -32,7 +33,7 @@ import { Space } from '../../application/services/space.service';
             <div class="space-card_meta">
               <div class="space-card_page-count">
                 <lib-icon name="file-text" size="sm" />
-                <span>{{ space().pageCount || 0 }} page(s)</span>
+                <span>{{ space().pageCount || 0 }} {{ 'spaces.pages' | translate }}</span>
               </div>
             </div>
           </div>

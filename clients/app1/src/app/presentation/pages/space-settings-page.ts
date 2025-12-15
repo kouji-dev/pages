@@ -13,66 +13,72 @@ import { SpaceService } from '../../application/services/space.service';
 import { NavigationService } from '../../application/services/navigation.service';
 import { DeleteSpaceModal } from '../components/delete-space-modal';
 import { BackToPage } from '../components/back-to-page';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-space-settings-page',
-  imports: [Button, Input, LoadingState, ErrorState, BackToPage],
+  imports: [Button, Input, LoadingState, ErrorState, BackToPage, TranslatePipe],
   template: `
     <div class="space-settings-page">
       <div class="space-settings-page_header">
         <div class="space-settings-page_header-content">
           <div>
-            <app-back-to-page label="Back to Space" (onClick)="handleBackToSpace()" />
-            <h1 class="space-settings-page_title">Space Settings</h1>
-            <p class="space-settings-page_subtitle">Manage your space details and configuration.</p>
+            <app-back-to-page
+              [label]="'spaces.backToSpace' | translate"
+              (onClick)="handleBackToSpace()"
+            />
+            <h1 class="space-settings-page_title">{{ 'spaces.settings.title' | translate }}</h1>
+            <p class="space-settings-page_subtitle">{{ 'spaces.settings.subtitle' | translate }}</p>
           </div>
         </div>
       </div>
 
       <div class="space-settings-page_content">
         @if (spaceService.isFetchingSpace()) {
-          <lib-loading-state message="Loading space..." />
+          <lib-loading-state [message]="'spaces.loadingSpace' | translate" />
         } @else if (spaceService.hasSpaceError()) {
           <lib-error-state
-            title="Failed to Load Space"
+            [title]="'spaces.failedToLoad' | translate"
             [message]="errorMessage()"
-            [retryLabel]="'Retry'"
+            [retryLabel]="'common.retry' | translate"
             (onRetry)="handleRetry()"
           />
         } @else if (!space()) {
           <lib-error-state
-            title="Space Not Found"
-            message="The space you're looking for doesn't exist or you don't have access to it."
+            [title]="'spaces.notFound' | translate"
+            [message]="'spaces.notFoundDescription' | translate"
             [showRetry]="false"
           />
         } @else {
           <div class="space-settings-page_container">
             <!-- Space Details Section -->
             <div class="space-settings-page_section">
-              <h2 class="space-settings-page_section-title">Space Details</h2>
+              <h2 class="space-settings-page_section-title">
+                {{ 'spaces.settings.details' | translate }}
+              </h2>
               <form class="space-settings-page_form" (ngSubmit)="handleSaveSpace()">
                 <lib-input
-                  label="Space Name"
-                  placeholder="Enter space name"
+                  [label]="'spaces.settings.name' | translate"
+                  [placeholder]="'spaces.settings.namePlaceholder' | translate"
                   [(model)]="name"
                   [required]="true"
                   [errorMessage]="nameError()"
-                  helperText="The display name for your space"
+                  [helperText]="'spaces.settings.nameHelper' | translate"
                 />
                 <lib-input
-                  label="Space Key"
+                  [label]="'spaces.settings.key' | translate"
                   placeholder="SPACE"
                   [(model)]="key"
                   [readonly]="true"
-                  helperText="Space key cannot be changed after creation"
+                  [helperText]="'spaces.settings.keyHelper' | translate"
                 />
                 <lib-input
-                  label="Description"
+                  [label]="'spaces.settings.description' | translate"
                   type="textarea"
-                  placeholder="Describe your space (optional)"
+                  [placeholder]="'spaces.settings.descriptionPlaceholder' | translate"
                   [(model)]="description"
                   [rows]="4"
-                  helperText="Optional description of your space"
+                  [helperText]="'spaces.settings.descriptionHelper' | translate"
                 />
                 <div class="space-settings-page_form-actions">
                   <lib-button
@@ -81,14 +87,14 @@ import { BackToPage } from '../components/back-to-page';
                     [loading]="isSaving()"
                     [disabled]="!isFormValid() || !hasChanges()"
                   >
-                    Save Changes
+                    {{ 'common.saveChanges' | translate }}
                   </lib-button>
                   <lib-button
                     variant="secondary"
                     (clicked)="handleReset()"
                     [disabled]="!hasChanges() || isSaving()"
                   >
-                    Cancel
+                    {{ 'common.cancel' | translate }}
                   </lib-button>
                 </div>
               </form>
@@ -96,13 +102,16 @@ import { BackToPage } from '../components/back-to-page';
 
             <!-- Danger Zone Section -->
             <div class="space-settings-page_section space-settings-page_section--danger">
-              <h2 class="space-settings-page_section-title">Danger Zone</h2>
+              <h2 class="space-settings-page_section-title">
+                {{ 'spaces.settings.dangerZone' | translate }}
+              </h2>
               <div class="space-settings-page_danger-content">
                 <div>
-                  <h3 class="space-settings-page_danger-title">Delete Space</h3>
+                  <h3 class="space-settings-page_danger-title">
+                    {{ 'spaces.settings.deleteTitle' | translate }}
+                  </h3>
                   <p class="space-settings-page_danger-description">
-                    Once you delete a space, there is no going back. All pages in this space will
-                    also be deleted. Please be certain.
+                    {{ 'spaces.settings.deleteDescription' | translate }}
                   </p>
                 </div>
                 <lib-button
@@ -111,7 +120,7 @@ import { BackToPage } from '../components/back-to-page';
                   (clicked)="handleDeleteSpace()"
                   [disabled]="isDeleting()"
                 >
-                  Delete Space
+                  {{ 'spaces.deleteSpace' | translate }}
                 </lib-button>
               </div>
             </div>
@@ -229,6 +238,7 @@ export class SpaceSettingsPage {
   readonly modal = inject(Modal);
   readonly toast = inject(ToastService);
   readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly translateService = inject(TranslateService);
 
   readonly spaceId = computed(() => {
     return this.navigationService.currentSpaceId() || '';
@@ -249,10 +259,10 @@ export class SpaceSettingsPage {
   readonly nameError = computed(() => {
     const value = this.name();
     if (!value.trim()) {
-      return 'Space name is required';
+      return this.translateService.instant('spaces.settings.nameRequired');
     }
     if (value.trim().length < 3) {
-      return 'Space name must be at least 3 characters';
+      return this.translateService.instant('spaces.settings.nameMinLength');
     }
     return '';
   });
@@ -271,9 +281,11 @@ export class SpaceSettingsPage {
   readonly errorMessage = computed(() => {
     const error = this.spaceService.spaceError();
     if (error) {
-      return error instanceof Error ? error.message : 'An error occurred while loading the space.';
+      return error instanceof Error
+        ? error.message
+        : this.translateService.instant('spaces.loadError');
     }
-    return 'An unknown error occurred.';
+    return this.translateService.instant('common.unknownError');
   });
 
   private readonly initializeFormEffect = effect(
@@ -309,11 +321,13 @@ export class SpaceSettingsPage {
       });
       this.originalName.set(this.name().trim());
       this.originalDescription.set(this.description().trim());
-      this.toast.success('Space updated successfully!');
+      this.toast.success(this.translateService.instant('spaces.updateSuccess'));
     } catch (error) {
       console.error('Failed to update space:', error);
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to update space. Please try again.';
+        error instanceof Error
+          ? error.message
+          : this.translateService.instant('spaces.updateError');
       this.toast.error(errorMessage);
     } finally {
       this.isSaving.set(false);

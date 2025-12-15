@@ -5,25 +5,28 @@ import { firstValueFrom } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { AuthService } from '../../application/services/auth.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-reset-password-page',
   standalone: true,
-  imports: [Button, Input, RouterLink],
+  imports: [Button, Input, RouterLink, TranslatePipe],
   template: `
     <div class="reset-password-page">
       <div class="reset-password-page_container">
         <div class="reset-password-page_content">
-          <h1 class="reset-password-page_title">Reset Password</h1>
-          <p class="reset-password-page_subtitle">Enter your new password below</p>
+          <h1 class="reset-password-page_title">{{ 'auth.resetPassword.title' | translate }}</h1>
+          <p class="reset-password-page_subtitle">
+            {{ 'auth.resetPassword.subtitle' | translate }}
+          </p>
 
           @if (isInvalidToken()) {
             <div class="reset-password-page_error">
               <p class="reset-password-page_error-text">
-                Invalid or expired reset token. Please request a new password reset link.
+                {{ 'auth.resetPassword.invalidToken' | translate }}
               </p>
               <lib-button variant="primary" [link]="'/forgot-password'">
-                Request New Link
+                {{ 'auth.resetPassword.requestNewLink' | translate }}
               </lib-button>
             </div>
           } @else {
@@ -33,9 +36,9 @@ import { AuthService } from '../../application/services/auth.service';
               (submit)="$event.preventDefault()"
             >
               <lib-input
-                label="New Password"
+                [label]="'auth.resetPassword.newPassword' | translate"
                 type="password"
-                placeholder="Enter your new password"
+                [placeholder]="'auth.resetPassword.newPasswordPlaceholder' | translate"
                 [(model)]="password"
                 [required]="true"
                 [errorMessage]="passwordError()"
@@ -44,9 +47,9 @@ import { AuthService } from '../../application/services/auth.service';
               />
 
               <lib-input
-                label="Confirm New Password"
+                [label]="'auth.resetPassword.confirmPassword' | translate"
                 type="password"
-                placeholder="Confirm your new password"
+                [placeholder]="'auth.resetPassword.confirmPasswordPlaceholder' | translate"
                 [(model)]="confirmPassword"
                 [required]="true"
                 [errorMessage]="confirmPasswordError()"
@@ -61,7 +64,7 @@ import { AuthService } from '../../application/services/auth.service';
                   [disabled]="!isFormValid()"
                   class="reset-password-page_submit-button"
                 >
-                  Reset Password
+                  {{ 'auth.resetPassword.resetPassword' | translate }}
                 </lib-button>
               </div>
             </form>
@@ -70,15 +73,18 @@ import { AuthService } from '../../application/services/auth.service';
           @if (isSuccess()) {
             <div class="reset-password-page_success">
               <p class="reset-password-page_success-text">
-                Your password has been reset successfully. You can now sign in with your new
-                password.
+                {{ 'auth.resetPassword.successMessage' | translate }}
               </p>
-              <lib-button variant="primary" [link]="'/login'">Go to Sign In</lib-button>
+              <lib-button variant="primary" [link]="'/login'">{{
+                'auth.resetPassword.goToSignIn' | translate
+              }}</lib-button>
             </div>
           }
 
           <div class="reset-password-page_footer">
-            <a routerLink="/login" class="reset-password-page_link">Back to Sign In</a>
+            <a routerLink="/login" class="reset-password-page_link">{{
+              'auth.resetPassword.backToSignIn' | translate
+            }}</a>
           </div>
         </div>
       </div>
@@ -198,6 +204,7 @@ export class ResetPasswordPage {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly toast = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   readonly password = signal('');
   readonly confirmPassword = signal('');
@@ -217,19 +224,19 @@ export class ResetPasswordPage {
   readonly passwordError = computed(() => {
     const value = this.password();
     if (!value.trim()) {
-      return 'Password is required';
+      return this.translateService.instant('auth.passwordRequired');
     }
     if (value.length < 8) {
-      return 'Password must be at least 8 characters long';
+      return this.translateService.instant('auth.passwordMinLength');
     }
     if (!/[A-Z]/.test(value)) {
-      return 'Password must contain at least one uppercase letter';
+      return this.translateService.instant('auth.passwordUppercase');
     }
     if (!/[a-z]/.test(value)) {
-      return 'Password must contain at least one lowercase letter';
+      return this.translateService.instant('auth.passwordLowercase');
     }
     if (!/[0-9]/.test(value)) {
-      return 'Password must contain at least one number';
+      return this.translateService.instant('auth.passwordNumber');
     }
     return '';
   });
@@ -238,10 +245,10 @@ export class ResetPasswordPage {
     const value = this.confirmPassword();
     const passwordValue = this.password();
     if (!value.trim()) {
-      return 'Please confirm your password';
+      return this.translateService.instant('auth.confirmPasswordRequired');
     }
     if (value !== passwordValue) {
-      return 'Passwords do not match';
+      return this.translateService.instant('auth.passwordsDoNotMatch');
     }
     return '';
   });
@@ -249,7 +256,7 @@ export class ResetPasswordPage {
   readonly passwordStrengthText = computed(() => {
     const value = this.password();
     if (!value) {
-      return 'Password must be at least 8 characters with uppercase, lowercase, and number';
+      return this.translateService.instant('auth.resetPassword.passwordRequirements');
     }
     if (this.passwordError()) {
       return this.passwordError();
@@ -263,11 +270,11 @@ export class ResetPasswordPage {
     if (/[^A-Za-z0-9]/.test(value)) strength++;
 
     if (strength <= 2) {
-      return 'Password strength: Weak';
+      return this.translateService.instant('auth.resetPassword.passwordStrengthWeak');
     } else if (strength <= 4) {
-      return 'Password strength: Medium';
+      return this.translateService.instant('auth.resetPassword.passwordStrengthMedium');
     } else {
-      return 'Password strength: Strong';
+      return this.translateService.instant('auth.resetPassword.passwordStrengthStrong');
     }
   });
 
@@ -292,7 +299,7 @@ export class ResetPasswordPage {
       await firstValueFrom(this.authService.resetPassword(this.resetToken()!, this.password()));
 
       this.isSuccess.set(true);
-      this.toast.success('Password reset successfully!');
+      this.toast.success(this.translateService.instant('auth.resetPassword.resetSuccess'));
     } catch (error) {
       // Check if it's a token error
       if (error && typeof error === 'object' && 'status' in error && error.status === 400) {

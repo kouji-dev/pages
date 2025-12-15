@@ -12,15 +12,16 @@ import {
 import { Icon, Button, Modal } from 'shared-ui';
 import { Organization, OrganizationService } from '../../application/services/organization.service';
 import { NavigationService } from '../../application/services/navigation.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-organization-card',
-  imports: [Icon, Button],
+  imports: [Icon, Button, TranslatePipe],
   template: `
     <div class="org-card">
       <div
         class="org-card_link"
-        [attr.aria-label]="'Switch to ' + organization().name"
+        [attr.aria-label]="('organizations.switchTo' | translate) + ': ' + organization().name"
         (click)="handleCardClick()"
       >
         <div class="org-card_content">
@@ -35,7 +36,10 @@ import { NavigationService } from '../../application/services/navigation.service
             <div class="org-card_meta">
               <div class="org-card_member-count">
                 <lib-icon name="users" size="sm" />
-                <span>{{ organization().memberCount || 0 }} member(s)</span>
+                <span
+                  >{{ organization().memberCount || 0 }}
+                  {{ 'organizations.members' | translate }}</span
+                >
               </div>
             </div>
           </div>

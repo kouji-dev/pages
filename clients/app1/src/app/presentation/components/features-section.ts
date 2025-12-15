@@ -1,5 +1,6 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { Icon, IconName } from 'shared-ui';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 interface Feature {
   icon: IconName;
@@ -9,14 +10,14 @@ interface Feature {
 
 @Component({
   selector: 'app-features-section',
-  imports: [Icon],
+  imports: [Icon, TranslatePipe],
   template: `
     <section class="features-section">
       <div class="features-section_container">
-        <h2 class="features-section_heading">Why Choose Pages?</h2>
-        <p class="features-section_subheading">Everything you need to collaborate and succeed</p>
+        <h2 class="features-section_heading">{{ 'public.whyChoose' | translate }}</h2>
+        <p class="features-section_subheading">{{ 'public.everythingYouNeed' | translate }}</p>
         <div class="features-section_grid">
-          @for (feature of features; track feature.title) {
+          @for (feature of features(); track feature.title) {
             <div class="features-section_card">
               <div class="features-section_card-content">
                 <div class="features-section_card-icon">
@@ -108,30 +109,28 @@ interface Feature {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FeaturesSection {
-  readonly features: Feature[] = [
+  private readonly translateService = inject(TranslateService);
+
+  readonly features = computed<Feature[]>(() => [
     {
       icon: 'zap',
-      title: 'Lightning Fast',
-      description:
-        'Built for speed and performance. Experience seamless collaboration without any lag or delays.',
+      title: this.translateService.instant('public.lightningFast'),
+      description: this.translateService.instant('public.lightningFastDescription'),
     },
     {
       icon: 'users',
-      title: 'Team Collaboration',
-      description:
-        'Work together in real-time with your team. Share ideas, assign tasks, and stay in sync.',
+      title: this.translateService.instant('public.teamCollaboration'),
+      description: this.translateService.instant('public.teamCollaborationDescription'),
     },
     {
       icon: 'shield',
-      title: 'Secure & Private',
-      description:
-        'Your data is protected with enterprise-grade security. Privacy and safety are our top priorities.',
+      title: this.translateService.instant('public.securePrivate'),
+      description: this.translateService.instant('public.securePrivateDescription'),
     },
     {
       icon: 'folder',
-      title: 'Flexible Workspace',
-      description:
-        'Organize your work the way you want. Customize layouts, views, and workflows to fit your needs.',
+      title: this.translateService.instant('public.flexibleWorkspace'),
+      description: this.translateService.instant('public.flexibleWorkspaceDescription'),
     },
-  ];
+  ]);
 }

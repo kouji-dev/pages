@@ -6,6 +6,7 @@ import {
   computed,
   TemplateRef,
   ViewChild,
+  inject,
 } from '@angular/core';
 import {
   Button,
@@ -18,40 +19,41 @@ import {
   TableColumn,
 } from 'shared-ui';
 import { OrganizationMember } from '../../application/services/organization-members.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-member-list',
-  imports: [Button, Icon, Dropdown, LoadingState, ErrorState, EmptyState, Table],
+  imports: [Button, Icon, Dropdown, LoadingState, ErrorState, EmptyState, Table, TranslatePipe],
   template: `
     <div class="member-list">
       <div class="member-list_header">
         <div>
-          <h2 class="member-list_title">Members</h2>
-          <p class="member-list_subtitle">Manage organization members and their roles.</p>
+          <h2 class="member-list_title">{{ 'members.title' | translate }}</h2>
+          <p class="member-list_subtitle">{{ 'members.subtitle' | translate }}</p>
         </div>
         @if (canAddMembers()) {
           <lib-button variant="primary" size="md" leftIcon="plus" (clicked)="handleAddMember()">
-            Add Member
+            {{ 'members.addMember' | translate }}
           </lib-button>
         }
       </div>
 
       <div class="member-list_content">
         @if (isLoading()) {
-          <lib-loading-state message="Loading members..." />
+          <lib-loading-state [message]="'members.loadingMembers' | translate" />
         } @else if (hasError()) {
           <lib-error-state
-            title="Failed to Load Members"
+            [title]="'members.failedToLoad' | translate"
             [message]="errorMessage()"
-            [retryLabel]="'Retry'"
+            [retryLabel]="'common.retry' | translate"
             (onRetry)="handleRetry()"
           />
         } @else if (members().length === 0) {
           <lib-empty-state
-            title="No members yet"
-            message="Add members to your organization to collaborate together."
+            [title]="'members.noMembers' | translate"
+            [message]="'members.noMembersDescription' | translate"
             icon="users"
-            [actionLabel]="canAddMembers() ? 'Add Member' : ''"
+            [actionLabel]="canAddMembers() ? ('members.addMember' | translate) : ''"
             [actionIcon]="canAddMembers() ? 'plus' : undefined"
             (onAction)="handleAddMember()"
           />
@@ -119,7 +121,7 @@ import { OrganizationMember } from '../../application/services/organization-memb
                   (clicked)="handleChangeRole(member, actionsDropdown)"
                 >
                   <lib-icon name="user-cog" size="sm" class="member-list_action-icon" />
-                  <span>Change Role</span>
+                  <span>{{ 'members.changeRole' | translate }}</span>
                 </lib-button>
               }
               @if (canRemoveMember(member)) {
@@ -130,7 +132,7 @@ import { OrganizationMember } from '../../application/services/organization-memb
                   (clicked)="handleRemoveMember(member, actionsDropdown)"
                 >
                   <lib-icon name="user-minus" size="sm" class="member-list_action-icon" />
-                  <span>Remove</span>
+                  <span>{{ 'members.remove' | translate }}</span>
                 </lib-button>
               }
             </div>
@@ -261,6 +263,8 @@ import { OrganizationMember } from '../../application/services/organization-memb
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MemberList {
+  private readonly translateService = inject(TranslateService);
+
   readonly members = input.required<OrganizationMember[]>();
   readonly isLoading = input.required<boolean>();
   readonly hasError = input.required<boolean>();
@@ -287,12 +291,12 @@ export class MemberList {
   readonly columns = computed<TableColumn<OrganizationMember>[]>(() => [
     {
       key: 'member',
-      label: 'Member',
+      label: this.translateService.instant('members.title'),
       width: '40%',
     },
     {
       key: 'role',
-      label: 'Role',
+      label: this.translateService.instant('members.role'),
       width: '20%',
     },
   ]);
@@ -316,11 +320,11 @@ export class MemberList {
   getRoleLabel(role: 'admin' | 'member' | 'viewer'): string {
     switch (role) {
       case 'admin':
-        return 'Admin';
+        return this.translateService.instant('members.admin');
       case 'member':
-        return 'Member';
+        return this.translateService.instant('members.member');
       case 'viewer':
-        return 'Viewer';
+        return this.translateService.instant('members.viewer');
       default:
         return role;
     }

@@ -10,57 +10,66 @@ import { Button, Icon, Input, LoadingState, ErrorState, ToastService } from 'sha
 import { UserProfileService, UserProfile } from '../../application/services/user-profile.service';
 import { ChangePasswordForm } from '../components/change-password-form';
 import { AvatarUpload } from '../components/avatar-upload';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-profile-page',
-  imports: [Button, Input, LoadingState, ErrorState, ChangePasswordForm, AvatarUpload],
+  imports: [
+    Button,
+    Input,
+    LoadingState,
+    ErrorState,
+    ChangePasswordForm,
+    AvatarUpload,
+    TranslatePipe,
+  ],
   template: `
     <div class="profile-page">
       <div class="profile-page_header">
         <div class="profile-page_header-content">
           <div>
-            <h1 class="profile-page_title">Profile</h1>
-            <p class="profile-page_subtitle">Manage your account settings and preferences.</p>
+            <h1 class="profile-page_title">{{ 'profile.title' | translate }}</h1>
+            <p class="profile-page_subtitle">{{ 'profile.subtitle' | translate }}</p>
           </div>
         </div>
       </div>
 
       <div class="profile-page_content">
         @if (userProfileService.isLoading()) {
-          <lib-loading-state message="Loading profile..." />
+          <lib-loading-state [message]="'profile.loading' | translate" />
         } @else if (userProfileService.hasError()) {
           <lib-error-state
-            title="Failed to Load Profile"
+            [title]="'profile.failedToLoad' | translate"
             [message]="errorMessage()"
-            [retryLabel]="'Retry'"
+            [retryLabel]="'common.retry' | translate"
             (onRetry)="handleRetry()"
           />
         } @else if (!userProfileService.userProfile()) {
           <lib-error-state
-            title="Profile Not Found"
-            message="Unable to load your profile. Please try again later."
+            [title]="'profile.notFound' | translate"
+            [message]="'profile.notFoundDescription' | translate"
             [showRetry]="false"
           />
         } @else {
           <div class="profile-page_container">
             <!-- Profile Information Section -->
             <div class="profile-page_section">
-              <h2 class="profile-page_section-title">Profile Information</h2>
+              <h2 class="profile-page_section-title">{{ 'profile.information' | translate }}</h2>
               <form class="profile-page_form" (ngSubmit)="handleSaveProfile()">
                 <lib-input
-                  label="Name"
-                  placeholder="Enter your name"
+                  [label]="'profile.name' | translate"
+                  [placeholder]="'profile.namePlaceholder' | translate"
                   [(model)]="name"
                   [required]="true"
                   [errorMessage]="nameError()"
-                  helperText="Your display name"
+                  [helperText]="'profile.nameHelper' | translate"
                 />
                 <lib-input
-                  label="Email"
-                  placeholder="your@email.com"
+                  [label]="'profile.email' | translate"
+                  [placeholder]="'profile.emailPlaceholder' | translate"
                   [(model)]="email"
                   [readonly]="true"
-                  helperText="Email cannot be changed here. Contact support to change your email."
+                  [helperText]="'profile.emailHelper' | translate"
                 />
                 <div class="profile-page_form-actions">
                   <lib-button
@@ -69,14 +78,14 @@ import { AvatarUpload } from '../components/avatar-upload';
                     [loading]="isSaving()"
                     [disabled]="!isFormValid() || !hasChanges()"
                   >
-                    Save Changes
+                    {{ 'common.saveChanges' | translate }}
                   </lib-button>
                   <lib-button
                     variant="secondary"
                     (clicked)="handleReset()"
                     [disabled]="!hasChanges() || isSaving()"
                   >
-                    Cancel
+                    {{ 'common.cancel' | translate }}
                   </lib-button>
                 </div>
               </form>
@@ -178,6 +187,7 @@ import { AvatarUpload } from '../components/avatar-upload';
 export class ProfilePage {
   readonly userProfileService = inject(UserProfileService);
   readonly toast = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   readonly name = signal('');
   readonly email = signal('');
@@ -187,10 +197,10 @@ export class ProfilePage {
   readonly nameError = computed(() => {
     const value = this.name();
     if (!value.trim()) {
-      return 'Name is required';
+      return this.translateService.instant('profile.nameRequired');
     }
     if (value.trim().length < 2) {
-      return 'Name must be at least 2 characters';
+      return this.translateService.instant('profile.nameMinLength');
     }
     return '';
   });
@@ -208,9 +218,9 @@ export class ProfilePage {
     if (error) {
       return error instanceof Error
         ? error.message
-        : 'An error occurred while loading your profile.';
+        : this.translateService.instant('profile.loadError');
     }
-    return 'An unknown error occurred.';
+    return this.translateService.instant('common.unknownError');
   });
 
   // Update form fields when profile loads
@@ -238,11 +248,13 @@ export class ProfilePage {
         name: this.name().trim(),
       });
       this.originalName.set(this.name().trim());
-      this.toast.success('Profile updated successfully!');
+      this.toast.success(this.translateService.instant('profile.updateSuccess'));
     } catch (error) {
       console.error('Failed to update profile:', error);
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to update profile. Please try again.';
+        error instanceof Error
+          ? error.message
+          : this.translateService.instant('profile.updateError');
       this.toast.error(errorMessage);
     } finally {
       this.isSaving.set(false);

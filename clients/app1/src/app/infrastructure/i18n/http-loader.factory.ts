@@ -9,5 +9,6 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 export function HttpLoaderFactory(http: HttpClient): TranslateLoader {
   // TranslateHttpLoader implements TranslateLoader interface
   // Type assertion needed due to Observable<Object> vs Observable<TranslationObject> type mismatch
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json') as unknown as TranslateLoader;
+  // Use relative path - TranslateHttpLoader will resolve relative to base href
+  return new TranslateHttpLoader(http, 'assets/i18n/', '.json') as unknown as TranslateLoader;
 }

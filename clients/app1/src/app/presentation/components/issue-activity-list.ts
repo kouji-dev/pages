@@ -1,26 +1,27 @@
 import { Component, ChangeDetectionStrategy, computed, inject, input, effect } from '@angular/core';
 import { LoadingState, ErrorState, EmptyState, Button, Icon, IconName } from 'shared-ui';
 import { IssueActivityService } from '../../application/services/issue-activity.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-issue-activity-list',
   standalone: true,
-  imports: [LoadingState, ErrorState, EmptyState, Button, Icon],
+  imports: [LoadingState, ErrorState, EmptyState, Button, Icon, TranslatePipe],
   template: `
     <div class="activity-list">
       @if (activityService.isLoading()) {
-        <lib-loading-state message="Loading activity..." />
+        <lib-loading-state [message]="'activity.loading' | translate" />
       } @else if (activityService.hasError()) {
         <lib-error-state
-          title="Failed to Load Activity"
+          [title]="'activity.failedToLoad' | translate"
           [message]="errorMessage()"
-          [retryLabel]="'Retry'"
+          [retryLabel]="'common.retry' | translate"
           (onRetry)="handleRetry()"
         />
       } @else if (activities().length === 0) {
         <lib-empty-state
-          title="No activity yet"
-          message="Activity logs will appear here when changes are made to this issue."
+          [title]="'activity.noActivity' | translate"
+          [message]="'activity.noActivityDescription' | translate"
           icon="clock"
         />
       } @else {
@@ -47,11 +48,11 @@ import { IssueActivityService } from '../../application/services/issue-activity.
                     }}</span>
                     <span class="activity-list_item-value-change">
                       <span class="activity-list_item-old-value">{{
-                        activity.old_value || 'empty'
+                        activity.old_value || ('activity.empty' | translate)
                       }}</span>
                       <lib-icon name="arrow-right" [size]="'xs'" />
                       <span class="activity-list_item-new-value">{{
-                        activity.new_value || 'empty'
+                        activity.new_value || ('activity.empty' | translate)
                       }}</span>
                     </span>
                   </div>
@@ -69,10 +70,11 @@ import { IssueActivityService } from '../../application/services/issue-activity.
               [disabled]="currentPage() === 1"
               (clicked)="handlePreviousPage()"
             >
-              Previous
+              {{ 'common.previous' | translate }}
             </lib-button>
             <span class="activity-list_pagination-info">
-              Page {{ currentPage() }} of {{ totalPages() }}
+              {{ 'common.page' | translate }} {{ currentPage() }} {{ 'common.of' | translate }}
+              {{ totalPages() }}
             </span>
             <lib-button
               variant="ghost"
@@ -80,7 +82,7 @@ import { IssueActivityService } from '../../application/services/issue-activity.
               [disabled]="currentPage() === totalPages()"
               (clicked)="handleNextPage()"
             >
-              Next
+              {{ 'common.next' | translate }}
             </lib-button>
           </div>
         }
@@ -200,6 +202,7 @@ import { IssueActivityService } from '../../application/services/issue-activity.
 })
 export class IssueActivityList {
   readonly activityService = inject(IssueActivityService);
+  private readonly translateService = inject(TranslateService);
 
   readonly issueId = input.required<string>();
 
@@ -218,13 +221,17 @@ export class IssueActivityList {
   readonly errorMessage = computed(() => {
     const error = this.activityService.error();
     if (error) {
-      return error instanceof Error ? error.message : 'An error occurred while loading activity.';
+      return error instanceof Error
+        ? error.message
+        : this.translateService.instant('activity.loadError');
     }
-    return 'An unknown error occurred.';
+    return this.translateService.instant('common.unknownError');
   });
 
   getUserName(activity: { user_name?: string; user_email?: string }): string {
-    return activity.user_name || activity.user_email || 'System';
+    return (
+      activity.user_name || activity.user_email || this.translateService.instant('activity.system')
+    );
   }
 
   getActivityIcon(action: string): IconName {
@@ -252,25 +259,35 @@ export class IssueActivityList {
   }): string {
     switch (activity.action) {
       case 'created':
-        return 'created this issue';
+        return this.translateService.instant('activity.createdIssue');
       case 'updated':
         if (activity.field_name) {
-          return `updated ${this.formatFieldName(activity.field_name)}`;
+          return this.translateService.instant('activity.updatedField', {
+            field: this.formatFieldName(activity.field_name),
+          });
         }
-        return 'updated this issue';
+        return this.translateService.instant('activity.updatedIssue');
       case 'deleted':
-        return 'deleted this issue';
+        return this.translateService.instant('activity.deletedIssue');
       case 'status_changed':
-        return 'changed status';
+        return this.translateService.instant('activity.changedStatus');
       case 'assigned':
-        return 'assigned this issue';
+        return this.translateService.instant('activity.assignedIssue');
       default:
-        return activity.action.replace(/_/g, ' ');
+        return (
+          this.translateService.instant(`activity.${activity.action.replace(/_/g, '')}`) ||
+          activity.action.replace(/_/g, ' ')
+        );
     }
   }
 
   formatFieldName(fieldName: string): string {
-    // Convert snake_case to Title Case
+    // Use translation if available, otherwise convert snake_case to Title Case
+    const translationKey = `activity.field.${fieldName}`;
+    const translated = this.translateService.instant(translationKey);
+    if (translated !== translationKey) {
+      return translated;
+    }
     return fieldName
       .split('_')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -286,13 +303,13 @@ export class IssueActivityList {
     const diffDays = Math.floor(diffMs / 86400000);
 
     if (diffMins < 1) {
-      return 'just now';
+      return this.translateService.instant('activity.justNow');
     } else if (diffMins < 60) {
-      return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
+      return this.translateService.instant('activity.minutesAgo', { count: diffMins });
     } else if (diffHours < 24) {
-      return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+      return this.translateService.instant('activity.hoursAgo', { count: diffHours });
     } else if (diffDays < 7) {
-      return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+      return this.translateService.instant('activity.daysAgo', { count: diffDays });
     } else {
       return date.toLocaleDateString();
     }

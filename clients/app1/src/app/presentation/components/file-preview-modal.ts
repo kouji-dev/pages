@@ -10,11 +10,12 @@ import {
 } from 'shared-ui';
 import { Attachment } from '../../application/services/attachment.service';
 import { AttachmentService } from '../../application/services/attachment.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-file-preview-modal',
   standalone: true,
-  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, Icon],
+  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, Icon, TranslatePipe],
   template: `
     <lib-modal-container>
       <lib-modal-header>
@@ -34,12 +35,18 @@ import { AttachmentService } from '../../application/services/attachment.service
               class="file-preview_image"
             />
           } @else if (isPdf()) {
-            <iframe [src]="previewUrl()" class="file-preview_pdf" title="PDF Preview"></iframe>
+            <iframe
+              [src]="previewUrl()"
+              class="file-preview_pdf"
+              [title]="'attachments.pdfPreview' | translate"
+            ></iframe>
           } @else {
             <div class="file-preview_unsupported">
               <lib-icon name="file" size="xl" />
-              <p>Preview not available for this file type</p>
-              <p class="file-preview_unsupported-hint">Click download to view the file</p>
+              <p>{{ 'attachments.previewNotAvailable' | translate }}</p>
+              <p class="file-preview_unsupported-hint">
+                {{ 'attachments.previewHint' | translate }}
+              </p>
             </div>
           }
         </div>
@@ -48,10 +55,12 @@ import { AttachmentService } from '../../application/services/attachment.service
         <a [href]="downloadUrl()" target="_blank" class="file-preview_download-link">
           <lib-button variant="primary">
             <lib-icon name="download" size="sm" />
-            Download
+            {{ 'attachments.download' | translate }}
           </lib-button>
         </a>
-        <lib-button variant="secondary" (clicked)="handleClose()"> Close </lib-button>
+        <lib-button variant="secondary" (clicked)="handleClose()">
+          {{ 'common.close' | translate }}
+        </lib-button>
       </lib-modal-footer>
     </lib-modal-container>
   `,

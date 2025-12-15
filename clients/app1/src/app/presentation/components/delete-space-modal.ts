@@ -4,33 +4,33 @@ import { Button, Input } from 'shared-ui';
 import { ToastService } from 'shared-ui';
 import { SpaceService } from '../../application/services/space.service';
 import { NavigationService } from '../../application/services/navigation.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-delete-space-modal',
-  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, Input],
+  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, Input, TranslatePipe],
   template: `
     <lib-modal-container>
-      <lib-modal-header>Delete Space</lib-modal-header>
+      <lib-modal-header>{{ 'spaces.modals.deleteSpace' | translate }}</lib-modal-header>
       <lib-modal-content>
         <div class="delete-space-modal_content">
           <p class="delete-space-modal_warning">
-            Are you sure you want to delete <strong>{{ spaceName() }}</strong
-            >? This action cannot be undone.
+            {{ 'spaces.modals.deleteWarning' | translate: { name: spaceName() } }}
           </p>
           <p class="delete-space-modal_description">
-            All pages and comments associated with this space will be permanently deleted.
+            {{ 'spaces.modals.deleteDescription' | translate }}
           </p>
           <lib-input
-            label="Type space name to confirm"
-            placeholder="Enter space name"
+            [label]="'spaces.modals.deleteConfirmLabel' | translate"
+            [placeholder]="'spaces.modals.deleteConfirmPlaceholder' | translate"
             [(model)]="confirmationName"
-            helperText="Type the space name to confirm deletion"
+            [helperText]="'spaces.modals.deleteConfirmHelper' | translate"
           />
         </div>
       </lib-modal-content>
       <lib-modal-footer>
         <lib-button variant="secondary" (clicked)="handleCancel()" [disabled]="isDeleting()">
-          Cancel
+          {{ 'common.cancel' | translate }}
         </lib-button>
         <lib-button
           variant="danger"
@@ -38,7 +38,7 @@ import { NavigationService } from '../../application/services/navigation.service
           [loading]="isDeleting()"
           [disabled]="!isConfirmed()"
         >
-          Delete Space
+          {{ 'spaces.modals.deleteSpace' | translate }}
         </lib-button>
       </lib-modal-footer>
     </lib-modal-container>
@@ -76,6 +76,7 @@ export class DeleteSpaceModal {
   private readonly toast = inject(ToastService);
   private readonly navigationService = inject(NavigationService);
   private readonly modal = inject(Modal);
+  private readonly translateService = inject(TranslateService);
 
   readonly spaceId = input.required<string>();
   readonly spaceName = input.required<string>();
@@ -101,7 +102,7 @@ export class DeleteSpaceModal {
 
     try {
       await this.spaceService.deleteSpace(this.spaceId());
-      this.toast.success('Space deleted successfully!');
+      this.toast.success(this.translateService.instant('spaces.modals.deleteSuccess'));
       this.modal.close();
 
       // Navigate to spaces list for current organization
@@ -114,7 +115,9 @@ export class DeleteSpaceModal {
     } catch (error) {
       console.error('Failed to delete space:', error);
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to delete space. Please try again.';
+        error instanceof Error
+          ? error.message
+          : this.translateService.instant('spaces.modals.deleteError');
       this.toast.error(errorMessage);
     } finally {
       this.isDeleting.set(false);

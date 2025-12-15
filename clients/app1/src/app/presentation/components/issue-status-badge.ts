@@ -1,4 +1,5 @@
-import { Component, input, ChangeDetectionStrategy, computed } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy, computed, inject } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
 
@@ -42,6 +43,8 @@ type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IssueStatusBadge {
+  private readonly translateService = inject(TranslateService);
+
   readonly status = input.required<IssueStatus>();
 
   readonly customLabel = input<string | undefined>(undefined);
@@ -50,12 +53,7 @@ export class IssueStatusBadge {
     const customLabel = this.customLabel();
     if (customLabel) return customLabel;
 
-    const labels: Record<IssueStatus, string> = {
-      todo: 'To Do',
-      in_progress: 'In Progress',
-      done: 'Done',
-      cancelled: 'Cancelled',
-    };
-    return labels[this.status()] || this.status();
+    const statusKey = this.status();
+    return this.translateService.instant(`issues.status.${statusKey}`);
   });
 }

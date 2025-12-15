@@ -6,19 +6,23 @@ import {
   computed,
   TemplateRef,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Button, Icon, LoadingState, ErrorState, EmptyState, Table, TableColumn } from 'shared-ui';
 import { OrganizationInvitation } from '../../application/services/organization-invitations.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-pending-invitations',
-  imports: [Button, Icon, LoadingState, ErrorState, EmptyState, Table],
+  imports: [Button, Icon, LoadingState, ErrorState, EmptyState, Table, TranslatePipe],
   template: `
     <div class="pending-invitations">
       <div class="pending-invitations_header">
         <div>
-          <h2 class="pending-invitations_title">Pending Invitations</h2>
-          <p class="pending-invitations_subtitle">Invitations that haven't been accepted yet.</p>
+          <h2 class="pending-invitations_title">{{ 'invitations.pendingTitle' | translate }}</h2>
+          <p class="pending-invitations_subtitle">
+            {{ 'invitations.pendingSubtitle' | translate }}
+          </p>
         </div>
         @if (canSendInvitations()) {
           <lib-button
@@ -27,27 +31,27 @@ import { OrganizationInvitation } from '../../application/services/organization-
             leftIcon="mail"
             (clicked)="handleSendInvitation()"
           >
-            Send Invitation
+            {{ 'invitations.sendInvitation' | translate }}
           </lib-button>
         }
       </div>
 
       <div class="pending-invitations_content">
         @if (isLoading()) {
-          <lib-loading-state message="Loading invitations..." />
+          <lib-loading-state [message]="'invitations.loading' | translate" />
         } @else if (hasError()) {
           <lib-error-state
-            title="Failed to Load Invitations"
+            [title]="'invitations.failedToLoad' | translate"
             [message]="errorMessage()"
-            [retryLabel]="'Retry'"
+            [retryLabel]="'common.retry' | translate"
             (onRetry)="handleRetry()"
           />
         } @else if (invitations().length === 0) {
           <lib-empty-state
-            title="No pending invitations"
-            message="Invite people to join your organization by sending them an invitation."
+            [title]="'invitations.noPending' | translate"
+            [message]="'invitations.noPendingDescription' | translate"
             icon="mail"
-            [actionLabel]="canSendInvitations() ? 'Send Invitation' : ''"
+            [actionLabel]="canSendInvitations() ? ('invitations.sendInvitation' | translate) : ''"
             [actionIcon]="canSendInvitations() ? 'mail' : undefined"
             (onAction)="handleSendInvitation()"
           />
@@ -72,7 +76,7 @@ import { OrganizationInvitation } from '../../application/services/organization-
             @if (isExpiringSoon(invitation)) {
               <div class="pending-invitations_table-expiring-warning">
                 <lib-icon name="clock" size="xs" />
-                <span>Expiring soon</span>
+                <span>{{ 'invitations.expiringSoon' | translate }}</span>
               </div>
             }
           </div>
@@ -103,7 +107,7 @@ import { OrganizationInvitation } from '../../application/services/organization-
             [iconOnly]="true"
             leftIcon="x"
             (clicked)="handleCancelInvitation(invitation)"
-            [title]="'Cancel invitation'"
+            [title]="'invitations.cancelInvitation' | translate"
           >
           </lib-button>
         }
@@ -198,6 +202,8 @@ import { OrganizationInvitation } from '../../application/services/organization-
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PendingInvitations {
+  private readonly translateService = inject(TranslateService);
+
   readonly invitations = input.required<OrganizationInvitation[]>();
   readonly isLoading = input.required<boolean>();
   readonly hasError = input.required<boolean>();
@@ -222,17 +228,17 @@ export class PendingInvitations {
   readonly columns = computed<TableColumn<OrganizationInvitation>[]>(() => [
     {
       key: 'email',
-      label: 'Email',
+      label: this.translateService.instant('invitations.email'),
       width: '30%',
     },
     {
       key: 'role',
-      label: 'Role',
+      label: this.translateService.instant('members.role'),
       width: '20%',
     },
     {
       key: 'expires_at',
-      label: 'Expires',
+      label: this.translateService.instant('invitations.expires'),
       width: '30%',
     },
   ]);
@@ -242,11 +248,11 @@ export class PendingInvitations {
   getRoleLabel(role: 'admin' | 'member' | 'viewer'): string {
     switch (role) {
       case 'admin':
-        return 'Admin';
+        return this.translateService.instant('members.admin');
       case 'member':
-        return 'Member';
+        return this.translateService.instant('members.member');
       case 'viewer':
-        return 'Viewer';
+        return this.translateService.instant('members.viewer');
       default:
         return role;
     }
@@ -268,16 +274,16 @@ export class PendingInvitations {
     const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
 
     if (diffInDays < 0) {
-      return 'Expired';
+      return this.translateService.instant('invitations.expired');
     } else if (diffInDays === 0) {
-      return 'Expires today';
+      return this.translateService.instant('invitations.expiresToday');
     } else if (diffInDays === 1) {
-      return 'Expires tomorrow';
+      return this.translateService.instant('invitations.expiresTomorrow');
     } else if (diffInDays <= 7) {
-      return `Expires in ${diffInDays} days`;
+      return this.translateService.instant('invitations.expiresInDays', { count: diffInDays });
     } else {
       const diffInWeeks = Math.floor(diffInDays / 7);
-      return `Expires in ${diffInWeeks} ${diffInWeeks === 1 ? 'week' : 'weeks'}`;
+      return this.translateService.instant('invitations.expiresInWeeks', { count: diffInWeeks });
     }
   }
 

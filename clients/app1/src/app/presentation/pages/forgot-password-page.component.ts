@@ -3,18 +3,19 @@ import { RouterLink } from '@angular/router';
 import { Button, Input, ToastService } from 'shared-ui';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../application/services/auth.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-forgot-password-page',
   standalone: true,
-  imports: [Button, Input, RouterLink],
+  imports: [Button, Input, RouterLink, TranslatePipe],
   template: `
     <div class="forgot-password-page">
       <div class="forgot-password-page_container">
         <div class="forgot-password-page_content">
-          <h1 class="forgot-password-page_title">Forgot Password?</h1>
+          <h1 class="forgot-password-page_title">{{ 'auth.forgotPassword.title' | translate }}</h1>
           <p class="forgot-password-page_subtitle">
-            Enter your email address and we'll send you a link to reset your password.
+            {{ 'auth.forgotPassword.subtitle' | translate }}
           </p>
 
           <form
@@ -23,13 +24,13 @@ import { AuthService } from '../../application/services/auth.service';
             (submit)="$event.preventDefault()"
           >
             <lib-input
-              label="Email"
+              [label]="'auth.email' | translate"
               type="email"
-              placeholder="Enter your email"
+              [placeholder]="'auth.forgotPassword.emailPlaceholder' | translate"
               [(model)]="email"
               [required]="true"
               [errorMessage]="emailError()"
-              helperText="Enter the email address associated with your account"
+              [helperText]="'auth.forgotPassword.emailHelper' | translate"
             />
 
             <div class="forgot-password-page_actions">
@@ -40,7 +41,7 @@ import { AuthService } from '../../application/services/auth.service';
                 [disabled]="!isFormValid()"
                 class="forgot-password-page_submit-button"
               >
-                Send Reset Link
+                {{ 'auth.forgotPassword.sendResetLink' | translate }}
               </lib-button>
             </div>
           </form>
@@ -48,14 +49,15 @@ import { AuthService } from '../../application/services/auth.service';
           @if (isSuccess()) {
             <div class="forgot-password-page_success">
               <p class="forgot-password-page_success-text">
-                If an account exists with this email, we've sent a password reset link. Please check
-                your inbox.
+                {{ 'auth.forgotPassword.successMessage' | translate }}
               </p>
             </div>
           }
 
           <div class="forgot-password-page_footer">
-            <a routerLink="/login" class="forgot-password-page_link">Back to Sign In</a>
+            <a routerLink="/login" class="forgot-password-page_link">{{
+              'auth.forgotPassword.backToSignIn' | translate
+            }}</a>
           </div>
         </div>
       </div>
@@ -155,6 +157,7 @@ import { AuthService } from '../../application/services/auth.service';
 export class ForgotPasswordPage {
   private readonly authService = inject(AuthService);
   private readonly toast = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   readonly email = signal('');
   readonly isSubmitting = signal(false);
@@ -163,11 +166,11 @@ export class ForgotPasswordPage {
   readonly emailError = computed(() => {
     const value = this.email();
     if (!value.trim()) {
-      return 'Email is required';
+      return this.translateService.instant('auth.emailRequired');
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(value.trim())) {
-      return 'Please enter a valid email address';
+      return this.translateService.instant('auth.emailInvalid');
     }
     return '';
   });
@@ -186,7 +189,7 @@ export class ForgotPasswordPage {
     try {
       await firstValueFrom(this.authService.requestPasswordReset(this.email().trim()));
       this.isSuccess.set(true);
-      this.toast.success('Password reset link sent! Please check your email.');
+      this.toast.success(this.translateService.instant('auth.forgotPassword.resetLinkSent'));
     } catch (error) {
       // Error is already handled by error interceptor
       console.error('Password reset request failed:', error);

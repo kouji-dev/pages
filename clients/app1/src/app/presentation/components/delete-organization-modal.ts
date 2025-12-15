@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, inject, input, signal, computed } f
 import { Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter } from 'shared-ui';
 import { Button } from 'shared-ui';
 import { Organization } from '../../application/services/organization.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 export interface DeleteOrganizationModalData {
   organization: Organization;
@@ -9,31 +10,33 @@ export interface DeleteOrganizationModalData {
 
 @Component({
   selector: 'app-delete-organization-modal',
-  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button],
+  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, TranslatePipe],
   template: `
     <lib-modal-container>
-      <lib-modal-header>Delete Organization</lib-modal-header>
+      <lib-modal-header>{{
+        'organizations.modals.deleteOrganization' | translate
+      }}</lib-modal-header>
       <lib-modal-content>
         <p>
-          Are you sure you want to delete <strong>{{ organization()?.name }}</strong
-          >? This action cannot be undone.
+          {{ 'organizations.modals.deleteWarning' | translate: { name: organization()?.name } }}
         </p>
-        <p>This will permanently delete:</p>
+        <p>{{ 'organizations.modals.deleteWillDelete' | translate }}</p>
         <ul>
-          <li>The organization and all its data</li>
-          <li>All projects, issues, and pages</li>
-          <li>All member associations</li>
+          <li>{{ 'organizations.modals.deleteItem1' | translate }}</li>
+          <li>{{ 'organizations.modals.deleteItem2' | translate }}</li>
+          <li>{{ 'organizations.modals.deleteItem3' | translate }}</li>
         </ul>
         <p class="delete-org-modal_warning">
-          <strong>Warning:</strong> This action is permanent and irreversible.
+          <strong>{{ 'organizations.modals.deleteWarningLabel' | translate }}</strong>
+          {{ 'organizations.modals.deleteWarningText' | translate }}
         </p>
       </lib-modal-content>
       <lib-modal-footer>
         <lib-button variant="secondary" (clicked)="handleCancel()" [disabled]="isDeleting()">
-          Cancel
+          {{ 'common.cancel' | translate }}
         </lib-button>
         <lib-button variant="danger" (clicked)="handleConfirm()" [loading]="isDeleting()">
-          Delete Organization
+          {{ 'organizations.modals.deleteOrganization' | translate }}
         </lib-button>
       </lib-modal-footer>
     </lib-modal-container>

@@ -8,6 +8,7 @@ import {
   effect,
 } from '@angular/core';
 import { Button, LoadingState, ErrorState, Modal, TextEditor } from 'shared-ui';
+import { TranslatePipe } from '@ngx-translate/core';
 import { IssueService } from '../../application/services/issue.service';
 import { NavigationService } from '../../application/services/navigation.service';
 import { IssueTypeBadge } from '../components/issue-type-badge';
@@ -33,28 +34,32 @@ import { BackToPage } from '../components/back-to-page';
     IssueActivityList,
     TextEditor,
     BackToPage,
+    TranslatePipe,
   ],
   template: `
     <div class="issue-detail-page">
       @if (issueService.isFetchingIssue()) {
-        <lib-loading-state message="Loading issue..." />
+        <lib-loading-state [message]="'issueDetail.loadingIssue' | translate" />
       } @else if (issueService.hasIssueError()) {
         <lib-error-state
-          title="Failed to Load Issue"
+          [title]="'issueDetail.failedToLoad' | translate"
           [message]="errorMessage()"
-          [retryLabel]="'Retry'"
+          [retryLabel]="'common.retry' | translate"
           (onRetry)="handleRetry()"
         />
       } @else if (!issue()) {
         <lib-error-state
-          title="Issue Not Found"
-          message="The issue you're looking for doesn't exist or you don't have access to it."
+          [title]="'issueDetail.notFound' | translate"
+          [message]="'issueDetail.notFoundDescription' | translate"
           [showRetry]="false"
         />
       } @else {
         <div class="issue-detail-page_header">
           <div class="issue-detail-page_header-content">
-            <app-back-to-page label="Back to Issues" (onClick)="handleBackToIssues()" />
+            <app-back-to-page
+              [label]="'issueDetail.backToIssues' | translate"
+              (onClick)="handleBackToIssues()"
+            />
             <div class="issue-detail-page_header-main">
               <div class="issue-detail-page_header-info">
                 <div class="issue-detail-page_key">{{ issue()?.key }}</div>
@@ -66,7 +71,7 @@ import { BackToPage } from '../components/back-to-page';
                 </div>
               </div>
               <lib-button variant="primary" size="md" (clicked)="handleEditIssue()">
-                Edit Issue
+                {{ 'issueDetail.editIssue' | translate }}
               </lib-button>
             </div>
           </div>
@@ -76,7 +81,9 @@ import { BackToPage } from '../components/back-to-page';
           <div class="issue-detail-page_container">
             <div class="issue-detail-page_main">
               <div class="issue-detail-page_section">
-                <h2 class="issue-detail-page_section-title">Description</h2>
+                <h2 class="issue-detail-page_section-title">
+                  {{ 'issueDetail.description' | translate }}
+                </h2>
                 <div class="issue-detail-page_description">
                   @if (issue()?.description) {
                     <lib-text-editor
@@ -86,7 +93,9 @@ import { BackToPage } from '../components/back-to-page';
                       class="issue-detail-page_description-editor"
                     />
                   } @else {
-                    <p class="issue-detail-page_no-description">No description provided.</p>
+                    <p class="issue-detail-page_no-description">
+                      {{ 'issueDetail.noDescription' | translate }}
+                    </p>
                   }
                 </div>
               </div>
@@ -100,38 +109,52 @@ import { BackToPage } from '../components/back-to-page';
               </div>
 
               <div class="issue-detail-page_section">
-                <h2 class="issue-detail-page_section-title">Activity</h2>
+                <h2 class="issue-detail-page_section-title">
+                  {{ 'issueDetail.activity' | translate }}
+                </h2>
                 <app-issue-activity-list [issueId]="issueId()" />
               </div>
             </div>
             <div class="issue-detail-page_sidebar">
               <div class="issue-detail-page_metadata">
-                <h3 class="issue-detail-page_metadata-title">Details</h3>
+                <h3 class="issue-detail-page_metadata-title">
+                  {{ 'issueDetail.details' | translate }}
+                </h3>
                 <div class="issue-detail-page_metadata-item">
-                  <span class="issue-detail-page_metadata-label">Type</span>
+                  <span class="issue-detail-page_metadata-label">{{
+                    'issues.form.type' | translate
+                  }}</span>
                   <app-issue-type-badge [type]="issue()!.type" />
                 </div>
                 <div class="issue-detail-page_metadata-item">
-                  <span class="issue-detail-page_metadata-label">Status</span>
+                  <span class="issue-detail-page_metadata-label">{{
+                    'issues.form.status' | translate
+                  }}</span>
                   <app-issue-status-badge [status]="issue()!.status" />
                 </div>
                 <div class="issue-detail-page_metadata-item">
-                  <span class="issue-detail-page_metadata-label">Priority</span>
+                  <span class="issue-detail-page_metadata-label">{{
+                    'issues.form.priority' | translate
+                  }}</span>
                   <app-issue-priority-indicator [priority]="issue()!.priority" />
                 </div>
                 <div class="issue-detail-page_metadata-item">
-                  <span class="issue-detail-page_metadata-label">Assignee</span>
+                  <span class="issue-detail-page_metadata-label">{{
+                    'issueDetail.assignee' | translate
+                  }}</span>
                   <span class="issue-detail-page_metadata-value">
                     @if (issue()?.assignee) {
                       {{ issue()!.assignee!.name }}
                     } @else {
-                      Unassigned
+                      {{ 'issues.unassigned' | translate }}
                     }
                   </span>
                 </div>
                 @if (issue()?.reporter) {
                   <div class="issue-detail-page_metadata-item">
-                    <span class="issue-detail-page_metadata-label">Reporter</span>
+                    <span class="issue-detail-page_metadata-label">{{
+                      'issueDetail.reporter' | translate
+                    }}</span>
                     <span class="issue-detail-page_metadata-value">{{
                       issue()!.reporter!.name
                     }}</span>
@@ -139,7 +162,9 @@ import { BackToPage } from '../components/back-to-page';
                 }
                 @if (issue()?.due_date) {
                   <div class="issue-detail-page_metadata-item">
-                    <span class="issue-detail-page_metadata-label">Due Date</span>
+                    <span class="issue-detail-page_metadata-label">{{
+                      'issueDetail.dueDate' | translate
+                    }}</span>
                     <span class="issue-detail-page_metadata-value">{{
                       formatDate(issue()!.due_date!)
                     }}</span>
@@ -147,20 +172,26 @@ import { BackToPage } from '../components/back-to-page';
                 }
                 @if (issue()?.story_points) {
                   <div class="issue-detail-page_metadata-item">
-                    <span class="issue-detail-page_metadata-label">Story Points</span>
+                    <span class="issue-detail-page_metadata-label">{{
+                      'issueDetail.storyPoints' | translate
+                    }}</span>
                     <span class="issue-detail-page_metadata-value">{{
                       issue()!.story_points
                     }}</span>
                   </div>
                 }
                 <div class="issue-detail-page_metadata-item">
-                  <span class="issue-detail-page_metadata-label">Created</span>
+                  <span class="issue-detail-page_metadata-label">{{
+                    'issueDetail.created' | translate
+                  }}</span>
                   <span class="issue-detail-page_metadata-value">{{
                     formatDate(issue()!.created_at)
                   }}</span>
                 </div>
                 <div class="issue-detail-page_metadata-item">
-                  <span class="issue-detail-page_metadata-label">Updated</span>
+                  <span class="issue-detail-page_metadata-label">{{
+                    'issueDetail.updated' | translate
+                  }}</span>
                   <span class="issue-detail-page_metadata-value">{{
                     formatDate(issue()!.updated_at)
                   }}</span>

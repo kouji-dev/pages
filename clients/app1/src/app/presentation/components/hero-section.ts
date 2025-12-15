@@ -1,29 +1,30 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Button, Icon } from 'shared-ui';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-hero-section',
-  imports: [Button, Icon],
+  imports: [Button, Icon, TranslatePipe],
   template: `
     <section class="hero-section">
       <div class="hero-section_container">
         <div class="hero-section_content">
-          <h1 class="hero-section_headline">{{ headline }}</h1>
-          <p class="hero-section_subheading">{{ subheading }}</p>
-          <p class="hero-section_description">{{ valueProposition }}</p>
+          <h1 class="hero-section_headline">{{ 'public.headline' | translate }}</h1>
+          <p class="hero-section_subheading">{{ 'public.subheading' | translate }}</p>
+          <p class="hero-section_description">{{ 'public.valueProposition' | translate }}</p>
           <div class="hero-section_actions">
             <lib-button variant="primary" size="lg" [link]="['/register']">
-              {{ primaryCtaLabel }}
+              {{ 'public.getStarted' | translate }}
             </lib-button>
             <lib-button variant="secondary" size="lg" [link]="['/login']">
-              {{ secondaryCtaLabel }}
+              {{ 'public.learnMore' | translate }}
             </lib-button>
           </div>
         </div>
         <div class="hero-section_image">
           <div class="hero-section_image-placeholder">
             <lib-icon name="image" size="2xl" color="var(--color-text-tertiary)" />
-            <p class="hero-section_image-text">Hero Image</p>
+            <p class="hero-section_image-text">{{ 'public.heroImage' | translate }}</p>
           </div>
         </div>
       </div>
@@ -109,10 +110,5 @@ import { Button, Icon } from 'shared-ui';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeroSection {
-  readonly headline = 'Build Better Together';
-  readonly subheading = 'Collaborate, Create, Succeed';
-  readonly valueProposition =
-    'Pages is your all-in-one workspace for teams. Organize projects, share ideas, and bring your vision to life with powerful collaboration tools.';
-  readonly primaryCtaLabel = 'Get Started';
-  readonly secondaryCtaLabel = 'Learn More';
+  // All text is now translated via template using TranslatePipe
 }

@@ -16,8 +16,8 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Overlay, OverlayRef, OverlayConfig } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { Input, Icon } from 'shared-ui';
+import { TranslateService } from '@ngx-translate/core';
+import { Input } from 'shared-ui';
 import type { Input as InputComponent } from 'shared-ui';
 import { SearchService } from '../../application/services/search.service';
 import { NavigationService } from '../../application/services/navigation.service';
@@ -25,7 +25,7 @@ import { SearchDropdown } from './search-dropdown';
 
 @Component({
   selector: 'app-search-bar',
-  imports: [Input, Icon, FormsModule, SearchDropdown, TranslatePipe],
+  imports: [Input, FormsModule, SearchDropdown],
   template: `
     <div class="search-bar" #searchBarContainer>
       <lib-input

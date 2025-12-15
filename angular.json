@@ -27,6 +27,11 @@
                 "glob": "**/*",
                 "input": "clients/app1/src/assets",
                 "output": "/assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "libraries/shared-ui/src/assets",
+                "output": "/assets/shared-ui"
               }
             ],
             "styles": ["clients/app1/src/styles.css", "libraries/shared-ui/src/styles.css"],

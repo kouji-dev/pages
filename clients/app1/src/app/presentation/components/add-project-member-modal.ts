@@ -16,19 +16,29 @@ import {
 } from '../../application/services/project-members.service';
 import { UserService, User } from '../../application/services/user.service';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-add-project-member-modal',
-  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, Input, Icon],
+  imports: [
+    ModalContainer,
+    ModalHeader,
+    ModalContent,
+    ModalFooter,
+    Button,
+    Input,
+    Icon,
+    TranslatePipe,
+  ],
   template: `
     <lib-modal-container>
-      <lib-modal-header>Add Member</lib-modal-header>
+      <lib-modal-header>{{ 'members.addMember' | translate }}</lib-modal-header>
       <lib-modal-content>
         <form class="add-project-member-form" (ngSubmit)="handleSubmit()">
           <div class="add-project-member-form_search">
             <lib-input
-              label="Search Users"
-              placeholder="Search by name or email..."
+              [label]="'members.searchUsers' | translate"
+              [placeholder]="'members.searchPlaceholder' | translate"
               [(model)]="searchQuery"
               leftIcon="search"
               (input)="onSearchInput()"
@@ -36,7 +46,7 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
             @if (userService.isLoading()) {
               <div class="add-project-member-form_loading">
                 <lib-icon name="loader" size="sm" animation="spin" />
-                <span>Searching...</span>
+                <span>{{ 'members.searching' | translate }}</span>
               </div>
             }
           </div>
@@ -46,12 +56,12 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
               @if (userService.hasError()) {
                 <div class="add-project-member-form_error">
                   <lib-icon name="circle-alert" size="sm" />
-                  <span>Failed to search users. Please try again.</span>
+                  <span>{{ 'members.searchError' | translate }}</span>
                 </div>
               } @else if (users().length === 0 && !userService.isLoading()) {
                 <div class="add-project-member-form_empty">
                   <lib-icon name="search" size="sm" />
-                  <span>No users found. Try a different search query.</span>
+                  <span>{{ 'members.noUsersFound' | translate }}</span>
                 </div>
               } @else {
                 <div class="add-project-member-form_user-list">
@@ -96,13 +106,15 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
           } @else {
             <div class="add-project-member-form_hint">
               <lib-icon name="info" size="sm" />
-              <span>Enter at least 2 characters to search for users.</span>
+              <span>{{ 'members.searchHint' | translate }}</span>
             </div>
           }
 
           @if (selectedUserId()) {
             <div class="add-project-member-form_role">
-              <label class="add-project-member-form_role-label">Role</label>
+              <label class="add-project-member-form_role-label">{{
+                'members.role' | translate
+              }}</label>
               <div class="add-project-member-form_role-options">
                 @for (role of availableRoles(); track role.value) {
                   <button
@@ -128,7 +140,7 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
       </lib-modal-content>
       <lib-modal-footer>
         <lib-button variant="secondary" (clicked)="handleCancel()" [disabled]="isSubmitting()">
-          Cancel
+          {{ 'common.cancel' | translate }}
         </lib-button>
         <lib-button
           variant="primary"
@@ -136,7 +148,7 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
           [loading]="isSubmitting()"
           [disabled]="!isValid()"
         >
-          Add Member
+          {{ 'members.addMember' | translate }}
         </lib-button>
       </lib-modal-footer>
     </lib-modal-container>
@@ -317,6 +329,7 @@ export class AddProjectMemberModal {
   private readonly membersService = inject(ProjectMembersService);
   readonly userService = inject(UserService);
   private readonly toast = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   readonly projectId = input.required<string>();
   readonly searchQuery = signal('');
@@ -331,18 +344,18 @@ export class AddProjectMemberModal {
   readonly availableRoles = computed(() => [
     {
       value: 'admin' as const,
-      label: 'Admin',
-      description: 'Full access to manage project and members',
+      label: this.translateService.instant('members.admin'),
+      description: this.translateService.instant('members.adminDescription'),
     },
     {
       value: 'member' as const,
-      label: 'Member',
-      description: 'Can create and edit issues, but cannot manage members',
+      label: this.translateService.instant('members.member'),
+      description: this.translateService.instant('members.memberDescription'),
     },
     {
       value: 'viewer' as const,
-      label: 'Viewer',
-      description: 'Read-only access to project content',
+      label: this.translateService.instant('members.viewer'),
+      description: this.translateService.instant('members.viewerDescription'),
     },
   ]);
 
@@ -400,11 +413,11 @@ export class AddProjectMemberModal {
       };
 
       await this.membersService.addMember(this.projectId(), request);
-      this.toast.success('Member added successfully!');
+      this.toast.success(this.translateService.instant('members.addMemberSuccess'));
       this.modal.close({ success: true });
     } catch (error) {
       console.error('Failed to add member:', error);
-      this.toast.error('Failed to add member. Please try again.');
+      this.toast.error(this.translateService.instant('members.addMemberError'));
     } finally {
       this.isSubmitting.set(false);
     }
