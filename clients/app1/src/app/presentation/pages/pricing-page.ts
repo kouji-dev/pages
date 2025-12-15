@@ -55,7 +55,7 @@ interface ComparisonRow {
       <section class="pricing-page_content">
         <div class="pricing-page_container">
           <div class="pricing-page_grid">
-            @for (tier of pricingTiers; track tier.name) {
+            @for (tier of pricingTiers(); track tier.name) {
               <div class="pricing-page_tier" [class.pricing-page_tier--popular]="tier.popular">
                 @if (tier.popular) {
                   <div class="pricing-page_tier-badge">
@@ -116,13 +116,13 @@ interface ComparisonRow {
               <thead>
                 <tr>
                   <th>{{ 'public.pricingPage.comparison.feature' | translate }}</th>
-                  @for (tier of pricingTiers; track tier.name) {
+                  @for (tier of pricingTiers(); track tier.name) {
                     <th>{{ tier.name }}</th>
                   }
                 </tr>
               </thead>
               <tbody>
-                @for (row of comparisonRows; track row.feature) {
+                @for (row of comparisonRows(); track row.feature) {
                   <tr>
                     <td class="pricing-page_table-feature">{{ row.feature }}</td>
                     <td class="pricing-page_table-value">
@@ -185,7 +185,7 @@ interface ComparisonRow {
             <h2 class="pricing-page_faq-title">{{ 'public.pricingPage.faq.title' | translate }}</h2>
           </div>
           <div class="pricing-page_faq-list">
-            @for (faq of faqs; track faq.question) {
+            @for (faq of faqs(); track faq.question) {
               <div class="pricing-page_faq-item">
                 <h3 class="pricing-page_faq-question">{{ faq.question }}</h3>
                 <p class="pricing-page_faq-answer">{{ faq.answer }}</p>

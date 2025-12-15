@@ -44,7 +44,7 @@ interface FeatureCategory {
       <!-- Feature Categories -->
       <section class="features-page_content">
         <div class="features-page_container">
-          @for (category of featureCategories; track category.title) {
+          @for (category of featureCategories(); track category.title) {
             <div class="features-page_category">
               <div class="features-page_category-header">
                 <h2 class="features-page_category-title">{{ category.title }}</h2>
