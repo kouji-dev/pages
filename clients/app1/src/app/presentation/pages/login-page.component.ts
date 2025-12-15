@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Button, Input, ToastService } from 'shared-ui';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { filter, take, timeout, catchError, of, switchMap } from 'rxjs';
@@ -9,13 +10,13 @@ import { NavigationService } from '../../application/services/navigation.service
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [Button, Input, RouterLink],
+  imports: [Button, Input, RouterLink, TranslatePipe],
   template: `
     <div class="login-page">
       <div class="login-page_container">
         <div class="login-page_content">
-          <h1 class="login-page_title">Welcome back</h1>
-          <p class="login-page_subtitle">Sign in to your account to continue</p>
+          <h1 class="login-page_title">{{ 'auth.welcomeBack' | translate }}</h1>
+          <p class="login-page_subtitle">{{ 'auth.signInToContinue' | translate }}</p>
 
           <form
             class="login-page_form"
@@ -23,19 +24,19 @@ import { NavigationService } from '../../application/services/navigation.service
             (submit)="$event.preventDefault()"
           >
             <lib-input
-              label="Email"
+              [label]="'auth.email' | translate"
               type="email"
-              placeholder="Enter your email"
+              [placeholder]="'auth.enterEmail' | translate"
               [(model)]="email"
               [required]="true"
               [errorMessage]="emailError()"
-              helperText="Enter your registered email address"
+              [helperText]="'auth.emailHelper' | translate"
             />
 
             <lib-input
-              label="Password"
+              [label]="'auth.password' | translate"
               type="password"
-              placeholder="Enter your password"
+              [placeholder]="'auth.enterPassword' | translate"
               [(model)]="password"
               [required]="true"
               [errorMessage]="passwordError()"
@@ -51,17 +52,19 @@ import { NavigationService } from '../../application/services/navigation.service
                 class="login-page_submit-button"
                 (clicked)="handleSubmit()"
               >
-                Sign In
+                {{ 'auth.signIn' | translate }}
               </lib-button>
             </div>
           </form>
 
           <div class="login-page_footer">
             <p class="login-page_footer-text">
-              Don't have an account?
-              <a routerLink="/register" class="login-page_link">Sign up</a>
+              {{ 'auth.dontHaveAccount' | translate }}
+              <a routerLink="/register" class="login-page_link">{{ 'auth.signUp' | translate }}</a>
             </p>
-            <a routerLink="/forgot-password" class="login-page_forgot-link">Forgot password?</a>
+            <a routerLink="/forgot-password" class="login-page_forgot-link">{{
+              'auth.forgotPassword' | translate
+            }}</a>
           </div>
         </div>
       </div>
@@ -167,6 +170,7 @@ export class LoginPage {
   private readonly authService = inject(AuthService);
   private readonly navigationService = inject(NavigationService);
   private readonly toast = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   readonly email = signal('');
   readonly password = signal('');
@@ -175,11 +179,11 @@ export class LoginPage {
   readonly emailError = computed(() => {
     const value = this.email();
     if (!value.trim()) {
-      return 'Email is required';
+      return this.translateService.instant('auth.emailRequired');
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(value.trim())) {
-      return 'Please enter a valid email address';
+      return this.translateService.instant('auth.emailInvalid');
     }
     return '';
   });
@@ -187,7 +191,7 @@ export class LoginPage {
   readonly passwordError = computed(() => {
     const value = this.password();
     if (!value.trim()) {
-      return 'Password is required';
+      return this.translateService.instant('auth.passwordRequired');
     }
     return '';
   });
@@ -216,7 +220,7 @@ export class LoginPage {
       .pipe(take(1))
       .subscribe({
         next: () => {
-          this.toast.success('Welcome back!');
+          this.toast.success(this.translateService.instant('auth.welcomeBack') + '!');
           // Navigate directly to organizations list
           this.navigationService.navigateToOrganizations();
           this.isSubmitting.set(false);

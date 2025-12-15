@@ -12,24 +12,25 @@ import { Button, Modal, TextEditor } from 'shared-ui';
 import { CommentService, Comment } from '../../application/services/comment.service';
 import { CommentInput } from './comment-input';
 import { EditCommentModal } from './edit-comment-modal';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-comment-list',
   standalone: true,
-  imports: [Button, CommentInput, TextEditor],
+  imports: [Button, CommentInput, TextEditor, TranslatePipe],
   template: `
     <div class="comment-list">
       <div class="comment-list_header">
-        <h3 class="comment-list_title">Comments</h3>
+        <h3 class="comment-list_title">{{ 'comments.title' | translate }}</h3>
       </div>
 
       <app-comment-input [issueId]="issueId()" [pageId]="pageId()" />
 
       <div class="comment-list_items">
         @if (commentService.isLoading()) {
-          <div class="comment-list_loading">Loading comments...</div>
+          <div class="comment-list_loading">{{ 'comments.loading' | translate }}</div>
         } @else if (comments().length === 0) {
-          <div class="comment-list_empty">No comments yet. Be the first to comment!</div>
+          <div class="comment-list_empty">{{ 'comments.noComments' | translate }}</div>
         } @else {
           @for (comment of comments(); track comment.id) {
             <div class="comment-list_item">
@@ -38,15 +39,17 @@ import { EditCommentModal } from './edit-comment-modal';
                   <span class="comment-list_item-author-name">{{ comment.user_name }}</span>
                   <span class="comment-list_item-date">{{ formatDate(comment.created_at) }}</span>
                   @if (comment.is_edited) {
-                    <span class="comment-list_item-edited">(edited)</span>
+                    <span class="comment-list_item-edited"
+                      >({{ 'comments.edited' | translate }})</span
+                    >
                   }
                 </div>
                 <div class="comment-list_item-actions">
                   <lib-button variant="ghost" size="sm" (clicked)="handleEditComment(comment)">
-                    Edit
+                    {{ 'common.edit' | translate }}
                   </lib-button>
                   <lib-button variant="ghost" size="sm" (clicked)="handleDeleteComment(comment)">
-                    Delete
+                    {{ 'common.delete' | translate }}
                   </lib-button>
                 </div>
               </div>
@@ -160,6 +163,7 @@ export class CommentList {
   readonly commentService = inject(CommentService);
   readonly modal = inject(Modal);
   readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly translateService = inject(TranslateService);
 
   readonly issueId = input<string>();
   readonly pageId = input<string>();
@@ -190,7 +194,7 @@ export class CommentList {
   }
 
   async handleDeleteComment(comment: Comment): Promise<void> {
-    if (!confirm('Are you sure you want to delete this comment?')) {
+    if (!confirm(this.translateService.instant('comments.deleteConfirm'))) {
       return;
     }
 

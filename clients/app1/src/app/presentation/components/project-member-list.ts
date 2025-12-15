@@ -28,40 +28,41 @@ import {
 import { AuthService } from '../../application/services/auth.service';
 import { AddProjectMemberModal } from './add-project-member-modal';
 import { ChangeProjectMemberRoleModal } from './change-project-member-role-modal';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-project-member-list',
-  imports: [Button, Icon, Dropdown, LoadingState, ErrorState, EmptyState, Table],
+  imports: [Button, Icon, Dropdown, LoadingState, ErrorState, EmptyState, Table, TranslatePipe],
   template: `
     <div class="project-member-list">
       <div class="project-member-list_header">
         <div>
-          <h2 class="project-member-list_title">Members</h2>
-          <p class="project-member-list_subtitle">Manage project members and their roles.</p>
+          <h2 class="project-member-list_title">{{ 'members.title' | translate }}</h2>
+          <p class="project-member-list_subtitle">{{ 'members.subtitle' | translate }}</p>
         </div>
         @if (canAddMembers()) {
           <lib-button variant="primary" size="md" leftIcon="plus" (clicked)="handleAddMember()">
-            Add Member
+            {{ 'members.addMember' | translate }}
           </lib-button>
         }
       </div>
 
       <div class="project-member-list_content">
         @if (membersService.isLoading()) {
-          <lib-loading-state message="Loading members..." />
+          <lib-loading-state [message]="'members.loadingMembers' | translate" />
         } @else if (membersService.hasError()) {
           <lib-error-state
-            title="Failed to Load Members"
+            [title]="'members.failedToLoad' | translate"
             [message]="errorMessage()"
-            [retryLabel]="'Retry'"
+            [retryLabel]="'common.retry' | translate"
             (onRetry)="handleRetry()"
           />
         } @else if (members().length === 0) {
           <lib-empty-state
-            title="No members yet"
-            message="Add members to your project to collaborate together."
+            [title]="'members.noMembers' | translate"
+            [message]="'members.noMembersDescription' | translate"
             icon="users"
-            [actionLabel]="canAddMembers() ? 'Add Member' : ''"
+            [actionLabel]="canAddMembers() ? ('members.addMember' | translate) : ''"
             [actionIcon]="canAddMembers() ? 'plus' : undefined"
             (onAction)="handleAddMember()"
           />
@@ -132,7 +133,7 @@ import { ChangeProjectMemberRoleModal } from './change-project-member-role-modal
                   (clicked)="handleChangeRole(member, actionsDropdown)"
                 >
                   <lib-icon name="user-cog" size="sm" class="project-member-list_action-icon" />
-                  <span>Change Role</span>
+                  <span>{{ 'members.changeRole' | translate }}</span>
                 </lib-button>
               }
               @if (canRemoveMember(member)) {
@@ -143,7 +144,7 @@ import { ChangeProjectMemberRoleModal } from './change-project-member-role-modal
                   (clicked)="handleRemoveMember(member, actionsDropdown)"
                 >
                   <lib-icon name="user-minus" size="sm" class="project-member-list_action-icon" />
-                  <span>Remove</span>
+                  <span>{{ 'members.remove' | translate }}</span>
                 </lib-button>
               }
             </div>
@@ -279,6 +280,7 @@ export class ProjectMemberList {
   readonly modal = inject(Modal);
   readonly toast = inject(ToastService);
   readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly translateService = inject(TranslateService);
 
   readonly projectId = input.required<string>();
 
@@ -290,9 +292,11 @@ export class ProjectMemberList {
   readonly errorMessage = computed(() => {
     const error = this.membersService.error();
     if (error) {
-      return error instanceof Error ? error.message : 'An error occurred while loading members.';
+      return error instanceof Error
+        ? error.message
+        : this.translateService.instant('members.loadError');
     }
-    return 'An unknown error occurred.';
+    return this.translateService.instant('common.unknownError');
   });
 
   @ViewChild('cellTemplate') cellTemplate!: TemplateRef<{
@@ -308,12 +312,12 @@ export class ProjectMemberList {
   readonly columns = computed<TableColumn<ProjectMember>[]>(() => [
     {
       key: 'member',
-      label: 'Member',
+      label: this.translateService.instant('members.title'),
       width: '40%',
     },
     {
       key: 'role',
-      label: 'Role',
+      label: this.translateService.instant('members.role'),
       width: '20%',
     },
   ]);
@@ -345,11 +349,11 @@ export class ProjectMemberList {
   getRoleLabel(role: 'admin' | 'member' | 'viewer'): string {
     switch (role) {
       case 'admin':
-        return 'Admin';
+        return this.translateService.instant('members.admin');
       case 'member':
-        return 'Member';
+        return this.translateService.instant('members.member');
       case 'viewer':
-        return 'Viewer';
+        return this.translateService.instant('members.viewer');
       default:
         return role;
     }
@@ -391,17 +395,23 @@ export class ProjectMemberList {
   async handleRemoveMember(member: ProjectMember, dropdown: Dropdown): Promise<void> {
     dropdown.open.set(false);
 
-    if (!confirm(`Are you sure you want to remove ${member.user_name} from this project?`)) {
+    if (
+      !confirm(
+        this.translateService.instant('members.removeConfirm', { userName: member.user_name }),
+      )
+    ) {
       return;
     }
 
     try {
       await this.membersService.removeMember(this.projectId(), member.user_id);
-      this.toast.success('Member removed successfully!');
+      this.toast.success(this.translateService.instant('members.removeSuccess'));
     } catch (error) {
       console.error('Failed to remove member:', error);
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to remove member. Please try again.';
+        error instanceof Error
+          ? error.message
+          : this.translateService.instant('members.removeError');
       this.toast.error(errorMessage);
     }
   }

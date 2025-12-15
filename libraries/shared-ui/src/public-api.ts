@@ -31,3 +31,4 @@ export * from './lib/sidenav/sidenav';
 export type { SidenavItem } from './lib/sidenav/sidenav';
 export * from './lib/select/select';
 export type { SelectOption } from './lib/select/select';
+export * from './lib/i18n/translate.service';

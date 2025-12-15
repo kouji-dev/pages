@@ -1,7 +1,8 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, inject } from '@angular/core';
 import { Button, Icon } from 'shared-ui';
 import { PublicNav } from '../components/public-nav';
 import { Footer } from '../components/footer';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 interface PricingTier {
   name: string;
@@ -25,21 +26,27 @@ interface ComparisonRow {
 
 @Component({
   selector: 'app-pricing-page',
-  imports: [Button, Icon, PublicNav, Footer],
+  imports: [Button, Icon, PublicNav, Footer, TranslatePipe],
   template: `
     <div class="pricing-page">
       <app-public-nav />
       <!-- Header Section -->
       <section class="pricing-page_header">
         <div class="pricing-page_header-container">
-          <h1 class="pricing-page_title">Simple, Transparent Pricing</h1>
+          <h1 class="pricing-page_title">{{ 'public.pricingPage.header.title' | translate }}</h1>
           <p class="pricing-page_subtitle">
-            Choose the perfect plan for your team. All plans include a 14-day free trial.
+            {{ 'public.pricingPage.header.subtitle' | translate }}
           </p>
           <div class="pricing-page_toggle">
-            <span class="pricing-page_toggle-label">Monthly</span>
-            <span class="pricing-page_toggle-label pricing-page_toggle-label--active">Annual</span>
-            <span class="pricing-page_toggle-badge">Save 20%</span>
+            <span class="pricing-page_toggle-label">{{
+              'public.pricingPage.header.monthly' | translate
+            }}</span>
+            <span class="pricing-page_toggle-label pricing-page_toggle-label--active">{{
+              'public.pricingPage.header.annual' | translate
+            }}</span>
+            <span class="pricing-page_toggle-badge">{{
+              'public.pricingPage.header.save20' | translate
+            }}</span>
           </div>
         </div>
       </section>
@@ -48,10 +55,12 @@ interface ComparisonRow {
       <section class="pricing-page_content">
         <div class="pricing-page_container">
           <div class="pricing-page_grid">
-            @for (tier of pricingTiers; track tier.name) {
+            @for (tier of pricingTiers(); track tier.name) {
               <div class="pricing-page_tier" [class.pricing-page_tier--popular]="tier.popular">
                 @if (tier.popular) {
-                  <div class="pricing-page_tier-badge">Most Popular</div>
+                  <div class="pricing-page_tier-badge">
+                    {{ 'public.pricingPage.mostPopular' | translate }}
+                  </div>
                 }
                 <div class="pricing-page_tier-header">
                   <h3 class="pricing-page_tier-name">{{ tier.name }}</h3>
@@ -74,7 +83,11 @@ interface ComparisonRow {
                     <lib-button
                       [variant]="tier.ctaVariant"
                       size="lg"
-                      [link]="tier.name === 'Enterprise' ? null : ['/register']"
+                      [link]="
+                        tier.ctaVariant === 'primary' && tier.name === pricingTiers()[4].name
+                          ? null
+                          : ['/register']
+                      "
                       class="pricing-page_tier-button"
                     >
                       {{ tier.ctaLabel }}
@@ -91,21 +104,25 @@ interface ComparisonRow {
       <section class="pricing-page_comparison">
         <div class="pricing-page_container">
           <div class="pricing-page_comparison-header">
-            <h2 class="pricing-page_comparison-title">Compare Plans</h2>
-            <p class="pricing-page_comparison-description">See how features differ across plans</p>
+            <h2 class="pricing-page_comparison-title">
+              {{ 'public.pricingPage.comparison.title' | translate }}
+            </h2>
+            <p class="pricing-page_comparison-description">
+              {{ 'public.pricingPage.comparison.description' | translate }}
+            </p>
           </div>
           <div class="pricing-page_comparison-table">
             <table class="pricing-page_table">
               <thead>
                 <tr>
-                  <th>Feature</th>
-                  @for (tier of pricingTiers; track tier.name) {
+                  <th>{{ 'public.pricingPage.comparison.feature' | translate }}</th>
+                  @for (tier of pricingTiers(); track tier.name) {
                     <th>{{ tier.name }}</th>
                   }
                 </tr>
               </thead>
               <tbody>
-                @for (row of comparisonRows; track row.feature) {
+                @for (row of comparisonRows(); track row.feature) {
                   <tr>
                     <td class="pricing-page_table-feature">{{ row.feature }}</td>
                     <td class="pricing-page_table-value">
@@ -165,10 +182,10 @@ interface ComparisonRow {
       <section class="pricing-page_faq">
         <div class="pricing-page_container">
           <div class="pricing-page_faq-header">
-            <h2 class="pricing-page_faq-title">Frequently Asked Questions</h2>
+            <h2 class="pricing-page_faq-title">{{ 'public.pricingPage.faq.title' | translate }}</h2>
           </div>
           <div class="pricing-page_faq-list">
-            @for (faq of faqs; track faq.question) {
+            @for (faq of faqs(); track faq.question) {
               <div class="pricing-page_faq-item">
                 <h3 class="pricing-page_faq-question">{{ faq.question }}</h3>
                 <p class="pricing-page_faq-answer">{{ faq.answer }}</p>
@@ -181,15 +198,17 @@ interface ComparisonRow {
       <!-- CTA Section -->
       <section class="pricing-page_cta">
         <div class="pricing-page_cta-container">
-          <h2 class="pricing-page_cta-title">Still have questions?</h2>
+          <h2 class="pricing-page_cta-title">{{ 'public.pricingPage.cta.title' | translate }}</h2>
           <p class="pricing-page_cta-description">
-            Our team is here to help you find the perfect plan for your needs.
+            {{ 'public.pricingPage.cta.description' | translate }}
           </p>
           <div class="pricing-page_cta-actions">
-            <lib-button variant="primary" size="lg">Contact Sales</lib-button>
-            <lib-button variant="secondary" size="lg" [link]="['/features']"
-              >View Features</lib-button
-            >
+            <lib-button variant="primary" size="lg">{{
+              'public.pricingPage.cta.contactSales' | translate
+            }}</lib-button>
+            <lib-button variant="secondary" size="lg" [link]="['/features']">{{
+              'public.pricingPage.cta.viewFeatures' | translate
+            }}</lib-button>
           </div>
         </div>
       </section>
@@ -528,137 +547,159 @@ interface ComparisonRow {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PricingPage {
-  readonly pricingTiers: PricingTier[] = [
+  private readonly translateService = inject(TranslateService);
+
+  readonly pricingTiers = computed<PricingTier[]>(() => [
     {
-      name: 'Free',
+      name: this.translateService.instant('public.pricingPage.tiers.free.name'),
       price: '$0',
-      priceSubtext: 'Forever free',
-      description: 'Perfect for small teams and personal projects',
+      priceSubtext: this.translateService.instant('public.pricingPage.tiers.free.priceSubtext'),
+      description: this.translateService.instant('public.pricingPage.tiers.free.description'),
       features: [
-        'Up to 10 users',
-        'Unlimited projects and issues',
-        '5GB storage per workspace',
-        'Core features (issues, boards, docs)',
-        'Basic integrations (5 integrations)',
-        'Community support',
-        'Up to 10 automation rules',
-        'Basic reporting',
+        this.translateService.instant('public.pricingPage.tiers.free.features.users'),
+        this.translateService.instant('public.pricingPage.tiers.free.features.projects'),
+        this.translateService.instant('public.pricingPage.tiers.free.features.storage'),
+        this.translateService.instant('public.pricingPage.tiers.free.features.coreFeatures'),
+        this.translateService.instant('public.pricingPage.tiers.free.features.integrations'),
+        this.translateService.instant('public.pricingPage.tiers.free.features.support'),
+        this.translateService.instant('public.pricingPage.tiers.free.features.automation'),
+        this.translateService.instant('public.pricingPage.tiers.free.features.reporting'),
       ],
-      ctaLabel: 'Get Started',
+      ctaLabel: this.translateService.instant('public.pricingPage.getStarted'),
       ctaVariant: 'secondary',
     },
     {
-      name: 'Starter',
+      name: this.translateService.instant('public.pricingPage.tiers.starter.name'),
       price: '$5',
-      priceSubtext: 'per user/month (annual)',
-      description: 'For growing teams that need more',
+      priceSubtext: this.translateService.instant('public.pricingPage.tiers.starter.priceSubtext'),
+      description: this.translateService.instant('public.pricingPage.tiers.starter.description'),
       features: [
-        'Up to 25 users',
-        '25GB storage per workspace',
-        'All integrations',
-        'API access',
-        '50 automation rules',
-        'Advanced reporting',
-        'Email support (48-hour response)',
-        'Custom fields (10 per project)',
-        'Advanced permissions',
-        'Export data',
+        this.translateService.instant('public.pricingPage.tiers.starter.features.users'),
+        this.translateService.instant('public.pricingPage.tiers.starter.features.storage'),
+        this.translateService.instant('public.pricingPage.tiers.starter.features.integrations'),
+        this.translateService.instant('public.pricingPage.tiers.starter.features.api'),
+        this.translateService.instant('public.pricingPage.tiers.starter.features.automation'),
+        this.translateService.instant('public.pricingPage.tiers.starter.features.reporting'),
+        this.translateService.instant('public.pricingPage.tiers.starter.features.support'),
+        this.translateService.instant('public.pricingPage.tiers.starter.features.customFields'),
+        this.translateService.instant('public.pricingPage.tiers.starter.features.permissions'),
+        this.translateService.instant('public.pricingPage.tiers.starter.features.export'),
       ],
-      ctaLabel: 'Start Free Trial',
+      ctaLabel: this.translateService.instant('public.pricingPage.startFreeTrial'),
       ctaVariant: 'secondary',
     },
     {
-      name: 'Professional',
+      name: this.translateService.instant('public.pricingPage.tiers.professional.name'),
       price: '$10',
-      priceSubtext: 'per user/month (annual)',
-      description: 'For established teams needing advanced features',
+      priceSubtext: this.translateService.instant(
+        'public.pricingPage.tiers.professional.priceSubtext',
+      ),
+      description: this.translateService.instant(
+        'public.pricingPage.tiers.professional.description',
+      ),
       features: [
-        'Up to 100 users',
-        '100GB storage per workspace',
-        'Unlimited automation rules',
-        'Advanced analytics',
-        'Custom workflows',
-        'Priority email support (24-hour)',
-        'SSO (SAML, OAuth)',
-        'Unlimited custom fields',
-        'Advanced security',
-        'Audit logs (90 days)',
-        'White-labeling',
-        'Custom domain',
-        'Time tracking',
-        'Client portals (1 portal)',
+        this.translateService.instant('public.pricingPage.tiers.professional.features.users'),
+        this.translateService.instant('public.pricingPage.tiers.professional.features.storage'),
+        this.translateService.instant('public.pricingPage.tiers.professional.features.automation'),
+        this.translateService.instant('public.pricingPage.tiers.professional.features.analytics'),
+        this.translateService.instant('public.pricingPage.tiers.professional.features.workflows'),
+        this.translateService.instant('public.pricingPage.tiers.professional.features.support'),
+        this.translateService.instant('public.pricingPage.tiers.professional.features.sso'),
+        this.translateService.instant(
+          'public.pricingPage.tiers.professional.features.customFields',
+        ),
+        this.translateService.instant('public.pricingPage.tiers.professional.features.security'),
+        this.translateService.instant('public.pricingPage.tiers.professional.features.audit'),
+        this.translateService.instant('public.pricingPage.tiers.professional.features.whiteLabel'),
+        this.translateService.instant('public.pricingPage.tiers.professional.features.domain'),
+        this.translateService.instant(
+          'public.pricingPage.tiers.professional.features.timeTracking',
+        ),
+        this.translateService.instant('public.pricingPage.tiers.professional.features.portals'),
       ],
-      ctaLabel: 'Start Free Trial',
+      ctaLabel: this.translateService.instant('public.pricingPage.startFreeTrial'),
       ctaVariant: 'primary',
       popular: true,
     },
     {
-      name: 'Business',
+      name: this.translateService.instant('public.pricingPage.tiers.business.name'),
       price: '$20',
-      priceSubtext: 'per user/month (annual)',
-      description: 'For large organizations with complex needs',
+      priceSubtext: this.translateService.instant('public.pricingPage.tiers.business.priceSubtext'),
+      description: this.translateService.instant('public.pricingPage.tiers.business.description'),
       features: [
-        'Up to 500 users',
-        '500GB storage per workspace',
-        'AI-powered features',
-        'Portfolio management',
-        'Advanced BI and reporting',
-        'Phone and chat support (4-hour)',
-        'Dedicated account manager',
-        'Extended audit logs (1 year)',
-        'Advanced compliance',
-        'Data residency options',
-        'Multiple client portals',
-        'Custom integrations support',
-        'Training sessions',
+        this.translateService.instant('public.pricingPage.tiers.business.features.users'),
+        this.translateService.instant('public.pricingPage.tiers.business.features.storage'),
+        this.translateService.instant('public.pricingPage.tiers.business.features.ai'),
+        this.translateService.instant('public.pricingPage.tiers.business.features.portfolio'),
+        this.translateService.instant('public.pricingPage.tiers.business.features.bi'),
+        this.translateService.instant('public.pricingPage.tiers.business.features.support'),
+        this.translateService.instant('public.pricingPage.tiers.business.features.accountManager'),
+        this.translateService.instant('public.pricingPage.tiers.business.features.audit'),
+        this.translateService.instant('public.pricingPage.tiers.business.features.compliance'),
+        this.translateService.instant('public.pricingPage.tiers.business.features.dataResidency'),
+        this.translateService.instant('public.pricingPage.tiers.business.features.portals'),
+        this.translateService.instant('public.pricingPage.tiers.business.features.integrations'),
+        this.translateService.instant('public.pricingPage.tiers.business.features.training'),
       ],
-      ctaLabel: 'Start Free Trial',
+      ctaLabel: this.translateService.instant('public.pricingPage.startFreeTrial'),
       ctaVariant: 'secondary',
     },
     {
-      name: 'Enterprise',
-      price: 'Custom',
-      priceSubtext: 'Contact sales',
-      description: 'For enterprises with custom requirements',
+      name: this.translateService.instant('public.pricingPage.tiers.enterprise.name'),
+      price: this.translateService.instant('public.pricingPage.tiers.enterprise.price'),
+      priceSubtext: this.translateService.instant(
+        'public.pricingPage.tiers.enterprise.priceSubtext',
+      ),
+      description: this.translateService.instant('public.pricingPage.tiers.enterprise.description'),
       features: [
-        'Unlimited users',
-        'Unlimited storage',
-        'Everything in Business tier',
-        'Dedicated infrastructure (optional)',
-        'On-premises deployment',
-        '99.99% SLA',
-        '24/7 phone support (1-hour)',
-        'Dedicated success manager',
-        'Custom SLA',
-        'Advanced security audits',
-        'Compliance certifications',
-        'Custom integrations development',
-        'White-glove migration',
+        this.translateService.instant('public.pricingPage.tiers.enterprise.features.users'),
+        this.translateService.instant('public.pricingPage.tiers.enterprise.features.storage'),
+        this.translateService.instant('public.pricingPage.tiers.enterprise.features.businessTier'),
+        this.translateService.instant(
+          'public.pricingPage.tiers.enterprise.features.infrastructure',
+        ),
+        this.translateService.instant('public.pricingPage.tiers.enterprise.features.onPremises'),
+        this.translateService.instant('public.pricingPage.tiers.enterprise.features.sla'),
+        this.translateService.instant('public.pricingPage.tiers.enterprise.features.support'),
+        this.translateService.instant(
+          'public.pricingPage.tiers.enterprise.features.successManager',
+        ),
+        this.translateService.instant('public.pricingPage.tiers.enterprise.features.customSla'),
+        this.translateService.instant(
+          'public.pricingPage.tiers.enterprise.features.securityAudits',
+        ),
+        this.translateService.instant('public.pricingPage.tiers.enterprise.features.compliance'),
+        this.translateService.instant('public.pricingPage.tiers.enterprise.features.integrations'),
+        this.translateService.instant('public.pricingPage.tiers.enterprise.features.migration'),
       ],
-      ctaLabel: 'Contact Sales',
+      ctaLabel: this.translateService.instant('public.pricingPage.contactSales'),
       ctaVariant: 'primary',
     },
-  ];
+  ]);
 
-  readonly comparisonRows: ComparisonRow[] = [
+  readonly comparisonRows = computed<ComparisonRow[]>(() => [
     {
-      feature: 'Users',
-      free: 'Up to 10',
-      starter: 'Up to 25',
-      professional: 'Up to 100',
-      business: 'Up to 500',
-      enterprise: 'Unlimited',
+      feature: this.translateService.instant('public.pricingPage.comparison.rows.users.feature'),
+      free: this.translateService.instant('public.pricingPage.comparison.rows.users.free'),
+      starter: this.translateService.instant('public.pricingPage.comparison.rows.users.starter'),
+      professional: this.translateService.instant(
+        'public.pricingPage.comparison.rows.users.professional',
+      ),
+      business: this.translateService.instant('public.pricingPage.comparison.rows.users.business'),
+      enterprise: this.translateService.instant(
+        'public.pricingPage.comparison.rows.users.enterprise',
+      ),
     },
     {
-      feature: 'Storage per workspace',
+      feature: this.translateService.instant('public.pricingPage.comparison.rows.storage.feature'),
       free: '5GB',
       starter: '25GB',
       professional: '100GB',
       business: '500GB',
-      enterprise: 'Unlimited',
+      enterprise: this.translateService.instant('public.pricingPage.unlimited'),
     },
     {
-      feature: 'API Access',
+      feature: this.translateService.instant('public.pricingPage.comparison.rows.api.feature'),
       free: false,
       starter: true,
       professional: true,
@@ -666,7 +707,7 @@ export class PricingPage {
       enterprise: true,
     },
     {
-      feature: 'SSO',
+      feature: this.translateService.instant('public.pricingPage.comparison.rows.sso.feature'),
       free: false,
       starter: false,
       professional: true,
@@ -674,7 +715,9 @@ export class PricingPage {
       enterprise: true,
     },
     {
-      feature: 'Advanced Analytics',
+      feature: this.translateService.instant(
+        'public.pricingPage.comparison.rows.analytics.feature',
+      ),
       free: false,
       starter: false,
       professional: true,
@@ -682,7 +725,7 @@ export class PricingPage {
       enterprise: true,
     },
     {
-      feature: 'AI Features',
+      feature: this.translateService.instant('public.pricingPage.comparison.rows.ai.feature'),
       free: false,
       starter: false,
       professional: false,
@@ -690,7 +733,7 @@ export class PricingPage {
       enterprise: true,
     },
     {
-      feature: 'Dedicated Support',
+      feature: this.translateService.instant('public.pricingPage.comparison.rows.support.feature'),
       free: false,
       starter: false,
       professional: false,
@@ -698,49 +741,51 @@ export class PricingPage {
       enterprise: true,
     },
     {
-      feature: 'On-Premises',
+      feature: this.translateService.instant(
+        'public.pricingPage.comparison.rows.onPremises.feature',
+      ),
       free: false,
       starter: false,
       professional: false,
       business: false,
       enterprise: true,
     },
-  ];
+  ]);
 
-  readonly faqs = [
+  readonly faqs = computed(() => [
     {
-      question: 'Can I change plans later?',
-      answer:
-        'Yes! You can upgrade, downgrade, or cancel your plan at any time. Changes will be reflected in your next billing cycle.',
+      question: this.translateService.instant('public.pricingPage.faq.items.changePlans.question'),
+      answer: this.translateService.instant('public.pricingPage.faq.items.changePlans.answer'),
     },
     {
-      question: 'Do you offer discounts for annual billing?',
-      answer:
-        'Yes! Annual plans save you 20% compared to monthly billing. This discount is automatically applied when you choose annual billing.',
+      question: this.translateService.instant('public.pricingPage.faq.items.discounts.question'),
+      answer: this.translateService.instant('public.pricingPage.faq.items.discounts.answer'),
     },
     {
-      question: 'What payment methods do you accept?',
-      answer:
-        'We accept all major credit cards (Visa, Mastercard, American Express) and support payments via bank transfer for Enterprise plans.',
+      question: this.translateService.instant(
+        'public.pricingPage.faq.items.paymentMethods.question',
+      ),
+      answer: this.translateService.instant('public.pricingPage.faq.items.paymentMethods.answer'),
     },
     {
-      question: 'Is there a free trial?',
-      answer:
-        'Yes! All paid plans include a 14-day free trial. No credit card required. You can explore all features risk-free.',
+      question: this.translateService.instant('public.pricingPage.faq.items.freeTrial.question'),
+      answer: this.translateService.instant('public.pricingPage.faq.items.freeTrial.answer'),
     },
     {
-      question: 'Can I get a refund?',
-      answer:
-        "We offer a 30-day money-back guarantee for all annual plans. If you're not satisfied, contact us within 30 days for a full refund.",
+      question: this.translateService.instant('public.pricingPage.faq.items.refund.question'),
+      answer: this.translateService.instant('public.pricingPage.faq.items.refund.answer'),
     },
     {
-      question: 'What happens if I exceed my plan limits?',
-      answer:
-        "We'll notify you when you approach your limits. You can upgrade your plan at any time to continue using Pages without interruption.",
+      question: this.translateService.instant('public.pricingPage.faq.items.exceedLimits.question'),
+      answer: this.translateService.instant('public.pricingPage.faq.items.exceedLimits.answer'),
     },
-  ];
+  ]);
 
   isStringValue(value: string | boolean): value is string {
     return typeof value === 'string' && value !== '';
+  }
+
+  isEnterpriseTier(tier: PricingTier): boolean {
+    return tier.ctaLabel === this.translateService.instant('public.pricingPage.contactSales');
   }
 }

@@ -1,0 +1,1018 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "actions": "Actions",
+    "noResults": "Aucun résultat trouvé",
+    "retry": "Réessayer",
+    "saveChanges": "Enregistrer les modifications",
+    "unknownError": "Une erreur inconnue s'est produite.",
+    "and": "et",
+    "tryAgain": "Réessayer",
+    "reset": "Réinitialiser",
+    "switchToLightMode": "Passer en mode clair",
+    "switchToDarkMode": "Passer en mode sombre",
+    "notFound": {
+      "title": "Page introuvable",
+      "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
+      "goToHome": "Aller à l'accueil"
+    }
+  },
+  "navigation": {
+    "organizations": "Organisations",
+    "projects": "Projets",
+    "spaces": "Espaces",
+    "issues": "Tâches",
+    "pages": "Pages",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "notifications": "Notifications"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllAsRead": "Tout marquer comme lu",
+    "noNotifications": "Aucune notification",
+    "failedToLoad": "Échec du chargement des notifications",
+    "viewAll": "Voir toutes les notifications",
+    "justNow": "À l'instant",
+    "minutesAgo": "Il y a {{count}} min",
+    "hoursAgo": "Il y a {{count}} h",
+    "daysAgo": "Il y a {{count}} j"
+  },
+  "search": {
+    "placeholder": "Rechercher des tâches et des pages...",
+    "searching": "Recherche...",
+    "noResults": "Aucun résultat trouvé",
+    "startTyping": "Commencez à taper pour rechercher...",
+    "issues": "Tâches",
+    "pages": "Pages",
+    "organizations": "Organisations",
+    "projects": "Projets",
+    "spaces": "Espaces"
+  },
+  "language": {
+    "english": "English",
+    "french": "Français",
+    "switchLanguage": "Changer de langue"
+  },
+  "issues": {
+    "title": "Tâches",
+    "createIssue": "Créer une tâche",
+    "editIssue": "Modifier la tâche",
+    "searchIssues": "Rechercher des tâches...",
+    "loadingIssues": "Chargement des tâches...",
+    "failedToLoad": "Échec du chargement des tâches",
+    "noIssues": "Aucune tâche pour le moment",
+    "noIssuesDescription": "Commencez par créer votre première tâche pour suivre le travail dans ce projet.",
+    "assigned": "Assigné",
+    "unassigned": "Non assigné",
+    "form": {
+      "title": "Titre",
+      "titlePlaceholder": "Saisir le titre de la tâche",
+      "titleRequired": "Le titre est requis",
+      "titleMaxLength": "Le titre doit contenir 255 caractères ou moins",
+      "titleHelper": "Brève description de la tâche",
+      "description": "Description",
+      "descriptionPlaceholder": "Décrire la tâche en détail (optionnel)",
+      "descriptionPlaceholderEdit": "Décrire la tâche en détail",
+      "type": "Type",
+      "priority": "Priorité",
+      "status": "Statut",
+      "assignee": "Assigné à",
+      "assigneeOptional": "Assigné à (optionnel)",
+      "dueDate": "Date d'échéance",
+      "dueDateOptional": "Date d'échéance (optionnel)",
+      "selectType": "Sélectionner le type...",
+      "selectPriority": "Sélectionner la priorité...",
+      "selectStatus": "Sélectionner le statut...",
+      "saveChanges": "Enregistrer les modifications"
+    },
+    "filters": {
+      "status": "Statut",
+      "type": "Type",
+      "assignee": "Assigné à",
+      "allStatuses": "Tous les statuts",
+      "allTypes": "Tous les types",
+      "allAssignees": "Tous les assignés",
+      "clearFilters": "Effacer les filtres"
+    },
+    "pagination": {
+      "page": "Page",
+      "of": "sur"
+    },
+    "table": {
+      "key": "Clé",
+      "title": "Titre",
+      "type": "Type",
+      "status": "Statut",
+      "priority": "Priorité",
+      "assignee": "Assigné à",
+      "created": "Créé"
+    },
+    "status": {
+      "todo": "À faire",
+      "inProgress": "En cours",
+      "done": "Terminé",
+      "cancelled": "Annulé"
+    },
+    "type": {
+      "task": "Tâche",
+      "bug": "Bug",
+      "story": "Histoire",
+      "epic": "Épopée"
+    },
+    "priority": {
+      "low": "Faible",
+      "medium": "Moyenne",
+      "high": "Élevée",
+      "critical": "Critique"
+    },
+    "updateStatusError": "Échec de la mise à jour du statut de la tâche"
+  },
+  "pages": {
+    "title": "Pages",
+    "createPage": "Créer une page",
+    "editPage": "Modifier la page",
+    "deletePage": "Supprimer la page",
+    "pageTitle": "Titre de la page",
+    "loadingPage": "Chargement de la page...",
+    "failedToLoad": "Échec du chargement de la page",
+    "notFound": "Page introuvable",
+    "notFoundDescription": "La page que vous recherchez n'existe pas ou vous n'y avez pas accès.",
+    "startWriting": "Commencez à écrire...",
+    "noContent": "Aucun contenu pour le moment. Cliquez sur Modifier pour ajouter du contenu.",
+    "createdBy": "Créé par",
+    "lastEditedBy": "Dernière modification par",
+    "lastUpdated": "Dernière mise à jour",
+    "on": "le",
+    "titleRequired": "Le titre est requis",
+    "titleMaxLength": "Le titre doit contenir 255 caractères ou moins",
+    "noPagesYet": "Aucune page pour le moment",
+    "loadingPages": "Chargement des pages...",
+    "updated": "Mis à jour",
+    "loadError": "Une erreur s'est produite lors du chargement des pages.",
+    "noPagesYetDescription": "Commencez par créer votre première page dans cet espace.",
+    "modals": {
+      "createPage": "Créer une page",
+      "pageTitle": "Titre de la page",
+      "pageTitlePlaceholder": "Saisir le titre de la page",
+      "pageTitleHelper": "Choisissez un titre pour votre page",
+      "parentPage": "Page parente (optionnel)",
+      "parentPagePlaceholder": "Aucune (page racine)",
+      "parentPageHelper": "Sélectionnez une page parente pour créer une page enfant",
+      "titleRequired": "Le titre de la page est requis",
+      "createSuccess": "Page créée avec succès !",
+      "createError": "Échec de la création de la page. Veuillez réessayer."
+    }
+  },
+  "organizations": {
+    "title": "Organisations",
+    "subtitle": "Gérez vos organisations et équipes en un seul endroit.",
+    "createOrganization": "Créer une organisation",
+    "loadingOrganizations": "Chargement des organisations...",
+    "failedToLoad": "Échec du chargement des organisations",
+    "noOrganizations": "Aucune organisation pour le moment",
+    "noOrganizationsDescription": "Commencez par créer votre première organisation pour gérer les équipes et les projets.",
+    "selectOrganization": "Sélectionner une organisation",
+    "manage": "Gérer",
+    "backToOrganizations": "Retour aux organisations",
+    "switchTo": "Basculer vers",
+    "members": "membre(s)",
+    "viewSpace": "Voir",
+    "modals": {
+      "createOrganization": "Créer une organisation",
+      "organizationName": "Nom de l'organisation",
+      "organizationNamePlaceholder": "Saisir le nom de l'organisation",
+      "organizationNameHelper": "Choisissez un nom pour votre organisation",
+      "slug": "Identifiant",
+      "slugPlaceholder": "organisation-identifiant",
+      "slugHelper": "Identifiant convivial pour l'URL (minuscules, tirets uniquement)",
+      "description": "Description",
+      "descriptionPlaceholder": "Décrire votre organisation (optionnel)",
+      "descriptionHelper": "Description optionnelle de votre organisation",
+      "nameRequired": "Le nom de l'organisation est requis",
+      "nameMinLength": "Le nom de l'organisation doit contenir au moins 3 caractères",
+      "slugRequired": "L'identifiant est requis",
+      "slugInvalidFormat": "L'identifiant ne peut contenir que des lettres minuscules, des chiffres et des tirets",
+      "slugMinLength": "L'identifiant doit contenir au moins 3 caractères",
+      "createSuccess": "Organisation créée avec succès !",
+      "createError": "Échec de la création de l'organisation. Veuillez réessayer.",
+      "deleteOrganization": "Supprimer l'organisation",
+      "deleteWarning": "Êtes-vous sûr de vouloir supprimer {{name}} ? Cette action est irréversible.",
+      "deleteWillDelete": "Cela supprimera définitivement :",
+      "deleteItem1": "L'organisation et toutes ses données",
+      "deleteItem2": "Tous les projets, tâches et pages",
+      "deleteItem3": "Toutes les associations de membres",
+      "deleteWarningLabel": "Avertissement :",
+      "deleteWarningText": "Cette action est permanente et irréversible."
+    }
+  },
+  "projects": {
+    "title": "Projets",
+    "subtitle": "Gérez vos projets et suivez les tâches en un seul endroit.",
+    "createProject": "Créer un projet",
+    "loadingProjects": "Chargement des projets...",
+    "failedToLoad": "Échec du chargement des projets",
+    "noOrganizationSelected": "Aucune organisation sélectionnée",
+    "noOrganizationSelectedDescription": "Veuillez sélectionner ou créer une organisation pour voir les projets.",
+    "goToOrganizations": "Aller aux organisations",
+    "searchPlaceholder": "Rechercher des projets par nom, clé ou description...",
+    "noProjectsFound": "Aucun projet trouvé",
+    "noProjectsFoundDescription": "Essayez d'ajuster vos termes de recherche.",
+    "noProjects": "Aucun projet pour le moment",
+    "noProjectsDescription": "Commencez par créer votre premier projet pour gérer les tâches.",
+    "viewProject": "Voir",
+    "members": "membre(s)",
+    "modals": {
+      "createProject": "Créer un projet",
+      "projectName": "Nom du projet",
+      "projectNamePlaceholder": "Saisir le nom du projet",
+      "projectNameHelper": "Choisissez un nom pour votre projet",
+      "projectKey": "Clé du projet",
+      "projectKeyPlaceholder": "PROJ",
+      "projectKeyHelper": "Identifiant court (généré automatiquement à partir du nom, max 10 caractères, majuscules)",
+      "description": "Description",
+      "descriptionPlaceholder": "Décrire votre projet (optionnel)",
+      "descriptionHelper": "Description optionnelle de votre projet",
+      "nameRequired": "Le nom du projet est requis",
+      "nameMinLength": "Le nom du projet doit contenir au moins 3 caractères",
+      "keyInvalidFormat": "La clé ne peut contenir que des lettres majuscules et des chiffres",
+      "keyMaxLength": "La clé doit contenir 10 caractères ou moins",
+      "keyMinLength": "La clé doit contenir au moins 2 caractères",
+      "createSuccess": "Projet créé avec succès !",
+      "createError": "Échec de la création du projet. Veuillez réessayer.",
+      "deleteProject": "Supprimer le projet",
+      "deleteWarning": "Êtes-vous sûr de vouloir supprimer {{name}} ? Cette action est irréversible.",
+      "deleteDescription": "Toutes les tâches, commentaires et pièces jointes associés à ce projet seront définitivement supprimés.",
+      "deleteConfirmLabel": "Tapez le nom du projet pour confirmer",
+      "deleteConfirmPlaceholder": "Saisir le nom du projet",
+      "deleteConfirmHelper": "Tapez le nom du projet pour confirmer la suppression",
+      "deleteSuccess": "Projet supprimé avec succès !",
+      "deleteError": "Échec de la suppression du projet. Veuillez réessayer."
+    }
+  },
+  "spaces": {
+    "title": "Espaces",
+    "subtitle": "Organisez votre documentation dans des espaces dédiés.",
+    "createSpace": "Créer un espace",
+    "loadingSpaces": "Chargement des espaces...",
+    "failedToLoad": "Échec du chargement des espaces",
+    "noOrganizationSelected": "Aucune organisation sélectionnée",
+    "noOrganizationSelectedDescription": "Veuillez sélectionner ou créer une organisation pour voir les espaces.",
+    "goToOrganizations": "Aller aux organisations",
+    "searchPlaceholder": "Rechercher des espaces par nom ou clé...",
+    "noSpacesFound": "Aucun espace trouvé",
+    "noSpacesFoundDescription": "Essayez d'ajuster vos termes de recherche.",
+    "noSpaces": "Aucun espace pour le moment",
+    "noSpacesDescription": "Commencez par créer votre premier espace pour organiser votre documentation.",
+    "viewSpace": "Voir",
+    "pages": "page(s)",
+    "modals": {
+      "createSpace": "Créer un espace",
+      "spaceName": "Nom de l'espace",
+      "spaceNamePlaceholder": "Saisir le nom de l'espace",
+      "spaceNameHelper": "Choisissez un nom pour votre espace",
+      "spaceKey": "Clé de l'espace",
+      "spaceKeyPlaceholder": "SPACE",
+      "spaceKeyHelper": "Identifiant court (généré automatiquement à partir du nom, max 10 caractères, majuscules)",
+      "description": "Description",
+      "descriptionPlaceholder": "Décrire votre espace (optionnel)",
+      "descriptionHelper": "Description optionnelle de votre espace",
+      "nameRequired": "Le nom de l'espace est requis",
+      "nameMinLength": "Le nom de l'espace doit contenir au moins 3 caractères",
+      "keyInvalidFormat": "La clé ne peut contenir que des lettres majuscules et des chiffres",
+      "keyMaxLength": "La clé doit contenir 10 caractères ou moins",
+      "keyMinLength": "La clé doit contenir au moins 2 caractères",
+      "createSuccess": "Espace créé avec succès !",
+      "createError": "Échec de la création de l'espace. Veuillez réessayer.",
+      "deleteSpace": "Supprimer l'espace",
+      "deleteWarning": "Êtes-vous sûr de vouloir supprimer {{name}} ? Cette action est irréversible.",
+      "deleteDescription": "Toutes les pages et commentaires associés à cet espace seront définitivement supprimés.",
+      "deleteConfirmLabel": "Tapez le nom de l'espace pour confirmer",
+      "deleteConfirmPlaceholder": "Saisir le nom de l'espace",
+      "deleteConfirmHelper": "Tapez le nom de l'espace pour confirmer la suppression",
+      "deleteSuccess": "Espace supprimé avec succès !",
+      "deleteError": "Échec de la suppression de l'espace. Veuillez réessayer."
+    }
+  },
+  "issueDetail": {
+    "loadingIssue": "Chargement de la tâche...",
+    "failedToLoad": "Échec du chargement de la tâche",
+    "notFound": "Tâche introuvable",
+    "notFoundDescription": "La tâche que vous recherchez n'existe pas ou vous n'y avez pas accès.",
+    "backToIssues": "Retour aux tâches",
+    "editIssue": "Modifier la tâche",
+    "description": "Description",
+    "noDescription": "Aucune description fournie.",
+    "comments": "Commentaires",
+    "attachments": "Pièces jointes",
+    "activity": "Activité",
+    "details": "Détails",
+    "assignee": "Assigné à",
+    "reporter": "Signaleur",
+    "dueDate": "Date d'échéance",
+    "storyPoints": "Points d'histoire",
+    "created": "Créé",
+    "updated": "Mis à jour"
+  },
+  "auth": {
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "email": "Email",
+    "password": "Mot de passe",
+    "name": "Nom",
+    "confirmPassword": "Confirmer le mot de passe",
+    "rememberMe": "Se souvenir de moi",
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "dontHaveAccount": "Vous n'avez pas de compte ?",
+    "invalidCredentials": "Email ou mot de passe invalide",
+    "passwordResetSent": "Email de réinitialisation envoyé",
+    "passwordResetSuccess": "Le mot de passe a été réinitialisé avec succès",
+    "welcomeBack": "Bon retour",
+    "signInToContinue": "Connectez-vous à votre compte pour continuer",
+    "enterEmail": "Saisissez votre email",
+    "enterPassword": "Saisissez votre mot de passe",
+    "emailHelper": "Saisissez votre adresse email enregistrée",
+    "emailRequired": "L'email est requis",
+    "emailInvalid": "Veuillez saisir une adresse email valide",
+    "passwordRequired": "Le mot de passe est requis",
+    "passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères",
+    "passwordUppercase": "Le mot de passe doit contenir au moins une lettre majuscule",
+    "passwordLowercase": "Le mot de passe doit contenir au moins une lettre minuscule",
+    "passwordNumber": "Le mot de passe doit contenir au moins un chiffre",
+    "confirmPasswordRequired": "Veuillez confirmer votre mot de passe",
+    "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+    "nameRequired": "Le nom est requis",
+    "nameMinLength": "Le nom doit contenir au moins 2 caractères",
+    "forgotPassword": {
+      "title": "Mot de passe oublié ?",
+      "subtitle": "Saisissez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+      "emailPlaceholder": "Saisissez votre email",
+      "emailHelper": "Saisissez l'adresse email associée à votre compte",
+      "sendResetLink": "Envoyer le lien de réinitialisation",
+      "successMessage": "Si un compte existe avec cet email, nous avons envoyé un lien de réinitialisation. Veuillez vérifier votre boîte de réception.",
+      "backToSignIn": "Retour à la connexion",
+      "resetLinkSent": "Lien de réinitialisation envoyé ! Veuillez vérifier votre email."
+    },
+    "resetPassword": {
+      "title": "Réinitialiser le mot de passe",
+      "subtitle": "Saisissez votre nouveau mot de passe ci-dessous",
+      "invalidToken": "Jeton de réinitialisation invalide ou expiré. Veuillez demander un nouveau lien de réinitialisation.",
+      "requestNewLink": "Demander un nouveau lien",
+      "newPassword": "Nouveau mot de passe",
+      "newPasswordPlaceholder": "Saisissez votre nouveau mot de passe",
+      "confirmPassword": "Confirmer le nouveau mot de passe",
+      "confirmPasswordPlaceholder": "Confirmez votre nouveau mot de passe",
+      "resetPassword": "Réinitialiser le mot de passe",
+      "successMessage": "Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+      "goToSignIn": "Aller à la connexion",
+      "backToSignIn": "Retour à la connexion",
+      "passwordRequirements": "Le mot de passe doit contenir au moins 8 caractères avec majuscule, minuscule et chiffre",
+      "passwordStrengthWeak": "Force du mot de passe : Faible",
+      "passwordStrengthMedium": "Force du mot de passe : Moyenne",
+      "passwordStrengthStrong": "Force du mot de passe : Forte",
+      "resetSuccess": "Mot de passe réinitialisé avec succès !"
+    },
+    "invitationAcceptance": {
+      "loading": "Chargement de l'invitation...",
+      "successTitle": "Invitation acceptée !",
+      "successMessage": "Vous avez rejoint {{orgName}} en tant que {{role}}.",
+      "goToOrganizations": "Aller aux organisations",
+      "title": "Invitation à une organisation",
+      "description": "Vous avez été invité à rejoindre une organisation. Veuillez vous connecter ou vous inscrire pour accepter cette invitation.",
+      "authenticatedMessage": "Vous êtes connecté en tant que <strong>{{email}}</strong>. Cliquez sur le bouton ci-dessous pour accepter cette invitation.",
+      "acceptInvitation": "Accepter l'invitation",
+      "unauthenticatedMessage": "Vous devez vous connecter ou créer un compte pour accepter cette invitation.",
+      "unauthenticatedNote": "Après vous être connecté ou inscrit, vous serez redirigé ici pour accepter l'invitation.",
+      "acceptSuccess": "Invitation acceptée avec succès !",
+      "errors": {
+        "invalidToken": "Jeton d'invitation invalide",
+        "expired": "Invitation expirée",
+        "alreadyAccepted": "Invitation déjà acceptée",
+        "notFound": "Invitation introuvable",
+        "emailMismatch": "Email ne correspond pas",
+        "alreadyMember": "Déjà membre",
+        "failed": "Échec de l'acceptation de l'invitation"
+      }
+    },
+    "register": {
+      "title": "Créer un compte",
+      "subtitle": "Inscrivez-vous pour commencer avec Pages",
+      "namePlaceholder": "Saisissez votre nom complet",
+      "nameHelper": "Ceci sera affiché sur votre profil",
+      "emailPlaceholder": "Saisissez votre email",
+      "emailHelper": "Nous ne partagerons jamais votre email",
+      "passwordPlaceholder": "Créer un mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
+      "termsAgreement": "J'accepte les",
+      "termsOfService": "Conditions d'utilisation",
+      "privacyPolicy": "Politique de confidentialité",
+      "createAccount": "Créer un compte",
+      "alreadyHaveAccount": "Vous avez déjà un compte ?",
+      "signIn": "Se connecter",
+      "termsRequired": "Vous devez accepter les conditions d'utilisation pour continuer",
+      "passwordRequirements": "Le mot de passe doit contenir au moins 8 caractères avec majuscule, minuscule et chiffre",
+      "passwordStrengthWeak": "Force du mot de passe : Faible",
+      "passwordStrengthMedium": "Force du mot de passe : Moyenne",
+      "passwordStrengthStrong": "Force du mot de passe : Forte",
+      "accountCreated": "Compte créé avec succès !"
+    }
+  },
+  "userMenu": {
+    "ariaLabel": "Menu utilisateur",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "logout": "Déconnexion"
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "Gérez les paramètres et préférences de votre compte.",
+    "loading": "Chargement du profil...",
+    "failedToLoad": "Échec du chargement du profil",
+    "notFound": "Profil introuvable",
+    "notFoundDescription": "Impossible de charger votre profil. Veuillez réessayer plus tard.",
+    "information": "Informations du profil",
+    "name": "Nom",
+    "namePlaceholder": "Saisissez votre nom",
+    "nameHelper": "Votre nom d'affichage",
+    "email": "Email",
+    "emailPlaceholder": "votre@email.com",
+    "emailHelper": "L'email ne peut pas être modifié ici. Contactez le support pour changer votre email.",
+    "nameRequired": "Le nom est requis",
+    "nameMinLength": "Le nom doit contenir au moins 2 caractères",
+    "loadError": "Une erreur s'est produite lors du chargement de votre profil.",
+    "updateSuccess": "Profil mis à jour avec succès !",
+    "updateError": "Échec de la mise à jour du profil. Veuillez réessayer.",
+    "changePassword": {
+      "title": "Changer le mot de passe",
+      "description": "Mettez à jour votre mot de passe pour sécuriser votre compte.",
+      "currentPassword": "Mot de passe actuel",
+      "currentPasswordPlaceholder": "Saisissez votre mot de passe actuel",
+      "currentPasswordHelper": "Saisissez votre mot de passe actuel pour vérifier votre identité",
+      "currentPasswordRequired": "Le mot de passe actuel est requis",
+      "newPassword": "Nouveau mot de passe",
+      "newPasswordPlaceholder": "Saisissez votre nouveau mot de passe",
+      "newPasswordRequired": "Le nouveau mot de passe est requis",
+      "confirmPassword": "Confirmer le nouveau mot de passe",
+      "confirmPasswordPlaceholder": "Confirmez votre nouveau mot de passe",
+      "confirmPasswordHelper": "Resaisissez votre nouveau mot de passe pour confirmer",
+      "confirmPasswordRequired": "Veuillez confirmer votre nouveau mot de passe",
+      "updatePassword": "Mettre à jour le mot de passe",
+      "passwordRequirements": "Le mot de passe doit contenir au moins 8 caractères avec majuscule, minuscule et chiffre",
+      "passwordStrengthGood": "Force du mot de passe : Bon",
+      "updateSuccess": "Mot de passe mis à jour avec succès !",
+      "updateError": "Échec de la mise à jour du mot de passe. Veuillez réessayer."
+    },
+    "avatar": {
+      "title": "Avatar",
+      "description": "Téléchargez une photo de profil pour personnaliser votre compte.",
+      "uploading": "Téléchargement...",
+      "changeAvatar": "Changer l'avatar",
+      "uploadAvatar": "Télécharger l'avatar",
+      "removeAvatar": "Supprimer l'avatar",
+      "acceptedFormats": "Formats acceptés : JPG, PNG, GIF. Taille maximale du fichier : 5 Mo.",
+      "uploadSuccess": "Avatar téléchargé avec succès !",
+      "removeSuccess": "Avatar supprimé avec succès !",
+      "removeConfirm": "Êtes-vous sûr de vouloir supprimer votre avatar ?",
+      "errors": {
+        "notImage": "Veuillez sélectionner un fichier image",
+        "fileTooLarge": "La taille du fichier doit être inférieure à 5 Mo",
+        "readError": "Échec de la lecture du fichier. Veuillez réessayer.",
+        "uploadError": "Échec du téléchargement de l'avatar. Veuillez réessayer.",
+        "removeError": "Échec de la suppression de l'avatar. Veuillez réessayer."
+      }
+    }
+  },
+  "comments": {
+    "title": "Commentaires",
+    "addComment": "Ajouter un commentaire...",
+    "comment": "Commentaire",
+    "comments": "commentaires",
+    "addSuccess": "Commentaire ajouté avec succès !",
+    "addError": "Échec de l'ajout du commentaire. Veuillez réessayer.",
+    "maxLength": "Le commentaire doit contenir 10 000 caractères ou moins",
+    "loading": "Chargement des commentaires...",
+    "noComments": "Aucun commentaire pour le moment. Soyez le premier à commenter !",
+    "edited": "modifié",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce commentaire ?",
+    "editComment": "Modifier le commentaire",
+    "enterComment": "Saisissez votre commentaire",
+    "contentRequired": "Le contenu du commentaire est requis",
+    "updateSuccess": "Commentaire mis à jour avec succès !",
+    "updateError": "Échec de la mise à jour du commentaire. Veuillez réessayer."
+  },
+  "activity": {
+    "loading": "Chargement de l'activité...",
+    "failedToLoad": "Échec du chargement de l'activité",
+    "noActivity": "Aucune activité pour le moment",
+    "noActivityDescription": "Les journaux d'activité apparaîtront ici lorsque des modifications seront apportées à cette tâche.",
+    "empty": "vide",
+    "system": "Système",
+    "createdIssue": "a créé cette tâche",
+    "updatedIssue": "a mis à jour cette tâche",
+    "updatedField": "a mis à jour {{field}}",
+    "deletedIssue": "a supprimé cette tâche",
+    "changedStatus": "a changé le statut",
+    "assignedIssue": "a assigné cette tâche",
+    "justNow": "à l'instant",
+    "minutesAgo": "Il y a {{count}} minute(s)",
+    "hoursAgo": "Il y a {{count}} heure(s)",
+    "daysAgo": "Il y a {{count}} jour(s)",
+    "loadError": "Une erreur s'est produite lors du chargement de l'activité.",
+    "field": {
+      "title": "Titre",
+      "description": "Description",
+      "status": "Statut",
+      "priority": "Priorité",
+      "assignee": "Assigné à",
+      "due_date": "Date d'échéance"
+    }
+  },
+  "attachments": {
+    "title": "Pièces jointes",
+    "loading": "Chargement des pièces jointes...",
+    "noAttachments": "Aucune pièce jointe pour le moment.",
+    "preview": "Aperçu",
+    "download": "Télécharger",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer \"{{fileName}}\" ?",
+    "pdfPreview": "Aperçu PDF",
+    "previewNotAvailable": "Aperçu non disponible pour ce type de fichier",
+    "previewHint": "Cliquez sur télécharger pour voir le fichier",
+    "dragAndDrop": "Glissez-déposez les fichiers ici, ou",
+    "browse": "parcourir",
+    "maxFileSize": "Taille maximale du fichier : 10 Mo",
+    "clear": "Effacer",
+    "uploadFile": "Télécharger le fichier",
+    "uploadFiles": "Télécharger {{count}} fichiers",
+    "fileExceedsLimit": "Le fichier \"{{fileName}}\" dépasse la limite de 10 Mo",
+    "filesSkipped": "{{count}} fichier(s) ont été ignorés en raison des limites de taille",
+    "uploadSuccess": "{{count}} fichier(s) téléchargé(s) avec succès !",
+    "uploadFileError": "Échec du téléchargement de \"{{fileName}}\"",
+    "uploadFilesError": "Échec du téléchargement des fichiers. Veuillez réessayer."
+  },
+  "kanban": {
+    "title": "Tableau Kanban",
+    "createIssue": "Créer une tâche",
+    "assignee": "Assigné à",
+    "type": "Type",
+    "priority": "Priorité",
+    "allAssignees": "Tous les assignés",
+    "allTypes": "Tous les types",
+    "allPriorities": "Toutes les priorités",
+    "clearFilters": "Effacer les filtres",
+    "columnVisibility": "Visibilité des colonnes",
+    "resetAll": "Tout réinitialiser",
+    "loadingIssues": "Chargement des tâches...",
+    "failedToLoad": "Échec du chargement des tâches",
+    "noIssues": "Aucune tâche",
+    "assigned": "Assigné",
+    "overdue": "En retard",
+    "due": "Échéance : {{date}}"
+  },
+  "members": {
+    "title": "Membres",
+    "subtitle": "Gérez les membres du projet et leurs rôles.",
+    "addMember": "Ajouter un membre",
+    "loadingMembers": "Chargement des membres...",
+    "failedToLoad": "Échec du chargement des membres",
+    "noMembers": "Aucun membre pour le moment",
+    "noMembersDescription": "Ajoutez des membres à votre projet pour collaborer ensemble.",
+    "changeRole": "Changer le rôle",
+    "remove": "Retirer",
+    "searchUsers": "Rechercher des utilisateurs",
+    "searchPlaceholder": "Rechercher par nom ou email...",
+    "searching": "Recherche...",
+    "searchError": "Échec de la recherche d'utilisateurs. Veuillez réessayer.",
+    "noUsersFound": "Aucun utilisateur trouvé. Essayez une autre requête de recherche.",
+    "searchHint": "Saisissez au moins 2 caractères pour rechercher des utilisateurs.",
+    "role": "Rôle",
+    "admin": "Administrateur",
+    "adminDescription": "Accès complet pour gérer l'organisation et les membres",
+    "member": "Membre",
+    "memberDescription": "Peut créer et modifier des projets, mais ne peut pas gérer les membres",
+    "viewer": "Observateur",
+    "viewerDescription": "Accès en lecture seule au contenu de l'organisation",
+    "loadError": "Une erreur s'est produite lors du chargement des membres.",
+    "addMemberSuccess": "Membre ajouté avec succès !",
+    "addMemberError": "Échec de l'ajout du membre. Veuillez réessayer.",
+    "removeConfirm": "Êtes-vous sûr de vouloir retirer {{userName}} de ce projet ?",
+    "removeSuccess": "Membre retiré avec succès !",
+    "removeError": "Échec du retrait du membre. Veuillez réessayer.",
+    "currentRole": "Rôle actuel",
+    "newRole": "Nouveau rôle",
+    "current": "Actuel",
+    "updateRoleSuccess": "Rôle du membre mis à jour avec succès !",
+    "updateRoleError": "Échec de la mise à jour du rôle du membre. Veuillez réessayer."
+  },
+  "invitations": {
+    "title": "Envoyer une invitation",
+    "emailLabel": "Adresse e-mail",
+    "emailPlaceholder": "Saisir l'adresse e-mail...",
+    "emailHelper": "L'adresse e-mail de la personne que vous souhaitez inviter",
+    "emailRequired": "L'adresse e-mail est requise",
+    "emailInvalid": "Veuillez saisir une adresse e-mail valide",
+    "sendInvitation": "Envoyer l'invitation",
+    "invitationSent": "Invitation envoyée avec succès !",
+    "invitationError": "Échec de l'envoi de l'invitation. Veuillez réessayer.",
+    "pendingTitle": "Invitations en attente",
+    "pendingSubtitle": "Invitations qui n'ont pas encore été acceptées.",
+    "loading": "Chargement des invitations...",
+    "failedToLoad": "Échec du chargement des invitations",
+    "noPending": "Aucune invitation en attente",
+    "noPendingDescription": "Invitez des personnes à rejoindre votre organisation en leur envoyant une invitation.",
+    "email": "E-mail",
+    "expires": "Expire",
+    "expiringSoon": "Expire bientôt",
+    "cancelInvitation": "Annuler l'invitation",
+    "expired": "Expiré",
+    "expiresToday": "Expire aujourd'hui",
+    "expiresTomorrow": "Expire demain",
+    "expiresInDays": "Expire dans {{count}} jour(s)",
+    "expiresInWeeks": "Expire dans {{count}} semaine(s)"
+  },
+  "public": {
+    "home": "Accueil",
+    "features": "Fonctionnalités",
+    "pricing": "Tarifs",
+    "demo": "Démo",
+    "logIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "toggleMobileMenu": "Basculer le menu mobile",
+    "headline": "Construire ensemble, mieux",
+    "subheading": "Collaborer, créer, réussir",
+    "valueProposition": "Pages est votre espace de travail tout-en-un pour les équipes. Organisez des projets, partagez des idées et donnez vie à votre vision avec des outils de collaboration puissants.",
+    "getStarted": "Commencer",
+    "learnMore": "En savoir plus",
+    "heroImage": "Image héro",
+    "whyChoose": "Pourquoi choisir Pages ?",
+    "everythingYouNeed": "Tout ce dont vous avez besoin pour collaborer et réussir",
+    "lightningFast": "Ultra rapide",
+    "lightningFastDescription": "Conçu pour la vitesse et les performances. Profitez d'une collaboration fluide sans aucun délai.",
+    "teamCollaboration": "Collaboration d'équipe",
+    "teamCollaborationDescription": "Travaillez ensemble en temps réel avec votre équipe. Partagez des idées, assignez des tâches et restez synchronisés.",
+    "securePrivate": "Sécurisé et privé",
+    "securePrivateDescription": "Vos données sont protégées par une sécurité de niveau entreprise. La confidentialité et la sécurité sont nos priorités absolues.",
+    "flexibleWorkspace": "Espace de travail flexible",
+    "flexibleWorkspaceDescription": "Organisez votre travail comme vous le souhaitez. Personnalisez les mises en page, les vues et les flux de travail selon vos besoins.",
+    "description": "Votre espace de travail tout-en-un pour les équipes. Collaborez, créez et réussissez ensemble.",
+    "product": "Produit",
+    "documentation": "Documentation",
+    "legal": "Légal",
+    "termsOfService": "Conditions d'utilisation",
+    "privacyPolicy": "Politique de confidentialité",
+    "contact": "Contact",
+    "copyright": "© {{year}} Pages. Tous droits réservés.",
+    "followTwitter": "Suivez-nous sur Twitter",
+    "visitGitHub": "Visitez notre GitHub",
+    "connectLinkedIn": "Connectez-vous sur LinkedIn",
+    "pricingPage": {
+      "header": {
+        "title": "Tarification simple et transparente",
+        "subtitle": "Choisissez le plan parfait pour votre équipe. Tous les plans incluent un essai gratuit de 14 jours.",
+        "monthly": "Mensuel",
+        "annual": "Annuel",
+        "save20": "Économisez 20%"
+      },
+      "mostPopular": "Le plus populaire",
+      "getStarted": "Commencer",
+      "startFreeTrial": "Commencer l'essai gratuit",
+      "contactSales": "Contacter les ventes",
+      "unlimited": "Illimité",
+      "tiers": {
+        "free": {
+          "name": "Gratuit",
+          "priceSubtext": "Gratuit pour toujours",
+          "description": "Parfait pour les petites équipes et les projets personnels",
+          "features": {
+            "users": "Jusqu'à 10 utilisateurs",
+            "projects": "Projets et tâches illimités",
+            "storage": "5 Go de stockage par espace de travail",
+            "coreFeatures": "Fonctionnalités principales (tâches, tableaux, docs)",
+            "integrations": "Intégrations de base (5 intégrations)",
+            "support": "Support communautaire",
+            "automation": "Jusqu'à 10 règles d'automatisation",
+            "reporting": "Rapports de base"
+          }
+        },
+        "starter": {
+          "name": "Starter",
+          "priceSubtext": "par utilisateur/mois (annuel)",
+          "description": "Pour les équipes en croissance qui ont besoin de plus",
+          "features": {
+            "users": "Jusqu'à 25 utilisateurs",
+            "storage": "25 Go de stockage par espace de travail",
+            "integrations": "Toutes les intégrations",
+            "api": "Accès API",
+            "automation": "50 règles d'automatisation",
+            "reporting": "Rapports avancés",
+            "support": "Support par email (réponse sous 48 heures)",
+            "customFields": "Champs personnalisés (10 par projet)",
+            "permissions": "Permissions avancées",
+            "export": "Exporter les données"
+          }
+        },
+        "professional": {
+          "name": "Professionnel",
+          "priceSubtext": "par utilisateur/mois (annuel)",
+          "description": "Pour les équipes établies ayant besoin de fonctionnalités avancées",
+          "features": {
+            "users": "Jusqu'à 100 utilisateurs",
+            "storage": "100 Go de stockage par espace de travail",
+            "automation": "Règles d'automatisation illimitées",
+            "analytics": "Analyses avancées",
+            "workflows": "Flux de travail personnalisés",
+            "support": "Support email prioritaire (24 heures)",
+            "sso": "SSO (SAML, OAuth)",
+            "customFields": "Champs personnalisés illimités",
+            "security": "Sécurité avancée",
+            "audit": "Journaux d'audit (90 jours)",
+            "whiteLabel": "Marque blanche",
+            "domain": "Domaine personnalisé",
+            "timeTracking": "Suivi du temps",
+            "portals": "Portails clients (1 portail)"
+          }
+        },
+        "business": {
+          "name": "Business",
+          "priceSubtext": "par utilisateur/mois (annuel)",
+          "description": "Pour les grandes organisations aux besoins complexes",
+          "features": {
+            "users": "Jusqu'à 500 utilisateurs",
+            "storage": "500 Go de stockage par espace de travail",
+            "ai": "Fonctionnalités alimentées par IA",
+            "portfolio": "Gestion de portefeuille",
+            "bi": "BI et rapports avancés",
+            "support": "Support téléphone et chat (4 heures)",
+            "accountManager": "Gestionnaire de compte dédié",
+            "audit": "Journaux d'audit étendus (1 an)",
+            "compliance": "Conformité avancée",
+            "dataResidency": "Options de résidence des données",
+            "portals": "Plusieurs portails clients",
+            "integrations": "Support d'intégrations personnalisées",
+            "training": "Sessions de formation"
+          }
+        },
+        "enterprise": {
+          "name": "Entreprise",
+          "price": "Personnalisé",
+          "priceSubtext": "Contacter les ventes",
+          "description": "Pour les entreprises avec des exigences personnalisées",
+          "features": {
+            "users": "Utilisateurs illimités",
+            "storage": "Stockage illimité",
+            "businessTier": "Tout dans le niveau Business",
+            "infrastructure": "Infrastructure dédiée (optionnel)",
+            "onPremises": "Déploiement sur site",
+            "sla": "SLA 99,99%",
+            "support": "Support téléphonique 24/7 (1 heure)",
+            "successManager": "Gestionnaire de succès dédié",
+            "customSla": "SLA personnalisé",
+            "securityAudits": "Audits de sécurité avancés",
+            "compliance": "Certifications de conformité",
+            "integrations": "Développement d'intégrations personnalisées",
+            "migration": "Migration gant blanc"
+          }
+        }
+      },
+      "comparison": {
+        "title": "Comparer les plans",
+        "description": "Voir comment les fonctionnalités diffèrent selon les plans",
+        "feature": "Fonctionnalité",
+        "rows": {
+          "users": {
+            "feature": "Utilisateurs",
+            "free": "Jusqu'à 10",
+            "starter": "Jusqu'à 25",
+            "professional": "Jusqu'à 100",
+            "business": "Jusqu'à 500",
+            "enterprise": "Illimité"
+          },
+          "storage": {
+            "feature": "Stockage par espace de travail"
+          },
+          "api": {
+            "feature": "Accès API"
+          },
+          "sso": {
+            "feature": "SSO"
+          },
+          "analytics": {
+            "feature": "Analyses avancées"
+          },
+          "ai": {
+            "feature": "Fonctionnalités IA"
+          },
+          "support": {
+            "feature": "Support dédié"
+          },
+          "onPremises": {
+            "feature": "Sur site"
+          }
+        }
+      },
+      "faq": {
+        "title": "Questions fréquemment posées",
+        "items": {
+          "changePlans": {
+            "question": "Puis-je changer de plan plus tard ?",
+            "answer": "Oui ! Vous pouvez mettre à niveau, rétrograder ou annuler votre plan à tout moment. Les modifications seront reflétées dans votre prochain cycle de facturation."
+          },
+          "discounts": {
+            "question": "Offrez-vous des réductions pour la facturation annuelle ?",
+            "answer": "Oui ! Les plans annuels vous font économiser 20% par rapport à la facturation mensuelle. Cette réduction est automatiquement appliquée lorsque vous choisissez la facturation annuelle."
+          },
+          "paymentMethods": {
+            "question": "Quels modes de paiement acceptez-vous ?",
+            "answer": "Nous acceptons toutes les principales cartes de crédit (Visa, Mastercard, American Express) et supportons les paiements par virement bancaire pour les plans Entreprise."
+          },
+          "freeTrial": {
+            "question": "Y a-t-il un essai gratuit ?",
+            "answer": "Oui ! Tous les plans payants incluent un essai gratuit de 14 jours. Aucune carte de crédit requise. Vous pouvez explorer toutes les fonctionnalités sans risque."
+          },
+          "refund": {
+            "question": "Puis-je obtenir un remboursement ?",
+            "answer": "Nous offrons une garantie de remboursement de 30 jours pour tous les plans annuels. Si vous n'êtes pas satisfait, contactez-nous dans les 30 jours pour un remboursement complet."
+          },
+          "exceedLimits": {
+            "question": "Que se passe-t-il si je dépasse les limites de mon plan ?",
+            "answer": "Nous vous avertirons lorsque vous approcherez de vos limites. Vous pouvez mettre à niveau votre plan à tout moment pour continuer à utiliser Pages sans interruption."
+          }
+        }
+      },
+      "cta": {
+        "title": "Vous avez encore des questions ?",
+        "description": "Notre équipe est là pour vous aider à trouver le plan parfait pour vos besoins.",
+        "contactSales": "Contacter les ventes",
+        "viewFeatures": "Voir les fonctionnalités"
+      }
+    },
+    "featuresPage": {
+      "header": {
+        "title": "Tout ce dont vous avez besoin pour construire ensemble, mieux",
+        "subtitle": "Pages combine des outils puissants de gestion de projet et de documentation en une plateforme fluide.",
+        "getStarted": "Commencer",
+        "viewPricing": "Voir les tarifs"
+      },
+      "cta": {
+        "title": "Prêt à commencer ?",
+        "description": "Rejoignez des milliers d'équipes qui utilisent déjà Pages pour construire ensemble, mieux.",
+        "startFreeTrial": "Commencer l'essai gratuit"
+      },
+      "categories": {
+        "projectManagement": {
+          "title": "Gestion de projet",
+          "description": "Outils puissants pour organiser, suivre et gérer vos projets.",
+          "features": {
+            "issueTracking": {
+              "title": "Suivi des tâches",
+              "description": "Créez, assignez et suivez les tâches avec des flux de travail personnalisés.",
+              "details": {
+                "customTypes": "Types de tâches personnalisés (Tâche, Bug, Histoire, Épopée)",
+                "priorityDates": "Niveaux de priorité et dates d'échéance",
+                "linking": "Liaison et dépendances des tâches",
+                "subtasks": "Sous-tâches et opérations en masse"
+              }
+            },
+            "agileBoards": {
+              "title": "Tableaux agiles",
+              "description": "Tableaux Scrum et Kanban pour une gestion de projet flexible.",
+              "details": {
+                "dragDrop": "Vues de tableau glisser-déposer",
+                "sprintPlanning": "Planification et suivi des sprints",
+                "backlog": "Gestion du backlog",
+                "charts": "Graphiques de burndown et rapports de vélocité"
+              }
+            },
+            "workflows": {
+              "title": "Flux de travail",
+              "description": "Flux de travail personnalisables pour correspondre aux processus de votre équipe.",
+              "details": {
+                "states": "États de flux de travail personnalisés",
+                "transitions": "Transitions automatisées",
+                "logic": "Logique conditionnelle",
+                "functions": "Post-fonctions et validateurs"
+              }
+            },
+            "reporting": {
+              "title": "Rapports et analyses",
+              "description": "Informations en temps réel sur la progression de votre projet.",
+              "details": {
+                "dashboards": "Tableaux de bord personnalisés",
+                "velocity": "Rapports de vélocité et de burndown",
+                "timeTracking": "Rapports de suivi du temps",
+                "export": "Export vers PDF/CSV"
+              }
+            }
+          }
+        },
+        "documentation": {
+          "title": "Documentation",
+          "description": "Créez, organisez et collaborez sur la documentation.",
+          "features": {
+            "richTextEditor": {
+              "title": "Éditeur de texte riche",
+              "description": "Éditeur puissant avec formatage, médias et collaboration.",
+              "details": {
+                "wysiwyg": "Édition WYSIWYG",
+                "markdown": "Support Markdown",
+                "media": "Intégrations multimédias",
+                "collaboration": "Collaboration en temps réel"
+              }
+            },
+            "pageHierarchy": {
+              "title": "Hiérarchie des pages",
+              "description": "Organisez les pages dans une structure arborescente flexible.",
+              "details": {
+                "nested": "Structure de pages imbriquées",
+                "dragDrop": "Organisation glisser-déposer",
+                "templates": "Modèles de pages",
+                "navigation": "Navigation rapide"
+              }
+            },
+            "advancedSearch": {
+              "title": "Recherche avancée",
+              "description": "Trouvez instantanément n'importe quoi dans votre espace de travail.",
+              "details": {
+                "fullText": "Recherche en texte intégral",
+                "filters": "Filtrer par tags, auteur, date",
+                "saved": "Recherches enregistrées",
+                "attachments": "Recherche dans les pièces jointes"
+              }
+            },
+            "teamCollaboration": {
+              "title": "Collaboration d'équipe",
+              "description": "Travaillez ensemble avec des commentaires, des mentions et des notifications.",
+              "details": {
+                "comments": "Commentaires et discussions",
+                "mentions": "@mentions et notifications",
+                "watching": "Surveillance des pages",
+                "activity": "Flux d'activité"
+              }
+            }
+          }
+        },
+        "platformFeatures": {
+          "title": "Fonctionnalités de la plateforme",
+          "description": "Tout ce dont vous avez besoin pour faire évoluer votre équipe et votre organisation.",
+          "features": {
+            "security": {
+              "title": "Sécurité et permissions",
+              "description": "Sécurité de niveau entreprise avec des permissions granulaires.",
+              "details": {
+                "rbac": "Contrôle d'accès basé sur les rôles",
+                "sso": "Support SSO et SAML",
+                "audit": "Journaux d'audit",
+                "twoFactor": "Authentification à deux facteurs"
+              }
+            },
+            "integrations": {
+              "title": "Intégrations",
+              "description": "Connectez-vous aux outils que votre équipe utilise déjà.",
+              "details": {
+                "api": "API REST et webhooks",
+                "services": "GitHub, GitLab, Slack",
+                "custom": "Intégrations personnalisées",
+                "marketplace": "Applications du marketplace"
+              }
+            },
+            "mobileApps": {
+              "title": "Applications mobiles",
+              "description": "Accédez à votre travail en déplacement avec des applications mobiles natives.",
+              "details": {
+                "platforms": "Applications iOS et Android",
+                "offline": "Accès hors ligne",
+                "notifications": "Notifications push",
+                "optimized": "Vues optimisées pour mobile"
+              }
+            },
+            "performance": {
+              "title": "Performance",
+              "description": "Performance ultra-rapide, même avec de grands espaces de travail.",
+              "details": {
+                "fast": "Chargement rapide des pages",
+                "realtime": "Mises à jour en temps réel",
+                "scale": "Optimisé pour les grandes équipes",
+                "cdn": "CDN mondial"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

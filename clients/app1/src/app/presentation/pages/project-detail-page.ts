@@ -20,6 +20,7 @@ import { KanbanBoard } from '../components/kanban-board';
 import { BackToPage } from '../components/back-to-page';
 import { SidebarNav, SidebarNavItem } from '../components/sidebar-nav';
 import { DeleteProjectModal } from '../components/delete-project-modal';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 type TabType = 'issues' | 'board' | 'settings' | 'members';
 
@@ -35,28 +36,32 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
     KanbanBoard,
     BackToPage,
     SidebarNav,
+    TranslatePipe,
   ],
   template: `
     <div class="project-detail-page">
       @if (projectService.isFetchingProject()) {
-        <lib-loading-state message="Loading project..." />
+        <lib-loading-state [message]="'projects.loadingProject' | translate" />
       } @else if (projectService.hasProjectError()) {
         <lib-error-state
-          title="Failed to Load Project"
+          [title]="'projects.failedToLoad' | translate"
           [message]="errorMessage()"
-          [retryLabel]="'Retry'"
+          [retryLabel]="'common.retry' | translate"
           (onRetry)="handleRetry()"
         />
       } @else if (!project()) {
         <lib-error-state
-          title="Project Not Found"
-          message="The project you're looking for doesn't exist or you don't have access to it."
+          [title]="'projects.notFound' | translate"
+          [message]="'projects.notFoundDescription' | translate"
           [showRetry]="false"
         />
       } @else {
         <div class="project-detail-page_header">
           <div class="project-detail-page_header-content">
-            <app-back-to-page label="Back to Projects" (onClick)="handleBackToProjects()" />
+            <app-back-to-page
+              [label]="'projects.backToProjects' | translate"
+              (onClick)="handleBackToProjects()"
+            />
             <div class="project-detail-page_header-main">
               <div class="project-detail-page_key">{{ project()?.key }}</div>
               <h1 class="project-detail-page_title">{{ project()?.name }}</h1>
@@ -84,33 +89,35 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
                   <div class="project-detail-page_settings-container">
                     <!-- Project Details Section -->
                     <div class="project-detail-page_settings-section">
-                      <h2 class="project-detail-page_settings-section-title">Project Details</h2>
+                      <h2 class="project-detail-page_settings-section-title">
+                        {{ 'projects.settings.details' | translate }}
+                      </h2>
                       <form
                         class="project-detail-page_settings-form"
                         (ngSubmit)="handleSaveProject()"
                       >
                         <lib-input
-                          label="Project Name"
-                          placeholder="Enter project name"
+                          [label]="'projects.settings.name' | translate"
+                          [placeholder]="'projects.settings.namePlaceholder' | translate"
                           [(model)]="name"
                           [required]="true"
                           [errorMessage]="nameError()"
-                          helperText="The display name for your project"
+                          [helperText]="'projects.settings.nameHelper' | translate"
                         />
                         <lib-input
-                          label="Project Key"
+                          [label]="'projects.settings.key' | translate"
                           placeholder="PROJ"
                           [(model)]="key"
                           [readonly]="true"
-                          helperText="Project key cannot be changed after creation"
+                          [helperText]="'projects.settings.keyHelper' | translate"
                         />
                         <lib-input
-                          label="Description"
+                          [label]="'projects.settings.description' | translate"
                           type="textarea"
-                          placeholder="Describe your project (optional)"
+                          [placeholder]="'projects.settings.descriptionPlaceholder' | translate"
                           [(model)]="description"
                           [rows]="4"
-                          helperText="Optional description of your project"
+                          [helperText]="'projects.settings.descriptionHelper' | translate"
                         />
                         <div class="project-detail-page_settings-form-actions">
                           <lib-button
@@ -119,14 +126,14 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
                             [loading]="isSaving()"
                             [disabled]="!isFormValid() || !hasChanges()"
                           >
-                            Save Changes
+                            {{ 'common.saveChanges' | translate }}
                           </lib-button>
                           <lib-button
                             variant="secondary"
                             (clicked)="handleReset()"
                             [disabled]="!hasChanges() || isSaving()"
                           >
-                            Cancel
+                            {{ 'common.cancel' | translate }}
                           </lib-button>
                         </div>
                       </form>
@@ -136,12 +143,16 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
                     <div
                       class="project-detail-page_settings-section project-detail-page_settings-section--danger"
                     >
-                      <h2 class="project-detail-page_settings-section-title">Danger Zone</h2>
+                      <h2 class="project-detail-page_settings-section-title">
+                        {{ 'projects.settings.dangerZone' | translate }}
+                      </h2>
                       <div class="project-detail-page_settings-danger-content">
                         <div>
-                          <h3 class="project-detail-page_settings-danger-title">Delete Project</h3>
+                          <h3 class="project-detail-page_settings-danger-title">
+                            {{ 'projects.settings.deleteTitle' | translate }}
+                          </h3>
                           <p class="project-detail-page_settings-danger-description">
-                            Once you delete a project, there is no going back. Please be certain.
+                            {{ 'projects.settings.deleteDescription' | translate }}
                           </p>
                         </div>
                         <lib-button
@@ -150,7 +161,7 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
                           (clicked)="handleDeleteProject()"
                           [disabled]="isDeleting()"
                         >
-                          Delete Project
+                          {{ 'projects.deleteProject' | translate }}
                         </lib-button>
                       </div>
                     </div>
@@ -336,6 +347,7 @@ export class ProjectDetailPage {
   readonly modal = inject(Modal);
   readonly toast = inject(ToastService);
   readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly translateService = inject(TranslateService);
 
   readonly organizationId = computed(() => {
     return this.navigationService.currentOrganizationId() || '';
@@ -368,10 +380,10 @@ export class ProjectDetailPage {
   readonly nameError = computed(() => {
     const value = this.name();
     if (!value.trim()) {
-      return 'Project name is required';
+      return this.translateService.instant('projects.settings.nameRequired');
     }
     if (value.trim().length < 3) {
-      return 'Project name must be at least 3 characters';
+      return this.translateService.instant('projects.settings.nameMinLength');
     }
     return '';
   });
@@ -407,34 +419,34 @@ export class ProjectDetailPage {
     if (error) {
       return error instanceof Error
         ? error.message
-        : 'An error occurred while loading the project.';
+        : this.translateService.instant('projects.loadError');
     }
-    return 'An unknown error occurred.';
+    return this.translateService.instant('common.unknownError');
   });
 
   readonly navItems = computed<SidebarNavItem[]>(() => {
     const currentTab = this.activeTab();
     return [
       {
-        label: 'Issues',
+        label: this.translateService.instant('issues.title'),
         icon: 'file-text',
         active: currentTab === 'issues',
         onClick: () => this.setActiveTab('issues'),
       },
       {
-        label: 'Board',
+        label: this.translateService.instant('kanban.title'),
         icon: 'columns2',
         active: currentTab === 'board',
         onClick: () => this.setActiveTab('board'),
       },
       {
-        label: 'Members',
+        label: this.translateService.instant('members.title'),
         icon: 'users',
         active: currentTab === 'members',
         onClick: () => this.setActiveTab('members'),
       },
       {
-        label: 'Settings',
+        label: this.translateService.instant('projects.settings.title'),
         icon: 'settings',
         active: currentTab === 'settings',
         onClick: () => this.setActiveTab('settings'),
@@ -469,11 +481,13 @@ export class ProjectDetailPage {
       });
       this.originalName.set(this.name().trim());
       this.originalDescription.set(this.description().trim());
-      this.toast.success('Project updated successfully!');
+      this.toast.success(this.translateService.instant('projects.updateSuccess'));
     } catch (error) {
       console.error('Failed to update project:', error);
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to update project. Please try again.';
+        error instanceof Error
+          ? error.message
+          : this.translateService.instant('projects.updateError');
       this.toast.error(errorMessage);
     } finally {
       this.isSaving.set(false);

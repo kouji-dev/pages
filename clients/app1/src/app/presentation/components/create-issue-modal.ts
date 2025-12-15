@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter } from 'shared-ui';
 import { Button, Input, TextEditor, Icon, Select, SelectOption } from 'shared-ui';
 import { ToastService } from 'shared-ui';
@@ -38,25 +39,28 @@ type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
     Select,
     FormsModule,
     CommonModule,
+    TranslatePipe,
   ],
   template: `
     <lib-modal-container>
-      <lib-modal-header>Create Issue</lib-modal-header>
+      <lib-modal-header>{{ 'issues.createIssue' | translate }}</lib-modal-header>
       <lib-modal-content>
         <form class="create-issue-form" (ngSubmit)="handleSubmit()">
           <lib-input
-            label="Title"
-            placeholder="Enter issue title"
+            [label]="'issues.form.title' | translate"
+            [placeholder]="'issues.form.titlePlaceholder' | translate"
             [(model)]="title"
             [required]="true"
             [errorMessage]="titleError()"
-            helperText="Brief description of the issue"
+            [helperText]="'issues.form.titleHelper' | translate"
           />
           <div class="create-issue-form_field">
-            <label class="create-issue-form_label">Description</label>
+            <label class="create-issue-form_label">{{
+              'issues.form.description' | translate
+            }}</label>
             <lib-text-editor
               #descriptionEditor
-              placeholder="Describe the issue in detail (optional)"
+              [placeholder]="'issues.form.descriptionPlaceholder' | translate"
               [(ngModel)]="description"
               name="description"
               (htmlChange)="descriptionHtml.set($event)"
@@ -66,32 +70,34 @@ type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
           <div class="create-issue-form_row">
             <div class="create-issue-form_field">
               <lib-select
-                label="Type"
+                [label]="'issues.form.type' | translate"
                 [options]="typeSelectOptions()"
                 [(model)]="typeModel"
-                [placeholder]="'Select type...'"
+                [placeholder]="'issues.form.selectType' | translate"
               />
             </div>
             <div class="create-issue-form_field">
               <lib-select
-                label="Priority"
+                [label]="'issues.form.priority' | translate"
                 [options]="prioritySelectOptions()"
                 [(model)]="priorityModel"
-                [placeholder]="'Select priority...'"
+                [placeholder]="'issues.form.selectPriority' | translate"
               />
             </div>
           </div>
           <div class="create-issue-form_row">
             <div class="create-issue-form_field">
               <lib-select
-                label="Assignee (optional)"
+                [label]="'issues.form.assigneeOptional' | translate"
                 [options]="assigneeSelectOptions()"
                 [(model)]="assigneeModel"
-                [placeholder]="'Unassigned'"
+                [placeholder]="'issues.unassigned' | translate"
               />
             </div>
             <div class="create-issue-form_field">
-              <label class="create-issue-form_label">Due Date (optional)</label>
+              <label class="create-issue-form_label">{{
+                'issues.form.dueDateOptional' | translate
+              }}</label>
               <input
                 type="date"
                 class="create-issue-form_input"
@@ -104,7 +110,7 @@ type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
       </lib-modal-content>
       <lib-modal-footer>
         <lib-button variant="secondary" (clicked)="handleCancel()" [disabled]="isSubmitting()">
-          Cancel
+          {{ 'common.cancel' | translate }}
         </lib-button>
         <lib-button
           variant="primary"
@@ -112,7 +118,7 @@ type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
           [loading]="isSubmitting()"
           [disabled]="!isValid()"
         >
-          Create Issue
+          {{ 'issues.createIssue' | translate }}
         </lib-button>
       </lib-modal-footer>
     </lib-modal-container>
@@ -155,6 +161,7 @@ export class CreateIssueModal {
   private readonly toast = inject(ToastService);
   private readonly modal = inject(Modal);
   private readonly projectMembersService = inject(ProjectMembersService);
+  private readonly translateService = inject(TranslateService);
 
   readonly projectId = input.required<string>();
 
@@ -251,7 +258,8 @@ export class CreateIssueModal {
   });
 
   readonly assigneeSelectOptions = computed<SelectOption<string | null>[]>(() => {
-    const options: SelectOption<string | null>[] = [{ value: null, label: 'Unassigned' }];
+    const unassignedLabel = this.translateService.instant('issues.unassigned');
+    const options: SelectOption<string | null>[] = [{ value: null, label: unassignedLabel }];
     return options.concat(
       this.projectMembers().map((member) => ({
         value: member.user_id,
@@ -267,10 +275,10 @@ export class CreateIssueModal {
   readonly titleError = computed(() => {
     const value = this.title();
     if (!value.trim()) {
-      return 'Title is required';
+      return this.translateService.instant('issues.form.titleRequired');
     }
     if (value.trim().length > 255) {
-      return 'Title must be 255 characters or less';
+      return this.translateService.instant('issues.form.titleMaxLength');
     }
     return '';
   });

@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, computed, inject, input } from '@angular/core';
 import { PageService, Page } from '../../application/services/page.service';
 import { NavigationService } from '../../application/services/navigation.service';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-pages-tree-item',
@@ -114,12 +115,12 @@ export class PagesTreeItem {
 
 @Component({
   selector: 'app-pages-tree',
-  imports: [PagesTreeItem],
+  imports: [PagesTreeItem, TranslatePipe],
   template: `
     <div class="pages-tree">
       @if (pageTree().length === 0) {
         <div class="pages-tree_empty">
-          <p class="pages-tree_empty-text">No pages yet</p>
+          <p class="pages-tree_empty-text">{{ 'pages.noPagesYet' | translate }}</p>
         </div>
       } @else {
         <nav class="pages-tree_nav">

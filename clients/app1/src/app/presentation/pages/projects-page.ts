@@ -8,6 +8,7 @@ import {
   effect,
 } from '@angular/core';
 import { Button, LoadingState, ErrorState, EmptyState, Modal, Input } from 'shared-ui';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ProjectService, Project } from '../../application/services/project.service';
 import { OrganizationService } from '../../application/services/organization.service';
 import { NavigationService } from '../../application/services/navigation.service';
@@ -16,15 +17,15 @@ import { CreateProjectModal } from '../components/create-project-modal';
 
 @Component({
   selector: 'app-projects-page',
-  imports: [Button, LoadingState, ErrorState, EmptyState, ProjectCard, Input],
+  imports: [Button, LoadingState, ErrorState, EmptyState, ProjectCard, Input, TranslatePipe],
   template: `
     <div class="projects-page">
       <div class="projects-page_header">
         <div class="projects-page_header-content">
           <div>
-            <h1 class="projects-page_title">Projects</h1>
+            <h1 class="projects-page_title">{{ 'projects.title' | translate }}</h1>
             <p class="projects-page_subtitle">
-              Manage your projects and track issues in one place.
+              {{ 'projects.subtitle' | translate }}
             </p>
           </div>
           <lib-button
@@ -34,7 +35,7 @@ import { CreateProjectModal } from '../components/create-project-modal';
             (clicked)="handleCreateProject()"
             [disabled]="!organizationId()"
           >
-            Create Project
+            {{ 'projects.createProject' | translate }}
           </lib-button>
         </div>
       </div>
@@ -42,27 +43,27 @@ import { CreateProjectModal } from '../components/create-project-modal';
       <div class="projects-page_content">
         @if (!organizationId()) {
           <lib-empty-state
-            title="No organization selected"
-            message="Please select or create an organization to view projects."
+            [title]="'projects.noOrganizationSelected' | translate"
+            [message]="'projects.noOrganizationSelectedDescription' | translate"
             icon="building"
-            actionLabel="Go to Organizations"
+            [actionLabel]="'projects.goToOrganizations' | translate"
             actionIcon="arrow-right"
             (onAction)="handleGoToOrganizations()"
           />
         } @else if (projectService.isLoading()) {
-          <lib-loading-state message="Loading projects..." />
+          <lib-loading-state [message]="'projects.loadingProjects' | translate" />
         } @else if (projectService.hasError()) {
           <lib-error-state
-            title="Failed to Load Projects"
+            [title]="'projects.failedToLoad' | translate"
             [message]="errorMessage()"
-            [retryLabel]="'Retry'"
+            [retryLabel]="'common.retry' | translate"
             (onRetry)="handleRetry()"
           />
         } @else {
           @if (allProjects().length > 0) {
             <div class="projects-page_search">
               <lib-input
-                placeholder="Search projects by name, key, or description..."
+                [placeholder]="'projects.searchPlaceholder' | translate"
                 [(model)]="searchQuery"
                 leftIcon="search"
                 class="projects-page_search-input"
@@ -71,16 +72,16 @@ import { CreateProjectModal } from '../components/create-project-modal';
           }
           @if (filteredProjects().length === 0 && allProjects().length > 0) {
             <lib-empty-state
-              title="No projects found"
-              message="Try adjusting your search terms."
+              [title]="'projects.noProjectsFound' | translate"
+              [message]="'projects.noProjectsFoundDescription' | translate"
               icon="search"
             />
           } @else if (filteredProjects().length === 0) {
             <lib-empty-state
-              title="No projects yet"
-              message="Get started by creating your first project to manage issues and tasks."
+              [title]="'projects.noProjects' | translate"
+              [message]="'projects.noProjectsDescription' | translate"
               icon="folder"
-              actionLabel="Create Project"
+              [actionLabel]="'projects.createProject' | translate"
               actionIcon="plus"
               (onAction)="handleCreateProject()"
             />

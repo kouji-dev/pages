@@ -12,24 +12,25 @@ import { Button, Icon, Modal } from 'shared-ui';
 import { AttachmentService, Attachment } from '../../application/services/attachment.service';
 import { FileUpload } from './file-upload';
 import { FilePreviewModal } from './file-preview-modal';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-attachment-list',
   standalone: true,
-  imports: [Button, Icon, FileUpload],
+  imports: [Button, Icon, FileUpload, TranslatePipe],
   template: `
     <div class="attachment-list">
       <div class="attachment-list_header">
-        <h3 class="attachment-list_title">Attachments</h3>
+        <h3 class="attachment-list_title">{{ 'attachments.title' | translate }}</h3>
       </div>
 
       <app-file-upload [issueId]="issueId()" />
 
       <div class="attachment-list_items">
         @if (attachmentService.isLoading()) {
-          <div class="attachment-list_loading">Loading attachments...</div>
+          <div class="attachment-list_loading">{{ 'attachments.loading' | translate }}</div>
         } @else if (attachments().length === 0) {
-          <div class="attachment-list_empty">No attachments yet.</div>
+          <div class="attachment-list_empty">{{ 'attachments.noAttachments' | translate }}</div>
         } @else {
           @for (attachment of attachments(); track attachment.id) {
             <div class="attachment-list_item">
@@ -60,7 +61,7 @@ import { FilePreviewModal } from './file-preview-modal';
               <div class="attachment-list_item-actions">
                 @if (isImage(attachment.mime_type) || attachment.mime_type === 'application/pdf') {
                   <lib-button variant="ghost" size="sm" (clicked)="handlePreview(attachment)">
-                    Preview
+                    {{ 'attachments.preview' | translate }}
                   </lib-button>
                 }
                 <a
@@ -68,14 +69,16 @@ import { FilePreviewModal } from './file-preview-modal';
                   target="_blank"
                   class="attachment-list_download-link"
                 >
-                  <lib-button variant="ghost" size="sm"> Download </lib-button>
+                  <lib-button variant="ghost" size="sm">
+                    {{ 'attachments.download' | translate }}
+                  </lib-button>
                 </a>
                 <lib-button
                   variant="ghost"
                   size="sm"
                   (clicked)="handleDeleteAttachment(attachment)"
                 >
-                  Delete
+                  {{ 'common.delete' | translate }}
                 </lib-button>
               </div>
             </div>
@@ -177,6 +180,7 @@ export class AttachmentList {
   readonly attachmentService = inject(AttachmentService);
   readonly modal = inject(Modal);
   readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly translateService = inject(TranslateService);
 
   readonly issueId = input.required<string>();
 
@@ -207,7 +211,13 @@ export class AttachmentList {
   }
 
   async handleDeleteAttachment(attachment: Attachment): Promise<void> {
-    if (!confirm(`Are you sure you want to delete "${attachment.original_name}"?`)) {
+    if (
+      !confirm(
+        this.translateService.instant('attachments.deleteConfirm', {
+          fileName: attachment.original_name,
+        }),
+      )
+    ) {
       return;
     }
 

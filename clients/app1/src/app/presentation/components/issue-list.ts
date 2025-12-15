@@ -34,6 +34,7 @@ import { IssuePriorityIndicator } from './issue-priority-indicator';
 import { CreateIssueModal } from './create-issue-modal';
 import { Dropdown, Icon } from 'shared-ui';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-issue-list',
@@ -50,21 +51,22 @@ import { CommonModule } from '@angular/common';
     Dropdown,
     Select,
     CommonModule,
+    TranslatePipe,
   ],
   template: `
     <div class="issue-list">
       <div class="issue-list_header">
         <div class="issue-list_header-content">
-          <h2 class="issue-list_title">Issues</h2>
+          <h2 class="issue-list_title">{{ 'issues.title' | translate }}</h2>
           <lib-button variant="primary" size="md" leftIcon="plus" (clicked)="handleCreateIssue()">
-            Create Issue
+            {{ 'issues.createIssue' | translate }}
           </lib-button>
         </div>
       </div>
 
       <div class="issue-list_filters">
         <lib-input
-          placeholder="Search issues..."
+          [placeholder]="'issues.searchIssues' | translate"
           [(model)]="searchQuery"
           (modelChange)="handleSearch()"
           class="issue-list_search"
@@ -86,26 +88,26 @@ import { CommonModule } from '@angular/common';
             <div class="issue-list_filter-menu">
               <div class="issue-list_filter-section">
                 <lib-select
-                  label="Status"
+                  [label]="'issues.filters.status' | translate"
                   [options]="statusFilterOptions()"
                   [(model)]="statusFilterModel"
-                  [placeholder]="'All Statuses'"
+                  [placeholder]="'issues.filters.allStatuses' | translate"
                 />
               </div>
               <div class="issue-list_filter-section">
                 <lib-select
-                  label="Type"
+                  [label]="'issues.filters.type' | translate"
                   [options]="typeFilterOptions()"
                   [(model)]="typeFilterModel"
-                  [placeholder]="'All Types'"
+                  [placeholder]="'issues.filters.allTypes' | translate"
                 />
               </div>
               <div class="issue-list_filter-section">
                 <lib-select
-                  label="Assignee"
+                  [label]="'issues.filters.assignee' | translate"
                   [options]="assigneeFilterOptions()"
                   [(model)]="assigneeFilterModel"
-                  [placeholder]="'All Assignees'"
+                  [placeholder]="'issues.filters.allAssignees' | translate"
                 />
               </div>
               @if (hasActiveFilters()) {
@@ -116,7 +118,7 @@ import { CommonModule } from '@angular/common';
                     [fullWidth]="true"
                     (clicked)="clearFilters(filterDropdown)"
                   >
-                    Clear Filters
+                    {{ 'issues.filters.clearFilters' | translate }}
                   </lib-button>
                 </div>
               }
@@ -127,20 +129,20 @@ import { CommonModule } from '@angular/common';
 
       <div class="issue-list_content">
         @if (issueService.isLoading()) {
-          <lib-loading-state message="Loading issues..." />
+          <lib-loading-state [message]="'issues.loadingIssues' | translate" />
         } @else if (issueService.hasError()) {
           <lib-error-state
-            title="Failed to Load Issues"
+            [title]="'issues.failedToLoad' | translate"
             [message]="errorMessage()"
-            [retryLabel]="'Retry'"
+            [retryLabel]="'common.retry' | translate"
             (onRetry)="handleRetry()"
           />
         } @else if (issues().length === 0) {
           <lib-empty-state
-            title="No issues yet"
-            message="Get started by creating your first issue to track work in this project."
+            [title]="'issues.noIssues' | translate"
+            [message]="'issues.noIssuesDescription' | translate"
             icon="file-text"
-            actionLabel="Create Issue"
+            [actionLabel]="'issues.createIssue' | translate"
             actionIcon="plus"
             (onAction)="handleCreateIssue()"
           />
@@ -164,10 +166,11 @@ import { CommonModule } from '@angular/common';
                 [disabled]="currentPage() === 1"
                 (clicked)="handlePreviousPage()"
               >
-                Previous
+                {{ 'common.previous' | translate }}
               </lib-button>
               <span class="issue-list_pagination-info">
-                Page {{ currentPage() }} of {{ totalPages() }}
+                {{ 'issues.pagination.page' | translate }} {{ currentPage() }}
+                {{ 'issues.pagination.of' | translate }} {{ totalPages() }}
               </span>
               <lib-button
                 variant="ghost"
@@ -175,7 +178,7 @@ import { CommonModule } from '@angular/common';
                 [disabled]="currentPage() === totalPages()"
                 (clicked)="handleNextPage()"
               >
-                Next
+                {{ 'common.next' | translate }}
               </lib-button>
             </div>
           }
@@ -196,7 +199,11 @@ import { CommonModule } from '@angular/common';
           <app-issue-priority-indicator [priority]="issue.priority" />
         } @else if (column.key === 'assignee') {
           <span class="issue-list_assignee">
-            {{ issue.assignee_id ? 'Assigned' : 'Unassigned' }}
+            {{
+              issue.assignee_id
+                ? ('issues.assigned' | translate)
+                : ('issues.unassigned' | translate)
+            }}
           </span>
         } @else if (column.key === 'created_at') {
           <span class="issue-list_date">{{ formatDate(issue.created_at) }}</span>
@@ -313,6 +320,7 @@ export class IssueList {
   readonly projectMembersService = inject(ProjectMembersService);
   readonly modal = inject(Modal);
   readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly translateService = inject(TranslateService);
 
   readonly projectId = input.required<string>();
   readonly searchQuery = signal('');
@@ -489,27 +497,27 @@ export class IssueList {
   readonly statusFilterOptions = computed<
     SelectOption<'todo' | 'in_progress' | 'done' | 'cancelled' | null>[]
   >(() => [
-    { value: null, label: 'All Statuses' },
-    { value: 'todo', label: 'To Do' },
-    { value: 'in_progress', label: 'In Progress' },
-    { value: 'done', label: 'Done' },
-    { value: 'cancelled', label: 'Cancelled' },
+    { value: null, label: this.translateService.instant('issues.filters.allStatuses') },
+    { value: 'todo', label: this.translateService.instant('issues.status.todo') },
+    { value: 'in_progress', label: this.translateService.instant('issues.status.inProgress') },
+    { value: 'done', label: this.translateService.instant('issues.status.done') },
+    { value: 'cancelled', label: this.translateService.instant('issues.status.cancelled') },
   ]);
 
   readonly typeFilterOptions = computed<SelectOption<'task' | 'bug' | 'story' | 'epic' | null>[]>(
     () => [
-      { value: null, label: 'All Types' },
-      { value: 'task', label: 'Task' },
-      { value: 'bug', label: 'Bug' },
-      { value: 'story', label: 'Story' },
-      { value: 'epic', label: 'Epic' },
+      { value: null, label: this.translateService.instant('issues.filters.allTypes') },
+      { value: 'task', label: this.translateService.instant('issues.type.task') },
+      { value: 'bug', label: this.translateService.instant('issues.type.bug') },
+      { value: 'story', label: this.translateService.instant('issues.type.story') },
+      { value: 'epic', label: this.translateService.instant('issues.type.epic') },
     ],
   );
 
   readonly assigneeFilterOptions = computed<SelectOption<string | 'unassigned' | null>[]>(() => {
     const options: SelectOption<string | 'unassigned' | null>[] = [
-      { value: null, label: 'All Assignees' },
-      { value: 'unassigned', label: 'Unassigned' },
+      { value: null, label: this.translateService.instant('issues.filters.allAssignees') },
+      { value: 'unassigned', label: this.translateService.instant('issues.unassigned') },
     ];
     return options.concat(
       this.projectMembers().map((member) => ({

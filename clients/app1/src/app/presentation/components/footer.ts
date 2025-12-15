@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Icon, IconName } from 'shared-ui';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 interface FooterLink {
   label: string;
@@ -16,7 +17,7 @@ interface SocialLink {
 
 @Component({
   selector: 'app-footer',
-  imports: [RouterLink, Icon],
+  imports: [RouterLink, Icon, TranslatePipe],
   template: `
     <footer class="footer">
       <div class="footer_container">
@@ -28,15 +29,15 @@ interface SocialLink {
               <span class="footer_brand-text">Pages</span>
             </div>
             <p class="footer_description">
-              Your all-in-one workspace for teams. Collaborate, create, and succeed together.
+              {{ 'public.description' | translate }}
             </p>
           </div>
 
           <!-- Product Links -->
           <div class="footer_section">
-            <h3 class="footer_section-title">Product</h3>
+            <h3 class="footer_section-title">{{ 'public.product' | translate }}</h3>
             <ul class="footer_links">
-              @for (link of productLinks; track link.route) {
+              @for (link of productLinks(); track link.route) {
                 <li>
                   <a [routerLink]="[link.route]" class="footer_link">{{ link.label }}</a>
                 </li>
@@ -46,9 +47,9 @@ interface SocialLink {
 
           <!-- Legal Links -->
           <div class="footer_section">
-            <h3 class="footer_section-title">Legal</h3>
+            <h3 class="footer_section-title">{{ 'public.legal' | translate }}</h3>
             <ul class="footer_links">
-              @for (link of legalLinks; track link.route) {
+              @for (link of legalLinks(); track link.route) {
                 <li>
                   <a [routerLink]="[link.route]" class="footer_link">{{ link.label }}</a>
                 </li>
@@ -58,7 +59,7 @@ interface SocialLink {
 
           <!-- Contact Section -->
           <div class="footer_section">
-            <h3 class="footer_section-title">Contact</h3>
+            <h3 class="footer_section-title">{{ 'public.contact' | translate }}</h3>
             <div class="footer_contact">
               <p class="footer_contact-item">
                 <lib-icon name="mail" size="sm" />
@@ -66,7 +67,7 @@ interface SocialLink {
               </p>
             </div>
             <div class="footer_social">
-              @for (social of socialLinks; track social.name) {
+              @for (social of socialLinks(); track social.name) {
                 <a
                   [href]="social.url"
                   [attr.aria-label]="social.ariaLabel"
@@ -83,7 +84,9 @@ interface SocialLink {
 
         <!-- Copyright -->
         <div class="footer_copyright">
-          <p class="footer_copyright-text">© {{ currentYear }} Pages. All rights reserved.</p>
+          <p class="footer_copyright-text">
+            {{ 'public.copyright' | translate: { year: currentYear } }}
+          </p>
         </div>
       </div>
     </footer>
@@ -201,37 +204,38 @@ interface SocialLink {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Footer {
+  private readonly translateService = inject(TranslateService);
   readonly currentYear = new Date().getFullYear();
 
-  readonly productLinks: FooterLink[] = [
-    { label: 'Features', route: '/features' },
-    { label: 'Pricing', route: '/pricing' },
-    { label: 'Documentation', route: '/docs' },
-  ];
+  readonly productLinks = computed<FooterLink[]>(() => [
+    { label: this.translateService.instant('public.features'), route: '/features' },
+    { label: this.translateService.instant('public.pricing'), route: '/pricing' },
+    { label: this.translateService.instant('public.documentation'), route: '/docs' },
+  ]);
 
-  readonly legalLinks: FooterLink[] = [
-    { label: 'Terms of Service', route: '/terms' },
-    { label: 'Privacy Policy', route: '/privacy' },
-  ];
+  readonly legalLinks = computed<FooterLink[]>(() => [
+    { label: this.translateService.instant('public.termsOfService'), route: '/terms' },
+    { label: this.translateService.instant('public.privacyPolicy'), route: '/privacy' },
+  ]);
 
-  readonly socialLinks: SocialLink[] = [
+  readonly socialLinks = computed<SocialLink[]>(() => [
     {
       name: 'Twitter',
       icon: 'twitter',
       url: 'https://twitter.com',
-      ariaLabel: 'Follow us on Twitter',
+      ariaLabel: this.translateService.instant('public.followTwitter'),
     },
     {
       name: 'GitHub',
       icon: 'github',
       url: 'https://github.com',
-      ariaLabel: 'Visit our GitHub',
+      ariaLabel: this.translateService.instant('public.visitGitHub'),
     },
     {
       name: 'LinkedIn',
       icon: 'linkedin',
       url: 'https://linkedin.com',
-      ariaLabel: 'Connect on LinkedIn',
+      ariaLabel: this.translateService.instant('public.connectLinkedIn'),
     },
-  ];
+  ]);
 }

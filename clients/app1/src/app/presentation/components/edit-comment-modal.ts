@@ -17,6 +17,7 @@ import {
   Comment,
   UpdateCommentRequest,
 } from '../../application/services/comment.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-edit-comment-modal',
@@ -28,15 +29,16 @@ import {
     Button,
     TextEditor,
     FormsModule,
+    TranslatePipe,
   ],
   template: `
     <lib-modal-container>
-      <lib-modal-header>Edit Comment</lib-modal-header>
+      <lib-modal-header>{{ 'comments.editComment' | translate }}</lib-modal-header>
       <lib-modal-content>
         <form class="edit-comment-form" (ngSubmit)="handleSubmit()">
           <lib-text-editor
             #editor
-            placeholder="Enter your comment"
+            [placeholder]="'comments.enterComment' | translate"
             [showToolbar]="true"
             [(ngModel)]="content"
             name="edit-comment"
@@ -48,7 +50,7 @@ import {
       </lib-modal-content>
       <lib-modal-footer>
         <lib-button variant="secondary" (clicked)="handleCancel()" [disabled]="isSubmitting()">
-          Cancel
+          {{ 'common.cancel' | translate }}
         </lib-button>
         <lib-button
           variant="primary"
@@ -56,7 +58,7 @@ import {
           [loading]="isSubmitting()"
           [disabled]="!isValid()"
         >
-          Save Changes
+          {{ 'common.saveChanges' | translate }}
         </lib-button>
       </lib-modal-footer>
     </lib-modal-container>
@@ -77,6 +79,7 @@ export class EditCommentModal {
   private readonly toast = inject(ToastService);
   private readonly modal = inject(Modal);
   readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly translateService = inject(TranslateService);
 
   readonly commentId = input.required<string>();
   readonly comment = input.required<Comment>();
@@ -105,12 +108,12 @@ export class EditCommentModal {
   readonly contentError = computed(() => {
     const html = this.htmlContent();
     if (!html || html.trim() === '' || html.trim() === '<p></p>') {
-      return 'Comment content is required';
+      return this.translateService.instant('comments.contentRequired');
     }
     // Check text length (strip HTML tags for length check)
     const textContent = this.content();
     if (textContent.trim().length > 10000) {
-      return 'Comment must be 10,000 characters or less';
+      return this.translateService.instant('comments.maxLength');
     }
     return '';
   });
@@ -147,12 +150,14 @@ export class EditCommentModal {
 
       await this.commentService.updateComment(this.commentId(), request);
 
-      this.toast.success('Comment updated successfully!');
+      this.toast.success(this.translateService.instant('comments.updateSuccess'));
       this.modal.close();
     } catch (error) {
       console.error('Failed to update comment:', error);
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to update comment. Please try again.';
+        error instanceof Error
+          ? error.message
+          : this.translateService.instant('comments.updateError');
       this.toast.error(errorMessage);
     } finally {
       this.isSubmitting.set(false);

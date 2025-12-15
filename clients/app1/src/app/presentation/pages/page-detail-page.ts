@@ -9,6 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   Button,
   Input,
@@ -34,22 +35,23 @@ import { CommentList } from '../components/comment-list';
     FormsModule,
     Dropdown,
     CommentList,
+    TranslatePipe,
   ],
   template: `
     <div class="page-detail-page">
       @if (pageService.isFetchingPage()) {
-        <lib-loading-state message="Loading page..." />
+        <lib-loading-state [message]="'pages.loadingPage' | translate" />
       } @else if (pageService.hasPageError()) {
         <lib-error-state
-          title="Failed to Load Page"
+          [title]="'pages.failedToLoad' | translate"
           [message]="errorMessage()"
-          [retryLabel]="'Retry'"
+          [retryLabel]="'common.retry' | translate"
           (onRetry)="handleRetry()"
         />
       } @else if (!page()) {
         <lib-error-state
-          title="Page Not Found"
-          message="The page you're looking for doesn't exist or you don't have access to it."
+          [title]="'pages.notFound' | translate"
+          [message]="'pages.notFoundDescription' | translate"
           [showRetry]="false"
         />
       } @else {
@@ -58,7 +60,7 @@ import { CommentList } from '../components/comment-list';
             <div class="page-detail-page_header-main">
               <lib-input
                 [(model)]="title"
-                placeholder="Page title"
+                [placeholder]="'pages.pageTitle' | translate"
                 [required]="true"
                 [readonly]="!isEditMode()"
                 [errorMessage]="isEditMode() ? titleError() : ''"
@@ -72,7 +74,7 @@ import { CommentList } from '../components/comment-list';
                     (clicked)="handleCancel()"
                     [disabled]="isSaving()"
                   >
-                    Cancel
+                    {{ 'common.cancel' | translate }}
                   </lib-button>
                   <lib-button
                     variant="primary"
@@ -81,11 +83,11 @@ import { CommentList } from '../components/comment-list';
                     [loading]="isSaving()"
                     [disabled]="!isFormValid()"
                   >
-                    Save
+                    {{ 'common.save' | translate }}
                   </lib-button>
                 } @else {
                   <lib-button variant="ghost" size="sm" (clicked)="handleEdit()" leftIcon="pencil">
-                    Edit
+                    {{ 'common.edit' | translate }}
                   </lib-button>
                   <lib-button
                     variant="ghost"
@@ -106,7 +108,7 @@ import { CommentList } from '../components/comment-list';
                       class="page-detail-page_delete-button"
                       (clicked)="handleDelete(actionsDropdown)"
                     >
-                      Delete Page
+                      {{ 'pages.deletePage' | translate }}
                     </lib-button>
                   </ng-template>
                 }
@@ -116,22 +118,22 @@ import { CommentList } from '../components/comment-list';
               <div class="page-detail-page_metadata">
                 @if (page()?.authorName) {
                   <span class="page-detail-page_metadata-item">
-                    Created by {{ page()!.authorName }}
+                    {{ 'pages.createdBy' | translate }} {{ page()!.authorName }}
                     @if (page()!.createdAt) {
-                      on {{ formatDate(page()!.createdAt) }}
+                      {{ 'pages.on' | translate }} {{ formatDate(page()!.createdAt) }}
                     }
                   </span>
                 }
                 @if (page()?.editorName && page()?.editorName !== page()?.authorName) {
                   <span class="page-detail-page_metadata-item">
-                    Last edited by {{ page()!.editorName }}
+                    {{ 'pages.lastEditedBy' | translate }} {{ page()!.editorName }}
                     @if (page()!.updatedAt) {
-                      on {{ formatDate(page()!.updatedAt) }}
+                      {{ 'pages.on' | translate }} {{ formatDate(page()!.updatedAt) }}
                     }
                   </span>
                 } @else if (page()?.updatedAt) {
                   <span class="page-detail-page_metadata-item">
-                    Last updated {{ formatDate(page()!.updatedAt) }}
+                    {{ 'pages.lastUpdated' | translate }} {{ formatDate(page()!.updatedAt) }}
                   </span>
                 }
               </div>
@@ -142,7 +144,7 @@ import { CommentList } from '../components/comment-list';
             @if (isEditMode()) {
               <lib-text-editor
                 #contentEditor
-                placeholder="Start writing..."
+                [placeholder]="'pages.startWriting' | translate"
                 [showToolbar]="true"
                 [(ngModel)]="content"
                 name="page-content"
@@ -160,7 +162,7 @@ import { CommentList } from '../components/comment-list';
                     class="page-detail-page_view-editor"
                   />
                 } @else {
-                  <p class="page-detail-page_empty">No content yet. Click Edit to add content.</p>
+                  <p class="page-detail-page_empty">{{ 'pages.noContent' | translate }}</p>
                 }
               </div>
             }
@@ -311,6 +313,7 @@ import { CommentList } from '../components/comment-list';
 export class PageDetailPage {
   readonly pageService = inject(PageService);
   readonly navigationService = inject(NavigationService);
+  private readonly translateService = inject(TranslateService);
   readonly toast = inject(ToastService);
   readonly modal = inject(Modal);
 
@@ -353,10 +356,10 @@ export class PageDetailPage {
   readonly titleError = computed(() => {
     const titleValue = this.title();
     if (!titleValue || titleValue.trim() === '') {
-      return 'Title is required';
+      return this.translateService.instant('pages.titleRequired');
     }
     if (titleValue.length > 255) {
-      return 'Title must be 255 characters or less';
+      return this.translateService.instant('pages.titleMaxLength');
     }
     return '';
   });

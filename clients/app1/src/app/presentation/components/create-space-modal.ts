@@ -11,43 +11,44 @@ import { Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter } from 's
 import { Button, Input } from 'shared-ui';
 import { ToastService } from 'shared-ui';
 import { SpaceService } from '../../application/services/space.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-create-space-modal',
-  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, Input],
+  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, Input, TranslatePipe],
   template: `
     <lib-modal-container>
-      <lib-modal-header>Create Space</lib-modal-header>
+      <lib-modal-header>{{ 'spaces.modals.createSpace' | translate }}</lib-modal-header>
       <lib-modal-content>
         <form class="create-space-form" (ngSubmit)="handleSubmit()">
           <lib-input
-            label="Space Name"
-            placeholder="Enter space name"
+            [label]="'spaces.modals.spaceName' | translate"
+            [placeholder]="'spaces.modals.spaceNamePlaceholder' | translate"
             [(model)]="name"
             [required]="true"
             [errorMessage]="nameError()"
-            helperText="Choose a name for your space"
+            [helperText]="'spaces.modals.spaceNameHelper' | translate"
           />
           <lib-input
-            label="Space Key"
-            placeholder="SPACE"
+            [label]="'spaces.modals.spaceKey' | translate"
+            [placeholder]="'spaces.modals.spaceKeyPlaceholder' | translate"
             [(model)]="key"
             [errorMessage]="keyError()"
-            helperText="Short identifier (auto-generated from name, max 10 characters, uppercase)"
+            [helperText]="'spaces.modals.spaceKeyHelper' | translate"
           />
           <lib-input
-            label="Description"
+            [label]="'spaces.modals.description' | translate"
             type="textarea"
-            placeholder="Describe your space (optional)"
+            [placeholder]="'spaces.modals.descriptionPlaceholder' | translate"
             [(model)]="description"
             [rows]="3"
-            helperText="Optional description of your space"
+            [helperText]="'spaces.modals.descriptionHelper' | translate"
           />
         </form>
       </lib-modal-content>
       <lib-modal-footer>
         <lib-button variant="secondary" (clicked)="handleCancel()" [disabled]="isSubmitting()">
-          Cancel
+          {{ 'common.cancel' | translate }}
         </lib-button>
         <lib-button
           variant="primary"
@@ -55,7 +56,7 @@ import { SpaceService } from '../../application/services/space.service';
           [loading]="isSubmitting()"
           [disabled]="!isValid()"
         >
-          Create Space
+          {{ 'spaces.modals.createSpace' | translate }}
         </lib-button>
       </lib-modal-footer>
     </lib-modal-container>
@@ -75,6 +76,7 @@ export class CreateSpaceModal {
   private readonly spaceService = inject(SpaceService);
   private readonly toast = inject(ToastService);
   private readonly modal = inject(Modal);
+  private readonly translateService = inject(TranslateService);
 
   readonly organizationId = input.required<string>();
 
@@ -86,10 +88,10 @@ export class CreateSpaceModal {
   readonly nameError = computed(() => {
     const value = this.name();
     if (!value.trim()) {
-      return 'Space name is required';
+      return this.translateService.instant('spaces.modals.nameRequired');
     }
     if (value.trim().length < 3) {
-      return 'Space name must be at least 3 characters';
+      return this.translateService.instant('spaces.modals.nameMinLength');
     }
     return '';
   });
@@ -102,13 +104,13 @@ export class CreateSpaceModal {
     // Key format validation: uppercase letters and numbers only, max 10 chars
     const keyPattern = /^[A-Z0-9]+$/;
     if (!keyPattern.test(value)) {
-      return 'Key can only contain uppercase letters and numbers';
+      return this.translateService.instant('spaces.modals.keyInvalidFormat');
     }
     if (value.length > 10) {
-      return 'Key must be 10 characters or less';
+      return this.translateService.instant('spaces.modals.keyMaxLength');
     }
     if (value.length < 2) {
-      return 'Key must be at least 2 characters';
+      return this.translateService.instant('spaces.modals.keyMinLength');
     }
     return '';
   });
@@ -177,7 +179,7 @@ export class CreateSpaceModal {
         organization_id: this.organizationId(),
       });
 
-      this.toast.success('Space created successfully!');
+      this.toast.success(this.translateService.instant('spaces.modals.createSuccess'));
       this.modal.close();
 
       // Reset form
@@ -191,7 +193,9 @@ export class CreateSpaceModal {
     } catch (error) {
       console.error('Failed to create space:', error);
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to create space. Please try again.';
+        error instanceof Error
+          ? error.message
+          : this.translateService.instant('spaces.modals.createError');
       this.toast.error(errorMessage);
     } finally {
       this.isSubmitting.set(false);

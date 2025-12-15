@@ -3,17 +3,18 @@ import { Router, RouterLink } from '@angular/router';
 import { Button, Input, ToastService } from 'shared-ui';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../application/services/auth.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [Button, Input, RouterLink],
+  imports: [Button, Input, RouterLink, TranslatePipe],
   template: `
     <div class="register-page">
       <div class="register-page_container">
         <div class="register-page_content">
-          <h1 class="register-page_title">Create an account</h1>
-          <p class="register-page_subtitle">Sign up to get started with Pages</p>
+          <h1 class="register-page_title">{{ 'auth.register.title' | translate }}</h1>
+          <p class="register-page_subtitle">{{ 'auth.register.subtitle' | translate }}</p>
 
           <form
             class="register-page_form"
@@ -21,29 +22,29 @@ import { AuthService } from '../../application/services/auth.service';
             (submit)="$event.preventDefault()"
           >
             <lib-input
-              label="Name"
+              [label]="'auth.name' | translate"
               type="text"
-              placeholder="Enter your full name"
+              [placeholder]="'auth.register.namePlaceholder' | translate"
               [(model)]="name"
               [required]="true"
               [errorMessage]="nameError()"
-              helperText="This will be displayed on your profile"
+              [helperText]="'auth.register.nameHelper' | translate"
             />
 
             <lib-input
-              label="Email"
+              [label]="'auth.email' | translate"
               type="email"
-              placeholder="Enter your email"
+              [placeholder]="'auth.register.emailPlaceholder' | translate"
               [(model)]="email"
               [required]="true"
               [errorMessage]="emailError()"
-              helperText="We'll never share your email"
+              [helperText]="'auth.register.emailHelper' | translate"
             />
 
             <lib-input
-              label="Password"
+              [label]="'auth.password' | translate"
               type="password"
-              placeholder="Create a password"
+              [placeholder]="'auth.register.passwordPlaceholder' | translate"
               [(model)]="password"
               [required]="true"
               [errorMessage]="passwordError()"
@@ -52,9 +53,9 @@ import { AuthService } from '../../application/services/auth.service';
             />
 
             <lib-input
-              label="Confirm Password"
+              [label]="'auth.register.confirmPassword' | translate"
               type="password"
-              placeholder="Confirm your password"
+              [placeholder]="'auth.register.confirmPasswordPlaceholder' | translate"
               [(model)]="confirmPassword"
               [required]="true"
               [errorMessage]="confirmPasswordError()"
@@ -70,14 +71,14 @@ import { AuthService } from '../../application/services/auth.service';
                   (change)="acceptedTerms.set($any($event.target).checked)"
                 />
                 <span class="register-page_terms-text">
-                  I agree to the
-                  <a href="/terms" target="_blank" class="register-page_terms-link"
-                    >Terms of Service</a
-                  >
-                  and
-                  <a href="/privacy" target="_blank" class="register-page_terms-link"
-                    >Privacy Policy</a
-                  >
+                  {{ 'auth.register.termsAgreement' | translate }}
+                  <a href="/terms" target="_blank" class="register-page_terms-link">{{
+                    'auth.register.termsOfService' | translate
+                  }}</a>
+                  {{ 'common.and' | translate }}
+                  <a href="/privacy" target="_blank" class="register-page_terms-link">{{
+                    'auth.register.privacyPolicy' | translate
+                  }}</a>
                 </span>
               </label>
               @if (termsError()) {
@@ -93,15 +94,17 @@ import { AuthService } from '../../application/services/auth.service';
                 [disabled]="!isFormValid()"
                 class="register-page_submit-button"
               >
-                Create Account
+                {{ 'auth.register.createAccount' | translate }}
               </lib-button>
             </div>
           </form>
 
           <div class="register-page_footer">
             <p class="register-page_footer-text">
-              Already have an account?
-              <a routerLink="/login" class="register-page_link">Sign in</a>
+              {{ 'auth.register.alreadyHaveAccount' | translate }}
+              <a routerLink="/login" class="register-page_link">{{
+                'auth.register.signIn' | translate
+              }}</a>
             </p>
           </div>
         </div>
@@ -235,6 +238,7 @@ export class RegisterPage {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   readonly name = signal('');
   readonly email = signal('');
@@ -246,10 +250,10 @@ export class RegisterPage {
   readonly nameError = computed(() => {
     const value = this.name();
     if (!value.trim()) {
-      return 'Name is required';
+      return this.translateService.instant('auth.nameRequired');
     }
     if (value.trim().length < 2) {
-      return 'Name must be at least 2 characters';
+      return this.translateService.instant('auth.nameMinLength');
     }
     return '';
   });
@@ -257,11 +261,11 @@ export class RegisterPage {
   readonly emailError = computed(() => {
     const value = this.email();
     if (!value.trim()) {
-      return 'Email is required';
+      return this.translateService.instant('auth.emailRequired');
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(value.trim())) {
-      return 'Please enter a valid email address';
+      return this.translateService.instant('auth.emailInvalid');
     }
     return '';
   });
@@ -269,19 +273,19 @@ export class RegisterPage {
   readonly passwordError = computed(() => {
     const value = this.password();
     if (!value.trim()) {
-      return 'Password is required';
+      return this.translateService.instant('auth.passwordRequired');
     }
     if (value.length < 8) {
-      return 'Password must be at least 8 characters long';
+      return this.translateService.instant('auth.passwordMinLength');
     }
     if (!/[A-Z]/.test(value)) {
-      return 'Password must contain at least one uppercase letter';
+      return this.translateService.instant('auth.passwordUppercase');
     }
     if (!/[a-z]/.test(value)) {
-      return 'Password must contain at least one lowercase letter';
+      return this.translateService.instant('auth.passwordLowercase');
     }
     if (!/[0-9]/.test(value)) {
-      return 'Password must contain at least one number';
+      return this.translateService.instant('auth.passwordNumber');
     }
     return '';
   });
@@ -290,17 +294,17 @@ export class RegisterPage {
     const value = this.confirmPassword();
     const passwordValue = this.password();
     if (!value.trim()) {
-      return 'Please confirm your password';
+      return this.translateService.instant('auth.confirmPasswordRequired');
     }
     if (value !== passwordValue) {
-      return 'Passwords do not match';
+      return this.translateService.instant('auth.passwordsDoNotMatch');
     }
     return '';
   });
 
   readonly termsError = computed(() => {
     if (!this.acceptedTerms() && (this.name() || this.email() || this.password())) {
-      return 'You must accept the terms of service to continue';
+      return this.translateService.instant('auth.register.termsRequired');
     }
     return '';
   });
@@ -308,7 +312,7 @@ export class RegisterPage {
   readonly passwordStrengthText = computed(() => {
     const value = this.password();
     if (!value) {
-      return 'Password must be at least 8 characters with uppercase, lowercase, and number';
+      return this.translateService.instant('auth.register.passwordRequirements');
     }
     if (this.passwordError()) {
       return this.passwordError();
@@ -322,11 +326,11 @@ export class RegisterPage {
     if (/[^A-Za-z0-9]/.test(value)) strength++;
 
     if (strength <= 2) {
-      return 'Password strength: Weak';
+      return this.translateService.instant('auth.register.passwordStrengthWeak');
     } else if (strength <= 4) {
-      return 'Password strength: Medium';
+      return this.translateService.instant('auth.register.passwordStrengthMedium');
     } else {
-      return 'Password strength: Strong';
+      return this.translateService.instant('auth.register.passwordStrengthStrong');
     }
   });
 
@@ -361,7 +365,7 @@ export class RegisterPage {
         }),
       );
 
-      this.toast.success('Account created successfully!');
+      this.toast.success(this.translateService.instant('auth.register.accountCreated'));
       this.router.navigate(['/app']);
     } catch (error) {
       // Error is already handled by error interceptor

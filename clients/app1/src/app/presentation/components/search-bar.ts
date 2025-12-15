@@ -4,6 +4,7 @@ import {
   signal,
   inject,
   effect,
+  computed,
   HostListener,
   ViewChild,
   ElementRef,
@@ -15,7 +16,8 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Overlay, OverlayRef, OverlayConfig } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
-import { Input, Icon } from 'shared-ui';
+import { TranslateService } from '@ngx-translate/core';
+import { Input } from 'shared-ui';
 import type { Input as InputComponent } from 'shared-ui';
 import { SearchService } from '../../application/services/search.service';
 import { NavigationService } from '../../application/services/navigation.service';
@@ -23,14 +25,14 @@ import { SearchDropdown } from './search-dropdown';
 
 @Component({
   selector: 'app-search-bar',
-  imports: [Input, Icon, FormsModule, SearchDropdown],
+  imports: [Input, FormsModule, SearchDropdown],
   template: `
     <div class="search-bar" #searchBarContainer>
       <lib-input
         #searchInput
         type="search"
         [(model)]="query"
-        [placeholder]="placeholder()"
+        [placeholder]="computedPlaceholder()"
         leftIcon="search"
         [readonly]="readonly()"
         (keydown.enter)="handleSearch()"
@@ -106,13 +108,18 @@ export class SearchBar implements OnDestroy {
   private readonly navigationService = inject(NavigationService);
   private readonly overlay = inject(Overlay);
   private readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly translateService = inject(TranslateService);
 
   @ViewChild('searchInput', { static: false }) searchInput?: InputComponent;
   @ViewChild('searchBarContainer', { static: false })
   searchBarContainer?: ElementRef<HTMLDivElement>;
   @ViewChild('dropdownTemplate', { static: false }) dropdownTemplate?: TemplateRef<any>;
 
-  readonly placeholder = signal<string>('Search issues and pages...');
+  readonly placeholder = signal<string>('');
+
+  readonly computedPlaceholder = computed(() => {
+    return this.placeholder() || this.translateService.instant('search.placeholder');
+  });
   readonly readonly = signal<boolean>(false);
   readonly showKeyboardHint = signal<boolean>(true);
   readonly isDropdownOpen = signal<boolean>(false);

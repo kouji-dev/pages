@@ -2,10 +2,11 @@ import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/cor
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Button, Icon } from 'shared-ui';
 import { ThemeToggle } from './theme-toggle';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-public-nav',
-  imports: [RouterLink, RouterLinkActive, Button, Icon, ThemeToggle],
+  imports: [RouterLink, RouterLinkActive, Button, Icon, ThemeToggle, TranslatePipe],
   template: `
     <nav class="public-nav">
       <div class="public-nav_container">
@@ -22,31 +23,35 @@ import { ThemeToggle } from './theme-toggle';
               routerLinkActive="public-nav_link--active"
               class="public-nav_link"
               [routerLinkActiveOptions]="{ exact: true }"
-              >Home</a
+              >{{ 'public.home' | translate }}</a
             >
             <a
               routerLink="/features"
               routerLinkActive="public-nav_link--active"
               class="public-nav_link"
-              >Features</a
+              >{{ 'public.features' | translate }}</a
             >
             <a
               routerLink="/pricing"
               routerLinkActive="public-nav_link--active"
               class="public-nav_link"
-              >Pricing</a
+              >{{ 'public.pricing' | translate }}</a
             >
             <a
               routerLink="/demo"
               routerLinkActive="public-nav_link--active"
               class="public-nav_link public-nav_link--demo"
-              >Demo</a
+              >{{ 'public.demo' | translate }}</a
             >
           </div>
           <div class="public-nav_actions">
             <app-theme-toggle />
-            <lib-button variant="ghost" size="md" [link]="['/login']">Log In</lib-button>
-            <lib-button variant="primary" size="md" [link]="['/register']">Sign Up</lib-button>
+            <lib-button variant="ghost" size="md" [link]="['/login']">{{
+              'public.logIn' | translate
+            }}</lib-button>
+            <lib-button variant="primary" size="md" [link]="['/register']">{{
+              'public.signUp' | translate
+            }}</lib-button>
           </div>
         </div>
 
@@ -56,7 +61,7 @@ import { ThemeToggle } from './theme-toggle';
           type="button"
           (click)="toggleMobileMenu()"
           [attr.aria-expanded]="isMobileMenuOpen()"
-          aria-label="Toggle mobile menu"
+          [attr.aria-label]="'public.toggleMobileMenu' | translate"
         >
           <lib-icon [name]="isMobileMenuOpen() ? 'x' : 'menu'" size="md" />
         </button>
@@ -71,40 +76,40 @@ import { ThemeToggle } from './theme-toggle';
               routerLinkActive="public-nav_mobile-link--active"
               class="public-nav_mobile-link"
               (click)="closeMobileMenu()"
-              >Home</a
+              >{{ 'public.home' | translate }}</a
             >
             <a
               routerLink="/features"
               routerLinkActive="public-nav_mobile-link--active"
               class="public-nav_mobile-link"
               (click)="closeMobileMenu()"
-              >Features</a
+              >{{ 'public.features' | translate }}</a
             >
             <a
               routerLink="/pricing"
               routerLinkActive="public-nav_mobile-link--active"
               class="public-nav_mobile-link"
               (click)="closeMobileMenu()"
-              >Pricing</a
+              >{{ 'public.pricing' | translate }}</a
             >
             <a
               routerLink="/demo"
               routerLinkActive="public-nav_mobile-link--active"
               class="public-nav_mobile-link public-nav_mobile-link--demo"
               (click)="closeMobileMenu()"
-              >Demo</a
+              >{{ 'public.demo' | translate }}</a
             >
           </div>
           <div class="public-nav_mobile-actions">
-            <lib-button variant="ghost" size="md" [link]="['/login']" (click)="closeMobileMenu()"
-              >Log In</lib-button
-            >
+            <lib-button variant="ghost" size="md" [link]="['/login']" (click)="closeMobileMenu()">{{
+              'public.logIn' | translate
+            }}</lib-button>
             <lib-button
               variant="primary"
               size="md"
               [link]="['/register']"
               (click)="closeMobileMenu()"
-              >Sign Up</lib-button
+              >{{ 'public.signUp' | translate }}</lib-button
             >
           </div>
         </div>

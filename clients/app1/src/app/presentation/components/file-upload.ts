@@ -2,11 +2,12 @@ import { Component, ChangeDetectionStrategy, computed, inject, input, signal } f
 import { Button, Icon } from 'shared-ui';
 import { ToastService } from 'shared-ui';
 import { AttachmentService } from '../../application/services/attachment.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-file-upload',
   standalone: true,
-  imports: [Button, Icon],
+  imports: [Button, Icon, TranslatePipe],
   template: `
     <div class="file-upload">
       <input
@@ -27,17 +28,17 @@ import { AttachmentService } from '../../application/services/attachment.service
         <div class="file-upload_dropzone-content">
           <lib-icon name="upload" size="lg" />
           <p class="file-upload_dropzone-text">
-            Drag and drop files here, or
+            {{ 'attachments.dragAndDrop' | translate }}
             <button
               type="button"
               class="file-upload_dropzone-button"
               (click)="fileInput.click()"
               [disabled]="isUploading()"
             >
-              browse
+              {{ 'attachments.browse' | translate }}
             </button>
           </p>
-          <p class="file-upload_dropzone-hint">Maximum file size: 10MB</p>
+          <p class="file-upload_dropzone-hint">{{ 'attachments.maxFileSize' | translate }}</p>
         </div>
       </div>
       @if (selectedFiles().length > 0) {
@@ -67,7 +68,7 @@ import { AttachmentService } from '../../application/services/attachment.service
               [loading]="isUploading()"
               [disabled]="selectedFiles().length === 0"
             >
-              Upload {{ selectedFiles().length }} file{{ selectedFiles().length > 1 ? 's' : '' }}
+              {{ getUploadButtonLabel() }}
             </lib-button>
             <lib-button
               variant="ghost"
@@ -75,7 +76,7 @@ import { AttachmentService } from '../../application/services/attachment.service
               (clicked)="clearFiles()"
               [disabled]="isUploading()"
             >
-              Clear
+              {{ 'attachments.clear' | translate }}
             </lib-button>
           </div>
         </div>
@@ -194,6 +195,7 @@ import { AttachmentService } from '../../application/services/attachment.service
 export class FileUpload {
   private readonly attachmentService = inject(AttachmentService);
   private readonly toast = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   readonly issueId = input.required<string>();
   readonly acceptedTypes = input<string>('*/*'); // Accept all file types by default
@@ -237,7 +239,9 @@ export class FileUpload {
 
     for (const file of files) {
       if (file.size > maxSize) {
-        this.toast.error(`File "${file.name}" exceeds 10MB limit`);
+        this.toast.error(
+          this.translateService.instant('attachments.fileExceedsLimit', { fileName: file.name }),
+        );
         continue;
       }
       validFiles.push(file);
@@ -247,10 +251,19 @@ export class FileUpload {
       this.selectedFiles.update((current) => [...current, ...validFiles]);
       if (validFiles.length < files.length) {
         this.toast.warning(
-          `${files.length - validFiles.length} file(s) were skipped due to size limits`,
+          this.translateService.instant('attachments.filesSkipped', {
+            count: files.length - validFiles.length,
+          }),
         );
       }
     }
+  }
+
+  getUploadButtonLabel(): string {
+    const count = this.selectedFiles().length;
+    return count === 1
+      ? this.translateService.instant('attachments.uploadFile')
+      : this.translateService.instant('attachments.uploadFiles', { count });
   }
 
   removeFile(file: File): void {
@@ -280,17 +293,23 @@ export class FileUpload {
           await this.attachmentService.uploadAttachment(this.issueId(), file);
         } catch (error) {
           console.error(`Failed to upload ${file.name}:`, error);
-          this.toast.error(`Failed to upload "${file.name}"`);
+          this.toast.error(
+            this.translateService.instant('attachments.uploadFileError', { fileName: file.name }),
+          );
         }
       }
 
       const successCount = files.length;
-      this.toast.success(`Successfully uploaded ${successCount} file(s)!`);
+      this.toast.success(
+        this.translateService.instant('attachments.uploadSuccess', { count: successCount }),
+      );
       this.selectedFiles.set([]);
     } catch (error) {
       console.error('Failed to upload files:', error);
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to upload files. Please try again.';
+        error instanceof Error
+          ? error.message
+          : this.translateService.instant('attachments.uploadFilesError');
       this.toast.error(errorMessage);
     } finally {
       this.isUploading.set(false);

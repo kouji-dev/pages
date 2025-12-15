@@ -4,16 +4,17 @@ import { Icon, Button } from 'shared-ui';
 import { OrganizationService } from '../../application/services/organization.service';
 import { NavigationService } from '../../application/services/navigation.service';
 import { Project } from '../../application/services/project.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-project-card',
-  imports: [Icon, RouterLink, Button],
+  imports: [Icon, RouterLink, Button, TranslatePipe],
   template: `
     <div class="project-card">
       <a
         [routerLink]="getProjectRoute()"
         class="project-card_link"
-        [attr.aria-label]="'View ' + project().name"
+        [attr.aria-label]="('projects.viewProject' | translate) + ': ' + project().name"
       >
         <div class="project-card_content">
           <div class="project-card_header">
@@ -32,7 +33,7 @@ import { Project } from '../../application/services/project.service';
             <div class="project-card_meta">
               <div class="project-card_member-count">
                 <lib-icon name="users" size="sm" />
-                <span>{{ project().memberCount || 0 }} member(s)</span>
+                <span>{{ project().memberCount || 0 }} {{ 'projects.members' | translate }}</span>
               </div>
             </div>
           </div>

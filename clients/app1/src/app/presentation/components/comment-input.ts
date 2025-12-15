@@ -11,16 +11,17 @@ import {
 import { FormsModule } from '@angular/forms';
 import { Button, TextEditor, ToastService } from 'shared-ui';
 import { CommentService } from '../../application/services/comment.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-comment-input',
   standalone: true,
-  imports: [Button, TextEditor, FormsModule],
+  imports: [Button, TextEditor, FormsModule, TranslatePipe],
   template: `
     <div class="comment-input">
       <lib-text-editor
         #editor
-        placeholder="Add a comment..."
+        [placeholder]="'comments.addComment' | translate"
         [showToolbar]="true"
         [(ngModel)]="content"
         name="comment"
@@ -35,7 +36,7 @@ import { CommentService } from '../../application/services/comment.service';
           [loading]="isSubmitting()"
           [disabled]="!isValid()"
         >
-          Comment
+          {{ 'comments.comment' | translate }}
         </lib-button>
       </div>
     </div>
@@ -60,6 +61,7 @@ export class CommentInput {
   private readonly commentService = inject(CommentService);
   private readonly toast = inject(ToastService);
   readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly translateService = inject(TranslateService);
 
   readonly issueId = input<string>();
   readonly pageId = input<string>();
@@ -78,7 +80,7 @@ export class CommentInput {
     // Check text length (strip HTML tags for length check)
     const textContent = this.content();
     if (textContent.trim().length > 10000) {
-      return 'Comment must be 10,000 characters or less';
+      return this.translateService.instant('comments.maxLength');
     }
     return '';
   });
@@ -124,7 +126,7 @@ export class CommentInput {
         throw new Error('Either issueId or pageId must be provided');
       }
 
-      this.toast.success('Comment added successfully!');
+      this.toast.success(this.translateService.instant('comments.addSuccess'));
       this.content.set('');
       this.htmlContent.set('');
       // Clear the editor
@@ -134,7 +136,7 @@ export class CommentInput {
     } catch (error) {
       console.error('Failed to create comment:', error);
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to add comment. Please try again.';
+        error instanceof Error ? error.message : this.translateService.instant('comments.addError');
       this.toast.error(errorMessage);
     } finally {
       this.isSubmitting.set(false);

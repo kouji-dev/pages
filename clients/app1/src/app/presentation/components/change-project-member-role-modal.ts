@@ -14,13 +14,14 @@ import {
   ProjectMember,
   UpdateProjectMemberRoleRequest,
 } from '../../application/services/project-members.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-change-project-member-role-modal',
-  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button],
+  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, TranslatePipe],
   template: `
     <lib-modal-container>
-      <lib-modal-header>Change Role</lib-modal-header>
+      <lib-modal-header>{{ 'members.changeRole' | translate }}</lib-modal-header>
       <lib-modal-content>
         <div class="change-project-role-form">
           <div class="change-project-role-form_info">
@@ -46,7 +47,9 @@ import {
               </div>
             </div>
             <div class="change-project-role-form_current-role">
-              <span class="change-project-role-form_current-role-label">Current role:</span>
+              <span class="change-project-role-form_current-role-label"
+                >{{ 'members.currentRole' | translate }}:</span
+              >
               <span
                 class="change-project-role-form_role-badge"
                 [class]="'change-project-role-form_role-badge--' + member().role"
@@ -57,7 +60,9 @@ import {
           </div>
 
           <div class="change-project-role-form_role">
-            <label class="change-project-role-form_role-label">New Role</label>
+            <label class="change-project-role-form_role-label">{{
+              'members.newRole' | translate
+            }}</label>
             <div class="change-project-role-form_role-options">
               @for (role of availableRoles(); track role.value) {
                 <button
@@ -74,7 +79,9 @@ import {
                   <div class="change-project-role-form_role-option-header">
                     <span class="change-project-role-form_role-option-name">{{ role.label }}</span>
                     @if (role.value === member().role) {
-                      <span class="change-project-role-form_role-option-current">Current</span>
+                      <span class="change-project-role-form_role-option-current">{{
+                        'members.current' | translate
+                      }}</span>
                     }
                   </div>
                   <p class="change-project-role-form_role-option-description">
@@ -88,7 +95,7 @@ import {
       </lib-modal-content>
       <lib-modal-footer>
         <lib-button variant="secondary" (clicked)="handleCancel()" [disabled]="isSubmitting()">
-          Cancel
+          {{ 'common.cancel' | translate }}
         </lib-button>
         <lib-button
           variant="primary"
@@ -96,7 +103,7 @@ import {
           [loading]="isSubmitting()"
           [disabled]="!isValid()"
         >
-          Save Changes
+          {{ 'common.saveChanges' | translate }}
         </lib-button>
       </lib-modal-footer>
     </lib-modal-container>
@@ -260,6 +267,7 @@ export class ChangeProjectMemberRoleModal {
   private readonly modal = inject(Modal);
   private readonly membersService = inject(ProjectMembersService);
   private readonly toast = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   readonly projectId = input.required<string>();
   readonly member = input.required<ProjectMember>();
@@ -279,18 +287,18 @@ export class ChangeProjectMemberRoleModal {
   readonly availableRoles = computed(() => [
     {
       value: 'admin' as const,
-      label: 'Admin',
-      description: 'Full access to manage project and members',
+      label: this.translateService.instant('members.admin'),
+      description: this.translateService.instant('members.adminDescription'),
     },
     {
       value: 'member' as const,
-      label: 'Member',
-      description: 'Can create and edit issues, but cannot manage members',
+      label: this.translateService.instant('members.member'),
+      description: this.translateService.instant('members.memberDescription'),
     },
     {
       value: 'viewer' as const,
-      label: 'Viewer',
-      description: 'Read-only access to project content',
+      label: this.translateService.instant('members.viewer'),
+      description: this.translateService.instant('members.viewerDescription'),
     },
   ]);
 
@@ -311,11 +319,11 @@ export class ChangeProjectMemberRoleModal {
   getRoleLabel(role: 'admin' | 'member' | 'viewer'): string {
     switch (role) {
       case 'admin':
-        return 'Admin';
+        return this.translateService.instant('members.admin');
       case 'member':
-        return 'Member';
+        return this.translateService.instant('members.member');
       case 'viewer':
-        return 'Viewer';
+        return this.translateService.instant('members.viewer');
       default:
         return role;
     }
@@ -345,11 +353,11 @@ export class ChangeProjectMemberRoleModal {
       };
 
       await this.membersService.updateMemberRole(this.projectId(), this.member().user_id, request);
-      this.toast.success('Member role updated successfully!');
+      this.toast.success(this.translateService.instant('members.updateRoleSuccess'));
       this.modal.close({ success: true });
     } catch (error) {
       console.error('Failed to update member role:', error);
-      this.toast.error('Failed to update member role. Please try again.');
+      this.toast.error(this.translateService.instant('members.updateRoleError'));
     } finally {
       this.isSubmitting.set(false);
     }

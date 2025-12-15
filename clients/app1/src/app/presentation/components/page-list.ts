@@ -2,25 +2,26 @@ import { Component, ChangeDetectionStrategy, computed, inject, input } from '@an
 import { LoadingState, ErrorState, EmptyState } from 'shared-ui';
 import { PageService, Page } from '../../application/services/page.service';
 import { NavigationService } from '../../application/services/navigation.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-page-list',
-  imports: [LoadingState, ErrorState, EmptyState],
+  imports: [LoadingState, ErrorState, EmptyState, TranslatePipe],
   template: `
     <div class="page-list">
       @if (pageService.isFetchingPages()) {
-        <lib-loading-state message="Loading pages..." />
+        <lib-loading-state [message]="'pages.loadingPages' | translate" />
       } @else if (pageService.hasPagesError()) {
         <lib-error-state
-          title="Failed to Load Pages"
+          [title]="'pages.failedToLoad' | translate"
           [message]="errorMessage()"
-          [retryLabel]="'Retry'"
+          [retryLabel]="'common.retry' | translate"
           (onRetry)="handleRetry()"
         />
       } @else if (pages().length === 0) {
         <lib-empty-state
-          title="No pages yet"
-          message="Get started by creating your first page in this space."
+          [title]="'pages.noPagesYet' | translate"
+          [message]="'pages.noPagesYetDescription' | translate"
           icon="file-text"
         />
       } @else {
@@ -31,10 +32,12 @@ import { NavigationService } from '../../application/services/navigation.service
                 <h3 class="page-list_item-title">{{ page.title }}</h3>
                 @if (page.commentCount !== undefined && page.commentCount > 0) {
                   <span class="page-list_item-meta">
-                    {{ page.commentCount }} {{ page.commentCount === 1 ? 'comment' : 'comments' }}
+                    {{ page.commentCount }} {{ getCommentLabel(page.commentCount) }}
                   </span>
                 }
-                <p class="page-list_item-date">Updated {{ formatDate(page.updatedAt) }}</p>
+                <p class="page-list_item-date">
+                  {{ 'pages.updated' | translate }} {{ formatDate(page.updatedAt) }}
+                </p>
               </div>
             </div>
           }
@@ -94,6 +97,7 @@ import { NavigationService } from '../../application/services/navigation.service
 export class PageList {
   readonly pageService = inject(PageService);
   readonly navigationService = inject(NavigationService);
+  private readonly translateService = inject(TranslateService);
 
   readonly spaceId = input.required<string>();
 
@@ -106,10 +110,18 @@ export class PageList {
   readonly errorMessage = computed(() => {
     const error = this.pageService.error();
     if (error) {
-      return error instanceof Error ? error.message : 'An error occurred while loading pages.';
+      return error instanceof Error
+        ? error.message
+        : this.translateService.instant('pages.loadError');
     }
-    return 'An unknown error occurred.';
+    return this.translateService.instant('common.unknownError');
   });
+
+  getCommentLabel(count: number): string {
+    return count === 1
+      ? this.translateService.instant('comments.comment')
+      : this.translateService.instant('comments.comments');
+  }
 
   formatDate(dateString: string): string {
     const date = new Date(dateString);

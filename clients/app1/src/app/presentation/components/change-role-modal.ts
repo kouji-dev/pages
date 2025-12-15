@@ -14,13 +14,14 @@ import {
   OrganizationMember,
   UpdateMemberRoleRequest,
 } from '../../application/services/organization-members.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-change-role-modal',
-  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button],
+  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, TranslatePipe],
   template: `
     <lib-modal-container>
-      <lib-modal-header>Change Role</lib-modal-header>
+      <lib-modal-header>{{ 'members.changeRole' | translate }}</lib-modal-header>
       <lib-modal-content>
         <div class="change-role-form">
           <div class="change-role-form_info">
@@ -44,7 +45,9 @@ import {
               </div>
             </div>
             <div class="change-role-form_current-role">
-              <span class="change-role-form_current-role-label">Current role:</span>
+              <span class="change-role-form_current-role-label"
+                >{{ 'members.currentRole' | translate }}:</span
+              >
               <span
                 class="change-role-form_role-badge"
                 [class]="'change-role-form_role-badge--' + member().role"
@@ -55,7 +58,7 @@ import {
           </div>
 
           <div class="change-role-form_role">
-            <label class="change-role-form_role-label">New Role</label>
+            <label class="change-role-form_role-label">{{ 'members.newRole' | translate }}</label>
             <div class="change-role-form_role-options">
               @for (role of availableRoles(); track role.value) {
                 <button
@@ -68,7 +71,9 @@ import {
                   <div class="change-role-form_role-option-header">
                     <span class="change-role-form_role-option-name">{{ role.label }}</span>
                     @if (role.value === member().role) {
-                      <span class="change-role-form_role-option-current">Current</span>
+                      <span class="change-role-form_role-option-current">{{
+                        'members.current' | translate
+                      }}</span>
                     }
                   </div>
                   <p class="change-role-form_role-option-description">{{ role.description }}</p>
@@ -80,7 +85,7 @@ import {
       </lib-modal-content>
       <lib-modal-footer>
         <lib-button variant="secondary" (clicked)="handleCancel()" [disabled]="isSubmitting()">
-          Cancel
+          {{ 'common.cancel' | translate }}
         </lib-button>
         <lib-button
           variant="primary"
@@ -88,7 +93,7 @@ import {
           [loading]="isSubmitting()"
           [disabled]="!isValid()"
         >
-          Save Changes
+          {{ 'common.saveChanges' | translate }}
         </lib-button>
       </lib-modal-footer>
     </lib-modal-container>
@@ -252,6 +257,7 @@ export class ChangeRoleModal {
   private readonly modal = inject(Modal);
   private readonly membersService = inject(OrganizationMembersService);
   private readonly toast = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   readonly organizationId = input.required<string>();
   readonly member = input.required<OrganizationMember>();
@@ -268,18 +274,18 @@ export class ChangeRoleModal {
   readonly availableRoles = computed(() => [
     {
       value: 'admin' as const,
-      label: 'Admin',
-      description: 'Full access to manage organization and members',
+      label: this.translateService.instant('members.admin'),
+      description: this.translateService.instant('members.adminDescription'),
     },
     {
       value: 'member' as const,
-      label: 'Member',
-      description: 'Can create and edit projects, but cannot manage members',
+      label: this.translateService.instant('members.member'),
+      description: this.translateService.instant('members.memberDescription'),
     },
     {
       value: 'viewer' as const,
-      label: 'Viewer',
-      description: 'Read-only access to organization content',
+      label: this.translateService.instant('members.viewer'),
+      description: this.translateService.instant('members.viewerDescription'),
     },
   ]);
 
@@ -300,11 +306,11 @@ export class ChangeRoleModal {
   getRoleLabel(role: 'admin' | 'member' | 'viewer'): string {
     switch (role) {
       case 'admin':
-        return 'Admin';
+        return this.translateService.instant('members.admin');
       case 'member':
-        return 'Member';
+        return this.translateService.instant('members.member');
       case 'viewer':
-        return 'Viewer';
+        return this.translateService.instant('members.viewer');
       default:
         return role;
     }
@@ -338,11 +344,11 @@ export class ChangeRoleModal {
         this.member()!.user_id,
         request,
       );
-      this.toast.success('Member role updated successfully!');
+      this.toast.success(this.translateService.instant('members.updateRoleSuccess'));
       this.modal.close({ success: true });
     } catch (error) {
       console.error('Failed to update member role:', error);
-      this.toast.error('Failed to update member role. Please try again.');
+      this.toast.error(this.translateService.instant('members.updateRoleError'));
     } finally {
       this.isSubmitting.set(false);
     }

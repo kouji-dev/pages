@@ -1,0 +1,1018 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "actions": "Actions",
+    "noResults": "No results found",
+    "retry": "Retry",
+    "saveChanges": "Save Changes",
+    "unknownError": "An unknown error occurred.",
+    "and": "and",
+    "tryAgain": "Try Again",
+    "reset": "Reset",
+    "switchToLightMode": "Switch to light mode",
+    "switchToDarkMode": "Switch to dark mode",
+    "notFound": {
+      "title": "Page not found",
+      "description": "The page you're looking for doesn't exist or has been moved.",
+      "goToHome": "Go to Home"
+    }
+  },
+  "navigation": {
+    "organizations": "Organizations",
+    "projects": "Projects",
+    "spaces": "Spaces",
+    "issues": "Issues",
+    "pages": "Pages",
+    "profile": "Profile",
+    "settings": "Settings",
+    "notifications": "Notifications"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllAsRead": "Mark all as read",
+    "noNotifications": "No notifications",
+    "failedToLoad": "Failed to load notifications",
+    "viewAll": "View all notifications",
+    "justNow": "Just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago"
+  },
+  "search": {
+    "placeholder": "Search issues and pages...",
+    "searching": "Searching...",
+    "noResults": "No results found",
+    "startTyping": "Start typing to search...",
+    "issues": "Issues",
+    "pages": "Pages",
+    "organizations": "Organizations",
+    "projects": "Projects",
+    "spaces": "Spaces"
+  },
+  "language": {
+    "english": "English",
+    "french": "Français",
+    "switchLanguage": "Switch Language"
+  },
+  "issues": {
+    "title": "Issues",
+    "createIssue": "Create Issue",
+    "editIssue": "Edit Issue",
+    "searchIssues": "Search issues...",
+    "loadingIssues": "Loading issues...",
+    "failedToLoad": "Failed to Load Issues",
+    "noIssues": "No issues yet",
+    "noIssuesDescription": "Get started by creating your first issue to track work in this project.",
+    "assigned": "Assigned",
+    "unassigned": "Unassigned",
+    "form": {
+      "title": "Title",
+      "titlePlaceholder": "Enter issue title",
+      "titleRequired": "Title is required",
+      "titleMaxLength": "Title must be 255 characters or less",
+      "titleHelper": "Brief description of the issue",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe the issue in detail (optional)",
+      "descriptionPlaceholderEdit": "Describe the issue in detail",
+      "type": "Type",
+      "priority": "Priority",
+      "status": "Status",
+      "assignee": "Assignee",
+      "assigneeOptional": "Assignee (optional)",
+      "dueDate": "Due Date",
+      "dueDateOptional": "Due Date (optional)",
+      "selectType": "Select type...",
+      "selectPriority": "Select priority...",
+      "selectStatus": "Select status...",
+      "saveChanges": "Save Changes"
+    },
+    "filters": {
+      "status": "Status",
+      "type": "Type",
+      "assignee": "Assignee",
+      "allStatuses": "All Statuses",
+      "allTypes": "All Types",
+      "allAssignees": "All Assignees",
+      "clearFilters": "Clear Filters"
+    },
+    "pagination": {
+      "page": "Page",
+      "of": "of"
+    },
+    "table": {
+      "key": "Key",
+      "title": "Title",
+      "type": "Type",
+      "status": "Status",
+      "priority": "Priority",
+      "assignee": "Assignee",
+      "created": "Created"
+    },
+    "status": {
+      "todo": "To Do",
+      "inProgress": "In Progress",
+      "done": "Done",
+      "cancelled": "Cancelled"
+    },
+    "type": {
+      "task": "Task",
+      "bug": "Bug",
+      "story": "Story",
+      "epic": "Epic"
+    },
+    "priority": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical"
+    },
+    "updateStatusError": "Failed to update issue status"
+  },
+  "pages": {
+    "title": "Pages",
+    "createPage": "Create Page",
+    "editPage": "Edit Page",
+    "deletePage": "Delete Page",
+    "pageTitle": "Page title",
+    "loadingPage": "Loading page...",
+    "failedToLoad": "Failed to Load Page",
+    "notFound": "Page Not Found",
+    "notFoundDescription": "The page you're looking for doesn't exist or you don't have access to it.",
+    "startWriting": "Start writing...",
+    "noContent": "No content yet. Click Edit to add content.",
+    "createdBy": "Created by",
+    "lastEditedBy": "Last edited by",
+    "lastUpdated": "Last updated",
+    "on": "on",
+    "titleRequired": "Title is required",
+    "titleMaxLength": "Title must be 255 characters or less",
+    "noPagesYet": "No pages yet",
+    "loadingPages": "Loading pages...",
+    "updated": "Updated",
+    "loadError": "An error occurred while loading pages.",
+    "noPagesYetDescription": "Get started by creating your first page in this space.",
+    "modals": {
+      "createPage": "Create Page",
+      "pageTitle": "Page Title",
+      "pageTitlePlaceholder": "Enter page title",
+      "pageTitleHelper": "Choose a title for your page",
+      "parentPage": "Parent Page (optional)",
+      "parentPagePlaceholder": "None (root page)",
+      "parentPageHelper": "Select a parent page to create a child page",
+      "titleRequired": "Page title is required",
+      "createSuccess": "Page created successfully!",
+      "createError": "Failed to create page. Please try again."
+    }
+  },
+  "organizations": {
+    "title": "Organizations",
+    "subtitle": "Manage your organizations and teams in one place.",
+    "createOrganization": "Create Organization",
+    "loadingOrganizations": "Loading organizations...",
+    "failedToLoad": "Failed to Load Organizations",
+    "noOrganizations": "No organizations yet",
+    "noOrganizationsDescription": "Get started by creating your first organization to manage teams and projects.",
+    "selectOrganization": "Select Organization",
+    "manage": "Manage",
+    "backToOrganizations": "Back to Organizations",
+    "switchTo": "Switch to",
+    "members": "member(s)",
+    "viewSpace": "View",
+    "modals": {
+      "createOrganization": "Create Organization",
+      "organizationName": "Organization Name",
+      "organizationNamePlaceholder": "Enter organization name",
+      "organizationNameHelper": "Choose a name for your organization",
+      "slug": "Slug",
+      "slugPlaceholder": "organization-slug",
+      "slugHelper": "URL-friendly identifier (lowercase, hyphens only)",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe your organization (optional)",
+      "descriptionHelper": "Optional description of your organization",
+      "nameRequired": "Organization name is required",
+      "nameMinLength": "Organization name must be at least 3 characters",
+      "slugRequired": "Slug is required",
+      "slugInvalidFormat": "Slug can only contain lowercase letters, numbers, and hyphens",
+      "slugMinLength": "Slug must be at least 3 characters",
+      "createSuccess": "Organization created successfully!",
+      "createError": "Failed to create organization. Please try again.",
+      "deleteOrganization": "Delete Organization",
+      "deleteWarning": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+      "deleteWillDelete": "This will permanently delete:",
+      "deleteItem1": "The organization and all its data",
+      "deleteItem2": "All projects, issues, and pages",
+      "deleteItem3": "All member associations",
+      "deleteWarningLabel": "Warning:",
+      "deleteWarningText": "This action is permanent and irreversible."
+    }
+  },
+  "projects": {
+    "title": "Projects",
+    "subtitle": "Manage your projects and track issues in one place.",
+    "createProject": "Create Project",
+    "loadingProjects": "Loading projects...",
+    "failedToLoad": "Failed to Load Projects",
+    "noOrganizationSelected": "No organization selected",
+    "noOrganizationSelectedDescription": "Please select or create an organization to view projects.",
+    "goToOrganizations": "Go to Organizations",
+    "searchPlaceholder": "Search projects by name, key, or description...",
+    "noProjectsFound": "No projects found",
+    "noProjectsFoundDescription": "Try adjusting your search terms.",
+    "noProjects": "No projects yet",
+    "noProjectsDescription": "Get started by creating your first project to manage issues and tasks.",
+    "viewProject": "View",
+    "members": "member(s)",
+    "modals": {
+      "createProject": "Create Project",
+      "projectName": "Project Name",
+      "projectNamePlaceholder": "Enter project name",
+      "projectNameHelper": "Choose a name for your project",
+      "projectKey": "Project Key",
+      "projectKeyPlaceholder": "PROJ",
+      "projectKeyHelper": "Short identifier (auto-generated from name, max 10 characters, uppercase)",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe your project (optional)",
+      "descriptionHelper": "Optional description of your project",
+      "nameRequired": "Project name is required",
+      "nameMinLength": "Project name must be at least 3 characters",
+      "keyInvalidFormat": "Key can only contain uppercase letters and numbers",
+      "keyMaxLength": "Key must be 10 characters or less",
+      "keyMinLength": "Key must be at least 2 characters",
+      "createSuccess": "Project created successfully!",
+      "createError": "Failed to create project. Please try again.",
+      "deleteProject": "Delete Project",
+      "deleteWarning": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+      "deleteDescription": "All issues, comments, and attachments associated with this project will be permanently deleted.",
+      "deleteConfirmLabel": "Type project name to confirm",
+      "deleteConfirmPlaceholder": "Enter project name",
+      "deleteConfirmHelper": "Type the project name to confirm deletion",
+      "deleteSuccess": "Project deleted successfully!",
+      "deleteError": "Failed to delete project. Please try again."
+    }
+  },
+  "spaces": {
+    "title": "Spaces",
+    "subtitle": "Organize your documentation in dedicated spaces.",
+    "createSpace": "Create Space",
+    "loadingSpaces": "Loading spaces...",
+    "failedToLoad": "Failed to Load Spaces",
+    "noOrganizationSelected": "No organization selected",
+    "noOrganizationSelectedDescription": "Please select or create an organization to view spaces.",
+    "goToOrganizations": "Go to Organizations",
+    "searchPlaceholder": "Search spaces by name or key...",
+    "noSpacesFound": "No spaces found",
+    "noSpacesFoundDescription": "Try adjusting your search terms.",
+    "noSpaces": "No spaces yet",
+    "noSpacesDescription": "Get started by creating your first space to organize your documentation.",
+    "viewSpace": "View",
+    "pages": "page(s)",
+    "modals": {
+      "createSpace": "Create Space",
+      "spaceName": "Space Name",
+      "spaceNamePlaceholder": "Enter space name",
+      "spaceNameHelper": "Choose a name for your space",
+      "spaceKey": "Space Key",
+      "spaceKeyPlaceholder": "SPACE",
+      "spaceKeyHelper": "Short identifier (auto-generated from name, max 10 characters, uppercase)",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe your space (optional)",
+      "descriptionHelper": "Optional description of your space",
+      "nameRequired": "Space name is required",
+      "nameMinLength": "Space name must be at least 3 characters",
+      "keyInvalidFormat": "Key can only contain uppercase letters and numbers",
+      "keyMaxLength": "Key must be 10 characters or less",
+      "keyMinLength": "Key must be at least 2 characters",
+      "createSuccess": "Space created successfully!",
+      "createError": "Failed to create space. Please try again.",
+      "deleteSpace": "Delete Space",
+      "deleteWarning": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+      "deleteDescription": "All pages and comments associated with this space will be permanently deleted.",
+      "deleteConfirmLabel": "Type space name to confirm",
+      "deleteConfirmPlaceholder": "Enter space name",
+      "deleteConfirmHelper": "Type the space name to confirm deletion",
+      "deleteSuccess": "Space deleted successfully!",
+      "deleteError": "Failed to delete space. Please try again."
+    }
+  },
+  "issueDetail": {
+    "loadingIssue": "Loading issue...",
+    "failedToLoad": "Failed to Load Issue",
+    "notFound": "Issue Not Found",
+    "notFoundDescription": "The issue you're looking for doesn't exist or you don't have access to it.",
+    "backToIssues": "Back to Issues",
+    "editIssue": "Edit Issue",
+    "description": "Description",
+    "noDescription": "No description provided.",
+    "comments": "Comments",
+    "attachments": "Attachments",
+    "activity": "Activity",
+    "details": "Details",
+    "assignee": "Assignee",
+    "reporter": "Reporter",
+    "dueDate": "Due Date",
+    "storyPoints": "Story Points",
+    "created": "Created",
+    "updated": "Updated"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "confirmPassword": "Confirm Password",
+    "rememberMe": "Remember me",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "invalidCredentials": "Invalid email or password",
+    "passwordResetSent": "Password reset email sent",
+    "passwordResetSuccess": "Password has been reset successfully",
+    "welcomeBack": "Welcome back",
+    "signInToContinue": "Sign in to your account to continue",
+    "enterEmail": "Enter your email",
+    "enterPassword": "Enter your password",
+    "emailHelper": "Enter your registered email address",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please enter a valid email address",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 8 characters long",
+    "passwordUppercase": "Password must contain at least one uppercase letter",
+    "passwordLowercase": "Password must contain at least one lowercase letter",
+    "passwordNumber": "Password must contain at least one number",
+    "confirmPasswordRequired": "Please confirm your password",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "nameRequired": "Name is required",
+    "nameMinLength": "Name must be at least 2 characters",
+    "forgotPassword": {
+      "title": "Forgot Password?",
+      "subtitle": "Enter your email address and we'll send you a link to reset your password.",
+      "emailPlaceholder": "Enter your email",
+      "emailHelper": "Enter the email address associated with your account",
+      "sendResetLink": "Send Reset Link",
+      "successMessage": "If an account exists with this email, we've sent a password reset link. Please check your inbox.",
+      "backToSignIn": "Back to Sign In",
+      "resetLinkSent": "Password reset link sent! Please check your email."
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "subtitle": "Enter your new password below",
+      "invalidToken": "Invalid or expired reset token. Please request a new password reset link.",
+      "requestNewLink": "Request New Link",
+      "newPassword": "New Password",
+      "newPasswordPlaceholder": "Enter your new password",
+      "confirmPassword": "Confirm New Password",
+      "confirmPasswordPlaceholder": "Confirm your new password",
+      "resetPassword": "Reset Password",
+      "successMessage": "Your password has been reset successfully. You can now sign in with your new password.",
+      "goToSignIn": "Go to Sign In",
+      "backToSignIn": "Back to Sign In",
+      "passwordRequirements": "Password must be at least 8 characters with uppercase, lowercase, and number",
+      "passwordStrengthWeak": "Password strength: Weak",
+      "passwordStrengthMedium": "Password strength: Medium",
+      "passwordStrengthStrong": "Password strength: Strong",
+      "resetSuccess": "Password reset successfully!"
+    },
+    "invitationAcceptance": {
+      "loading": "Loading invitation...",
+      "successTitle": "Invitation Accepted!",
+      "successMessage": "You've successfully joined {{orgName}} as a {{role}}.",
+      "goToOrganizations": "Go to Organizations",
+      "title": "Organization Invitation",
+      "description": "You've been invited to join an organization. Please log in or sign up to accept this invitation.",
+      "authenticatedMessage": "You're logged in as <strong>{{email}}</strong>. Click the button below to accept this invitation.",
+      "acceptInvitation": "Accept Invitation",
+      "unauthenticatedMessage": "You need to log in or create an account to accept this invitation.",
+      "unauthenticatedNote": "After logging in or signing up, you'll be redirected back here to accept the invitation.",
+      "acceptSuccess": "Invitation accepted successfully!",
+      "errors": {
+        "invalidToken": "Invalid invitation token",
+        "expired": "Invitation Expired",
+        "alreadyAccepted": "Invitation Already Accepted",
+        "notFound": "Invitation Not Found",
+        "emailMismatch": "Email Mismatch",
+        "alreadyMember": "Already a Member",
+        "failed": "Failed to Accept Invitation"
+      }
+    },
+    "register": {
+      "title": "Create an account",
+      "subtitle": "Sign up to get started with Pages",
+      "namePlaceholder": "Enter your full name",
+      "nameHelper": "This will be displayed on your profile",
+      "emailPlaceholder": "Enter your email",
+      "emailHelper": "We'll never share your email",
+      "passwordPlaceholder": "Create a password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "termsAgreement": "I agree to the",
+      "termsOfService": "Terms of Service",
+      "privacyPolicy": "Privacy Policy",
+      "createAccount": "Create Account",
+      "alreadyHaveAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "termsRequired": "You must accept the terms of service to continue",
+      "passwordRequirements": "Password must be at least 8 characters with uppercase, lowercase, and number",
+      "passwordStrengthWeak": "Password strength: Weak",
+      "passwordStrengthMedium": "Password strength: Medium",
+      "passwordStrengthStrong": "Password strength: Strong",
+      "accountCreated": "Account created successfully!"
+    }
+  },
+  "userMenu": {
+    "ariaLabel": "User menu",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Manage your account settings and preferences.",
+    "loading": "Loading profile...",
+    "failedToLoad": "Failed to Load Profile",
+    "notFound": "Profile Not Found",
+    "notFoundDescription": "Unable to load your profile. Please try again later.",
+    "information": "Profile Information",
+    "name": "Name",
+    "namePlaceholder": "Enter your name",
+    "nameHelper": "Your display name",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "emailHelper": "Email cannot be changed here. Contact support to change your email.",
+    "nameRequired": "Name is required",
+    "nameMinLength": "Name must be at least 2 characters",
+    "loadError": "An error occurred while loading your profile.",
+    "updateSuccess": "Profile updated successfully!",
+    "updateError": "Failed to update profile. Please try again.",
+    "changePassword": {
+      "title": "Change Password",
+      "description": "Update your password to keep your account secure.",
+      "currentPassword": "Current Password",
+      "currentPasswordPlaceholder": "Enter your current password",
+      "currentPasswordHelper": "Enter your current password to verify your identity",
+      "currentPasswordRequired": "Current password is required",
+      "newPassword": "New Password",
+      "newPasswordPlaceholder": "Enter your new password",
+      "newPasswordRequired": "New password is required",
+      "confirmPassword": "Confirm New Password",
+      "confirmPasswordPlaceholder": "Confirm your new password",
+      "confirmPasswordHelper": "Re-enter your new password to confirm",
+      "confirmPasswordRequired": "Please confirm your new password",
+      "updatePassword": "Update Password",
+      "passwordRequirements": "Password must be at least 8 characters with uppercase, lowercase, and number",
+      "passwordStrengthGood": "Password strength: Good",
+      "updateSuccess": "Password updated successfully!",
+      "updateError": "Failed to update password. Please try again."
+    },
+    "avatar": {
+      "title": "Avatar",
+      "description": "Upload a profile picture to personalize your account.",
+      "uploading": "Uploading...",
+      "changeAvatar": "Change Avatar",
+      "uploadAvatar": "Upload Avatar",
+      "removeAvatar": "Remove Avatar",
+      "acceptedFormats": "Accepted formats: JPG, PNG, GIF. Maximum file size: 5MB.",
+      "uploadSuccess": "Avatar uploaded successfully!",
+      "removeSuccess": "Avatar removed successfully!",
+      "removeConfirm": "Are you sure you want to remove your avatar?",
+      "errors": {
+        "notImage": "Please select an image file",
+        "fileTooLarge": "File size must be less than 5MB",
+        "readError": "Failed to read file. Please try again.",
+        "uploadError": "Failed to upload avatar. Please try again.",
+        "removeError": "Failed to remove avatar. Please try again."
+      }
+    }
+  },
+  "comments": {
+    "title": "Comments",
+    "addComment": "Add a comment...",
+    "comment": "Comment",
+    "comments": "comments",
+    "addSuccess": "Comment added successfully!",
+    "addError": "Failed to add comment. Please try again.",
+    "maxLength": "Comment must be 10,000 characters or less",
+    "loading": "Loading comments...",
+    "noComments": "No comments yet. Be the first to comment!",
+    "edited": "edited",
+    "deleteConfirm": "Are you sure you want to delete this comment?",
+    "editComment": "Edit Comment",
+    "enterComment": "Enter your comment",
+    "contentRequired": "Comment content is required",
+    "updateSuccess": "Comment updated successfully!",
+    "updateError": "Failed to update comment. Please try again."
+  },
+  "activity": {
+    "loading": "Loading activity...",
+    "failedToLoad": "Failed to Load Activity",
+    "noActivity": "No activity yet",
+    "noActivityDescription": "Activity logs will appear here when changes are made to this issue.",
+    "empty": "empty",
+    "system": "System",
+    "createdIssue": "created this issue",
+    "updatedIssue": "updated this issue",
+    "updatedField": "updated {{field}}",
+    "deletedIssue": "deleted this issue",
+    "changedStatus": "changed status",
+    "assignedIssue": "assigned this issue",
+    "justNow": "just now",
+    "minutesAgo": "{{count}} minute(s) ago",
+    "hoursAgo": "{{count}} hour(s) ago",
+    "daysAgo": "{{count}} day(s) ago",
+    "loadError": "An error occurred while loading activity.",
+    "field": {
+      "title": "Title",
+      "description": "Description",
+      "status": "Status",
+      "priority": "Priority",
+      "assignee": "Assignee",
+      "due_date": "Due Date"
+    }
+  },
+  "attachments": {
+    "title": "Attachments",
+    "loading": "Loading attachments...",
+    "noAttachments": "No attachments yet.",
+    "preview": "Preview",
+    "download": "Download",
+    "deleteConfirm": "Are you sure you want to delete \"{{fileName}}\"?",
+    "pdfPreview": "PDF Preview",
+    "previewNotAvailable": "Preview not available for this file type",
+    "previewHint": "Click download to view the file",
+    "dragAndDrop": "Drag and drop files here, or",
+    "browse": "browse",
+    "maxFileSize": "Maximum file size: 10MB",
+    "clear": "Clear",
+    "uploadFile": "Upload file",
+    "uploadFiles": "Upload {{count}} files",
+    "fileExceedsLimit": "File \"{{fileName}}\" exceeds 10MB limit",
+    "filesSkipped": "{{count}} file(s) were skipped due to size limits",
+    "uploadSuccess": "Successfully uploaded {{count}} file(s)!",
+    "uploadFileError": "Failed to upload \"{{fileName}}\"",
+    "uploadFilesError": "Failed to upload files. Please try again."
+  },
+  "kanban": {
+    "title": "Kanban Board",
+    "createIssue": "Create Issue",
+    "assignee": "Assignee",
+    "type": "Type",
+    "priority": "Priority",
+    "allAssignees": "All Assignees",
+    "allTypes": "All Types",
+    "allPriorities": "All Priorities",
+    "clearFilters": "Clear Filters",
+    "columnVisibility": "Column Visibility",
+    "resetAll": "Reset All",
+    "loadingIssues": "Loading issues...",
+    "failedToLoad": "Failed to Load Issues",
+    "noIssues": "No issues",
+    "assigned": "Assigned",
+    "overdue": "Overdue",
+    "due": "Due: {{date}}"
+  },
+  "members": {
+    "title": "Members",
+    "subtitle": "Manage project members and their roles.",
+    "addMember": "Add Member",
+    "loadingMembers": "Loading members...",
+    "failedToLoad": "Failed to Load Members",
+    "noMembers": "No members yet",
+    "noMembersDescription": "Add members to your project to collaborate together.",
+    "changeRole": "Change Role",
+    "remove": "Remove",
+    "searchUsers": "Search Users",
+    "searchPlaceholder": "Search by name or email...",
+    "searching": "Searching...",
+    "searchError": "Failed to search users. Please try again.",
+    "noUsersFound": "No users found. Try a different search query.",
+    "searchHint": "Enter at least 2 characters to search for users.",
+    "role": "Role",
+    "admin": "Admin",
+    "adminDescription": "Full access to manage organization and members",
+    "member": "Member",
+    "memberDescription": "Can create and edit projects, but cannot manage members",
+    "viewer": "Viewer",
+    "viewerDescription": "Read-only access to organization content",
+    "loadError": "An error occurred while loading members.",
+    "addMemberSuccess": "Member added successfully!",
+    "addMemberError": "Failed to add member. Please try again.",
+    "removeConfirm": "Are you sure you want to remove {{userName}} from this project?",
+    "removeSuccess": "Member removed successfully!",
+    "removeError": "Failed to remove member. Please try again.",
+    "currentRole": "Current role",
+    "newRole": "New Role",
+    "current": "Current",
+    "updateRoleSuccess": "Member role updated successfully!",
+    "updateRoleError": "Failed to update member role. Please try again."
+  },
+  "invitations": {
+    "title": "Send Invitation",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "Enter email address...",
+    "emailHelper": "The email address of the person you want to invite",
+    "emailRequired": "Email address is required",
+    "emailInvalid": "Please enter a valid email address",
+    "sendInvitation": "Send Invitation",
+    "invitationSent": "Invitation sent successfully!",
+    "invitationError": "Failed to send invitation. Please try again.",
+    "pendingTitle": "Pending Invitations",
+    "pendingSubtitle": "Invitations that haven't been accepted yet.",
+    "loading": "Loading invitations...",
+    "failedToLoad": "Failed to Load Invitations",
+    "noPending": "No pending invitations",
+    "noPendingDescription": "Invite people to join your organization by sending them an invitation.",
+    "email": "Email",
+    "expires": "Expires",
+    "expiringSoon": "Expiring soon",
+    "cancelInvitation": "Cancel invitation",
+    "expired": "Expired",
+    "expiresToday": "Expires today",
+    "expiresTomorrow": "Expires tomorrow",
+    "expiresInDays": "Expires in {{count}} days",
+    "expiresInWeeks": "Expires in {{count}} week(s)"
+  },
+  "public": {
+    "home": "Home",
+    "features": "Features",
+    "pricing": "Pricing",
+    "demo": "Demo",
+    "logIn": "Log In",
+    "signUp": "Sign Up",
+    "toggleMobileMenu": "Toggle mobile menu",
+    "headline": "Build Better Together",
+    "subheading": "Collaborate, Create, Succeed",
+    "valueProposition": "Pages is your all-in-one workspace for teams. Organize projects, share ideas, and bring your vision to life with powerful collaboration tools.",
+    "getStarted": "Get Started",
+    "learnMore": "Learn More",
+    "heroImage": "Hero Image",
+    "whyChoose": "Why Choose Pages?",
+    "everythingYouNeed": "Everything you need to collaborate and succeed",
+    "lightningFast": "Lightning Fast",
+    "lightningFastDescription": "Built for speed and performance. Experience seamless collaboration without any lag or delays.",
+    "teamCollaboration": "Team Collaboration",
+    "teamCollaborationDescription": "Work together in real-time with your team. Share ideas, assign tasks, and stay in sync.",
+    "securePrivate": "Secure & Private",
+    "securePrivateDescription": "Your data is protected with enterprise-grade security. Privacy and safety are our top priorities.",
+    "flexibleWorkspace": "Flexible Workspace",
+    "flexibleWorkspaceDescription": "Organize your work the way you want. Customize layouts, views, and workflows to fit your needs.",
+    "description": "Your all-in-one workspace for teams. Collaborate, create, and succeed together.",
+    "product": "Product",
+    "documentation": "Documentation",
+    "legal": "Legal",
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy",
+    "contact": "Contact",
+    "copyright": "© {{year}} Pages. All rights reserved.",
+    "followTwitter": "Follow us on Twitter",
+    "visitGitHub": "Visit our GitHub",
+    "connectLinkedIn": "Connect on LinkedIn",
+    "pricingPage": {
+      "header": {
+        "title": "Simple, Transparent Pricing",
+        "subtitle": "Choose the perfect plan for your team. All plans include a 14-day free trial.",
+        "monthly": "Monthly",
+        "annual": "Annual",
+        "save20": "Save 20%"
+      },
+      "mostPopular": "Most Popular",
+      "getStarted": "Get Started",
+      "startFreeTrial": "Start Free Trial",
+      "contactSales": "Contact Sales",
+      "unlimited": "Unlimited",
+      "tiers": {
+        "free": {
+          "name": "Free",
+          "priceSubtext": "Forever free",
+          "description": "Perfect for small teams and personal projects",
+          "features": {
+            "users": "Up to 10 users",
+            "projects": "Unlimited projects and issues",
+            "storage": "5GB storage per workspace",
+            "coreFeatures": "Core features (issues, boards, docs)",
+            "integrations": "Basic integrations (5 integrations)",
+            "support": "Community support",
+            "automation": "Up to 10 automation rules",
+            "reporting": "Basic reporting"
+          }
+        },
+        "starter": {
+          "name": "Starter",
+          "priceSubtext": "per user/month (annual)",
+          "description": "For growing teams that need more",
+          "features": {
+            "users": "Up to 25 users",
+            "storage": "25GB storage per workspace",
+            "integrations": "All integrations",
+            "api": "API access",
+            "automation": "50 automation rules",
+            "reporting": "Advanced reporting",
+            "support": "Email support (48-hour response)",
+            "customFields": "Custom fields (10 per project)",
+            "permissions": "Advanced permissions",
+            "export": "Export data"
+          }
+        },
+        "professional": {
+          "name": "Professional",
+          "priceSubtext": "per user/month (annual)",
+          "description": "For established teams needing advanced features",
+          "features": {
+            "users": "Up to 100 users",
+            "storage": "100GB storage per workspace",
+            "automation": "Unlimited automation rules",
+            "analytics": "Advanced analytics",
+            "workflows": "Custom workflows",
+            "support": "Priority email support (24-hour)",
+            "sso": "SSO (SAML, OAuth)",
+            "customFields": "Unlimited custom fields",
+            "security": "Advanced security",
+            "audit": "Audit logs (90 days)",
+            "whiteLabel": "White-labeling",
+            "domain": "Custom domain",
+            "timeTracking": "Time tracking",
+            "portals": "Client portals (1 portal)"
+          }
+        },
+        "business": {
+          "name": "Business",
+          "priceSubtext": "per user/month (annual)",
+          "description": "For large organizations with complex needs",
+          "features": {
+            "users": "Up to 500 users",
+            "storage": "500GB storage per workspace",
+            "ai": "AI-powered features",
+            "portfolio": "Portfolio management",
+            "bi": "Advanced BI and reporting",
+            "support": "Phone and chat support (4-hour)",
+            "accountManager": "Dedicated account manager",
+            "audit": "Extended audit logs (1 year)",
+            "compliance": "Advanced compliance",
+            "dataResidency": "Data residency options",
+            "portals": "Multiple client portals",
+            "integrations": "Custom integrations support",
+            "training": "Training sessions"
+          }
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "price": "Custom",
+          "priceSubtext": "Contact sales",
+          "description": "For enterprises with custom requirements",
+          "features": {
+            "users": "Unlimited users",
+            "storage": "Unlimited storage",
+            "businessTier": "Everything in Business tier",
+            "infrastructure": "Dedicated infrastructure (optional)",
+            "onPremises": "On-premises deployment",
+            "sla": "99.99% SLA",
+            "support": "24/7 phone support (1-hour)",
+            "successManager": "Dedicated success manager",
+            "customSla": "Custom SLA",
+            "securityAudits": "Advanced security audits",
+            "compliance": "Compliance certifications",
+            "integrations": "Custom integrations development",
+            "migration": "White-glove migration"
+          }
+        }
+      },
+      "comparison": {
+        "title": "Compare Plans",
+        "description": "See how features differ across plans",
+        "feature": "Feature",
+        "rows": {
+          "users": {
+            "feature": "Users",
+            "free": "Up to 10",
+            "starter": "Up to 25",
+            "professional": "Up to 100",
+            "business": "Up to 500",
+            "enterprise": "Unlimited"
+          },
+          "storage": {
+            "feature": "Storage per workspace"
+          },
+          "api": {
+            "feature": "API Access"
+          },
+          "sso": {
+            "feature": "SSO"
+          },
+          "analytics": {
+            "feature": "Advanced Analytics"
+          },
+          "ai": {
+            "feature": "AI Features"
+          },
+          "support": {
+            "feature": "Dedicated Support"
+          },
+          "onPremises": {
+            "feature": "On-Premises"
+          }
+        }
+      },
+      "faq": {
+        "title": "Frequently Asked Questions",
+        "items": {
+          "changePlans": {
+            "question": "Can I change plans later?",
+            "answer": "Yes! You can upgrade, downgrade, or cancel your plan at any time. Changes will be reflected in your next billing cycle."
+          },
+          "discounts": {
+            "question": "Do you offer discounts for annual billing?",
+            "answer": "Yes! Annual plans save you 20% compared to monthly billing. This discount is automatically applied when you choose annual billing."
+          },
+          "paymentMethods": {
+            "question": "What payment methods do you accept?",
+            "answer": "We accept all major credit cards (Visa, Mastercard, American Express) and support payments via bank transfer for Enterprise plans."
+          },
+          "freeTrial": {
+            "question": "Is there a free trial?",
+            "answer": "Yes! All paid plans include a 14-day free trial. No credit card required. You can explore all features risk-free."
+          },
+          "refund": {
+            "question": "Can I get a refund?",
+            "answer": "We offer a 30-day money-back guarantee for all annual plans. If you're not satisfied, contact us within 30 days for a full refund."
+          },
+          "exceedLimits": {
+            "question": "What happens if I exceed my plan limits?",
+            "answer": "We'll notify you when you approach your limits. You can upgrade your plan at any time to continue using Pages without interruption."
+          }
+        }
+      },
+      "cta": {
+        "title": "Still have questions?",
+        "description": "Our team is here to help you find the perfect plan for your needs.",
+        "contactSales": "Contact Sales",
+        "viewFeatures": "View Features"
+      }
+    },
+    "featuresPage": {
+      "header": {
+        "title": "Everything You Need to Build Better Together",
+        "subtitle": "Pages combines powerful project management and documentation tools in one seamless platform.",
+        "getStarted": "Get Started",
+        "viewPricing": "View Pricing"
+      },
+      "cta": {
+        "title": "Ready to Get Started?",
+        "description": "Join thousands of teams already using Pages to build better together.",
+        "startFreeTrial": "Start Free Trial"
+      },
+      "categories": {
+        "projectManagement": {
+          "title": "Project Management",
+          "description": "Powerful tools to organize, track, and manage your projects.",
+          "features": {
+            "issueTracking": {
+              "title": "Issue Tracking",
+              "description": "Create, assign, and track issues with custom workflows.",
+              "details": {
+                "customTypes": "Custom issue types (Task, Bug, Story, Epic)",
+                "priorityDates": "Priority levels and due dates",
+                "linking": "Issue linking and dependencies",
+                "subtasks": "Subtasks and bulk operations"
+              }
+            },
+            "agileBoards": {
+              "title": "Agile Boards",
+              "description": "Scrum and Kanban boards for flexible project management.",
+              "details": {
+                "dragDrop": "Drag-and-drop board views",
+                "sprintPlanning": "Sprint planning and tracking",
+                "backlog": "Backlog management",
+                "charts": "Burndown charts and velocity reports"
+              }
+            },
+            "workflows": {
+              "title": "Workflows",
+              "description": "Customizable workflows to match your team's processes.",
+              "details": {
+                "states": "Custom workflow states",
+                "transitions": "Automated transitions",
+                "logic": "Conditional logic",
+                "functions": "Post-functions and validators"
+              }
+            },
+            "reporting": {
+              "title": "Reporting & Analytics",
+              "description": "Real-time insights into your project's progress.",
+              "details": {
+                "dashboards": "Custom dashboards",
+                "velocity": "Velocity and burndown reports",
+                "timeTracking": "Time tracking reports",
+                "export": "Export to PDF/CSV"
+              }
+            }
+          }
+        },
+        "documentation": {
+          "title": "Documentation",
+          "description": "Create, organize, and collaborate on documentation.",
+          "features": {
+            "richTextEditor": {
+              "title": "Rich Text Editor",
+              "description": "Powerful editor with formatting, media, and collaboration.",
+              "details": {
+                "wysiwyg": "WYSIWYG editing",
+                "markdown": "Markdown support",
+                "media": "Media embeds",
+                "collaboration": "Real-time collaboration"
+              }
+            },
+            "pageHierarchy": {
+              "title": "Page Hierarchy",
+              "description": "Organize pages in a flexible tree structure.",
+              "details": {
+                "nested": "Nested page structure",
+                "dragDrop": "Drag-and-drop organization",
+                "templates": "Page templates",
+                "navigation": "Quick navigation"
+              }
+            },
+            "advancedSearch": {
+              "title": "Advanced Search",
+              "description": "Find anything instantly across your workspace.",
+              "details": {
+                "fullText": "Full-text search",
+                "filters": "Filter by tags, author, date",
+                "saved": "Saved searches",
+                "attachments": "Search in attachments"
+              }
+            },
+            "teamCollaboration": {
+              "title": "Team Collaboration",
+              "description": "Work together with comments, mentions, and notifications.",
+              "details": {
+                "comments": "Comments and discussions",
+                "mentions": "@mentions and notifications",
+                "watching": "Page watching",
+                "activity": "Activity feed"
+              }
+            }
+          }
+        },
+        "platformFeatures": {
+          "title": "Platform Features",
+          "description": "Everything you need to scale your team and organization.",
+          "features": {
+            "security": {
+              "title": "Security & Permissions",
+              "description": "Enterprise-grade security with fine-grained permissions.",
+              "details": {
+                "rbac": "Role-based access control",
+                "sso": "SSO and SAML support",
+                "audit": "Audit logs",
+                "twoFactor": "Two-factor authentication"
+              }
+            },
+            "integrations": {
+              "title": "Integrations",
+              "description": "Connect with the tools your team already uses.",
+              "details": {
+                "api": "REST API and webhooks",
+                "services": "GitHub, GitLab, Slack",
+                "custom": "Custom integrations",
+                "marketplace": "Marketplace apps"
+              }
+            },
+            "mobileApps": {
+              "title": "Mobile Apps",
+              "description": "Access your work on the go with native mobile apps.",
+              "details": {
+                "platforms": "iOS and Android apps",
+                "offline": "Offline access",
+                "notifications": "Push notifications",
+                "optimized": "Mobile-optimized views"
+              }
+            },
+            "performance": {
+              "title": "Performance",
+              "description": "Lightning-fast performance, even with large workspaces.",
+              "details": {
+                "fast": "Fast page loads",
+                "realtime": "Real-time updates",
+                "scale": "Optimized for large teams",
+                "cdn": "Global CDN"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

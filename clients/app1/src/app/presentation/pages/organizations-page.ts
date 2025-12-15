@@ -8,6 +8,7 @@ import {
   effect,
 } from '@angular/core';
 import { Button, Icon, LoadingState, ErrorState, EmptyState, Modal } from 'shared-ui';
+import { TranslatePipe } from '@ngx-translate/core';
 import { OrganizationService, Organization } from '../../application/services/organization.service';
 import { NavigationService } from '../../application/services/navigation.service';
 import { OrganizationCard } from '../components/organization-card';
@@ -15,15 +16,15 @@ import { CreateOrganizationModal } from '../components/create-organization-modal
 
 @Component({
   selector: 'app-organizations-page',
-  imports: [Button, LoadingState, ErrorState, EmptyState, OrganizationCard],
+  imports: [Button, LoadingState, ErrorState, EmptyState, OrganizationCard, TranslatePipe],
   template: `
     <div class="organizations-page">
       <div class="organizations-page_header">
         <div class="organizations-page_header-content">
           <div>
-            <h1 class="organizations-page_title">Organizations</h1>
+            <h1 class="organizations-page_title">{{ 'organizations.title' | translate }}</h1>
             <p class="organizations-page_subtitle">
-              Manage your organizations and teams in one place.
+              {{ 'organizations.subtitle' | translate }}
             </p>
           </div>
           <lib-button
@@ -32,27 +33,27 @@ import { CreateOrganizationModal } from '../components/create-organization-modal
             leftIcon="plus"
             (clicked)="handleCreateOrganization()"
           >
-            Create Organization
+            {{ 'organizations.createOrganization' | translate }}
           </lib-button>
         </div>
       </div>
 
       <div class="organizations-page_content">
         @if (organizationService.isLoading()) {
-          <lib-loading-state message="Loading organizations..." />
+          <lib-loading-state [message]="'organizations.loadingOrganizations' | translate" />
         } @else if (organizationService.hasError()) {
           <lib-error-state
-            title="Failed to Load Organizations"
+            [title]="'organizations.failedToLoad' | translate"
             [message]="errorMessage()"
-            [retryLabel]="'Retry'"
+            [retryLabel]="'common.retry' | translate"
             (onRetry)="handleRetry()"
           />
         } @else if (organizations().length === 0) {
           <lib-empty-state
-            title="No organizations yet"
-            message="Get started by creating your first organization to manage teams and projects."
+            [title]="'organizations.noOrganizations' | translate"
+            [message]="'organizations.noOrganizationsDescription' | translate"
             icon="building"
-            actionLabel="Create Organization"
+            [actionLabel]="'organizations.createOrganization' | translate"
             actionIcon="plus"
             (onAction)="handleCreateOrganization()"
           />

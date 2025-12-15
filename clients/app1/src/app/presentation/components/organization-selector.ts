@@ -11,10 +11,11 @@ import { RouterLink } from '@angular/router';
 import { Icon, Dropdown, Button, Modal } from 'shared-ui';
 import { OrganizationService, Organization } from '../../application/services/organization.service';
 import { CreateOrganizationModal } from './create-organization-modal';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-organization-selector',
-  imports: [Icon, Dropdown, RouterLink, Button],
+  imports: [Icon, Dropdown, RouterLink, Button, TranslatePipe],
   template: `
     <div class="org-selector">
       <lib-button
@@ -23,7 +24,7 @@ import { CreateOrganizationModal } from './create-organization-modal';
         [libDropdown]="dropdownTemplate"
         [position]="'below'"
         [attr.aria-expanded]="dropdown.open()"
-        aria-label="Select organization"
+        [attr.aria-label]="'organizations.selectOrganization' | translate"
         [disabled]="isLoading()"
         class="org-selector_trigger"
         #dropdown="libDropdown"
@@ -49,14 +50,16 @@ import { CreateOrganizationModal } from './create-organization-modal';
       <ng-template #dropdownTemplate>
         <div class="org-selector_dropdown">
           <div class="org-selector_header">
-            <div class="org-selector_header-title">Organizations</div>
+            <div class="org-selector_header-title">
+              {{ 'navigation.organizations' | translate }}
+            </div>
             <a
               routerLink="/app/organizations"
               class="org-selector_header-link"
               (click)="closeMenu(dropdown)"
             >
               <lib-icon name="settings" size="sm" />
-              <span>Manage</span>
+              <span>{{ 'organizations.manage' | translate }}</span>
             </a>
           </div>
           <div class="org-selector_divider"></div>
@@ -95,7 +98,7 @@ import { CreateOrganizationModal } from './create-organization-modal';
               (clicked)="handleCreateOrganization(dropdown)"
             >
               <lib-icon name="plus" size="sm" class="org-selector_action-icon" />
-              <span>Create Organization</span>
+              <span>{{ 'organizations.createOrganization' | translate }}</span>
             </lib-button>
           </div>
         </div>
@@ -265,6 +268,7 @@ export class OrganizationSelector {
   private readonly organizationService = inject(OrganizationService);
   private readonly modal = inject(Modal);
   private readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly translateService = inject(TranslateService);
 
   @ViewChild('dropdownTemplate') dropdownTemplate!: TemplateRef<any>;
 
@@ -274,7 +278,7 @@ export class OrganizationSelector {
 
   readonly currentOrgName = computed(() => {
     const org = this.currentOrganization();
-    return org?.name || 'Select Organization';
+    return org?.name || this.translateService.instant('organizations.selectOrganization');
   });
 
   readonly currentOrgDescription = computed(() => {

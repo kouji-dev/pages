@@ -12,22 +12,23 @@ import { AuthService } from '../../application/services/auth.service';
 import { OrganizationInvitationsService } from '../../application/services/organization-invitations.service';
 import { PublicNav } from '../components/public-nav';
 import { Footer } from '../components/footer';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-invitation-acceptance-page',
-  imports: [PublicNav, Footer, Button, Icon, LoadingState, ErrorState],
+  imports: [PublicNav, Footer, Button, Icon, LoadingState, ErrorState, TranslatePipe],
   template: `
     <div class="invitation-acceptance-page">
       <app-public-nav />
       <main class="invitation-acceptance-page_main">
         <div class="invitation-acceptance-page_container">
           @if (isLoading()) {
-            <lib-loading-state message="Loading invitation..." />
+            <lib-loading-state [message]="'auth.invitationAcceptance.loading' | translate" />
           } @else if (hasError()) {
             <lib-error-state
               [title]="errorTitle()"
               [message]="errorMessage()"
-              [retryLabel]="isAuthenticated() ? 'Try Again' : ''"
+              [retryLabel]="isAuthenticated() ? ('common.tryAgain' | translate) : ''"
               [showRetry]="isAuthenticated()"
               (onRetry)="handleAccept()"
             />
@@ -36,12 +37,19 @@ import { Footer } from '../components/footer';
               <div class="invitation-acceptance-page_success-icon">
                 <lib-icon name="circle-check" size="xl" color="success" />
               </div>
-              <h1 class="invitation-acceptance-page_success-title">Invitation Accepted!</h1>
+              <h1 class="invitation-acceptance-page_success-title">
+                {{ 'auth.invitationAcceptance.successTitle' | translate }}
+              </h1>
               @if (acceptedOrganization()) {
                 <p class="invitation-acceptance-page_success-message">
-                  You've successfully joined
-                  <strong>{{ acceptedOrganization()?.organization_name }}</strong> as a
-                  {{ acceptedOrganization()?.role }}.
+                  {{
+                    'auth.invitationAcceptance.successMessage'
+                      | translate
+                        : {
+                            orgName: acceptedOrganization()?.organization_name,
+                            role: acceptedOrganization()?.role,
+                          }
+                  }}
                 </p>
                 <div class="invitation-acceptance-page_success-actions">
                   <lib-button
@@ -50,7 +58,7 @@ import { Footer } from '../components/footer';
                     [link]="['/app/organizations']"
                     leftIcon="arrow-right"
                   >
-                    Go to Organizations
+                    {{ 'auth.invitationAcceptance.goToOrganizations' | translate }}
                   </lib-button>
                 </div>
               }
@@ -60,17 +68,20 @@ import { Footer } from '../components/footer';
               <div class="invitation-acceptance-page_icon">
                 <lib-icon name="mail" size="xl" color="primary-500" />
               </div>
-              <h1 class="invitation-acceptance-page_title">Organization Invitation</h1>
+              <h1 class="invitation-acceptance-page_title">
+                {{ 'auth.invitationAcceptance.title' | translate }}
+              </h1>
               <p class="invitation-acceptance-page_description">
-                You've been invited to join an organization. Please log in or sign up to accept this
-                invitation.
+                {{ 'auth.invitationAcceptance.description' | translate }}
               </p>
 
               @if (isAuthenticated()) {
                 <div class="invitation-acceptance-page_authenticated">
                   <p class="invitation-acceptance-page_authenticated-message">
-                    You're logged in as <strong>{{ currentUserEmail() }}</strong
-                    >. Click the button below to accept this invitation.
+                    {{
+                      'auth.invitationAcceptance.authenticatedMessage'
+                        | translate: { email: currentUserEmail() }
+                    }}
                   </p>
                   <lib-button
                     variant="primary"
@@ -80,13 +91,13 @@ import { Footer } from '../components/footer';
                     [disabled]="isAccepting()"
                     leftIcon="check"
                   >
-                    Accept Invitation
+                    {{ 'auth.invitationAcceptance.acceptInvitation' | translate }}
                   </lib-button>
                 </div>
               } @else {
                 <div class="invitation-acceptance-page_unauthenticated">
                   <p class="invitation-acceptance-page_unauthenticated-message">
-                    You need to log in or create an account to accept this invitation.
+                    {{ 'auth.invitationAcceptance.unauthenticatedMessage' | translate }}
                   </p>
                   <div class="invitation-acceptance-page_unauthenticated-actions">
                     <lib-button
@@ -95,7 +106,7 @@ import { Footer } from '../components/footer';
                       (clicked)="handleLogin()"
                       leftIcon="log-in"
                     >
-                      Log In
+                      {{ 'auth.login' | translate }}
                     </lib-button>
                     <lib-button
                       variant="secondary"
@@ -103,12 +114,11 @@ import { Footer } from '../components/footer';
                       (clicked)="handleRegister()"
                       leftIcon="user-plus"
                     >
-                      Sign Up
+                      {{ 'auth.register.title' | translate }}
                     </lib-button>
                   </div>
                   <p class="invitation-acceptance-page_unauthenticated-note">
-                    After logging in or signing up, you'll be redirected back here to accept the
-                    invitation.
+                    {{ 'auth.invitationAcceptance.unauthenticatedNote' | translate }}
                   </p>
                 </div>
               }
@@ -280,6 +290,7 @@ export class InvitationAcceptancePage {
   private readonly authService = inject(AuthService);
   private readonly invitationsService = inject(OrganizationInvitationsService);
   private readonly toast = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   readonly token = computed(() => {
     const token = this.route.snapshot.paramMap.get('token');
@@ -303,19 +314,24 @@ export class InvitationAcceptancePage {
 
   readonly errorTitle = computed(() => {
     const err = this.error();
-    if (!err) return 'Error';
+    if (!err) return this.translateService.instant('common.error');
     const message = err.message.toLowerCase();
-    if (message.includes('expired')) return 'Invitation Expired';
-    if (message.includes('already accepted')) return 'Invitation Already Accepted';
-    if (message.includes('not found')) return 'Invitation Not Found';
-    if (message.includes('email')) return 'Email Mismatch';
-    if (message.includes('already member')) return 'Already a Member';
-    return 'Failed to Accept Invitation';
+    if (message.includes('expired'))
+      return this.translateService.instant('auth.invitationAcceptance.errors.expired');
+    if (message.includes('already accepted'))
+      return this.translateService.instant('auth.invitationAcceptance.errors.alreadyAccepted');
+    if (message.includes('not found'))
+      return this.translateService.instant('auth.invitationAcceptance.errors.notFound');
+    if (message.includes('email'))
+      return this.translateService.instant('auth.invitationAcceptance.errors.emailMismatch');
+    if (message.includes('already member'))
+      return this.translateService.instant('auth.invitationAcceptance.errors.alreadyMember');
+    return this.translateService.instant('auth.invitationAcceptance.errors.failed');
   });
 
   readonly errorMessage = computed(() => {
     const err = this.error();
-    if (!err) return 'An unknown error occurred';
+    if (!err) return this.translateService.instant('common.unknownError');
     return err.message;
   });
 
@@ -355,7 +371,9 @@ export class InvitationAcceptancePage {
   async handleAccept(): Promise<void> {
     const token = this.token();
     if (!token) {
-      this.error.set(new Error('Invalid invitation token'));
+      this.error.set(
+        new Error(this.translateService.instant('auth.invitationAcceptance.errors.invalidToken')),
+      );
       return;
     }
 
@@ -372,11 +390,13 @@ export class InvitationAcceptancePage {
       const result = await this.invitationsService.acceptInvitation(token);
       this.acceptedOrganization.set(result);
       this.isAccepted.set(true);
-      this.toast.success('Invitation accepted successfully!');
+      this.toast.success(this.translateService.instant('auth.invitationAcceptance.acceptSuccess'));
     } catch (error) {
       console.error('Failed to accept invitation:', error);
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to accept invitation. Please try again.';
+        error instanceof Error
+          ? error.message
+          : this.translateService.instant('auth.invitationAcceptance.errors.failed');
       this.error.set(new Error(errorMessage));
       this.toast.error(errorMessage);
     } finally {

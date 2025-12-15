@@ -12,13 +12,13 @@ import {
 } from '@angular/core';
 import { Overlay, OverlayRef, OverlayConfig } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
-import { Icon, Button } from 'shared-ui';
+import { Icon } from 'shared-ui';
 import { NotificationService } from '../../application/services/notification.service';
 import { NotificationDropdown } from './notification-dropdown';
 
 @Component({
   selector: 'app-notification-bell',
-  imports: [Icon, Button, NotificationDropdown],
+  imports: [Icon, NotificationDropdown],
   template: `
     <div class="notification-bell" #bellContainer>
       <button

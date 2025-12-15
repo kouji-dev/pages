@@ -13,19 +13,23 @@ import { ProjectService } from '../../application/services/project.service';
 import { NavigationService } from '../../application/services/navigation.service';
 import { DeleteProjectModal } from '../components/delete-project-modal';
 import { BackToPage } from '../components/back-to-page';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-project-settings-page',
-  imports: [Button, Input, LoadingState, ErrorState, BackToPage],
+  imports: [Button, Input, LoadingState, ErrorState, BackToPage, TranslatePipe],
   template: `
     <div class="project-settings-page">
       <div class="project-settings-page_header">
         <div class="project-settings-page_header-content">
           <div>
-            <app-back-to-page label="Back to Project" (onClick)="handleBackToProject()" />
-            <h1 class="project-settings-page_title">Project Settings</h1>
+            <app-back-to-page
+              [label]="'projects.backToProject' | translate"
+              (onClick)="handleBackToProject()"
+            />
+            <h1 class="project-settings-page_title">{{ 'projects.settings.title' | translate }}</h1>
             <p class="project-settings-page_subtitle">
-              Manage your project details and configuration.
+              {{ 'projects.settings.subtitle' | translate }}
             </p>
           </div>
         </div>
@@ -33,48 +37,50 @@ import { BackToPage } from '../components/back-to-page';
 
       <div class="project-settings-page_content">
         @if (projectService.isFetchingProject()) {
-          <lib-loading-state message="Loading project..." />
+          <lib-loading-state [message]="'projects.loadingProject' | translate" />
         } @else if (projectService.hasProjectError()) {
           <lib-error-state
-            title="Failed to Load Project"
+            [title]="'projects.failedToLoad' | translate"
             [message]="errorMessage()"
-            [retryLabel]="'Retry'"
+            [retryLabel]="'common.retry' | translate"
             (onRetry)="handleRetry()"
           />
         } @else if (!project()) {
           <lib-error-state
-            title="Project Not Found"
-            message="The project you're looking for doesn't exist or you don't have access to it."
+            [title]="'projects.notFound' | translate"
+            [message]="'projects.notFoundDescription' | translate"
             [showRetry]="false"
           />
         } @else {
           <div class="project-settings-page_container">
             <!-- Project Details Section -->
             <div class="project-settings-page_section">
-              <h2 class="project-settings-page_section-title">Project Details</h2>
+              <h2 class="project-settings-page_section-title">
+                {{ 'projects.settings.details' | translate }}
+              </h2>
               <form class="project-settings-page_form" (ngSubmit)="handleSaveProject()">
                 <lib-input
-                  label="Project Name"
-                  placeholder="Enter project name"
+                  [label]="'projects.settings.name' | translate"
+                  [placeholder]="'projects.settings.namePlaceholder' | translate"
                   [(model)]="name"
                   [required]="true"
                   [errorMessage]="nameError()"
-                  helperText="The display name for your project"
+                  [helperText]="'projects.settings.nameHelper' | translate"
                 />
                 <lib-input
-                  label="Project Key"
+                  [label]="'projects.settings.key' | translate"
                   placeholder="PROJ"
                   [(model)]="key"
                   [readonly]="true"
-                  helperText="Project key cannot be changed after creation"
+                  [helperText]="'projects.settings.keyHelper' | translate"
                 />
                 <lib-input
-                  label="Description"
+                  [label]="'projects.settings.description' | translate"
                   type="textarea"
-                  placeholder="Describe your project (optional)"
+                  [placeholder]="'projects.settings.descriptionPlaceholder' | translate"
                   [(model)]="description"
                   [rows]="4"
-                  helperText="Optional description of your project"
+                  [helperText]="'projects.settings.descriptionHelper' | translate"
                 />
                 <div class="project-settings-page_form-actions">
                   <lib-button
@@ -83,14 +89,14 @@ import { BackToPage } from '../components/back-to-page';
                     [loading]="isSaving()"
                     [disabled]="!isFormValid() || !hasChanges()"
                   >
-                    Save Changes
+                    {{ 'common.saveChanges' | translate }}
                   </lib-button>
                   <lib-button
                     variant="secondary"
                     (clicked)="handleReset()"
                     [disabled]="!hasChanges() || isSaving()"
                   >
-                    Cancel
+                    {{ 'common.cancel' | translate }}
                   </lib-button>
                 </div>
               </form>
@@ -98,12 +104,16 @@ import { BackToPage } from '../components/back-to-page';
 
             <!-- Danger Zone Section -->
             <div class="project-settings-page_section project-settings-page_section--danger">
-              <h2 class="project-settings-page_section-title">Danger Zone</h2>
+              <h2 class="project-settings-page_section-title">
+                {{ 'projects.settings.dangerZone' | translate }}
+              </h2>
               <div class="project-settings-page_danger-content">
                 <div>
-                  <h3 class="project-settings-page_danger-title">Delete Project</h3>
+                  <h3 class="project-settings-page_danger-title">
+                    {{ 'projects.settings.deleteTitle' | translate }}
+                  </h3>
                   <p class="project-settings-page_danger-description">
-                    Once you delete a project, there is no going back. Please be certain.
+                    {{ 'projects.settings.deleteDescription' | translate }}
                   </p>
                 </div>
                 <lib-button
@@ -112,7 +122,7 @@ import { BackToPage } from '../components/back-to-page';
                   (clicked)="handleDeleteProject()"
                   [disabled]="isDeleting()"
                 >
-                  Delete Project
+                  {{ 'projects.deleteProject' | translate }}
                 </lib-button>
               </div>
             </div>
@@ -230,6 +240,7 @@ export class ProjectSettingsPage {
   readonly modal = inject(Modal);
   readonly toast = inject(ToastService);
   readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly translateService = inject(TranslateService);
 
   readonly projectId = computed(() => {
     return (
@@ -252,10 +263,10 @@ export class ProjectSettingsPage {
   readonly nameError = computed(() => {
     const value = this.name();
     if (!value.trim()) {
-      return 'Project name is required';
+      return this.translateService.instant('projects.settings.nameRequired');
     }
     if (value.trim().length < 3) {
-      return 'Project name must be at least 3 characters';
+      return this.translateService.instant('projects.settings.nameMinLength');
     }
     return '';
   });
@@ -276,9 +287,9 @@ export class ProjectSettingsPage {
     if (error) {
       return error instanceof Error
         ? error.message
-        : 'An error occurred while loading the project.';
+        : this.translateService.instant('projects.loadError');
     }
-    return 'An unknown error occurred.';
+    return this.translateService.instant('common.unknownError');
   });
 
   private readonly initializeFormEffect = effect(
@@ -324,11 +335,13 @@ export class ProjectSettingsPage {
       });
       this.originalName.set(this.name().trim());
       this.originalDescription.set(this.description().trim());
-      this.toast.success('Project updated successfully!');
+      this.toast.success(this.translateService.instant('projects.updateSuccess'));
     } catch (error) {
       console.error('Failed to update project:', error);
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to update project. Please try again.';
+        error instanceof Error
+          ? error.message
+          : this.translateService.instant('projects.updateError');
       this.toast.error(errorMessage);
     } finally {
       this.isSaving.set(false);

@@ -1,18 +1,21 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Button } from 'shared-ui';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-not-found',
-  imports: [Button],
+  imports: [Button, TranslatePipe],
   template: `
     <div class="not-found">
       <div class="not-found_content">
         <h1 class="not-found_title">404</h1>
-        <p class="not-found_message">Page not found</p>
+        <p class="not-found_message">{{ 'common.notFound.title' | translate }}</p>
         <p class="not-found_description">
-          The page you're looking for doesn't exist or has been moved.
+          {{ 'common.notFound.description' | translate }}
         </p>
-        <lib-button variant="primary" [link]="['/']"> Go to Home </lib-button>
+        <lib-button variant="primary" [link]="['/']">{{
+          'common.notFound.goToHome' | translate
+        }}</lib-button>
       </div>
     </div>
   `,

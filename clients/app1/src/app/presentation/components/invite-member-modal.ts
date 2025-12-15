@@ -13,27 +13,28 @@ import {
   OrganizationInvitationsService,
   SendInvitationRequest,
 } from '../../application/services/organization-invitations.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-invite-member-modal',
-  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, Input],
+  imports: [ModalContainer, ModalHeader, ModalContent, ModalFooter, Button, Input, TranslatePipe],
   template: `
     <lib-modal-container>
-      <lib-modal-header>Send Invitation</lib-modal-header>
+      <lib-modal-header>{{ 'invitations.title' | translate }}</lib-modal-header>
       <lib-modal-content>
         <form class="invite-member-form" (ngSubmit)="handleSubmit()">
           <lib-input
-            label="Email Address"
+            [label]="'invitations.emailLabel' | translate"
             type="email"
-            placeholder="Enter email address..."
+            [placeholder]="'invitations.emailPlaceholder' | translate"
             [(model)]="email"
             [required]="true"
             [errorMessage]="emailError()"
-            helperText="The email address of the person you want to invite"
+            [helperText]="'invitations.emailHelper' | translate"
           />
 
           <div class="invite-member-form_role">
-            <label class="invite-member-form_role-label">Role</label>
+            <label class="invite-member-form_role-label">{{ 'members.role' | translate }}</label>
             <div class="invite-member-form_role-options">
               @for (role of availableRoles(); track role.value) {
                 <button
@@ -54,7 +55,7 @@ import {
       </lib-modal-content>
       <lib-modal-footer>
         <lib-button variant="secondary" (clicked)="handleCancel()" [disabled]="isSubmitting()">
-          Cancel
+          {{ 'common.cancel' | translate }}
         </lib-button>
         <lib-button
           variant="primary"
@@ -62,7 +63,7 @@ import {
           [loading]="isSubmitting()"
           [disabled]="!isValid()"
         >
-          Send Invitation
+          {{ 'invitations.sendInvitation' | translate }}
         </lib-button>
       </lib-modal-footer>
     </lib-modal-container>
@@ -134,6 +135,7 @@ export class InviteMemberModal {
   private readonly modal = inject(Modal);
   private readonly invitationsService = inject(OrganizationInvitationsService);
   private readonly toast = inject(ToastService);
+  private readonly translateService = inject(TranslateService);
 
   readonly organizationId = input.required<string>();
   readonly email = signal('');
@@ -143,30 +145,30 @@ export class InviteMemberModal {
   readonly availableRoles = computed(() => [
     {
       value: 'admin' as const,
-      label: 'Admin',
-      description: 'Full access to manage organization and members',
+      label: this.translateService.instant('members.admin'),
+      description: this.translateService.instant('members.adminDescription'),
     },
     {
       value: 'member' as const,
-      label: 'Member',
-      description: 'Can create and edit projects, but cannot manage members',
+      label: this.translateService.instant('members.member'),
+      description: this.translateService.instant('members.memberDescription'),
     },
     {
       value: 'viewer' as const,
-      label: 'Viewer',
-      description: 'Read-only access to organization content',
+      label: this.translateService.instant('members.viewer'),
+      description: this.translateService.instant('members.viewerDescription'),
     },
   ]);
 
   readonly emailError = computed(() => {
     const value = this.email().trim();
     if (!value) {
-      return 'Email address is required';
+      return this.translateService.instant('invitations.emailRequired');
     }
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(value)) {
-      return 'Please enter a valid email address';
+      return this.translateService.instant('invitations.emailInvalid');
     }
     return '';
   });
@@ -198,12 +200,14 @@ export class InviteMemberModal {
       };
 
       await this.invitationsService.sendInvitation(this.organizationId()!, request);
-      this.toast.success('Invitation sent successfully!');
+      this.toast.success(this.translateService.instant('invitations.invitationSent'));
       this.modal.close({ sent: true });
     } catch (error: any) {
       console.error('Failed to send invitation:', error);
       const errorMessage =
-        error?.error?.detail || error?.message || 'Failed to send invitation. Please try again.';
+        error?.error?.detail ||
+        error?.message ||
+        this.translateService.instant('invitations.invitationError');
       this.toast.error(errorMessage);
     } finally {
       this.isSubmitting.set(false);

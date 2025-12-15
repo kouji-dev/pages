@@ -6,6 +6,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { Button, LoadingState, ErrorState, EmptyState, Modal, Input } from 'shared-ui';
+import { TranslatePipe } from '@ngx-translate/core';
 import { SpaceService, Space } from '../../application/services/space.service';
 import { OrganizationService } from '../../application/services/organization.service';
 import { NavigationService } from '../../application/services/navigation.service';
@@ -14,14 +15,14 @@ import { CreateSpaceModal } from '../components/create-space-modal';
 
 @Component({
   selector: 'app-spaces-page',
-  imports: [Button, LoadingState, ErrorState, EmptyState, SpaceCard, Input],
+  imports: [Button, LoadingState, ErrorState, EmptyState, SpaceCard, Input, TranslatePipe],
   template: `
     <div class="spaces-page">
       <div class="spaces-page_header">
         <div class="spaces-page_header-content">
           <div>
-            <h1 class="spaces-page_title">Spaces</h1>
-            <p class="spaces-page_subtitle">Organize your documentation in dedicated spaces.</p>
+            <h1 class="spaces-page_title">{{ 'spaces.title' | translate }}</h1>
+            <p class="spaces-page_subtitle">{{ 'spaces.subtitle' | translate }}</p>
           </div>
           <lib-button
             variant="primary"
@@ -30,7 +31,7 @@ import { CreateSpaceModal } from '../components/create-space-modal';
             (clicked)="handleCreateSpace()"
             [disabled]="!organizationId()"
           >
-            Create Space
+            {{ 'spaces.createSpace' | translate }}
           </lib-button>
         </div>
       </div>
@@ -38,26 +39,26 @@ import { CreateSpaceModal } from '../components/create-space-modal';
       <div class="spaces-page_content">
         @if (!organizationId()) {
           <lib-empty-state
-            title="No organization selected"
-            message="Please select or create an organization to view spaces."
+            [title]="'spaces.noOrganizationSelected' | translate"
+            [message]="'spaces.noOrganizationSelectedDescription' | translate"
             icon="building"
-            actionLabel="Go to Organizations"
+            [actionLabel]="'spaces.goToOrganizations' | translate"
             actionIcon="arrow-right"
             (onAction)="handleGoToOrganizations()"
           />
         } @else if (spaceService.isLoading()) {
-          <lib-loading-state message="Loading spaces..." />
+          <lib-loading-state [message]="'spaces.loadingSpaces' | translate" />
         } @else if (spaceService.hasError()) {
           <lib-error-state
-            title="Failed to Load Spaces"
+            [title]="'spaces.failedToLoad' | translate"
             [message]="errorMessage()"
-            [retryLabel]="'Retry'"
+            [retryLabel]="'common.retry' | translate"
             (onRetry)="handleRetry()"
           />
         } @else {
           <div class="spaces-page_search">
             <lib-input
-              placeholder="Search spaces by name or key..."
+              [placeholder]="'spaces.searchPlaceholder' | translate"
               [(model)]="spaceService.searchQuery"
               leftIcon="search"
               class="spaces-page_search-input"
@@ -66,16 +67,16 @@ import { CreateSpaceModal } from '../components/create-space-modal';
           @if (allSpaces().length === 0) {
             @if (spaceService.searchQuery().trim()) {
               <lib-empty-state
-                title="No spaces found"
-                message="Try adjusting your search terms."
+                [title]="'spaces.noSpacesFound' | translate"
+                [message]="'spaces.noSpacesFoundDescription' | translate"
                 icon="search"
               />
             } @else {
               <lib-empty-state
-                title="No spaces yet"
-                message="Get started by creating your first space to organize your documentation."
+                [title]="'spaces.noSpaces' | translate"
+                [message]="'spaces.noSpacesDescription' | translate"
                 icon="book"
-                actionLabel="Create Space"
+                [actionLabel]="'spaces.createSpace' | translate"
                 actionIcon="plus"
                 (onAction)="handleCreateSpace()"
               />
