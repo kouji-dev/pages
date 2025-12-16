@@ -5,6 +5,7 @@ Revises: 0004
 Create Date: 2025-12-16 14:39:13.395191
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
@@ -12,8 +13,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '46fc6f4041c4'
-down_revision: Union[str, None] = '0004'
+revision: str = "46fc6f4041c4"
+down_revision: Union[str, None] = "0004"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -43,4 +44,3 @@ def downgrade() -> None:
     """Remove language column from users table."""
     op.drop_index(op.f("ix_users_language"), table_name="users")
     op.drop_column("users", "language")
-

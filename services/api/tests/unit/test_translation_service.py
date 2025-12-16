@@ -82,9 +82,7 @@ class TestTranslationService:
         result = service.get_translation("nonexistent.key", language="en")
         assert result == "nonexistent.key"
 
-    def test_get_translation_language_not_found_fallback(
-        self, temp_translations_dir: Path
-    ) -> None:
+    def test_get_translation_language_not_found_fallback(self, temp_translations_dir: Path) -> None:
         """Test fallback to default language when requested language not found."""
         service = TranslationService(temp_translations_dir)
 
@@ -92,18 +90,14 @@ class TestTranslationService:
         result = service.get_translation("user.not_found", language="es")
         assert result == "User not found"  # English fallback
 
-    def test_get_translation_no_language_uses_default(
-        self, temp_translations_dir: Path
-    ) -> None:
+    def test_get_translation_no_language_uses_default(self, temp_translations_dir: Path) -> None:
         """Test using default language when no language specified."""
         service = TranslationService(temp_translations_dir)
 
         result = service.get_translation("user.not_found")
         assert result == "User not found"  # Default is 'en'
 
-    def test_get_translation_with_region_code(
-        self, temp_translations_dir: Path
-    ) -> None:
+    def test_get_translation_with_region_code(self, temp_translations_dir: Path) -> None:
         """Test getting translation with region code (e.g., 'en-US')."""
         service = TranslationService(temp_translations_dir)
 
@@ -120,9 +114,7 @@ class TestTranslationService:
         assert "user" in translations
         assert translations["user"]["not_found"] == "User not found"
 
-    def test_get_all_translations_language_not_found(
-        self, temp_translations_dir: Path
-    ) -> None:
+    def test_get_all_translations_language_not_found(self, temp_translations_dir: Path) -> None:
         """Test getting all translations for non-existent language returns empty dict."""
         service = TranslationService(temp_translations_dir)
 
@@ -170,4 +162,3 @@ class TestTranslationService:
         # Should not raise error, just log warning
         result = service.get_translation("any.key", language="en")
         assert result == "any.key"  # Returns key when no translations loaded
-

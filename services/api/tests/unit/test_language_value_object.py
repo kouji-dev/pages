@@ -94,4 +94,3 @@ class TestLanguage:
         language = Language("en")
         with pytest.raises(Exception):  # FrozenInstanceError
             language.code = "fr"  # type: ignore
-

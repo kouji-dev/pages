@@ -2,7 +2,7 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.application.dtos.language import (
     SupportedLanguagesResponse,
@@ -100,4 +100,9 @@ async def update_user_language(
     The language code must be a valid ISO 639-1 code (e.g., 'en', 'fr', 'es', 'de').
     Requires authentication.
     """
-    return await use_case.execute(current_user.id, request)
+    try:
+        return await use_case.execute(current_user.id, request)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
+        ) from e

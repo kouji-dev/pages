@@ -44,9 +44,7 @@ class TestGetUserLanguageUseCase:
     """Tests for GetUserLanguageUseCase."""
 
     @pytest.mark.asyncio
-    async def test_get_user_language_success(
-        self, mock_user_repository, test_user
-    ) -> None:
+    async def test_get_user_language_success(self, mock_user_repository, test_user) -> None:
         """Test successfully getting user language preference."""
         mock_user_repository.get_by_id.return_value = test_user
 
@@ -58,9 +56,7 @@ class TestGetUserLanguageUseCase:
         mock_user_repository.get_by_id.assert_called_once_with(test_user.id)
 
     @pytest.mark.asyncio
-    async def test_get_user_language_user_not_found(
-        self, mock_user_repository
-    ) -> None:
+    async def test_get_user_language_user_not_found(self, mock_user_repository) -> None:
         """Test getting language preference for non-existent user."""
         user_id = uuid4()
         mock_user_repository.get_by_id.return_value = None
@@ -77,9 +73,7 @@ class TestUpdateUserLanguageUseCase:
     """Tests for UpdateUserLanguageUseCase."""
 
     @pytest.mark.asyncio
-    async def test_update_user_language_success(
-        self, mock_user_repository, test_user
-    ) -> None:
+    async def test_update_user_language_success(self, mock_user_repository, test_user) -> None:
         """Test successfully updating user language preference."""
         mock_user_repository.get_by_id.return_value = test_user
 
@@ -130,9 +124,7 @@ class TestUpdateUserLanguageUseCase:
         mock_user_repository.update.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_update_user_language_user_not_found(
-        self, mock_user_repository
-    ) -> None:
+    async def test_update_user_language_user_not_found(self, mock_user_repository) -> None:
         """Test updating language for non-existent user."""
         user_id = uuid4()
         mock_user_repository.get_by_id.return_value = None
@@ -147,9 +139,7 @@ class TestUpdateUserLanguageUseCase:
         mock_user_repository.update.assert_not_called()
 
     @pytest.mark.asyncio
-    async def test_update_user_language_invalid_code(
-        self, mock_user_repository, test_user
-    ) -> None:
+    async def test_update_user_language_invalid_code(self, mock_user_repository, test_user) -> None:
         """Test updating user language with invalid code."""
         mock_user_repository.get_by_id.return_value = test_user
 
@@ -183,4 +173,3 @@ class TestListSupportedLanguagesUseCase:
         for lang in result.languages:
             assert lang.code
             assert lang.name
-

@@ -232,4 +232,3 @@ async def test_unauthenticated_access_to_protected_endpoints(
         json={"language": "fr"},
     )
     assert update_response.status_code == 401
-
