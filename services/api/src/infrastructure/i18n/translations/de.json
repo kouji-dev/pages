@@ -1,0 +1,126 @@
+{
+  "auth": {
+    "login": {
+      "success": "Anmeldung erfolgreich",
+      "failed": "Ungültige E-Mail oder Passwort",
+      "required": "E-Mail und Passwort sind erforderlich"
+    },
+    "register": {
+      "success": "Registrierung erfolgreich",
+      "email_exists": "E-Mail bereits registriert",
+      "invalid_email": "Ungültiges E-Mail-Format",
+      "weak_password": "Das Passwort ist zu schwach"
+    },
+    "password": {
+      "reset_requested": "Passwort-Zurücksetzungs-E-Mail gesendet",
+      "reset_success": "Passwortzurücksetzung erfolgreich",
+      "invalid_token": "Ungültiges oder abgelaufenes Token",
+      "current_incorrect": "Das aktuelle Passwort ist falsch"
+    },
+    "token": {
+      "expired": "Das Token ist abgelaufen",
+      "invalid": "Ungültiges Token",
+      "refresh_success": "Token erfolgreich aktualisiert"
+    }
+  },
+  "user": {
+    "not_found": "Benutzer nicht gefunden",
+    "profile_updated": "Profil erfolgreich aktualisiert",
+    "email_updated": "E-Mail erfolgreich aktualisiert",
+    "password_updated": "Passwort erfolgreich aktualisiert",
+    "avatar_uploaded": "Avatar erfolgreich hochgeladen",
+    "avatar_deleted": "Avatar erfolgreich gelöscht",
+    "language_updated": "Spracheinstellung erfolgreich aktualisiert",
+    "preferences_updated": "Einstellungen erfolgreich aktualisiert",
+    "deactivated": "Benutzerkonto deaktiviert",
+    "reactivated": "Benutzerkonto reaktiviert"
+  },
+  "organization": {
+    "created": "Organisation erfolgreich erstellt",
+    "updated": "Organisation erfolgreich aktualisiert",
+    "deleted": "Organisation erfolgreich gelöscht",
+    "not_found": "Organisation nicht gefunden",
+    "member_added": "Mitglied erfolgreich hinzugefügt",
+    "member_removed": "Mitglied erfolgreich entfernt",
+    "member_not_found": "Mitglied nicht gefunden",
+    "role_updated": "Mitgliedsrolle erfolgreich aktualisiert",
+    "invitation_sent": "Einladung erfolgreich gesendet",
+    "invitation_accepted": "Einladung erfolgreich akzeptiert",
+    "invitation_cancelled": "Einladung storniert",
+    "invitation_not_found": "Einladung nicht gefunden oder abgelaufen",
+    "already_member": "Benutzer ist bereits Mitglied",
+    "last_admin": "Der letzte Administrator kann nicht entfernt werden"
+  },
+  "project": {
+    "created": "Projekt erfolgreich erstellt",
+    "updated": "Projekt erfolgreich aktualisiert",
+    "deleted": "Projekt erfolgreich gelöscht",
+    "not_found": "Projekt nicht gefunden",
+    "member_added": "Projektmitglied erfolgreich hinzugefügt",
+    "member_removed": "Projektmitglied erfolgreich entfernt",
+    "member_role_updated": "Projektmitgliedsrolle erfolgreich aktualisiert"
+  },
+  "issue": {
+    "created": "Problem erfolgreich erstellt",
+    "updated": "Problem erfolgreich aktualisiert",
+    "deleted": "Problem erfolgreich gelöscht",
+    "not_found": "Problem nicht gefunden",
+    "status_changed": "Problemstatus geändert zu {status}",
+    "assigned": "Problem zugewiesen an {assignee}",
+    "unassigned": "Problem nicht zugewiesen"
+  },
+  "comment": {
+    "created": "Kommentar erfolgreich hinzugefügt",
+    "updated": "Kommentar erfolgreich aktualisiert",
+    "deleted": "Kommentar erfolgreich gelöscht",
+    "not_found": "Kommentar nicht gefunden"
+  },
+  "page": {
+    "created": "Seite erfolgreich erstellt",
+    "updated": "Seite erfolgreich aktualisiert",
+    "deleted": "Seite erfolgreich gelöscht",
+    "not_found": "Seite nicht gefunden"
+  },
+  "space": {
+    "created": "Bereich erfolgreich erstellt",
+    "updated": "Bereich erfolgreich aktualisiert",
+    "deleted": "Bereich erfolgreich gelöscht",
+    "not_found": "Bereich nicht gefunden"
+  },
+  "attachment": {
+    "uploaded": "Datei erfolgreich hochgeladen",
+    "deleted": "Datei erfolgreich gelöscht",
+    "not_found": "Anhang nicht gefunden",
+    "invalid_type": "Ungültiger Dateityp",
+    "too_large": "Die Datei ist zu groß (max {max_size})"
+  },
+  "notification": {
+    "marked_read": "Benachrichtigung als gelesen markiert",
+    "all_marked_read": "{count} Benachrichtigungen als gelesen markiert",
+    "not_found": "Benachrichtigung nicht gefunden"
+  },
+  "validation": {
+    "required": "{field} ist erforderlich",
+    "invalid": "{field} ist ungültig",
+    "too_short": "{field} muss mindestens {min} Zeichen lang sein",
+    "too_long": "{field} darf {max} Zeichen nicht überschreiten",
+    "email_format": "Ungültiges E-Mail-Format",
+    "unique": "{field} muss eindeutig sein",
+    "not_found": "{entity} nicht gefunden"
+  },
+  "error": {
+    "unauthorized": "Nicht autorisierter Zugriff",
+    "forbidden": "Sie haben keine Berechtigung, diese Aktion durchzuführen",
+    "not_found": "Ressource nicht gefunden",
+    "internal": "Interner Serverfehler",
+    "bad_request": "Ungültige Anfrage",
+    "conflict": "Ressource existiert bereits"
+  },
+  "language": {
+    "en": "Englisch",
+    "fr": "Französisch",
+    "es": "Spanisch",
+    "de": "Deutsch"
+  }
+}
+

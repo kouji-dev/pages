@@ -1,0 +1,126 @@
+{
+  "auth": {
+    "login": {
+      "success": "Login successful",
+      "failed": "Invalid email or password",
+      "required": "Email and password are required"
+    },
+    "register": {
+      "success": "Registration successful",
+      "email_exists": "Email already registered",
+      "invalid_email": "Invalid email format",
+      "weak_password": "Password is too weak"
+    },
+    "password": {
+      "reset_requested": "Password reset email sent",
+      "reset_success": "Password reset successful",
+      "invalid_token": "Invalid or expired reset token",
+      "current_incorrect": "Current password is incorrect"
+    },
+    "token": {
+      "expired": "Token has expired",
+      "invalid": "Invalid token",
+      "refresh_success": "Token refreshed successfully"
+    }
+  },
+  "user": {
+    "not_found": "User not found",
+    "profile_updated": "Profile updated successfully",
+    "email_updated": "Email updated successfully",
+    "password_updated": "Password updated successfully",
+    "avatar_uploaded": "Avatar uploaded successfully",
+    "avatar_deleted": "Avatar deleted successfully",
+    "language_updated": "Language preference updated successfully",
+    "preferences_updated": "Preferences updated successfully",
+    "deactivated": "User account deactivated",
+    "reactivated": "User account reactivated"
+  },
+  "organization": {
+    "created": "Organization created successfully",
+    "updated": "Organization updated successfully",
+    "deleted": "Organization deleted successfully",
+    "not_found": "Organization not found",
+    "member_added": "Member added successfully",
+    "member_removed": "Member removed successfully",
+    "member_not_found": "Member not found",
+    "role_updated": "Member role updated successfully",
+    "invitation_sent": "Invitation sent successfully",
+    "invitation_accepted": "Invitation accepted successfully",
+    "invitation_cancelled": "Invitation cancelled",
+    "invitation_not_found": "Invitation not found or expired",
+    "already_member": "User is already a member",
+    "last_admin": "Cannot remove the last admin"
+  },
+  "project": {
+    "created": "Project created successfully",
+    "updated": "Project updated successfully",
+    "deleted": "Project deleted successfully",
+    "not_found": "Project not found",
+    "member_added": "Project member added successfully",
+    "member_removed": "Project member removed successfully",
+    "member_role_updated": "Project member role updated successfully"
+  },
+  "issue": {
+    "created": "Issue created successfully",
+    "updated": "Issue updated successfully",
+    "deleted": "Issue deleted successfully",
+    "not_found": "Issue not found",
+    "status_changed": "Issue status changed to {status}",
+    "assigned": "Issue assigned to {assignee}",
+    "unassigned": "Issue unassigned"
+  },
+  "comment": {
+    "created": "Comment added successfully",
+    "updated": "Comment updated successfully",
+    "deleted": "Comment deleted successfully",
+    "not_found": "Comment not found"
+  },
+  "page": {
+    "created": "Page created successfully",
+    "updated": "Page updated successfully",
+    "deleted": "Page deleted successfully",
+    "not_found": "Page not found"
+  },
+  "space": {
+    "created": "Space created successfully",
+    "updated": "Space updated successfully",
+    "deleted": "Space deleted successfully",
+    "not_found": "Space not found"
+  },
+  "attachment": {
+    "uploaded": "File uploaded successfully",
+    "deleted": "File deleted successfully",
+    "not_found": "Attachment not found",
+    "invalid_type": "Invalid file type",
+    "too_large": "File is too large (max {max_size})"
+  },
+  "notification": {
+    "marked_read": "Notification marked as read",
+    "all_marked_read": "{count} notifications marked as read",
+    "not_found": "Notification not found"
+  },
+  "validation": {
+    "required": "{field} is required",
+    "invalid": "{field} is invalid",
+    "too_short": "{field} must be at least {min} characters",
+    "too_long": "{field} cannot exceed {max} characters",
+    "email_format": "Invalid email format",
+    "unique": "{field} must be unique",
+    "not_found": "{entity} not found"
+  },
+  "error": {
+    "unauthorized": "Unauthorized access",
+    "forbidden": "You don't have permission to perform this action",
+    "not_found": "Resource not found",
+    "internal": "Internal server error",
+    "bad_request": "Invalid request",
+    "conflict": "Resource already exists"
+  },
+  "language": {
+    "en": "English",
+    "fr": "French",
+    "es": "Spanish",
+    "de": "German"
+  }
+}
+

@@ -6,6 +6,7 @@ from typing import Any, Self
 from uuid import UUID, uuid4
 
 from src.domain.value_objects import Email, HashedPassword
+from src.domain.value_objects.language import Language
 from src.domain.value_objects.preferences import get_default_preferences
 
 
@@ -23,6 +24,7 @@ class User:
     name: str
     avatar_url: str | None = None
     preferences: dict[str, Any] | None = None
+    language: Language = field(default_factory=lambda: Language(Language.DEFAULT_LANGUAGE))
     is_active: bool = True
     is_verified: bool = False
     created_at: datetime = field(default_factory=datetime.utcnow)

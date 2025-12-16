@@ -10,6 +10,7 @@ from src.domain.entities import User
 from src.domain.exceptions import ConflictException, EntityNotFoundException
 from src.domain.repositories import UserRepository
 from src.domain.value_objects import Email, HashedPassword
+from src.domain.value_objects.language import Language
 from src.infrastructure.database.models import UserModel
 
 
@@ -122,6 +123,7 @@ class SQLAlchemyUserRepository(UserRepository):
         model.name = user.name
         model.avatar_url = user.avatar_url
         model.preferences = json.dumps(user.preferences) if user.preferences else None
+        model.language = str(user.language)
         model.is_active = user.is_active
         model.is_verified = user.is_verified
         model.updated_at = user.updated_at
@@ -273,6 +275,7 @@ class SQLAlchemyUserRepository(UserRepository):
             name=model.name,
             avatar_url=model.avatar_url,
             preferences=preferences,
+            language=Language.from_string(model.language),
             is_active=model.is_active,
             is_verified=model.is_verified,
             created_at=model.created_at,

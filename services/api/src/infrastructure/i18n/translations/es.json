@@ -1,0 +1,126 @@
+{
+  "auth": {
+    "login": {
+      "success": "Inicio de sesión exitoso",
+      "failed": "Correo electrónico o contraseña inválidos",
+      "required": "Correo electrónico y contraseña son requeridos"
+    },
+    "register": {
+      "success": "Registro exitoso",
+      "email_exists": "Correo electrónico ya registrado",
+      "invalid_email": "Formato de correo electrónico inválido",
+      "weak_password": "La contraseña es demasiado débil"
+    },
+    "password": {
+      "reset_requested": "Correo de restablecimiento enviado",
+      "reset_success": "Restablecimiento de contraseña exitoso",
+      "invalid_token": "Token inválido o expirado",
+      "current_incorrect": "La contraseña actual es incorrecta"
+    },
+    "token": {
+      "expired": "El token ha expirado",
+      "invalid": "Token inválido",
+      "refresh_success": "Token actualizado exitosamente"
+    }
+  },
+  "user": {
+    "not_found": "Usuario no encontrado",
+    "profile_updated": "Perfil actualizado exitosamente",
+    "email_updated": "Correo electrónico actualizado exitosamente",
+    "password_updated": "Contraseña actualizada exitosamente",
+    "avatar_uploaded": "Avatar subido exitosamente",
+    "avatar_deleted": "Avatar eliminado exitosamente",
+    "language_updated": "Preferencia de idioma actualizada exitosamente",
+    "preferences_updated": "Preferencias actualizadas exitosamente",
+    "deactivated": "Cuenta de usuario desactivada",
+    "reactivated": "Cuenta de usuario reactivada"
+  },
+  "organization": {
+    "created": "Organización creada exitosamente",
+    "updated": "Organización actualizada exitosamente",
+    "deleted": "Organización eliminada exitosamente",
+    "not_found": "Organización no encontrada",
+    "member_added": "Miembro añadido exitosamente",
+    "member_removed": "Miembro eliminado exitosamente",
+    "member_not_found": "Miembro no encontrado",
+    "role_updated": "Rol de miembro actualizado exitosamente",
+    "invitation_sent": "Invitación enviada exitosamente",
+    "invitation_accepted": "Invitación aceptada exitosamente",
+    "invitation_cancelled": "Invitación cancelada",
+    "invitation_not_found": "Invitación no encontrada o expirada",
+    "already_member": "El usuario ya es miembro",
+    "last_admin": "No se puede eliminar el último administrador"
+  },
+  "project": {
+    "created": "Proyecto creado exitosamente",
+    "updated": "Proyecto actualizado exitosamente",
+    "deleted": "Proyecto eliminado exitosamente",
+    "not_found": "Proyecto no encontrado",
+    "member_added": "Miembro del proyecto añadido exitosamente",
+    "member_removed": "Miembro del proyecto eliminado exitosamente",
+    "member_role_updated": "Rol de miembro del proyecto actualizado exitosamente"
+  },
+  "issue": {
+    "created": "Problema creado exitosamente",
+    "updated": "Problema actualizado exitosamente",
+    "deleted": "Problema eliminado exitosamente",
+    "not_found": "Problema no encontrado",
+    "status_changed": "Estado del problema cambiado a {status}",
+    "assigned": "Problema asignado a {assignee}",
+    "unassigned": "Problema no asignado"
+  },
+  "comment": {
+    "created": "Comentario añadido exitosamente",
+    "updated": "Comentario actualizado exitosamente",
+    "deleted": "Comentario eliminado exitosamente",
+    "not_found": "Comentario no encontrado"
+  },
+  "page": {
+    "created": "Página creada exitosamente",
+    "updated": "Página actualizada exitosamente",
+    "deleted": "Página eliminada exitosamente",
+    "not_found": "Página no encontrada"
+  },
+  "space": {
+    "created": "Espacio creado exitosamente",
+    "updated": "Espacio actualizado exitosamente",
+    "deleted": "Espacio eliminado exitosamente",
+    "not_found": "Espacio no encontrado"
+  },
+  "attachment": {
+    "uploaded": "Archivo subido exitosamente",
+    "deleted": "Archivo eliminado exitosamente",
+    "not_found": "Adjunto no encontrado",
+    "invalid_type": "Tipo de archivo inválido",
+    "too_large": "El archivo es demasiado grande (máx {max_size})"
+  },
+  "notification": {
+    "marked_read": "Notificación marcada como leída",
+    "all_marked_read": "{count} notificaciones marcadas como leídas",
+    "not_found": "Notificación no encontrada"
+  },
+  "validation": {
+    "required": "{field} es requerido",
+    "invalid": "{field} es inválido",
+    "too_short": "{field} debe tener al menos {min} caracteres",
+    "too_long": "{field} no puede exceder {max} caracteres",
+    "email_format": "Formato de correo electrónico inválido",
+    "unique": "{field} debe ser único",
+    "not_found": "{entity} no encontrado"
+  },
+  "error": {
+    "unauthorized": "Acceso no autorizado",
+    "forbidden": "No tienes permiso para realizar esta acción",
+    "not_found": "Recurso no encontrado",
+    "internal": "Error interno del servidor",
+    "bad_request": "Solicitud inválida",
+    "conflict": "El recurso ya existe"
+  },
+  "language": {
+    "en": "Inglés",
+    "fr": "Francés",
+    "es": "Español",
+    "de": "Alemán"
+  }
+}
+
