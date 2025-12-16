@@ -9,6 +9,7 @@ from src.domain.entities.organization import Organization
 from src.domain.entities.page import Page
 from src.domain.entities.project import Project
 from src.domain.entities.space import Space
+from src.domain.entities.sprint import Sprint
 from src.domain.entities.template import Template
 from src.domain.entities.user import User
 
@@ -24,4 +25,5 @@ __all__ = [
     "Page",
     "Template",
     "Notification",
+    "Sprint",
 ]

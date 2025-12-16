@@ -71,6 +71,16 @@ from src.application.dtos.project_member import (
     ProjectMemberResponse,
     UpdateProjectMemberRoleRequest,
 )
+from src.application.dtos.sprint import (
+    AddIssueToSprintRequest,
+    CreateSprintRequest,
+    ReorderSprintIssuesRequest,
+    SprintListItemResponse,
+    SprintListResponse,
+    SprintResponse,
+    SprintWithIssuesResponse,
+    UpdateSprintRequest,
+)
 from src.application.dtos.user import (
     EmailUpdateRequest,
     PasswordUpdateRequest,
@@ -128,6 +138,15 @@ __all__ = [
     "ProjectMemberListResponse",
     "AddProjectMemberRequest",
     "UpdateProjectMemberRoleRequest",
+    # Sprint DTOs
+    "SprintResponse",
+    "SprintListItemResponse",
+    "SprintListResponse",
+    "SprintWithIssuesResponse",
+    "CreateSprintRequest",
+    "UpdateSprintRequest",
+    "AddIssueToSprintRequest",
+    "ReorderSprintIssuesRequest",
     # Issue DTOs
     "IssueResponse",
     "IssueListItemResponse",

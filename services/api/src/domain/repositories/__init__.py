@@ -10,6 +10,7 @@ from src.domain.repositories.organization_repository import OrganizationReposito
 from src.domain.repositories.page_repository import PageRepository
 from src.domain.repositories.project_repository import ProjectRepository
 from src.domain.repositories.space_repository import SpaceRepository
+from src.domain.repositories.sprint_repository import SprintRepository
 from src.domain.repositories.template_repository import TemplateRepository
 from src.domain.repositories.user_repository import UserRepository
 
@@ -26,4 +27,5 @@ __all__ = [
     "PageRepository",
     "TemplateRepository",
     "NotificationRepository",
+    "SprintRepository",
 ]
