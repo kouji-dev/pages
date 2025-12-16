@@ -1,7 +1,7 @@
 """Unit tests for sprint use cases."""
 
 from datetime import date
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, patch
 from uuid import uuid4
 
 import pytest
@@ -9,8 +9,10 @@ import pytest
 from src.application.dtos.sprint import CreateSprintRequest, UpdateSprintRequest
 from src.application.use_cases.sprint import (
     AddIssueToSprintUseCase,
+    CompleteSprintUseCase,
     CreateSprintUseCase,
     DeleteSprintUseCase,
+    GetSprintMetricsUseCase,
     GetSprintUseCase,
     ListSprintsUseCase,
     RemoveIssueFromSprintUseCase,
@@ -37,6 +39,12 @@ def mock_project_repository():
 @pytest.fixture
 def mock_issue_repository():
     """Mock issue repository."""
+    return AsyncMock()
+
+
+@pytest.fixture
+def mock_session():
+    """Mock database session."""
     return AsyncMock()
 
 
@@ -554,3 +562,277 @@ class TestReorderSprintIssuesUseCase:
 
         with pytest.raises(EntityNotFoundException):
             await use_case.execute(uuid4(), issue_orders)
+
+
+class TestGetSprintMetricsUseCase:
+    """Tests for GetSprintMetricsUseCase."""
+
+    @pytest.mark.asyncio
+    async def test_get_sprint_metrics_success(
+        self,
+        mock_sprint_repository,
+        mock_issue_repository,
+        mock_session,
+        test_sprint,
+    ):
+        """Test successful getting sprint metrics."""
+        from datetime import datetime
+        from unittest.mock import MagicMock
+
+        from src.infrastructure.database.models import IssueModel
+
+        # Setup sprint with dates
+        test_sprint.start_date = date(2024, 1, 1)
+        test_sprint.end_date = date(2024, 1, 14)
+        mock_sprint_repository.get_by_id.return_value = test_sprint
+        mock_sprint_repository.get_sprint_issues.return_value = [
+            (uuid4(), 0),
+            (uuid4(), 1),
+        ]
+
+        # Mock issues
+        issue1 = MagicMock(spec=IssueModel)
+        issue1.id = uuid4()
+        issue1.story_points = 5
+        issue1.status = "todo"
+        issue1.updated_at = None
+        issue1.deleted_at = None
+
+        issue2 = MagicMock(spec=IssueModel)
+        issue2.id = uuid4()
+        issue2.story_points = 3
+        issue2.status = "done"
+        issue2.updated_at = datetime(2024, 1, 5)
+        issue2.deleted_at = None
+
+        # Mock session execute
+        mock_result = MagicMock()
+        mock_result.scalars.return_value.all.return_value = [issue1, issue2]
+        mock_session.execute.return_value = mock_result
+
+        use_case = GetSprintMetricsUseCase(
+            mock_sprint_repository, mock_issue_repository, mock_session
+        )
+        result = await use_case.execute(test_sprint.id)
+
+        assert result.sprint_id == test_sprint.id
+        assert result.total_story_points == 8
+        assert result.completed_story_points == 3
+        assert result.remaining_story_points == 5
+        assert result.completion_percentage == 37.5
+        assert result.velocity == 3.0
+        assert result.issue_counts == {"todo": 1, "done": 1}
+        assert len(result.burndown_data) > 0
+
+    @pytest.mark.asyncio
+    async def test_get_sprint_metrics_no_issues(
+        self,
+        mock_sprint_repository,
+        mock_issue_repository,
+        mock_session,
+        test_sprint,
+    ):
+        """Test getting metrics for sprint with no issues."""
+        mock_sprint_repository.get_by_id.return_value = test_sprint
+        mock_sprint_repository.get_sprint_issues.return_value = []
+
+        use_case = GetSprintMetricsUseCase(
+            mock_sprint_repository, mock_issue_repository, mock_session
+        )
+        result = await use_case.execute(test_sprint.id)
+
+        assert result.sprint_id == test_sprint.id
+        assert result.total_story_points == 0
+        assert result.completed_story_points == 0
+        assert result.remaining_story_points == 0
+        assert result.completion_percentage == 0.0
+        assert result.velocity == 0.0
+        assert result.issue_counts == {}
+        assert result.burndown_data == []
+
+    @pytest.mark.asyncio
+    async def test_get_sprint_metrics_sprint_not_found(
+        self,
+        mock_sprint_repository,
+        mock_issue_repository,
+        mock_session,
+    ):
+        """Test getting metrics when sprint not found."""
+        mock_sprint_repository.get_by_id.return_value = None
+
+        use_case = GetSprintMetricsUseCase(
+            mock_sprint_repository, mock_issue_repository, mock_session
+        )
+
+        with pytest.raises(EntityNotFoundException):
+            await use_case.execute(uuid4())
+
+    @pytest.mark.asyncio
+    async def test_get_sprint_metrics_no_dates(
+        self,
+        mock_sprint_repository,
+        mock_issue_repository,
+        mock_session,
+        test_sprint,
+    ):
+        """Test getting metrics for sprint without dates."""
+        test_sprint.start_date = None
+        test_sprint.end_date = None
+        mock_sprint_repository.get_by_id.return_value = test_sprint
+        mock_sprint_repository.get_sprint_issues.return_value = [(uuid4(), 0)]
+
+        from unittest.mock import MagicMock
+
+        from src.infrastructure.database.models import IssueModel
+
+        issue = MagicMock(spec=IssueModel)
+        issue.id = uuid4()
+        issue.story_points = 5
+        issue.status = "todo"
+        issue.updated_at = None
+        issue.deleted_at = None
+
+        mock_result = MagicMock()
+        mock_result.scalars.return_value.all.return_value = [issue]
+        mock_session.execute.return_value = mock_result
+
+        use_case = GetSprintMetricsUseCase(
+            mock_sprint_repository, mock_issue_repository, mock_session
+        )
+        result = await use_case.execute(test_sprint.id)
+
+        assert result.burndown_data == []
+
+
+class TestCompleteSprintUseCase:
+    """Tests for CompleteSprintUseCase."""
+
+    @pytest.mark.asyncio
+    async def test_complete_sprint_success(
+        self,
+        mock_sprint_repository,
+        mock_issue_repository,
+        mock_session,
+        test_sprint,
+    ):
+        """Test successful sprint completion."""
+        from src.application.dtos.sprint_metrics import CompleteSprintRequest
+        from unittest.mock import MagicMock
+
+        from src.infrastructure.database.models import IssueModel
+
+        mock_sprint_repository.get_by_id.return_value = test_sprint
+        mock_sprint_repository.get_sprint_issues.return_value = [(uuid4(), 0)]
+
+        # Mock issue
+        issue = MagicMock(spec=IssueModel)
+        issue.id = uuid4()
+        issue.status = "todo"
+        issue.deleted_at = None
+        issue.backlog_order = None
+
+        mock_result = MagicMock()
+        mock_result.scalars.return_value.all.return_value = [issue]
+        mock_session.execute.return_value = mock_result
+
+        # Mock metrics use case
+        from src.application.dtos.sprint_metrics import SprintMetricsResponse
+
+        mock_metrics = SprintMetricsResponse(
+            sprint_id=test_sprint.id,
+            total_story_points=5,
+            completed_story_points=0,
+            remaining_story_points=5,
+            completion_percentage=0.0,
+            velocity=0.0,
+            issue_counts={},
+            burndown_data=[],
+        )
+
+        request = CompleteSprintRequest(move_incomplete_to_backlog=True)
+
+        use_case = CompleteSprintUseCase(
+            mock_sprint_repository, mock_issue_repository, mock_session
+        )
+
+        # Mock the metrics use case
+        with patch(
+            "src.application.use_cases.sprint.get_sprint_metrics.GetSprintMetricsUseCase"
+        ) as mock_metrics_class:
+            mock_metrics_instance = AsyncMock()
+            mock_metrics_instance.execute.return_value = mock_metrics
+            mock_metrics_class.return_value = mock_metrics_instance
+
+            result = await use_case.execute(test_sprint.id, request)
+            assert result.sprint_id == test_sprint.id
+            assert result.incomplete_issues_moved == 1
+            assert result.metrics == mock_metrics
+            assert test_sprint.status == SprintStatus.COMPLETED
+            mock_sprint_repository.update.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_complete_sprint_no_move_incomplete(
+        self,
+        mock_sprint_repository,
+        mock_issue_repository,
+        mock_session,
+        test_sprint,
+    ):
+        """Test sprint completion without moving incomplete issues."""
+        from src.application.dtos.sprint_metrics import (
+            CompleteSprintRequest,
+            SprintMetricsResponse,
+        )
+
+        mock_sprint_repository.get_by_id.return_value = test_sprint
+        mock_sprint_repository.get_sprint_issues.return_value = []
+
+        mock_metrics = SprintMetricsResponse(
+            sprint_id=test_sprint.id,
+            total_story_points=0,
+            completed_story_points=0,
+            remaining_story_points=0,
+            completion_percentage=0.0,
+            velocity=0.0,
+            issue_counts={},
+            burndown_data=[],
+        )
+
+        request = CompleteSprintRequest(move_incomplete_to_backlog=False)
+
+        use_case = CompleteSprintUseCase(
+            mock_sprint_repository, mock_issue_repository, mock_session
+        )
+
+        # Mock the metrics use case
+        with patch(
+            "src.application.use_cases.sprint.get_sprint_metrics.GetSprintMetricsUseCase"
+        ) as mock_metrics_class:
+            mock_metrics_instance = AsyncMock()
+            mock_metrics_instance.execute.return_value = mock_metrics
+            mock_metrics_class.return_value = mock_metrics_instance
+
+            result = await use_case.execute(test_sprint.id, request)
+            assert result.sprint_id == test_sprint.id
+            assert result.incomplete_issues_moved == 0
+            assert test_sprint.status == SprintStatus.COMPLETED
+
+    @pytest.mark.asyncio
+    async def test_complete_sprint_sprint_not_found(
+        self,
+        mock_sprint_repository,
+        mock_issue_repository,
+        mock_session,
+    ):
+        """Test completing sprint when sprint not found."""
+        from src.application.dtos.sprint_metrics import CompleteSprintRequest
+
+        mock_sprint_repository.get_by_id.return_value = None
+        request = CompleteSprintRequest()
+
+        use_case = CompleteSprintUseCase(
+            mock_sprint_repository, mock_issue_repository, mock_session
+        )
+
+        with pytest.raises(EntityNotFoundException):
+            await use_case.execute(uuid4(), request)
