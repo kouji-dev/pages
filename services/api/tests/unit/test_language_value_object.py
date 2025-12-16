@@ -91,6 +91,8 @@ class TestLanguage:
 
     def test_language_immutable(self) -> None:
         """Test that language is immutable (frozen dataclass)."""
+        from dataclasses import FrozenInstanceError
+
         language = Language("en")
-        with pytest.raises(Exception):  # FrozenInstanceError
+        with pytest.raises(FrozenInstanceError):
             language.code = "fr"  # type: ignore
