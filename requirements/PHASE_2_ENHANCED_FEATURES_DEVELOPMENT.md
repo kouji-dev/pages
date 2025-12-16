@@ -40,39 +40,40 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 **Priority**: High  
 **Estimated Time**: 3-4 days  
 **Dependencies**: Phase 1.3.2  
-**Assigned To**: BATATA1
+**Assigned To**: BATATA1  
+**Status**: ✅ **COMPLETED**
 
 **Backend Tasks**:
 
-- [ ] Design sprint data model
-  - [ ] Sprints table (id, project_id, name, goal, start_date, end_date, status)
-  - [ ] SprintIssues table (sprint_id, issue_id, order)
-- [ ] Create sprint creation endpoint (POST /api/projects/:id/sprints)
-  - [ ] Validate dates (start < end)
-  - [ ] Check for overlapping sprints
-  - [ ] Set default sprint name (e.g., "Sprint 1")
-  - [ ] Create sprint record
-- [ ] Create sprint retrieval endpoint (GET /api/sprints/:id)
-  - [ ] Include sprint issues
-  - [ ] Include basic sprint info (name, goal, dates, status)
-- [ ] Create sprint list endpoint (GET /api/projects/:id/sprints)
-  - [ ] Filter by status (active, planned, completed)
-  - [ ] Sort by start date
-  - [ ] Pagination support
-- [ ] Create sprint update endpoint (PUT /api/sprints/:id)
-  - [ ] Update name, goal, dates
-  - [ ] Update status
-  - [ ] Validate date ranges
-- [ ] Create sprint deletion endpoint (DELETE /api/sprints/:id)
-  - [ ] Permission check (project admin)
-  - [ ] Handle sprint issues (move to backlog or delete)
-- [ ] Write sprint CRUD API tests
+- [x] Design sprint data model
+  - [x] Sprints table (id, project_id, name, goal, start_date, end_date, status)
+  - [x] SprintIssues table (sprint_id, issue_id, order)
+- [x] Create sprint creation endpoint (POST /api/projects/:id/sprints)
+  - [x] Validate dates (start < end)
+  - [x] Check for overlapping sprints
+  - [x] Set default sprint name (e.g., "Sprint 1")
+  - [x] Create sprint record
+- [x] Create sprint retrieval endpoint (GET /api/sprints/:id)
+  - [x] Include sprint issues
+  - [x] Include basic sprint info (name, goal, dates, status)
+- [x] Create sprint list endpoint (GET /api/projects/:id/sprints)
+  - [x] Filter by status (active, planned, completed)
+  - [x] Sort by start date
+  - [x] Pagination support
+- [x] Create sprint update endpoint (PUT /api/sprints/:id)
+  - [x] Update name, goal, dates
+  - [x] Update status
+  - [x] Validate date ranges
+- [x] Create sprint deletion endpoint (DELETE /api/sprints/:id)
+  - [x] Permission check (project admin)
+  - [x] Handle sprint issues (move to backlog or delete)
+- [x] Write sprint CRUD API tests (unit, integration, functional)
 
 **Deliverables**:
 
-- Sprint data model and migrations
-- Sprint CRUD API endpoints
-- API tests
+- ✅ Sprint data model and migrations
+- ✅ Sprint CRUD API endpoints
+- ✅ API tests (unit, integration, functional)
 
 ---
 
@@ -81,25 +82,26 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 **Priority**: High  
 **Estimated Time**: 2-3 days  
 **Dependencies**: 2.1.1  
-**Assigned To**: BATATA1
+**Assigned To**: BATATA1  
+**Status**: ✅ **COMPLETED**
 
 **Backend Tasks**:
 
-- [ ] Create add issue to sprint endpoint (PUT /api/sprints/:id/issues)
-  - [ ] Validate issue belongs to same project
-  - [ ] Check issue not already in another active sprint
-  - [ ] Add issue to SprintIssues table with order
-- [ ] Create remove issue from sprint endpoint (DELETE /api/sprints/:id/issues/:issueId)
-  - [ ] Remove from SprintIssues table
-  - [ ] Move issue back to backlog
-- [ ] Create reorder sprint issues endpoint (PUT /api/sprints/:id/issues/reorder)
-  - [ ] Update order of issues in sprint
-- [ ] Write sprint issue management API tests
+- [x] Create add issue to sprint endpoint (PUT /api/sprints/:id/issues)
+  - [x] Validate issue belongs to same project
+  - [x] Check issue not already in another active sprint
+  - [x] Add issue to SprintIssues table with order
+- [x] Create remove issue from sprint endpoint (DELETE /api/sprints/:id/issues/:issueId)
+  - [x] Remove from SprintIssues table
+  - [x] Move issue back to backlog
+- [x] Create reorder sprint issues endpoint (PUT /api/sprints/:id/issues/reorder)
+  - [x] Update order of issues in sprint
+- [x] Write sprint issue management API tests (unit, integration, functional)
 
 **Deliverables**:
 
-- Sprint issue management endpoints
-- API tests
+- ✅ Sprint issue management endpoints
+- ✅ API tests (unit, integration, functional)
 
 ---
 
@@ -108,31 +110,32 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 **Priority**: High  
 **Estimated Time**: 2-3 days  
 **Dependencies**: 2.1.1  
-**Assigned To**: BATATA1
+**Assigned To**: BATATA1  
+**Status**: ✅ **COMPLETED**
 
 **Backend Tasks**:
 
-- [ ] Implement sprint velocity calculation
-  - [ ] Calculate completed story points per sprint
-  - [ ] Track velocity over multiple sprints
-  - [ ] Average velocity calculation
-- [ ] Create sprint metrics endpoint (GET /api/sprints/:id/metrics)
-  - [ ] Return velocity, completion percentage
-  - [ ] Return issue counts by status
-  - [ ] Return burndown data points
-- [ ] Create sprint completion endpoint (POST /api/sprints/:id/complete)
-  - [ ] Validate all issues moved to final status or handle incomplete
-  - [ ] Move incomplete issues to backlog
-  - [ ] Calculate and store sprint metrics
-  - [ ] Update sprint status to completed
-- [ ] Write sprint metrics API tests
+- [x] Implement sprint velocity calculation
+  - [x] Calculate completed story points per sprint
+  - [x] Track velocity over multiple sprints
+  - [x] Average velocity calculation
+- [x] Create sprint metrics endpoint (GET /api/sprints/:id/metrics)
+  - [x] Return velocity, completion percentage
+  - [x] Return issue counts by status
+  - [x] Return burndown data points
+- [x] Create sprint completion endpoint (POST /api/sprints/:id/complete)
+  - [x] Validate all issues moved to final status or handle incomplete
+  - [x] Move incomplete issues to backlog
+  - [x] Calculate and store sprint metrics
+  - [x] Update sprint status to completed
+- [x] Write sprint metrics API tests (unit, integration, functional)
 
 **Deliverables**:
 
-- Sprint velocity calculation
-- Sprint metrics endpoint
-- Sprint completion functionality
-- API tests
+- ✅ Sprint velocity calculation
+- ✅ Sprint metrics endpoint
+- ✅ Sprint completion functionality
+- ✅ API tests (unit, integration, functional)
 
 ---
 
@@ -314,26 +317,27 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 **Priority**: High  
 **Estimated Time**: 2-3 days  
 **Dependencies**: 2.1.1  
-**Assigned To**: HWIMDA1
+**Assigned To**: HWIMDA1  
+**Status**: ✅ **COMPLETED**
 
 **Backend Tasks**:
 
-- [ ] Create backlog endpoint (GET /api/projects/:id/backlog)
-  - [ ] Return issues not in any sprint
-  - [ ] Include backlog order/priority
-  - [ ] Filter options (by type, assignee, priority)
-  - [ ] Sort options (priority, created date, updated date)
-  - [ ] Pagination support
-- [ ] Implement backlog filtering logic
-  - [ ] Filter by issue type
-  - [ ] Filter by assignee
-  - [ ] Filter by priority
-- [ ] Write backlog list API tests
+- [x] Create backlog endpoint (GET /api/projects/:id/backlog)
+  - [x] Return issues not in any sprint
+  - [x] Include backlog order/priority
+  - [x] Filter options (by type, assignee, priority)
+  - [x] Sort options (priority, created date, updated date, backlog_order)
+  - [x] Pagination support
+- [x] Implement backlog filtering logic
+  - [x] Filter by issue type
+  - [x] Filter by assignee
+  - [x] Filter by priority
+- [x] Write backlog list API tests (unit, integration, functional)
 
 **Deliverables**:
 
-- Backlog list endpoint with filtering and pagination
-- API tests
+- ✅ Backlog list endpoint with filtering and pagination
+- ✅ API tests (unit, integration, functional)
 
 ---
 
@@ -342,23 +346,25 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 **Priority**: High  
 **Estimated Time**: 1-2 days  
 **Dependencies**: 2.1.10  
-**Assigned To**: HWIMDA1
+**Assigned To**: HWIMDA1  
+**Status**: ✅ **COMPLETED**
 
 **Backend Tasks**:
 
-- [ ] Design backlog order storage (add order field to issues table or separate table)
-- [ ] Create backlog prioritization endpoint (PUT /api/projects/:id/backlog/prioritize)
-  - [ ] Accept array of issue IDs in priority order
-  - [ ] Update issue order in backlog
-  - [ ] Store backlog order
-- [ ] Create reorder single issue endpoint (PUT /api/projects/:id/backlog/issues/:issueId/reorder)
-  - [ ] Move issue to specific position
-- [ ] Write backlog prioritization API tests
+- [x] Design backlog order storage (add order field to issues table or separate table)
+  - [x] Added `backlog_order` column to `issues` table
+- [x] Create backlog prioritization endpoint (PUT /api/projects/:id/backlog/prioritize)
+  - [x] Accept array of issue IDs in priority order
+  - [x] Update issue order in backlog
+  - [x] Store backlog order
+- [x] Create reorder single issue endpoint (PUT /api/projects/:id/backlog/issues/:issueId/reorder)
+  - [x] Move issue to specific position
+- [x] Write backlog prioritization API tests (unit, integration, functional)
 
 **Deliverables**:
 
-- Backlog prioritization endpoints
-- API tests
+- ✅ Backlog prioritization endpoints
+- ✅ API tests (unit, integration, functional)
 
 ---
 

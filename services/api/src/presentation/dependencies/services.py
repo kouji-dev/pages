@@ -20,6 +20,7 @@ from src.domain.repositories import (
     PageRepository,
     ProjectRepository,
     SpaceRepository,
+    SprintRepository,
     TemplateRepository,
     UserRepository,
 )
@@ -36,6 +37,7 @@ from src.infrastructure.database.repositories import (
     SQLAlchemyPageRepository,
     SQLAlchemyProjectRepository,
     SQLAlchemySpaceRepository,
+    SQLAlchemySprintRepository,
     SQLAlchemyTemplateRepository,
     SQLAlchemyUserRepository,
 )
@@ -221,6 +223,20 @@ async def get_notification_repository(
         SQLAlchemy implementation of NotificationRepository
     """
     return SQLAlchemyNotificationRepository(session)
+
+
+async def get_sprint_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> SprintRepository:
+    """Get sprint repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of SprintRepository
+    """
+    return SQLAlchemySprintRepository(session)
 
 
 async def get_search_query_service(

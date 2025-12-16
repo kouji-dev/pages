@@ -15,6 +15,7 @@ from src.infrastructure.database.models.project import (
     ProjectMemberModel,
     ProjectModel,
 )
+from src.infrastructure.database.models.sprint import SprintIssueModel, SprintModel
 from src.infrastructure.database.models.template import TemplateModel
 from src.infrastructure.database.models.user import UserModel
 
@@ -33,4 +34,6 @@ __all__ = [
     "TemplateModel",
     "AttachmentModel",
     "NotificationModel",
+    "SprintModel",
+    "SprintIssueModel",
 ]

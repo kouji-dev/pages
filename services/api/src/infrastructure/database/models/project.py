@@ -64,6 +64,12 @@ class ProjectModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         lazy="selectin",
         cascade="all, delete-orphan",
     )
+    sprints = relationship(
+        "SprintModel",
+        back_populates="project",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+    )
 
     def __repr__(self) -> str:
         return f"<Project(id={self.id}, key={self.key}, name={self.name})>"

@@ -30,6 +30,9 @@ from src.infrastructure.database.repositories.project_repository import (
 from src.infrastructure.database.repositories.space_repository import (
     SQLAlchemySpaceRepository,
 )
+from src.infrastructure.database.repositories.sprint_repository import (
+    SQLAlchemySprintRepository,
+)
 from src.infrastructure.database.repositories.template_repository import (
     SQLAlchemyTemplateRepository,
 )
@@ -50,4 +53,5 @@ __all__ = [
     "SQLAlchemyPageRepository",
     "SQLAlchemyTemplateRepository",
     "SQLAlchemyNotificationRepository",
+    "SQLAlchemySprintRepository",
 ]

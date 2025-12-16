@@ -90,6 +90,13 @@ class IssueModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         nullable=True,
     )
 
+    # Backlog prioritization
+    backlog_order: Mapped[int | None] = mapped_column(
+        Integer,
+        nullable=True,
+        index=True,
+    )  # Order in backlog (lower = higher priority)
+
     # Relationships
     project = relationship(
         "ProjectModel",

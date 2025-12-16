@@ -228,6 +228,7 @@ async def create_test_issue(
     issue_type: str = "task",
     status: str = "todo",
     priority: str = "medium",
+    story_points: int | None = None,
 ) -> dict[str, Any]:
     """Create a test issue.
 
@@ -240,6 +241,7 @@ async def create_test_issue(
         issue_type: Issue type (bug, task, story, epic)
         status: Issue status (todo, in_progress, done, etc.)
         priority: Issue priority (low, medium, high, critical)
+        story_points: Story points estimation
 
     Returns:
         Issue data
@@ -253,6 +255,8 @@ async def create_test_issue(
     }
     if description:
         payload["description"] = description
+    if story_points is not None:
+        payload["story_points"] = story_points
 
     response = await client.post(
         "/api/v1/issues/",
