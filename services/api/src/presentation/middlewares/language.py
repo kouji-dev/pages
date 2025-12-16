@@ -79,14 +79,17 @@ class LanguageDetectionMiddleware(BaseHTTPMiddleware):
         Returns:
             List of language codes sorted by quality value (descending)
         """
-        languages = []
+        languages: list[tuple[str, float]] = []
+        if not header or not header.strip():
+            return []
+
         parts = header.split(",")
 
         for part in parts:
             # Split language and quality value
             # Example: "en-US;q=0.9" -> ["en-US", "q=0.9"]
             components = part.strip().split(";")
-            if not components:
+            if not components or not components[0].strip():
                 continue
 
             lang_code = components[0].strip()

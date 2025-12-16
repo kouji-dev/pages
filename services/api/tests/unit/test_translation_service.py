@@ -150,10 +150,21 @@ class TestTranslationService:
         """Test missing variable in translation returns string without substitution."""
         service = TranslationService(temp_translations_dir)
 
-        # Try to substitute with missing variable
-        result = service.get_translation("welcome", language="en")
-        # Should return the original string without substitution
-        assert "Welcome" in result
+        # Try to substitute with missing variable (welcome requires 'name' but we don't provide it)
+        result = service.get_translation("welcome", language="en", wrong_var="test")
+        # Should return the original string without substitution when KeyError occurs
+        assert "Welcome" in result or result == "Welcome, {name}!"
+
+    def test_keyerror_handling_in_translation(self, temp_translations_dir: Path) -> None:
+        """Test KeyError handling when variable is missing in kwargs."""
+        service = TranslationService(temp_translations_dir)
+
+        # Translation requires 'name' but we provide 'wrong_key'
+        result = service.get_translation("welcome", language="en", wrong_key="test")
+        # Should handle KeyError gracefully and return original string
+        assert isinstance(result, str)
+        # Should contain the original template with {name}
+        assert "{name}" in result or "Welcome" in result
 
     def test_nonexistent_translations_directory(self) -> None:
         """Test service handles non-existent translations directory gracefully."""
@@ -162,3 +173,54 @@ class TestTranslationService:
         # Should not raise error, just log warning
         result = service.get_translation("any.key", language="en")
         assert result == "any.key"  # Returns key when no translations loaded
+
+    def test_translation_service_default_directory(self) -> None:
+        """Test TranslationService with default directory (None)."""
+        # When translations_dir is None, it should use default path
+        service = TranslationService(None)
+        # Should not raise error
+        assert service._translations_dir is not None
+        # Should be able to get translations (even if empty)
+        result = service.get_translation("any.key", language="en")
+        assert result == "any.key"  # Returns key when no translations loaded
+
+    def test_load_translations_with_invalid_json(self, temp_translations_dir: Path) -> None:
+        """Test loading translations with invalid JSON file."""
+        # Create a file with invalid JSON
+        invalid_file = temp_translations_dir / "invalid.json"
+        with open(invalid_file, "w", encoding="utf-8") as f:
+            f.write("{ invalid json }")
+
+        # Should not raise error, just log error
+        service = TranslationService(temp_translations_dir)
+        # Service should still work with valid translations
+        result = service.get_translation("user.not_found", language="en")
+        assert result == "User not found"
+
+    def test_load_translations_with_os_error(
+        self, temp_translations_dir: Path, monkeypatch
+    ) -> None:
+        """Test loading translations with OSError (file read error)."""
+        # Mock file open to raise OSError
+        original_open = open
+
+        def mock_open(*args, **kwargs):
+            if "invalid" in str(args[0]):
+                raise OSError("Permission denied")
+            return original_open(*args, **kwargs)
+
+        # Create a file that will cause OSError
+        invalid_file = temp_translations_dir / "invalid.json"
+        with open(invalid_file, "w", encoding="utf-8") as f:
+            json.dump({"test": "value"}, f)
+
+        # Mock the open function
+        import builtins
+
+        monkeypatch.setattr(builtins, "open", mock_open)
+
+        # Should not raise error, just log error
+        service = TranslationService(temp_translations_dir)
+        # Service should still work with valid translations
+        result = service.get_translation("user.not_found", language="en")
+        assert result == "User not found"
