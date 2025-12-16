@@ -33,10 +33,21 @@ async def test_list_supported_languages(client: AsyncClient) -> None:
 async def test_get_user_language_success(
     client: AsyncClient,
     test_user: User,
-    auth_headers_regular: dict[str, str],
 ) -> None:
     """Test getting user language preference."""
-    response = await client.get("/api/v1/users/me/language", headers=auth_headers_regular)
+    # Login to get token
+    login_response = await client.post(
+        "/api/v1/auth/login",
+        json={
+            "email": test_user.email.value,
+            "password": "TestPassword123!",
+        },
+    )
+    assert login_response.status_code == 200
+    access_token = login_response.json()["access_token"]
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    response = await client.get("/api/v1/users/me/language", headers=headers)
 
     assert response.status_code == 200
     data = response.json()
@@ -57,15 +68,26 @@ async def test_update_user_language_success(
     client: AsyncClient,
     db_session: AsyncSession,
     test_user: User,
-    auth_headers_regular: dict[str, str],
 ) -> None:
     """Test updating user language preference."""
     from src.infrastructure.database.repositories import SQLAlchemyUserRepository
 
+    # Login to get token
+    login_response = await client.post(
+        "/api/v1/auth/login",
+        json={
+            "email": test_user.email.value,
+            "password": "TestPassword123!",
+        },
+    )
+    assert login_response.status_code == 200
+    access_token = login_response.json()["access_token"]
+    headers = {"Authorization": f"Bearer {access_token}"}
+
     # Update to French
     response = await client.put(
         "/api/v1/users/me/language",
-        headers=auth_headers_regular,
+        headers=headers,
         json={"language": "fr"},
     )
 
@@ -86,14 +108,25 @@ async def test_update_user_language_with_region_code(
     client: AsyncClient,
     db_session: AsyncSession,
     test_user: User,
-    auth_headers_regular: dict[str, str],
 ) -> None:
     """Test updating user language with region code."""
     from src.infrastructure.database.repositories import SQLAlchemyUserRepository
 
+    # Login to get token
+    login_response = await client.post(
+        "/api/v1/auth/login",
+        json={
+            "email": test_user.email.value,
+            "password": "TestPassword123!",
+        },
+    )
+    assert login_response.status_code == 200
+    access_token = login_response.json()["access_token"]
+    headers = {"Authorization": f"Bearer {access_token}"}
+
     response = await client.put(
         "/api/v1/users/me/language",
-        headers=auth_headers_regular,
+        headers=headers,
         json={"language": "es-MX"},
     )
 
@@ -112,12 +145,23 @@ async def test_update_user_language_with_region_code(
 async def test_update_user_language_invalid_code(
     client: AsyncClient,
     test_user: User,
-    auth_headers_regular: dict[str, str],
 ) -> None:
     """Test updating user language with invalid language code."""
+    # Login to get token
+    login_response = await client.post(
+        "/api/v1/auth/login",
+        json={
+            "email": test_user.email.value,
+            "password": "TestPassword123!",
+        },
+    )
+    assert login_response.status_code == 200
+    access_token = login_response.json()["access_token"]
+    headers = {"Authorization": f"Bearer {access_token}"}
+
     response = await client.put(
         "/api/v1/users/me/language",
-        headers=auth_headers_regular,
+        headers=headers,
         json={"language": "invalid"},
     )
 
@@ -128,12 +172,23 @@ async def test_update_user_language_invalid_code(
 async def test_update_user_language_unsupported_code(
     client: AsyncClient,
     test_user: User,
-    auth_headers_regular: dict[str, str],
 ) -> None:
     """Test updating user language with unsupported language code."""
+    # Login to get token
+    login_response = await client.post(
+        "/api/v1/auth/login",
+        json={
+            "email": test_user.email.value,
+            "password": "TestPassword123!",
+        },
+    )
+    assert login_response.status_code == 200
+    access_token = login_response.json()["access_token"]
+    headers = {"Authorization": f"Bearer {access_token}"}
+
     response = await client.put(
         "/api/v1/users/me/language",
-        headers=auth_headers_regular,
+        headers=headers,
         json={"language": "zh"},  # Chinese not supported
     )
 
@@ -156,15 +211,26 @@ async def test_update_user_language_multiple_times(
     client: AsyncClient,
     db_session: AsyncSession,
     test_user: User,
-    auth_headers_regular: dict[str, str],
 ) -> None:
     """Test updating user language multiple times."""
     from src.infrastructure.database.repositories import SQLAlchemyUserRepository
 
+    # Login to get token
+    login_response = await client.post(
+        "/api/v1/auth/login",
+        json={
+            "email": test_user.email.value,
+            "password": "TestPassword123!",
+        },
+    )
+    assert login_response.status_code == 200
+    access_token = login_response.json()["access_token"]
+    headers = {"Authorization": f"Bearer {access_token}"}
+
     # Update to French
     response1 = await client.put(
         "/api/v1/users/me/language",
-        headers=auth_headers_regular,
+        headers=headers,
         json={"language": "fr"},
     )
     assert response1.status_code == 200
@@ -173,7 +239,7 @@ async def test_update_user_language_multiple_times(
     # Update to Spanish
     response2 = await client.put(
         "/api/v1/users/me/language",
-        headers=auth_headers_regular,
+        headers=headers,
         json={"language": "es"},
     )
     assert response2.status_code == 200
@@ -182,7 +248,7 @@ async def test_update_user_language_multiple_times(
     # Update to German
     response3 = await client.put(
         "/api/v1/users/me/language",
-        headers=auth_headers_regular,
+        headers=headers,
         json={"language": "de"},
     )
     assert response3.status_code == 200
@@ -199,19 +265,30 @@ async def test_update_user_language_multiple_times(
 async def test_get_user_language_after_update(
     client: AsyncClient,
     test_user: User,
-    auth_headers_regular: dict[str, str],
 ) -> None:
     """Test getting user language after updating it."""
+    # Login to get token
+    login_response = await client.post(
+        "/api/v1/auth/login",
+        json={
+            "email": test_user.email.value,
+            "password": "TestPassword123!",
+        },
+    )
+    assert login_response.status_code == 200
+    access_token = login_response.json()["access_token"]
+    headers = {"Authorization": f"Bearer {access_token}"}
+
     # Update language
     update_response = await client.put(
         "/api/v1/users/me/language",
-        headers=auth_headers_regular,
+        headers=headers,
         json={"language": "de"},
     )
     assert update_response.status_code == 200
 
     # Get language
-    get_response = await client.get("/api/v1/users/me/language", headers=auth_headers_regular)
+    get_response = await client.get("/api/v1/users/me/language", headers=headers)
     assert get_response.status_code == 200
     data = get_response.json()
     assert data["language"] == "de"

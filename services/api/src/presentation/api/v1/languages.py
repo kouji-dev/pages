@@ -103,6 +103,4 @@ async def update_user_language(
     try:
         return await use_case.execute(current_user.id, request)
     except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
-        ) from e
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) from e
