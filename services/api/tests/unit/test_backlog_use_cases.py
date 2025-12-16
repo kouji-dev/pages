@@ -1,6 +1,6 @@
 """Unit tests for backlog use cases."""
 
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock
 from uuid import uuid4
 
 import pytest
@@ -115,8 +115,6 @@ class TestListBacklogUseCase:
     ):
         """Test backlog listing with filters."""
         from unittest.mock import MagicMock
-
-        from src.infrastructure.database.models import IssueModel
 
         mock_project_repository.get_by_id.return_value = test_project
 
