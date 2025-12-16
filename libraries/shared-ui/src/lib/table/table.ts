@@ -138,8 +138,8 @@ export interface SortEvent {
         @apply overflow-hidden;
         @apply rounded-lg;
         @apply border;
-        @apply border-border-default;
-        @apply bg-bg-primary;
+        @apply border-border;
+        @apply bg-background;
       }
 
       .table_container {
@@ -152,16 +152,16 @@ export interface SortEvent {
       }
 
       .table_head {
-        @apply bg-bg-tertiary;
+        @apply bg-muted/50;
       }
 
       .table_row {
         @apply border-b;
-        @apply border-border-default;
+        @apply border-border;
       }
 
       .table_row--header {
-        @apply border-b-2;
+        @apply border-b;
       }
 
       .table_row--body {
@@ -169,7 +169,7 @@ export interface SortEvent {
       }
 
       .table_row--hover:hover {
-        @apply bg-bg-secondary;
+        @apply bg-muted/50;
       }
 
       .table_row--clickable {
@@ -183,8 +183,8 @@ export interface SortEvent {
       .table_header {
         @apply px-4 py-3;
         @apply text-left;
-        @apply text-sm font-semibold;
-        @apply text-text-primary;
+        @apply text-sm font-medium;
+        @apply text-muted-foreground;
         white-space: nowrap;
       }
 
@@ -199,12 +199,12 @@ export interface SortEvent {
       .table_header--sortable {
         @apply cursor-pointer;
         @apply select-none;
-        @apply hover:bg-bg-hover;
+        @apply hover:bg-muted;
         @apply transition-colors;
       }
 
       .table_header--sorted {
-        @apply bg-bg-secondary;
+        @apply bg-muted;
       }
 
       .table_header-content {
@@ -232,7 +232,7 @@ export interface SortEvent {
         @apply px-4 py-3;
         @apply text-sm;
         @apply text-left;
-        @apply text-text-primary;
+        @apply text-foreground;
       }
 
       .table_cell--center {
@@ -251,12 +251,12 @@ export interface SortEvent {
       .table_cell--empty {
         @apply text-center;
         @apply py-12;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
       }
 
       .table_empty-message {
         @apply text-sm;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
       }
     `,
   ],

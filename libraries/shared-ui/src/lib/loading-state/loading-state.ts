@@ -42,7 +42,7 @@ export type LoadingStateColor = 'default' | 'primary' | 'secondary';
 
       .loading-state_message {
         @apply text-sm font-medium;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         margin: 0;
         text-align: center;
       }
@@ -69,7 +69,7 @@ export class LoadingState {
   readonly iconColor = computed<IconColor | undefined>(() => {
     const color = this.color();
     const colorMap: Record<LoadingStateColor, IconColor> = {
-      default: 'text-primary',
+      default: 'foreground',
       primary: 'primary-500',
       secondary: 'secondary-500',
     };

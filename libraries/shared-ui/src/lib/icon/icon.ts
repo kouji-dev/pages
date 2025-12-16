@@ -7,16 +7,40 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, icons } from 'lucide-angular';
+import { IconName, lucideIconNames } from './icon-names';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
 // Icon color names - maps to CSS variables
 export type IconColor =
-  // Semantic colors
+  // Semantic colors (New System)
+  | 'foreground'
+  | 'muted-foreground'
+  | 'card-foreground'
+  | 'popover-foreground'
+  | 'primary-foreground'
+  | 'secondary-foreground'
+  | 'accent-foreground'
+  | 'destructive-foreground'
+  | 'error-foreground'
+  | 'success-foreground'
+  | 'warning-foreground'
+  | 'navigation-foreground'
+  | 'navigation-accent-foreground'
+  
+  // Base colors
   | 'primary'
   | 'secondary'
+  | 'accent'
+  | 'destructive'
+  | 'error'
   | 'success'
   | 'warning'
+  | 'border'
+  | 'input'
+  | 'ring'
+
+  // Legacy colors (Deprecated - to be migrated)
   | 'error'
   | 'info'
   // Primary shades
@@ -44,7 +68,7 @@ export type IconColor =
   // Text colors
   | 'text-primary'
   | 'text-secondary'
-  | 'text-tertiary'
+  // 'text-tertiary' removed - use muted-foreground
   | 'text-muted'
   | 'text-disabled'
   | 'text-inverse'
@@ -61,15 +85,9 @@ export type IconColor =
   | 'gray-800'
   | 'gray-900';
 
-// Convert PascalCase icon names to kebab-case for better developer experience
-type PascalCaseToKebabCase<S extends string> = S extends `${infer P1}${infer P2}`
-  ? P2 extends Uncapitalize<P2>
-    ? `${Uncapitalize<P1>}${PascalCaseToKebabCase<P2>}`
-    : `${Uncapitalize<P1>}-${PascalCaseToKebabCase<Uncapitalize<P2>>}`
-  : S;
-
-// Extract icon names and convert to kebab-case
-export type IconName = PascalCaseToKebabCase<keyof typeof icons>;
+// Re-export IconName and lucideIconNames from icon-names.ts
+export type { IconName } from './icon-names';
+export { lucideIconNames } from './icon-names';
 
 @Component({
   selector: 'lib-icon',
@@ -164,54 +182,79 @@ export class Icon {
    * Map color name to CSS variable
    */
   private readonly colorMap: Record<IconColor, string> = {
-    // Semantic colors
-    primary: 'var(--color-primary)',
-    secondary: 'var(--color-secondary)',
-    success: 'var(--color-success)',
-    warning: 'var(--color-warning)',
-    error: 'var(--color-error)',
-    info: 'var(--color-info)',
+    // Semantic colors (New System)
+    'foreground': 'var(--color-foreground)',
+    'muted-foreground': 'var(--color-muted-foreground)',
+    'card-foreground': 'var(--color-card-foreground)',
+    'popover-foreground': 'var(--color-popover-foreground)',
+    'primary-foreground': 'var(--color-primary-foreground)',
+    'secondary-foreground': 'var(--color-secondary-foreground)',
+    'accent-foreground': 'var(--color-accent-foreground)',
+    'destructive-foreground': 'var(--color-error-foreground)',
+    'error-foreground': 'var(--color-error-foreground)',
+    'success-foreground': 'var(--color-success-foreground)',
+    'warning-foreground': 'var(--color-warning-foreground)',
+    'navigation-foreground': 'var(--color-navigation-foreground)',
+    'navigation-accent-foreground': 'var(--color-navigation-accent-foreground)',
+    
+    'primary': 'var(--color-primary)',
+    'secondary': 'var(--color-secondary)',
+    'accent': 'var(--color-accent)',
+    'destructive': 'var(--color-error)',
+    'error': 'var(--color-error)',
+    'success': 'var(--color-success)',
+    'warning': 'var(--color-warning)',
+    'border': 'var(--color-border)',
+    'input': 'var(--color-input)',
+    'ring': 'var(--color-ring)',
+
+    // Legacy colors - error is now the primary semantic name
+    info: 'var(--color-primary)',
+    
     // Primary shades
-    'primary-50': 'var(--color-primary-50)',
-    'primary-100': 'var(--color-primary-100)',
-    'primary-200': 'var(--color-primary-200)',
-    'primary-300': 'var(--color-primary-300)',
-    'primary-400': 'var(--color-primary-400)',
-    'primary-500': 'var(--color-primary-500)',
-    'primary-600': 'var(--color-primary-600)',
-    'primary-700': 'var(--color-primary-700)',
-    'primary-800': 'var(--color-primary-800)',
-    'primary-900': 'var(--color-primary-900)',
-    // Secondary shades
-    'secondary-50': 'var(--color-secondary-50)',
-    'secondary-100': 'var(--color-secondary-100)',
-    'secondary-200': 'var(--color-secondary-200)',
-    'secondary-300': 'var(--color-secondary-300)',
-    'secondary-400': 'var(--color-secondary-400)',
-    'secondary-500': 'var(--color-secondary-500)',
-    'secondary-600': 'var(--color-secondary-600)',
-    'secondary-700': 'var(--color-secondary-700)',
-    'secondary-800': 'var(--color-secondary-800)',
-    'secondary-900': 'var(--color-secondary-900)',
+    'primary-50': 'var(--color-primary)',
+    'primary-100': 'var(--color-primary)',
+    'primary-200': 'var(--color-primary)',
+    'primary-300': 'var(--color-primary)',
+    'primary-400': 'var(--color-primary)',
+    'primary-500': 'var(--color-primary)',
+    'primary-600': 'var(--color-primary)',
+    'primary-700': 'var(--color-primary)',
+    'primary-800': 'var(--color-primary)',
+    'primary-900': 'var(--color-primary)',
+    
+    // Secondary shades - using muted/secondary tokens
+    'secondary-50': 'var(--color-secondary)',
+    'secondary-100': 'var(--color-secondary)',
+    'secondary-200': 'var(--color-secondary)',
+    'secondary-300': 'var(--color-secondary)',
+    'secondary-400': 'var(--color-secondary)',
+    'secondary-500': 'var(--color-secondary)',
+    'secondary-600': 'var(--color-secondary)',
+    'secondary-700': 'var(--color-secondary)',
+    'secondary-800': 'var(--color-secondary)',
+    'secondary-900': 'var(--color-secondary)',
+    
     // Text colors
-    'text-primary': 'var(--color-text-primary)',
-    'text-secondary': 'var(--color-text-secondary)',
-    'text-tertiary': 'var(--color-text-tertiary)',
-    'text-muted': 'var(--color-text-muted)',
-    'text-disabled': 'var(--color-text-disabled)',
-    'text-inverse': 'var(--color-text-inverse)',
-    'text-link': 'var(--color-text-link)',
+    'text-primary': 'var(--color-foreground)',
+    'text-secondary': 'var(--color-muted-foreground)',
+    // 'text-tertiary' removed - use muted-foreground
+    'text-muted': 'var(--color-muted-foreground)',
+    'text-disabled': 'var(--color-muted-foreground)',
+    'text-inverse': 'var(--color-background)',
+    'text-link': 'var(--color-primary)',
+    
     // Gray shades
-    'gray-50': 'var(--color-gray-50)',
-    'gray-100': 'var(--color-gray-100)',
-    'gray-200': 'var(--color-gray-200)',
-    'gray-300': 'var(--color-gray-300)',
-    'gray-400': 'var(--color-gray-400)',
-    'gray-500': 'var(--color-gray-500)',
-    'gray-600': 'var(--color-gray-600)',
-    'gray-700': 'var(--color-gray-700)',
-    'gray-800': 'var(--color-gray-800)',
-    'gray-900': 'var(--color-gray-900)',
+    'gray-50': 'var(--color-muted)',
+    'gray-100': 'var(--color-muted)',
+    'gray-200': 'var(--color-muted)',
+    'gray-300': 'var(--color-muted)',
+    'gray-400': 'var(--color-muted)',
+    'gray-500': 'var(--color-muted-foreground)',
+    'gray-600': 'var(--color-muted-foreground)',
+    'gray-700': 'var(--color-muted-foreground)',
+    'gray-800': 'var(--color-foreground)',
+    'gray-900': 'var(--color-foreground)',
   };
 
   /**

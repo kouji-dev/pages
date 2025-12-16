@@ -3,26 +3,26 @@ import { Demo } from './presentation/pages/demo';
 import { Landing } from './presentation/pages/landing';
 import { FeaturesPage } from './presentation/pages/features-page';
 import { PricingPage } from './presentation/pages/pricing-page';
-import { OrganizationsPage } from './presentation/pages/organizations-page';
-import { OrganizationSettingsPage } from './presentation/pages/organization-settings-page';
-import { InvitationAcceptancePage } from './presentation/pages/invitation-acceptance-page';
-import { ProfilePage } from './presentation/pages/profile-page';
-import { ProjectsPage } from './presentation/pages/projects-page';
-import { ProjectDetailPage } from './presentation/pages/project-detail-page';
-import { IssueDetailPage } from './presentation/pages/issue-detail-page';
-import { SpacesPage } from './presentation/pages/spaces-page';
-import { SpaceDetailPage } from './presentation/pages/space-detail-page';
-import { SpaceSettingsPage } from './presentation/pages/space-settings-page';
-import { PageDetailPage } from './presentation/pages/page-detail-page';
-import { LoginPage } from './presentation/pages/login-page.component';
-import { RegisterPage } from './presentation/pages/register-page.component';
-import { ForgotPasswordPage } from './presentation/pages/forgot-password-page.component';
-import { ResetPasswordPage } from './presentation/pages/reset-password-page.component';
+import { OrganizationsPage } from './features/organizations/pages/organizations/organizations-page.component';
+import { OrganizationSettingsPage } from './features/organizations/pages/settings/organization-settings-page.component';
+import { InvitationAcceptancePage } from './features/organizations/pages/invitation/invitation-acceptance-page.component';
+import { ProfilePage } from './features/user/pages/profile/profile-page.component';
+import { ProjectsPage } from './features/projects/pages/projects/projects-page';
+
+import { IssueDetailPage } from './features/projects/pages/issue-detail/issue-detail-page';
+import { SpacesPage } from './features/spaces/pages/spaces/spaces-page';
+import { SpaceDetailPage } from './features/spaces/pages/detail/space-detail-page';
+import { SpaceSettingsPage } from './features/spaces/pages/settings/space-settings-page';
+import { PageDetailPage } from './features/pages/pages/detail/page-detail-page';
+import { LoginPage } from './features/auth/pages/login/login-page.component';
+import { RegisterPage } from './features/auth/pages/register/register-page.component';
+import { ForgotPasswordPage } from './features/auth/pages/forgot-password/forgot-password-page.component';
+import { ResetPasswordPage } from './features/auth/pages/reset-password/reset-password-page.component';
 import { NotFoundComponent } from './presentation/pages/not-found.component';
 import { AuthenticatedLayout } from './presentation/layout/authenticated-layout';
 import { OrganizationLayout } from './presentation/layout/organization-layout';
-import { authGuard } from './application/guards/auth.guard';
-import { loginGuard } from './application/guards/login.guard';
+import { authGuard } from './core/auth/guards/auth.guard';
+import { loginGuard } from './core/auth/guards/login.guard';
 
 export const routes: Routes = [
   {
@@ -135,8 +135,19 @@ export const routes: Routes = [
         children: [
           {
             path: '',
-            component: ProjectDetailPage,
+            loadComponent: () =>
+              import('./features/projects/pages/detail/project-detail-page').then(
+                (m) => m.ProjectDetailPage,
+              ),
             title: 'Project Details - Pages',
+          },
+          {
+            path: 'settings',
+            loadComponent: () =>
+              import('./features/projects/pages/settings/project-settings-page').then(
+                (m) => m.ProjectSettingsPage,
+              ),
+            title: 'Project Settings - Pages',
           },
           {
             path: 'issues/:issueId',

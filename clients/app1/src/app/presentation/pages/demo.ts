@@ -349,7 +349,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
               <div class="demo_item-content">
                 <div
                   *spinner="loadingBasic(); message: 'Loading...'"
-                  style="position: relative; padding: 2rem; border: 1px solid var(--color-border-default); border-radius: 0.5rem; min-height: 150px;"
+                  style="position: relative; padding: 2rem; border: 1px solid var(--color-border); border-radius: 0.5rem; min-height: 150px;"
                 >
                   <p>This content is wrapped with the spinner directive.</p>
                   <p>When loading is true, a backdrop and spinner will appear.</p>
@@ -365,7 +365,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
               <div class="demo_item-content">
                 <div
                   *spinner="loadingSmall(); size: 'sm'; message: 'Loading (small)...'"
-                  style="position: relative; padding: 2rem; border: 1px solid var(--color-border-default); border-radius: 0.5rem; min-height: 150px;"
+                  style="position: relative; padding: 2rem; border: 1px solid var(--color-border); border-radius: 0.5rem; min-height: 150px;"
                 >
                   <p>Small spinner (sm)</p>
                 </div>
@@ -375,7 +375,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
 
                 <div
                   *spinner="loadingMedium(); size: 'md'; message: 'Loading (medium)...'"
-                  style="position: relative; padding: 2rem; border: 1px solid var(--color-border-default); border-radius: 0.5rem; min-height: 150px; margin-top: 1rem;"
+                  style="position: relative; padding: 2rem; border: 1px solid var(--color-border); border-radius: 0.5rem; min-height: 150px; margin-top: 1rem;"
                 >
                   <p>Medium spinner (md)</p>
                 </div>
@@ -385,7 +385,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
 
                 <div
                   *spinner="loadingLarge(); size: 'lg'; message: 'Loading (large)...'"
-                  style="position: relative; padding: 2rem; border: 1px solid var(--color-border-default); border-radius: 0.5rem; min-height: 150px; margin-top: 1rem;"
+                  style="position: relative; padding: 2rem; border: 1px solid var(--color-border); border-radius: 0.5rem; min-height: 150px; margin-top: 1rem;"
                 >
                   <p>Large spinner (lg)</p>
                 </div>
@@ -404,7 +404,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
                     color: 'default';
                     message: 'Loading with default color...'
                   "
-                  style="position: relative; padding: 2rem; border: 1px solid var(--color-border-default); border-radius: 0.5rem; min-height: 150px;"
+                  style="position: relative; padding: 2rem; border: 1px solid var(--color-border); border-radius: 0.5rem; min-height: 150px;"
                 >
                   <p>Default color spinner</p>
                 </div>
@@ -421,7 +421,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
                     color: 'primary';
                     message: 'Loading with primary color...'
                   "
-                  style="position: relative; padding: 2rem; border: 1px solid var(--color-border-default); border-radius: 0.5rem; min-height: 150px; margin-top: 1rem;"
+                  style="position: relative; padding: 2rem; border: 1px solid var(--color-border); border-radius: 0.5rem; min-height: 150px; margin-top: 1rem;"
                 >
                   <p>Primary color spinner</p>
                 </div>
@@ -439,7 +439,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
               <div class="demo_item-content">
                 <div
                   *spinner="loadingWithMessage(); message: 'Loading data...'"
-                  style="position: relative; padding: 2rem; border: 1px solid var(--color-border-default); border-radius: 0.5rem; min-height: 150px;"
+                  style="position: relative; padding: 2rem; border: 1px solid var(--color-border); border-radius: 0.5rem; min-height: 150px;"
                 >
                   <p>This example shows a spinner with a custom message.</p>
                   <p>The message appears below the spinner.</p>
@@ -463,7 +463,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
                     size: 'lg';
                     message: 'Loading card content...'
                   "
-                  style="position: relative; padding: 2rem; background: var(--color-bg-secondary); border-radius: 0.5rem; min-height: 200px;"
+                  style="position: relative; padding: 2rem; background: var(--color-muted); border-radius: 0.5rem; min-height: 200px;"
                 >
                   <h4 style="margin-top: 0;">Card Title</h4>
                   <p>This is a card component that can show a loading state.</p>
@@ -523,7 +523,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
               <h3 class="demo_item-title">Basic Loading</h3>
               <div
                 class="demo_item-content"
-                style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+                style="border: 1px solid var(--color-border); border-radius: 0.5rem; padding: 1rem;"
               >
                 <lib-loading-state />
               </div>
@@ -533,7 +533,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
               <h3 class="demo_item-title">With Message</h3>
               <div
                 class="demo_item-content"
-                style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+                style="border: 1px solid var(--color-border); border-radius: 0.5rem; padding: 1rem;"
               >
                 <lib-loading-state message="Loading data..." />
               </div>
@@ -543,7 +543,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
               <h3 class="demo_item-title">Different Sizes</h3>
               <div
                 class="demo_item-content"
-                style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+                style="border: 1px solid var(--color-border); border-radius: 0.5rem; padding: 1rem;"
               >
                 <lib-loading-state size="sm" message="Small spinner" />
                 <lib-loading-state size="md" message="Medium spinner" />
@@ -562,7 +562,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
               <h3 class="demo_item-title">Basic Error</h3>
               <div
                 class="demo_item-content"
-                style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+                style="border: 1px solid var(--color-border); border-radius: 0.5rem; padding: 1rem;"
               >
                 <lib-error-state />
               </div>
@@ -572,7 +572,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
               <h3 class="demo_item-title">With Custom Message</h3>
               <div
                 class="demo_item-content"
-                style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+                style="border: 1px solid var(--color-border); border-radius: 0.5rem; padding: 1rem;"
               >
                 <lib-error-state
                   title="Connection Error"
@@ -585,7 +585,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
               <h3 class="demo_item-title">With Retry Action</h3>
               <div
                 class="demo_item-content"
-                style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+                style="border: 1px solid var(--color-border); border-radius: 0.5rem; padding: 1rem;"
               >
                 <lib-error-state
                   title="Failed to Load"
@@ -600,7 +600,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
               <h3 class="demo_item-title">Without Retry Button</h3>
               <div
                 class="demo_item-content"
-                style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+                style="border: 1px solid var(--color-border); border-radius: 0.5rem; padding: 1rem;"
               >
                 <lib-error-state
                   title="Access Denied"
@@ -621,7 +621,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
               <h3 class="demo_item-title">Basic Empty State</h3>
               <div
                 class="demo_item-content"
-                style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+                style="border: 1px solid var(--color-border); border-radius: 0.5rem; padding: 1rem;"
               >
                 <lib-empty-state />
               </div>
@@ -631,7 +631,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
               <h3 class="demo_item-title">With Icon and Message</h3>
               <div
                 class="demo_item-content"
-                style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+                style="border: 1px solid var(--color-border); border-radius: 0.5rem; padding: 1rem;"
               >
                 <lib-empty-state
                   title="No projects found"
@@ -645,7 +645,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
               <h3 class="demo_item-title">With Action Button</h3>
               <div
                 class="demo_item-content"
-                style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+                style="border: 1px solid var(--color-border); border-radius: 0.5rem; padding: 1rem;"
               >
                 <lib-empty-state
                   title="No items yet"
@@ -662,7 +662,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
               <h3 class="demo_item-title">Different Variants</h3>
               <div
                 class="demo_item-content"
-                style="border: 1px solid var(--color-border-default); border-radius: 0.5rem; padding: 1rem;"
+                style="border: 1px solid var(--color-border); border-radius: 0.5rem; padding: 1rem;"
               >
                 <lib-empty-state title="No tasks" actionLabel="Add Task" actionVariant="primary" />
                 <lib-empty-state
@@ -893,7 +893,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
           <h2 class="demo_section-title">Text Editor Component (Lexical)</h2>
           <p
             class="demo_section-description"
-            style="margin-bottom: 2rem; color: var(--color-text-secondary);"
+            style="margin-bottom: 2rem; color: var(--color-muted-foreground);"
           >
             A powerful rich text editor built with Lexical. Supports formatting, headings, lists,
             links, quotes, font sizes, and more. The editor can serialize content to both HTML and
@@ -906,7 +906,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
               <h3 class="demo_item-title">Interactive Text Editor</h3>
               <p
                 class="demo_item-description"
-                style="font-size: 0.875rem; color: var(--color-text-secondary); margin-bottom: 1rem;"
+                style="font-size: 0.875rem; color: var(--color-muted-foreground); margin-bottom: 1rem;"
               >
                 Fully-featured editor with controls to toggle states, load formatted content, and
                 view HTML output.
@@ -914,7 +914,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
               <div class="demo_item-content">
                 <!-- Controls -->
                 <div
-                  style="margin-bottom: 1rem; padding: 1rem; background: var(--color-bg-secondary); border-radius: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;"
+                  style="margin-bottom: 1rem; padding: 1rem; background: var(--color-muted); border-radius: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;"
                 >
                   <lib-button
                     variant="primary"
@@ -947,13 +947,13 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
                     Switch to {{ editorMode() === 'html' ? 'JSON' : 'HTML' }} Mode
                   </lib-button>
                   <span
-                    style="margin-left: auto; display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--color-text-secondary);"
+                    style="margin-left: auto; display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--color-muted-foreground);"
                   >
                     <strong>Status:</strong>
                     <span
                       [style.color]="
                         editorDisabled()
-                          ? 'var(--color-error)'
+                          ? 'var(--color-destructive)'
                           : editorReadOnly()
                             ? 'var(--color-warning)'
                             : 'var(--color-success)'
@@ -987,12 +987,12 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
 
                 <!-- HTML/JSON Output -->
                 <div
-                  style="margin-top: 1rem; padding: 1rem; background: var(--color-bg-secondary); border-radius: 0.5rem;"
+                  style="margin-top: 1rem; padding: 1rem; background: var(--color-muted); border-radius: 0.5rem;"
                 >
                   <div
                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;"
                   >
-                    <p style="font-size: 0.875rem; color: var(--color-text-secondary); margin: 0;">
+                    <p style="font-size: 0.875rem; color: var(--color-muted-foreground); margin: 0;">
                       {{ editorMode() === 'html' ? 'HTML' : 'JSON' }} Output:
                     </p>
                     <div style="display: flex; gap: 0.5rem;">
@@ -1025,12 +1025,12 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
                   </div>
                   @if (editorMode() === 'html' && showHtmlOutput()) {
                     <pre
-                      style="font-size: 0.75rem; overflow-x: auto; max-height: 200px; overflow-y: auto; margin: 0; padding: 0.5rem; background: var(--color-bg-primary); border-radius: 0.25rem;"
+                      style="font-size: 0.75rem; overflow-x: auto; max-height: 200px; overflow-y: auto; margin: 0; padding: 0.5rem; background: var(--color-background); border-radius: 0.25rem;"
                       >{{ editorHtml() || '(empty)' }}</pre
                     >
                   } @else if (editorMode() === 'json' && showJsonOutput()) {
                     <pre
-                      style="font-size: 0.75rem; overflow-x: auto; max-height: 200px; overflow-y: auto; margin: 0; padding: 0.5rem; background: var(--color-bg-primary); border-radius: 0.25rem;"
+                      style="font-size: 0.75rem; overflow-x: auto; max-height: 200px; overflow-y: auto; margin: 0; padding: 0.5rem; background: var(--color-background); border-radius: 0.25rem;"
                       >{{ (editorJson() | json) || '(empty)' }}</pre
                     >
                   }
@@ -1042,7 +1042,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
               <h3 class="demo_item-title">Form Integration Example</h3>
               <p
                 class="demo_item-description"
-                style="font-size: 0.875rem; color: var(--color-text-secondary); margin-bottom: 1rem;"
+                style="font-size: 0.875rem; color: var(--color-muted-foreground); margin-bottom: 1rem;"
               >
                 Editor integrated with Angular forms using ngModel. The value is bound and can be
                 submitted.
@@ -1055,7 +1055,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
                   <lib-input label="Title" placeholder="Enter a title" [(model)]="formTitle" />
                   <div>
                     <label
-                      style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--color-text-primary);"
+                      style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--color-foreground);"
                     >
                       Content
                     </label>
@@ -1075,10 +1075,10 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
                 </form>
                 @if (formSubmitted()) {
                   <div
-                    style="margin-top: 1rem; padding: 1rem; background: var(--color-bg-secondary); border-radius: 0.5rem;"
+                    style="margin-top: 1rem; padding: 1rem; background: var(--color-muted); border-radius: 0.5rem;"
                   >
                     <p
-                      style="font-size: 0.875rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;"
+                      style="font-size: 0.875rem; color: var(--color-muted-foreground); margin-bottom: 0.5rem;"
                     >
                       Form Data:
                     </p>
@@ -1119,24 +1119,24 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
         @apply inline-flex items-center gap-2;
         @apply text-sm font-medium;
         @apply mb-4;
-        @apply text-primary-500;
+        @apply text-primary;
         text-decoration: none;
         @apply transition-colors;
         @apply hover:opacity-80;
       }
 
       .demo_back-link:hover {
-        @apply text-primary-600;
+        @apply text-primary/80;
       }
 
       .demo_title {
         @apply text-4xl font-bold mb-2;
-        @apply text-text-primary;
+        @apply text-foreground;
       }
 
       .demo_subtitle {
         @apply text-lg mb-8;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
       }
 
       .demo_section {
@@ -1145,7 +1145,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
 
       .demo_section-title {
         @apply text-2xl font-semibold mb-6;
-        @apply text-text-primary;
+        @apply text-foreground;
       }
 
       .demo_grid {
@@ -1158,7 +1158,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
 
       .demo_item-title {
         @apply text-lg font-medium mb-3;
-        @apply text-text-primary;
+        @apply text-foreground;
       }
 
       .demo_item-content {
@@ -1171,9 +1171,9 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
         @apply px-4 py-2;
         @apply rounded-md;
         @apply border;
-        @apply border-border-default;
-        @apply bg-bg-primary;
-        @apply text-text-primary;
+        @apply border-border;
+        @apply bg-background;
+        @apply text-foreground;
         @apply font-medium;
         @apply transition-colors;
         @apply cursor-pointer;
@@ -1190,14 +1190,14 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
         @apply px-4 py-2;
         @apply text-sm;
         @apply transition-colors;
-        @apply text-text-primary;
+        @apply text-foreground;
         @apply cursor-pointer;
         @apply hover:bg-gray-100;
       }
 
       .demo_dropdown-item--active {
-        @apply bg-bg-secondary;
-        @apply text-primary-500;
+        @apply bg-accent;
+        @apply text-primary;
         font-weight: 500;
       }
 

@@ -15,12 +15,8 @@ import { CommonModule } from '@angular/common';
 
       .modal-container {
         @apply flex flex-col;
-        @apply bg-white rounded-lg shadow-xl;
-        @apply w-full;
-        @apply overflow-hidden;
-        @apply bg-bg-primary;
-        @apply rounded-lg;
-        @apply shadow-lg;
+        @apply bg-card text-card-foreground rounded-lg shadow-xl;
+        @apply w-full overflow-hidden;
         animation: modalFadeIn 0.2s ease-out;
         max-height: calc(100vh - 4rem);
       }
@@ -37,11 +33,7 @@ import { CommonModule } from '@angular/common';
         }
       }
 
-      /* Dark theme support */
-      [data-theme='dark'] .modal-container,
-      .dark .modal-container {
-        @apply bg-bg-primary;
-      }
+
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,

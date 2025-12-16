@@ -3,8 +3,11 @@ import { Router, RouterOutlet, ActivatedRoute, NavigationEnd } from '@angular/ro
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
 import { NavigationService } from '../../application/services/navigation.service';
-import { BackToPage } from '../components/back-to-page';
-import { SidebarNav, SidebarNavItem } from '../components/sidebar-nav';
+import { BackToPage } from '../../shared/components/back-to-page/back-to-page.component';
+import {
+  SidebarNav,
+  SidebarNavItem,
+} from '../../features/projects/components/sidebar-nav/sidebar-nav';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -36,7 +39,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
       .organization-layout {
         @apply min-h-screen;
         @apply flex flex-col;
-        @apply bg-bg-primary;
+        @apply bg-background;
         height: 100vh;
       }
 
@@ -53,7 +56,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
         height: 100vh; /* Fixed height: full viewport height */
         @apply flex-shrink-0;
         @apply border-r;
-        @apply border-border-default;
+        @apply border-border;
         @apply flex flex-col;
         @apply min-h-0;
       }

@@ -40,7 +40,7 @@ interface Feature {
         @apply w-full;
         @apply py-16 md:py-24;
         @apply px-4 sm:px-6 lg:px-8;
-        @apply bg-bg-secondary;
+        @apply bg-muted;
       }
 
       .features-section_container {
@@ -53,14 +53,14 @@ interface Feature {
         @apply text-3xl sm:text-4xl md:text-5xl;
         @apply font-bold;
         @apply text-center;
-        @apply text-text-primary;
+        @apply text-foreground;
         margin: 0;
       }
 
       .features-section_subheading {
         @apply text-lg sm:text-xl md:text-2xl;
         @apply text-center;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         margin: 0;
       }
 
@@ -73,9 +73,9 @@ interface Feature {
         @apply h-full;
         @apply rounded-lg;
         @apply p-6;
-        @apply bg-bg-primary;
+        @apply bg-background;
         @apply border;
-        @apply border-border-default;
+        @apply border-border;
         @apply transition-shadow;
         @apply hover:shadow-lg;
       }
@@ -90,18 +90,18 @@ interface Feature {
         @apply flex items-center justify-center;
         @apply w-12 h-12;
         @apply rounded-lg;
-        @apply bg-bg-tertiary;
+        @apply bg-accent;
       }
 
       .features-section_card-title {
         @apply text-xl font-semibold;
-        @apply text-text-primary;
+        @apply text-foreground;
         margin: 0;
       }
 
       .features-section_card-description {
         @apply text-base leading-relaxed;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         margin: 0;
       }
     `,

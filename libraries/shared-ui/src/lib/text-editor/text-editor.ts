@@ -96,15 +96,15 @@ import { TranslateService } from '../i18n/translate.service';
 
       .text-editor {
         @apply flex flex-col;
-        @apply border border-border-default rounded-lg;
-        @apply bg-bg-primary;
+        @apply border border-border rounded-lg;
+        @apply bg-background;
       }
 
       .text-editor_toolbar {
         @apply flex items-center gap-1;
         @apply p-2;
-        @apply border-b border-border-default;
-        @apply bg-bg-secondary;
+        @apply border-b border-border;
+        @apply bg-muted/40;
         @apply flex-wrap;
       }
 
@@ -114,7 +114,7 @@ import { TranslateService } from '../i18n/translate.service';
 
       .text-editor_toolbar-separator {
         @apply w-px h-6;
-        @apply bg-border-default;
+        @apply bg-border;
         @apply mx-1;
       }
 
@@ -122,11 +122,11 @@ import { TranslateService } from '../i18n/translate.service';
         @apply px-2 py-1;
         @apply rounded;
         @apply text-sm;
-        @apply text-text-primary;
+        @apply text-foreground;
         @apply bg-transparent;
         @apply border border-transparent;
-        @apply hover:bg-bg-tertiary;
-        @apply active:bg-bg-tertiary;
+        @apply hover:bg-muted;
+        @apply active:bg-muted;
         @apply transition-colors;
         @apply cursor-pointer;
         @apply min-w-[32px];
@@ -134,9 +134,9 @@ import { TranslateService } from '../i18n/translate.service';
       }
 
       .text-editor_toolbar-button.active {
-        @apply bg-primary-100;
-        @apply border-primary-300;
-        @apply text-primary-700;
+        @apply bg-primary/10;
+        @apply border-primary/20;
+        @apply text-primary;
       }
 
       .text-editor_toolbar-button:disabled {
@@ -158,28 +158,29 @@ import { TranslateService } from '../i18n/translate.service';
       .text-editor_container--disabled {
         @apply opacity-50;
         @apply cursor-not-allowed select-none;
+        @apply bg-muted/20;
       }
 
       .text-editor_container--error {
-        @apply border-error;
+        @apply border-destructive;
       }
 
       .text-editor_error {
-        @apply text-xs text-error;
+        @apply text-xs text-destructive;
         @apply mt-1 px-3;
       }
 
       :host ::ng-deep .text-editor_content {
         @apply min-h-[100px];
         @apply outline-none;
-        @apply text-text-primary;
+        @apply text-foreground;
         @apply leading-relaxed;
         @apply overflow-auto;
       }
 
       :host ::ng-deep .text-editor_content[data-placeholder]:empty::before {
         content: attr(data-placeholder);
-        @apply text-text-tertiary;
+        @apply text-muted-foreground;
         @apply pointer-events-none;
       }
 
@@ -190,17 +191,17 @@ import { TranslateService } from '../i18n/translate.service';
 
       :host ::ng-deep .te-h1 {
         @apply text-4xl font-bold mb-4;
-        @apply text-text-primary;
+        @apply text-foreground;
       }
 
       :host ::ng-deep .te-h2 {
         @apply text-3xl font-semibold mb-3;
-        @apply text-text-primary;
+        @apply text-foreground;
       }
 
       :host ::ng-deep .te-h3 {
         @apply text-2xl font-semibold mb-2;
-        @apply text-text-primary;
+        @apply text-foreground;
       }
 
       :host ::ng-deep .te-ul {
@@ -220,8 +221,9 @@ import { TranslateService } from '../i18n/translate.service';
       }
 
       :host ::ng-deep .te-link {
-        @apply text-text-link;
+        @apply text-primary underline-offset-4;
         @apply underline;
+        @apply cursor-pointer;
       }
 
       :host ::ng-deep .te-bold {
@@ -241,7 +243,7 @@ import { TranslateService } from '../i18n/translate.service';
       }
 
       :host ::ng-deep .te-code {
-        @apply bg-bg-tertiary;
+        @apply bg-muted;
         @apply px-1 py-0.5;
         @apply rounded;
         @apply font-mono;
@@ -249,10 +251,10 @@ import { TranslateService } from '../i18n/translate.service';
       }
 
       :host ::ng-deep .te-quote {
-        @apply border-l-4 border-border-default;
+        @apply border-l-4 border-border;
         @apply pl-4;
         @apply italic;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         @apply my-2;
       }
 

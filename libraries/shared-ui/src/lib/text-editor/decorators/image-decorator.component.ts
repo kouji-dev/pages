@@ -66,7 +66,7 @@ import { ImageNode } from '../nodes/image-node';
         @apply rounded-lg;
         @apply overflow-hidden;
         @apply border;
-        @apply border-border-default;
+        @apply border-border;
       }
 
       .te-image-decorator_image {
@@ -79,7 +79,7 @@ import { ImageNode } from '../nodes/image-node';
       .te-image-decorator_overlay {
         @apply absolute;
         @apply inset-0;
-        @apply bg-bg-overlay;
+        @apply bg-background/80;
         @apply opacity-0;
         @apply hover:opacity-100;
         @apply transition-opacity;

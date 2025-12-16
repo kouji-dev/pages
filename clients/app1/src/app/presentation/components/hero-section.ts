@@ -23,7 +23,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
         </div>
         <div class="hero-section_image">
           <div class="hero-section_image-placeholder">
-            <lib-icon name="image" size="2xl" color="var(--color-text-tertiary)" />
+            <lib-icon name="image" size="2xl" color="muted-foreground" />
             <p class="hero-section_image-text">{{ 'public.heroImage' | translate }}</p>
           </div>
         </div>
@@ -38,7 +38,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
         @apply w-full;
         @apply py-16 md:py-24 lg:py-32;
         @apply px-4 sm:px-6 lg:px-8;
-        @apply bg-bg-primary;
+        @apply bg-background;
       }
 
       .hero-section_container {
@@ -56,21 +56,21 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
       .hero-section_headline {
         @apply text-4xl sm:text-5xl md:text-6xl lg:text-7xl;
         @apply font-bold leading-tight;
-        @apply text-text-primary;
+        @apply text-foreground;
         margin: 0;
       }
 
       .hero-section_subheading {
         @apply text-xl sm:text-2xl md:text-3xl;
         @apply font-semibold;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         margin: 0;
       }
 
       .hero-section_description {
         @apply text-base sm:text-lg md:text-xl;
         @apply leading-relaxed;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         margin: 0;
         max-width: 600px;
         @apply mx-auto lg:mx-0;
@@ -94,15 +94,15 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
         @apply aspect-square;
         @apply flex flex-col items-center justify-center;
         @apply border-2 border-dashed;
-        @apply border-border-default;
+        @apply border-border;
         @apply rounded-lg;
-        @apply bg-bg-secondary;
+        @apply bg-muted;
         @apply gap-4;
       }
 
       .hero-section_image-text {
         @apply text-sm font-medium;
-        @apply text-text-tertiary;
+        @apply text-muted-foreground;
         margin: 0;
       }
     `,

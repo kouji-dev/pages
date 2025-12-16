@@ -60,8 +60,8 @@ import { AttachmentNode } from '../nodes/attachment-node';
         @apply p-2;
         @apply rounded-lg;
         @apply border;
-        @apply border-border-default;
-        @apply bg-bg-secondary;
+        @apply border-border;
+        @apply bg-muted;
         @apply transition-colors;
         @apply min-w-0;
       }
@@ -78,14 +78,14 @@ import { AttachmentNode } from '../nodes/attachment-node';
 
       .te-attachment-decorator_filename {
         @apply font-medium;
-        @apply text-text-primary;
+        @apply text-foreground;
         @apply text-sm;
         @apply truncate;
       }
 
       .te-attachment-decorator_meta {
         @apply text-xs;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         @apply truncate;
       }
 
@@ -96,7 +96,7 @@ import { AttachmentNode } from '../nodes/attachment-node';
 
       .te-attachment-decorator_loading {
         @apply text-xs;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         @apply italic;
       }
     `,

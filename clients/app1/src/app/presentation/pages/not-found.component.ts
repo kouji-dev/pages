@@ -37,18 +37,18 @@ import { TranslatePipe } from '@ngx-translate/core';
       .not-found_title {
         @apply text-8xl font-bold;
         @apply mb-4;
-        @apply text-primary-600;
+        @apply text-primary;
       }
 
       .not-found_message {
         @apply text-2xl font-semibold;
         @apply mb-2;
-        @apply text-text-primary;
+        @apply text-foreground;
       }
 
       .not-found_description {
         @apply mb-6;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
       }
     `,
   ],

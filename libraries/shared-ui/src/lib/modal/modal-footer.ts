@@ -17,7 +17,7 @@ import { CommonModule } from '@angular/common';
         @apply flex items-center justify-end gap-3;
         @apply px-6 py-4;
         @apply border-t;
-        @apply border-border-divider;
+        @apply border-border;
       }
 
       @media (max-width: 640px) {

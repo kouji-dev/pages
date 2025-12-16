@@ -47,8 +47,8 @@ export interface SidenavItem {
         @apply top-4;
         @apply w-64;
         @apply max-h-[calc(100vh-2rem)];
-        @apply bg-bg-secondary;
-        @apply border border-border-default;
+        @apply bg-card;
+        @apply border border-border;
         @apply rounded-lg;
         @apply overflow-y-auto;
         @apply flex flex-col;
@@ -58,12 +58,12 @@ export interface SidenavItem {
       .sidenav_header {
         @apply flex items-center;
         @apply p-4;
-        @apply border-b border-border-default;
+        @apply border-b border-border;
       }
 
       .sidenav_title {
         @apply text-lg font-semibold;
-        @apply text-text-primary;
+        @apply text-foreground;
         @apply whitespace-nowrap;
       }
 
@@ -83,17 +83,17 @@ export interface SidenavItem {
         @apply px-3 py-2;
         @apply rounded;
         @apply text-sm;
-        @apply text-text-secondary;
-        @apply hover:text-text-primary;
-        @apply hover:bg-bg-tertiary;
+        @apply text-muted-foreground;
+        @apply hover:text-foreground;
+        @apply hover:bg-muted;
         @apply transition-colors;
         @apply no-underline;
         @apply cursor-pointer;
       }
 
       .sidenav_link--active {
-        @apply text-text-primary;
-        @apply bg-primary-100;
+        @apply text-primary;
+        @apply bg-primary/10;
         @apply font-medium;
       }
 

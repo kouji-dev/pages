@@ -79,8 +79,8 @@ import { ToolbarImageButton } from './toolbar/toolbar-image-button';
       .text-editor_toolbar {
         @apply flex items-center gap-1;
         @apply p-2;
-        @apply border-b border-border-default;
-        @apply bg-bg-secondary;
+        @apply border-b border-border;
+        @apply bg-muted/40;
         @apply flex-wrap;
       }
 
@@ -90,14 +90,14 @@ import { ToolbarImageButton } from './toolbar/toolbar-image-button';
 
       .text-editor_toolbar-separator {
         @apply w-px h-6;
-        @apply bg-border-default;
+        @apply bg-border;
         @apply mx-1;
       }
 
       .text-editor_toolbar-button--active {
-        @apply bg-primary-100;
-        @apply border-primary-300;
-        @apply text-primary-700;
+        @apply bg-primary/10;
+        @apply border-primary/20;
+        @apply text-primary;
       }
     `,
   ],

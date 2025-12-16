@@ -95,53 +95,45 @@ import { Icon, IconName } from '../icon/icon';
 
       .button:focus-visible {
         @apply outline-2;
-        @apply outline-border-focus;
+        @apply outline-primary-focus;
         outline-offset: 2px;
       }
 
       /* Variants */
       .button--primary {
-        @apply text-text-inverse; /* White text */
-        @apply bg-text-primary; /* Pure black background - Notion style */
-        @apply border-text-primary;
+        @apply bg-primary text-primary-foreground border-primary;
+        @apply font-semibold shadow-md;
       }
 
       .button--primary:not(.button--disabled):hover {
-        @apply bg-gray-800; /* Dark gray on hover */
-        @apply border-gray-800;
+        @apply bg-primary/90 border-primary/90 shadow-lg;
       }
 
       .button--secondary {
-        @apply text-text-primary; /* Black text */
-        @apply bg-bg-tertiary; /* Light gray/beige background - Notion style */
-        @apply border-border-default;
+        @apply bg-secondary text-secondary-foreground border-border;
+        @apply font-medium;
       }
 
       .button--secondary:not(.button--disabled):hover {
-        @apply bg-gray-300; /* Slightly darker on hover */
-        @apply border-border-hover;
+        @apply bg-secondary/80;
       }
 
       .button--danger {
-        @apply text-text-inverse; /* White text */
-        @apply bg-error; /* Red background */
-        @apply border-error;
+        @apply bg-destructive text-destructive-foreground border-destructive;
+        @apply font-medium;
       }
 
       .button--danger:not(.button--disabled):hover {
-        @apply bg-error-600; /* Darker red on hover */
-        @apply border-error-600;
+        @apply bg-destructive/90 border-destructive/90;
       }
 
       .button--ghost {
-        @apply text-text-primary; /* Black text */
-        background-color: transparent;
-        border-color: transparent;
+        @apply bg-transparent text-foreground border-transparent;
+        @apply font-medium;
       }
 
       .button--ghost:not(.button--disabled):hover {
-        @apply bg-bg-hover; /* Light hover background - Notion style */
-        border-color: transparent;
+        @apply bg-accent text-accent-foreground;
       }
 
       /* Sizes */

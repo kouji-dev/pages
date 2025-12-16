@@ -8,7 +8,7 @@ import { Icon } from '../icon/icon';
   template: `
     <div class="error-state">
       <div class="error-state_content">
-        <lib-icon name="circle-alert" size="xl" color="error" [ariaLabel]="'Error'" />
+        <lib-icon name="circle-alert" size="xl" color="destructive" [ariaLabel]="'Error'" />
         <h3 class="error-state_title">{{ title() || 'Something went wrong' }}</h3>
         @if (message()) {
           <p class="error-state_message">{{ message() }}</p>
@@ -51,13 +51,13 @@ import { Icon } from '../icon/icon';
 
       .error-state_title {
         @apply text-lg font-semibold;
-        @apply text-text-primary;
+        @apply text-foreground;
         margin: 0;
       }
 
       .error-state_message {
         @apply text-sm;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         margin: 0;
       }
     `,

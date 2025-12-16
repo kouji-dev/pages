@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Task Board</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4b2bee",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#131022",
+                        "card-dark": "#1e1933",
+                        "border-dark": "#2d2843",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "sans": ["Inter", "sans-serif"],
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(155, 146, 201, 0.2);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(155, 146, 201, 0.4);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display h-screen overflow-hidden flex selection:bg-primary/30">
+<aside class="w-64 flex flex-col border-r border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark z-20 shrink-0 h-full">
+<div class="px-4 pt-6 pb-2 flex flex-col gap-1">
+<div class="flex items-center gap-2 mb-4 px-2">
+<div class="w-6 h-6 rounded bg-primary flex items-center justify-center shadow-lg shadow-primary/25">
+<span class="material-symbols-outlined text-white text-[14px]">grid_view</span>
+</div>
+<span class="font-bold text-slate-800 dark:text-white tracking-tight">TaskFlow</span>
+</div>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#1e1933] transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">search</span>
+<span class="text-sm font-medium">Search</span>
+<span class="ml-auto text-[10px] text-slate-400 border border-slate-200 dark:border-border-dark px-1.5 py-0.5 rounded">⌘K</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#1e1933] transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">inbox</span>
+<span class="text-sm font-medium">Inbox</span>
+<span class="ml-auto bg-primary/10 text-primary text-[10px] font-bold px-1.5 py-0.5 rounded-full">4</span>
+</a>
+</div>
+<div class="mx-6 h-px bg-slate-100 dark:bg-border-dark/50 my-2"></div>
+<div class="flex-1 overflow-y-auto px-4 py-2 custom-scrollbar">
+<div class="mb-2 px-3 flex items-center justify-between group">
+<span class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Workspaces</span>
+<button class="text-slate-400 hover:text-primary transition-colors opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+</div>
+<div class="flex flex-col gap-1">
+<div>
+<button class="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#1e1933] transition-colors text-left group">
+<span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300">folder_open</span>
+<span class="text-sm font-medium">Engineering</span>
+<span class="material-symbols-outlined text-[16px] ml-auto text-slate-400 transform rotate-180">expand_less</span>
+</button>
+<div class="flex flex-col gap-1 pl-3 mt-1 border-l border-slate-200 dark:border-border-dark/50 ml-5">
+<div>
+<button class="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#1e1933] transition-colors text-left">
+<span class="material-symbols-outlined text-[18px] text-primary">folder</span>
+<span class="text-sm font-medium">Project Alpha</span>
+</button>
+<div class="flex flex-col gap-1 pl-3 mt-1 border-l border-slate-200 dark:border-border-dark/50 ml-5">
+<a class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 text-primary dark:bg-[#292348] dark:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">view_kanban</span>
+<span class="text-sm font-medium">Board</span>
+</a>
+<a class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#1e1933] transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">list_alt</span>
+<span class="text-sm font-medium">Backlog</span>
+</a>
+<a class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#1e1933] transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span>
+<span class="text-sm font-medium">Roadmap</span>
+</a>
+</div>
+</div>
+<button class="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#1e1933] transition-colors text-left">
+<span class="material-symbols-outlined text-[18px] text-slate-400">folder</span>
+<span class="text-sm font-medium">Mobile App</span>
+</button>
+</div>
+</div>
+<button class="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#1e1933] transition-colors text-left group">
+<span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300">folder</span>
+<span class="text-sm font-medium">Product</span>
+<span class="material-symbols-outlined text-[16px] ml-auto text-slate-400">expand_more</span>
+</button>
+<button class="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#1e1933] transition-colors text-left group">
+<span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300">folder</span>
+<span class="text-sm font-medium">Design</span>
+<span class="material-symbols-outlined text-[16px] ml-auto text-slate-400">expand_more</span>
+</button>
+</div>
+</div>
+<div class="p-4 border-t border-slate-200 dark:border-border-dark bg-slate-50/50 dark:bg-background-dark/50">
+<div class="flex items-center gap-3 mb-3">
+<div class="relative">
+<img alt="User Avatar" class="w-9 h-9 rounded-full border border-slate-200 dark:border-border-dark" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDo56bwz1q4Vx3Uf3ZDDaV0Ff-w_fonVPNhQYWN7Zyl-emuqnlX2qICUIsddf9iPMpEFauV_Tdf0b-msnw-JD98Jm54FK-q-sjo7XreXBsgwzJ8hbAfhOb8C7rSjxb8O-cd9cph3NbHSCNBxBKd1PTRfOfqXxp8-kw-hJRsDGOesYNj8tWKjTR9ccvIi-zng6Mfsp_RqGcfUVepZBrlZj-08AxMmHKZMUdlRJ2z93IrVzCQgUvPXgwPwsKgbas11i9hVXyfA3-VF9g"/>
+<div class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 border-2 border-white dark:border-[#131022] rounded-full"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="text-sm font-semibold text-slate-800 dark:text-white truncate">Alex Morgan</div>
+<div class="text-[11px] text-slate-500 dark:text-slate-400 truncate">alex@taskflow.com</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex-1 flex items-center justify-center gap-2 h-8 rounded-lg border border-slate-200 dark:border-border-dark bg-white dark:bg-[#1e1933] hover:bg-slate-50 dark:hover:bg-[#292348] text-slate-600 dark:text-slate-400 transition-all text-xs font-medium shadow-sm">
+<span class="material-symbols-outlined text-[16px]">settings</span>
+<span>Settings</span>
+</button>
+<button class="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 dark:border-border-dark bg-white dark:bg-[#1e1933] hover:bg-slate-50 dark:hover:bg-[#292348] text-slate-600 dark:text-slate-400 transition-all shadow-sm group">
+<span class="material-symbols-outlined text-[18px] group-hover:text-primary transition-colors">dark_mode</span>
+</button>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-white dark:bg-background-dark relative">
+<header class="shrink-0 h-16 border-b border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark z-10 flex items-center justify-between px-6 gap-6">
+<div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 font-medium">
+<span class="hover:text-slate-900 dark:hover:text-white cursor-pointer transition-colors">Projects</span>
+<span class="material-symbols-outlined text-[16px] text-slate-400">chevron_right</span>
+<span class="hover:text-slate-900 dark:hover:text-white cursor-pointer transition-colors">Project Alpha</span>
+<span class="material-symbols-outlined text-[16px] text-slate-400">chevron_right</span>
+<span class="text-slate-900 dark:text-white font-semibold">Sprint 24</span>
+</div>
+<div class="flex-1 max-w-lg">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors text-[20px]">search</span>
+<input class="w-full h-10 pl-10 pr-12 rounded-lg bg-slate-100 dark:bg-[#1e1933] border-none text-sm text-slate-700 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-primary/20 transition-all shadow-sm" placeholder="Search" type="text"/>
+<div class="absolute right-3 top-1/2 -translate-y-1/2">
+<kbd class="hidden sm:inline-flex items-center h-5 px-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#292348] text-[10px] font-bold text-slate-400 dark:text-slate-500 font-sans shadow-sm">⌘K</kbd>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 h-9 px-4 rounded-lg bg-primary hover:bg-primary/90 text-white text-sm font-bold shadow-lg shadow-primary/25 transition-all">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>New</span>
+</button>
+<div class="h-6 w-px bg-slate-200 dark:bg-border-dark"></div>
+<div class="flex -space-x-2">
+<img alt="User Avatar" class="w-8 h-8 rounded-full border-2 border-white dark:border-background-dark" data-alt="User Avatar 1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDo56bwz1q4Vx3Uf3ZDDaV0Ff-w_fonVPNhQYWN7Zyl-emuqnlX2qICUIsddf9iPMpEFauV_Tdf0b-msnw-JD98Jm54FK-q-sjo7XreXBsgwzJ8hbAfhOb8C7rSjxb8O-cd9cph3NbHSCNBxBKd1PTRfOfqXxp8-kw-hJRsDGOesYNj8tWKjTR9ccvIi-zng6Mfsp_RqGcfUVepZBrlZj-08AxMmHKZMUdlRJ2z93IrVzCQgUvPXgwPwsKgbas11i9hVXyfA3-VF9g"/>
+<img alt="User Avatar" class="w-8 h-8 rounded-full border-2 border-white dark:border-background-dark" data-alt="User Avatar 2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANhbo06e_wVqjUVusvsYUxAyZEEykvvveQAj0tQQbPCgNimZEEhuGyshvxYk28IPB9qvsFNKV3I2FWrNEojcUEMo0Cig1aPtMywnX9q14AzBVs9bQP8aJ9TIeELGSTjpJDkVg0iTJIKY8WAcDS_LKPMdoRtnzmkSwmz19li4UCd4nI_zClogbJe9F4UTqjXKrtNAGF2aWCIWZNbn8B24H8CsOF2QNf2VTgIjseoqiZcaGbTrApDMcn5p_3wESOtMQjPRgcxI3_fII"/>
+<div class="w-8 h-8 rounded-full border-2 border-white dark:border-background-dark bg-slate-100 dark:bg-[#292348] text-[10px] font-bold flex items-center justify-center text-slate-600 dark:text-white">+4</div>
+</div>
+</div>
+</header>
+<div class="shrink-0 px-6 pt-6 pb-2 bg-white dark:bg-background-dark">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-baseline gap-4">
+<h2 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Sprint 24 Board</h2>
+<span class="text-xs font-medium px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">12 days remaining</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="h-9 px-4 bg-white border border-slate-200 dark:border-slate-700 dark:bg-[#292348]/20 hover:bg-slate-50 dark:hover:bg-[#342d5b] text-slate-700 dark:text-white text-sm font-medium rounded-lg transition-colors">
+                        Complete Sprint
+                    </button>
+<button class="h-9 w-9 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:text-[#9b92c9] dark:hover:bg-[#292348] rounded-lg transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-2 px-3 h-8 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e1933] text-slate-600 dark:text-[#9b92c9] text-sm font-medium transition-colors">
+<span class="material-symbols-outlined text-[18px]">person</span>
+<span>Assignee</span>
+</button>
+<button class="flex items-center gap-2 px-3 h-8 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1e1933] text-slate-600 dark:text-[#9b92c9] text-sm font-medium transition-colors">
+<span class="material-symbols-outlined text-[18px]">label</span>
+<span>Label</span>
+</button>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-slate-400 dark:text-[#666089] text-xs font-medium uppercase tracking-wider mr-2">Group By</span>
+<button class="flex items-center gap-2 px-3 h-8 rounded-lg bg-slate-100 dark:bg-[#292348] text-slate-800 dark:text-white text-sm font-medium">
+<span>Status</span>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-x-auto overflow-y-hidden p-6 bg-background-light dark:bg-background-dark border-t border-slate-200 dark:border-border-dark/50">
+<div class="flex h-full gap-5 min-w-max pb-4">
+<div class="flex flex-col w-[300px] h-full rounded-xl bg-slate-100/50 dark:bg-[#1e1933]/20 border border-transparent dark:border-border-dark/30">
+<div class="p-3 flex items-center justify-between shrink-0">
+<div class="flex items-center gap-2">
+<h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#9b92c9]">To Do</h3>
+<span class="bg-slate-200 dark:bg-[#292348] text-slate-600 dark:text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">3</span>
+</div>
+<div class="flex gap-1">
+<button class="p-1 hover:bg-slate-200 dark:hover:bg-[#292348] rounded text-slate-400 dark:text-[#666089] transition-colors">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+<button class="p-1 hover:bg-slate-200 dark:hover:bg-[#292348] rounded text-slate-400 dark:text-[#666089] transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+</button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-2 pb-2 flex flex-col gap-2.5 scrollbar-hide">
+<div class="group p-3 rounded-lg bg-white dark:bg-card-dark shadow-sm hover:shadow-md border border-slate-200 dark:border-border-dark/60 cursor-pointer transition-all hover:border-primary/50 relative">
+<div class="flex justify-between items-start mb-2">
+<p class="text-slate-800 dark:text-white text-sm font-medium leading-snug">Implement Oauth 2.0 flow for mobile clients</p>
+</div>
+<div class="flex items-center justify-between mt-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-orange-400 text-[16px]" title="Story">bookmark</span>
+<span class="text-[11px] font-medium text-slate-400 dark:text-[#9b92c9]">PROJ-102</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded bg-red-500/10 text-red-500 text-[10px] font-bold uppercase">High</span>
+<img alt="Assignee" class="w-5 h-5 rounded-full" data-alt="Assignee Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAI15FHH-4JL2orBbWCh_QKpLCNJSl03H-GqVkuQYKKN0Tcl-ZWnGIKXeJGl2n1hGCjnXQf-_RQnZGAQLLReArkUvtkKPepRcVPf-xIs5M9FiGRmva-tdFO2QKapTiUTG8d1IhkQajiYCufQPSfbbazqGxYv4WY2uge6Yx6rcY2-zB1Kki7fpCBKZ95fYd48VD47etLLM10DNSozvf1RA2_07XOc5GRxLJZ-nTH1yFhQ4gn6o3TUw-C6IALslkt3BCxa_Md87tp3Ug"/>
+</div>
+</div>
+</div>
+<div class="group p-3 rounded-lg bg-white dark:bg-card-dark shadow-sm hover:shadow-md border border-slate-200 dark:border-border-dark/60 cursor-pointer transition-all hover:border-primary/50 relative">
+<div class="flex justify-between items-start mb-2">
+<p class="text-slate-800 dark:text-white text-sm font-medium leading-snug">Research new animation library</p>
+</div>
+<div class="flex flex-wrap gap-1 mb-3">
+<span class="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-500 text-[10px] font-medium">Design</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-cyan-400 text-[16px]" title="Task">check_box</span>
+<span class="text-[11px] font-medium text-slate-400 dark:text-[#9b92c9]">PROJ-115</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-[16px]">arrow_upward</span>
+<div class="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center text-[10px] text-white">?</div>
+</div>
+</div>
+</div>
+<div class="group p-3 rounded-lg bg-white dark:bg-card-dark shadow-sm hover:shadow-md border border-slate-200 dark:border-border-dark/60 cursor-pointer transition-all hover:border-primary/50 relative">
+<div class="flex justify-between items-start mb-2">
+<p class="text-slate-800 dark:text-white text-sm font-medium leading-snug">Fix layout shift on pricing page</p>
+</div>
+<div class="flex items-center justify-between mt-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-red-400 text-[16px]" title="Bug">bug_report</span>
+<span class="text-[11px] font-medium text-slate-400 dark:text-[#9b92c9]">PROJ-140</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-red-400 text-[16px]">priority_high</span>
+<img alt="Assignee" class="w-5 h-5 rounded-full" data-alt="Assignee Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIHTvGmVID576uh35ok34x9pNTq87rlfyHqYUIELTPjZJ06ytjt20BSFtNM0azRFNqOISWM4xCXUh1XcJK9zzh_UCQGyCs_zOqhn3p264AxB20IOzxFp3PBDEkoSQGrMjFg1zX7-7_c7HcamjxjDGGnodIFIvnltWWMS2yNdaR9lyVc1ziYF2BBKlnTuUcw71fDbrLMs1kGtKyU5mVZTzQTBQZmfIeko4Sm6HXpw0cfYJwKzzVXrkHofq2HXqPb7qxKmeGa-wIMPM"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col w-[300px] h-full rounded-xl bg-slate-100/50 dark:bg-[#1e1933]/20 border border-transparent dark:border-border-dark/30">
+<div class="p-3 flex items-center justify-between shrink-0">
+<div class="flex items-center gap-2">
+<h3 class="text-xs font-bold uppercase tracking-wider text-blue-500">In Progress</h3>
+<span class="bg-blue-500/20 text-blue-500 text-[10px] font-bold px-1.5 py-0.5 rounded-full">2</span>
+</div>
+<div class="flex gap-1">
+<button class="p-1 hover:bg-slate-200 dark:hover:bg-[#292348] rounded text-slate-400 dark:text-[#666089] transition-colors">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+<button class="p-1 hover:bg-slate-200 dark:hover:bg-[#292348] rounded text-slate-400 dark:text-[#666089] transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+</button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-2 pb-2 flex flex-col gap-2.5 scrollbar-hide">
+<div class="group p-3 rounded-lg bg-white dark:bg-card-dark shadow-sm hover:shadow-md border border-slate-200 dark:border-border-dark/60 cursor-pointer transition-all hover:border-primary/50 relative">
+<div class="w-full h-28 bg-cover bg-center rounded mb-3" data-alt="Abstract gradient design pattern for UI mockup" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAaS2gWh4GYKHf0nTivNVofVyz8-Ynzth55ZjZAjKnF1_qxiYscQTdSlMmkvONuN8krhniPlzCbWDm5ffu6UtynpdpJFJ8JtDUbpyWQREyrziZxyZSYOxSNHCNavLTjTCbaec0NSLOlf1oKMnoyACjmz52cS5nL0Tsmr3wqYph1cz0ZdkjEvr7nCAWL4Fld0xGCSSHTnpLrvJs07egIwywor146PVI91PZfxPQzNfgB4-hXl-fZxQNIwqW9XlI6FrZc_zwCN7ne570');"></div>
+<div class="flex justify-between items-start mb-2">
+<p class="text-slate-800 dark:text-white text-sm font-medium leading-snug">New Dashboard UI Design</p>
+</div>
+<div class="flex flex-wrap gap-1 mb-3">
+<span class="px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-500 text-[10px] font-medium">Frontend</span>
+<span class="px-2 py-0.5 rounded-md bg-pink-500/10 text-pink-500 text-[10px] font-medium">UI/UX</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-orange-400 text-[16px]" title="Story">bookmark</span>
+<span class="text-[11px] font-medium text-slate-400 dark:text-[#9b92c9]">PROJ-99</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-[16px]">arrow_upward</span>
+<img alt="Assignee" class="w-5 h-5 rounded-full" data-alt="Assignee Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1-JShSftmTr2ILDk2gjOGWrrcmuDnYq8eCK6wNFUw3jZORjVKMGvDUAMkwLb36a5iWJ93L3b_PKIWAxP6QxJQ9vS1J6cFxM-94XnoqxGbLrsbwupZKY8BjCnpsPaA0RVlDemvszC7p_BiBHHaiemFKiq-wIOEPRtryjigev4qooh2VT_eioYld1R3KMVCJivFQ3kJBgDAYral8650IdskRzo0EOZXyanizBiiQrnzhzPOYORY7gwInubOj2upzDTOdN0OPk3hhhw"/>
+</div>
+</div>
+</div>
+<div class="group p-3 rounded-lg bg-white dark:bg-card-dark shadow-sm hover:shadow-md border border-slate-200 dark:border-border-dark/60 cursor-pointer transition-all hover:border-primary/50 relative">
+<div class="flex justify-between items-start mb-2">
+<p class="text-slate-800 dark:text-white text-sm font-medium leading-snug">Database migration scripts for v2.0</p>
+</div>
+<div class="flex items-center justify-between mt-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-cyan-400 text-[16px]" title="Task">check_box</span>
+<span class="text-[11px] font-medium text-slate-400 dark:text-[#9b92c9]">PROJ-108</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-[16px]">drag_handle</span>
+<img alt="Assignee" class="w-5 h-5 rounded-full" data-alt="Assignee Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm2xwHhpFCRtfzCMt_F4luhsIPbYGRI5hHwr2n_TZsBEH4IxL67d_nLKXSNoFgoppoLev58V9oOgSrXgAqXMVPuYs_zJhuuuBqrMfKjQJFFGrr-pqKCnCKM3GmZE3mUaIzGxsA-4sbAOmZT258W-cR1vf6DiX1NEl7W4lTKnA7PHCsutL3WKu6CAT_Me-Xfjx9mJGkwhMs-UKkzFzoayrHpHp73GEivDwQI1Cw25FkhvES3F25AvLfEc602-mn3Vu6h6dEVNw92rw"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col w-[300px] h-full rounded-xl bg-slate-100/50 dark:bg-[#1e1933]/20 border border-transparent dark:border-border-dark/30">
+<div class="p-3 flex items-center justify-between shrink-0">
+<div class="flex items-center gap-2">
+<h3 class="text-xs font-bold uppercase tracking-wider text-purple-400">Code Review</h3>
+<span class="bg-purple-500/20 text-purple-400 text-[10px] font-bold px-1.5 py-0.5 rounded-full">1</span>
+</div>
+<div class="flex gap-1">
+<button class="p-1 hover:bg-slate-200 dark:hover:bg-[#292348] rounded text-slate-400 dark:text-[#666089] transition-colors">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+<button class="p-1 hover:bg-slate-200 dark:hover:bg-[#292348] rounded text-slate-400 dark:text-[#666089] transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+</button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-2 pb-2 flex flex-col gap-2.5 scrollbar-hide">
+<div class="group p-3 rounded-lg bg-white dark:bg-card-dark shadow-sm hover:shadow-md border border-slate-200 dark:border-border-dark/60 cursor-pointer transition-all hover:border-primary/50 relative opacity-90">
+<div class="flex justify-between items-start mb-2">
+<p class="text-slate-800 dark:text-white text-sm font-medium leading-snug">Update API Documentation</p>
+</div>
+<div class="flex items-center justify-between mt-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-green-400 text-[16px]" title="Sub-task">subdirectory_arrow_right</span>
+<span class="text-[11px] font-medium text-slate-400 dark:text-[#9b92c9]">PROJ-155</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-[16px]">arrow_downward</span>
+<img alt="Assignee" class="w-5 h-5 rounded-full" data-alt="Assignee Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATYBDEyoXKF64OH19ZCve8R4vfkXjDXYgnqM8a2Rq6VmVbRUNhBIK0EARzJmRRKvIg4ltFocXo48ST7f6VufEcZv9mXYyFT2TdPHtZ6Rx07TfK8br5NQmSQPlazdBIYpL0zycbBuZSR4bzDhY9Pd9fIsfPecNSVbE_XxK5yXB4x4WclZIExkP3j7cI8vv691nFdeJ5IsVp_VoljHYWQMNkcNLdQttQwZ4n73eKi8VgUvC65k9Kf1j4ZaOFJujFf8zZAKD_r88IpyI"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col w-[300px] h-full rounded-xl bg-slate-100/50 dark:bg-[#1e1933]/20 border border-transparent dark:border-border-dark/30">
+<div class="p-3 flex items-center justify-between shrink-0">
+<div class="flex items-center gap-2">
+<h3 class="text-xs font-bold uppercase tracking-wider text-green-500">Done</h3>
+<span class="bg-green-500/20 text-green-500 text-[10px] font-bold px-1.5 py-0.5 rounded-full">4</span>
+</div>
+<div class="flex gap-1">
+<button class="p-1 hover:bg-slate-200 dark:hover:bg-[#292348] rounded text-slate-400 dark:text-[#666089] transition-colors">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-2 pb-2 flex flex-col gap-2.5 scrollbar-hide">
+<div class="group p-3 rounded-lg bg-slate-50 dark:bg-[#292348]/40 shadow-none border border-transparent hover:border-slate-200 dark:hover:border-border-dark cursor-pointer transition-all relative">
+<div class="flex justify-between items-start mb-2 opacity-60 line-through decoration-slate-400">
+<p class="text-slate-800 dark:text-white text-sm font-medium leading-snug">Q3 Planning Meeting notes</p>
+</div>
+<div class="flex items-center justify-between mt-2 opacity-50">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-[16px]" title="Task">check_box</span>
+<span class="text-[11px] font-medium text-slate-400 dark:text-[#9b92c9]">PROJ-85</span>
+</div>
+<div class="flex items-center gap-2">
+<img alt="Assignee" class="w-5 h-5 rounded-full grayscale" data-alt="Assignee Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvAQuAZpgkPMh9Dvusg2xZPk0_MO3JnbCdrK9y2-yrfPnJZziMSCCKDe_OXe6x7_sd1zO5N7i7SF4vZbCLZqQygJkBwzEnHiude6Hx2lPBVvfOKGCRK6fPLfJkhgMewfFV0SrtYeigC-zDu696PDWSHa4XSRsu8K7E4CGAzMnzRCKCbpQA2TfOMIdQ0_GSt2QOyjcj259oas0ZsZB6J3gZh9NU8L1b23yB7q3j8iGcGStQzbu9-VaSy8nBeqELvQa8YM2b7sORHt0"/>
+</div>
+</div>
+</div>
+<div class="group p-3 rounded-lg bg-slate-50 dark:bg-[#292348]/40 shadow-none border border-transparent hover:border-slate-200 dark:hover:border-border-dark cursor-pointer transition-all relative">
+<div class="flex justify-between items-start mb-2 opacity-60 line-through decoration-slate-400">
+<p class="text-slate-800 dark:text-white text-sm font-medium leading-snug">Setup CI/CD Pipeline</p>
+</div>
+<div class="flex items-center justify-between mt-2 opacity-50">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-[16px]" title="Task">settings</span>
+<span class="text-[11px] font-medium text-slate-400 dark:text-[#9b92c9]">PROJ-21</span>
+</div>
+<div class="flex items-center gap-2">
+<img alt="Assignee" class="w-5 h-5 rounded-full grayscale" data-alt="Assignee Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANYj686a-qsI180WB0tYBRxr4-yPlLh1tYOz7ZUpELp3qRs6NsazE4qLuXw5jqT_-9D6AuTKTsH1bl2Ls1lv6Q2qPyE6KXb3lFfNDaoOkFpVwWW_2lRfB_UxBXpcvk7DdXtXrOqa3VNzL3KmgI3AidHTVEQx9jlc5ZiCeTHU6Bd7NFTR6aRfT2cnZVqnfNnnMlW8HakGxOMrTzxMOHYUv78hvBrOo17_HiIGwDVkgm3SDBvYWpUFb9bU5wSZ2EyvNsg1hHtyCGxkk"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<button class="w-[300px] h-12 rounded-xl border-2 border-dashed border-slate-200 dark:border-border-dark/50 hover:border-primary/50 text-slate-400 dark:text-slate-500 hover:text-primary dark:hover:text-primary flex items-center justify-center gap-2 transition-all">
+<span class="material-symbols-outlined">add</span>
+<span class="text-sm font-medium">Add Section</span>
+</button>
+</div>
+</div>
+</main>
+</body></html>

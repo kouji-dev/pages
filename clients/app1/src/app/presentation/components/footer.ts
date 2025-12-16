@@ -98,8 +98,8 @@ interface SocialLink {
       .footer {
         @apply w-full;
         @apply border-t;
-        @apply border-border-default;
-        @apply bg-bg-primary;
+        @apply border-border;
+        @apply bg-background;
         @apply mt-auto;
       }
 
@@ -122,7 +122,7 @@ interface SocialLink {
       .footer_brand {
         @apply flex items-center gap-2;
         @apply font-bold text-lg;
-        @apply text-text-primary;
+        @apply text-foreground;
         @apply mb-2;
       }
 
@@ -132,13 +132,13 @@ interface SocialLink {
 
       .footer_description {
         @apply text-sm leading-relaxed;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         margin: 0;
       }
 
       .footer_section-title {
         @apply text-base font-semibold;
-        @apply text-text-primary;
+        @apply text-foreground;
         margin: 0;
         @apply mb-2;
       }
@@ -152,14 +152,14 @@ interface SocialLink {
 
       .footer_link {
         @apply text-sm;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         text-decoration: none;
         @apply transition-colors;
         @apply hover:opacity-80;
       }
 
       .footer_link:hover {
-        @apply text-primary-500;
+        @apply text-primary;
       }
 
       .footer_contact {
@@ -169,7 +169,7 @@ interface SocialLink {
       .footer_contact-item {
         @apply flex items-center gap-2;
         @apply text-sm;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         margin: 0;
       }
 
@@ -182,8 +182,8 @@ interface SocialLink {
         @apply flex items-center justify-center;
         @apply w-10 h-10;
         @apply rounded-lg;
-        @apply text-text-secondary;
-        @apply bg-bg-tertiary;
+        @apply text-muted-foreground;
+        @apply bg-muted;
         @apply hover:bg-gray-200 transition-colors;
         text-decoration: none;
       }
@@ -191,12 +191,12 @@ interface SocialLink {
       .footer_copyright {
         @apply pt-8;
         @apply border-t;
-        @apply border-border-default;
+        @apply border-border;
       }
 
       .footer_copyright-text {
         @apply text-sm text-center;
-        @apply text-text-tertiary;
+        @apply text-muted-foreground;
         margin: 0;
       }
     `,

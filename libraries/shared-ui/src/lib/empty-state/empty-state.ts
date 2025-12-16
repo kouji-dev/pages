@@ -12,7 +12,7 @@ import { Icon, IconName } from '../icon/icon';
           <lib-icon
             [name]="icon()!"
             size="xl"
-            [color]="'text-tertiary'"
+            [color]="'muted-foreground'"
             [ariaLabel]="iconLabel() || 'Empty state'"
           />
         }
@@ -58,13 +58,13 @@ import { Icon, IconName } from '../icon/icon';
 
       .empty-state_title {
         @apply text-lg font-semibold;
-        @apply text-text-primary;
+        @apply text-foreground;
         margin: 0;
       }
 
       .empty-state_message {
         @apply text-sm;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         margin: 0;
       }
     `,

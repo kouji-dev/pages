@@ -54,9 +54,9 @@ import { ToastType } from './toast.service';
         @apply mb-3;
         @apply transform transition-all duration-300 ease-out;
         @apply opacity-0 translate-x-full;
-        @apply bg-bg-primary;
+        @apply bg-card;
         @apply border;
-        @apply border-border-default;
+        @apply border-border;
         margin-bottom: 0.75rem; /* Stack spacing between toasts */
       }
 
@@ -90,7 +90,7 @@ import { ToastType } from './toast.service';
         @apply text-sm;
         @apply m-0;
         @apply leading-relaxed;
-        @apply text-text-primary;
+        @apply text-foreground;
         word-wrap: break-word;
         display: block;
         width: 100%;
@@ -102,13 +102,13 @@ import { ToastType } from './toast.service';
         @apply transition-colors;
         background: transparent;
         border: none;
-        @apply text-text-tertiary;
+        @apply text-muted-foreground;
         cursor: pointer;
       }
 
       .toast_close:hover {
-        @apply bg-bg-hover;
-        @apply text-text-primary;
+        @apply bg-muted;
+        @apply text-foreground;
       }
 
       /* Type variants */

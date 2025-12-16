@@ -24,9 +24,9 @@ export class ToolbarHeadingButton {
 
   readonly iconName = computed<IconName | null>(() => {
     const tag = this.tag();
-    if (tag === 'h1') return 'heading1';
-    if (tag === 'h2') return 'heading2';
-    if (tag === 'h3') return 'heading3';
+    if (tag === 'h1') return 'heading-1';
+    if (tag === 'h2') return 'heading-2';
+    if (tag === 'h3') return 'heading-3';
     return null;
   });
 

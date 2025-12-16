@@ -1,87 +1,112 @@
-import { Component, signal, input, computed } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, signal, input, computed, inject } from '@angular/core';
+import { RouterOutlet, Router, ActivatedRoute, NavigationEnd } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, map } from 'rxjs';
+import { AppSidebar } from './app-sidebar/app-sidebar';
+import { Breadcrumbs, BreadcrumbItem } from '../../shared/components/breadcrumbs/breadcrumbs';
+import { SearchBar } from '../../shared/components/search-bar/search-bar';
+import { AvatarStack, AvatarStackItem } from '../../shared/components/avatar-stack/avatar-stack';
+import { Button, Icon, IconName } from 'shared-ui';
+import { UserMenu } from '../../shared/components/user-menu/user-menu';
+import { NotificationBell } from '../../shared/components/notification-bell/notification-bell';
+import { LanguageSwitcher } from '../../shared/components/language-switcher/language-switcher';
+
+const teamMembers: AvatarStackItem[] = [
+  { name: 'Alice', avatarUrl: 'https://i.pravatar.cc/150?img=1', initials: 'AL' },
+  { name: 'Bob', avatarUrl: 'https://i.pravatar.cc/150?img=2', initials: 'BO' },
+  { name: 'Charlie', avatarUrl: 'https://i.pravatar.cc/150?img=3', initials: 'CH' },
+  { name: 'Diana', avatarUrl: 'https://i.pravatar.cc/150?img=4', initials: 'DI' },
+];
 
 @Component({
   selector: 'app-base-layout',
-  imports: [RouterOutlet],
+  imports: [
+    RouterOutlet,
+    AppSidebar,
+    Breadcrumbs,
+    SearchBar,
+    AvatarStack,
+    Button,
+    Icon,
+    UserMenu,
+    NotificationBell,
+    LanguageSwitcher,
+  ],
   template: `
     <div class="layout" [class.layout--sidebar-open]="sidebarOpen()">
-      <!-- Header Toolbar (Jira/Confluence Style) -->
-      <header class="layout_header">
-        <div class="layout_header-content">
-          <div class="layout_header-left">
-            <button
-              class="layout_sidebar-toggle"
-              (click)="toggleSidebar()"
-              type="button"
-              aria-label="Toggle sidebar"
-            >
-              <span class="layout_sidebar-toggle-icon">☰</span>
-            </button>
-            <!-- Logo/Branding Area -->
-            <div class="layout_logo">
-              <span class="layout_logo-text">Pages</span>
+      <!-- Sidebar -->
+      <aside class="layout_sidebar" [class.layout_sidebar--hidden]="!sidebarOpen()">
+        <app-app-sidebar />
+      </aside>
+
+      <!-- Main Content Area -->
+      <main class="layout_main">
+        <!-- Header Toolbar -->
+        <header class="layout_header">
+          <div class="layout_header-content">
+            <div class="layout_header-left">
+              <!-- Sidebar Toggle (always visible) -->
+              <button
+                class="layout_sidebar-toggle"
+                [class.layout_sidebar-toggle--open]="sidebarOpen()"
+                (click)="toggleSidebar()"
+                type="button"
+                [attr.aria-label]="sidebarOpen() ? 'Hide sidebar' : 'Show sidebar'"
+              >
+                <lib-icon name="menu" size="sm" class="layout_sidebar-toggle-icon" />
+              </button>
+
+              <!-- Breadcrumbs -->
+              <app-breadcrumbs [items]="breadcrumbs()" />
             </div>
-            <!-- Breadcrumb Navigation (Jira/Confluence Style) -->
-            <div class="layout_breadcrumbs">
-              <ng-content select="[slot=breadcrumbs]"></ng-content>
+
+            <!-- Global Search (Center) -->
+            <div class="layout_search">
+              <app-search-bar />
+            </div>
+
+            <!-- Header Right Actions -->
+            <div class="layout_header-right">
+              <!-- Stacked Avatars -->
+              <div class="layout_avatars">
+                <app-avatar-stack [items]="teamMembers" [limit]="4" size="sm" />
+              </div>
+
+              <!-- Action Button (context-aware) -->
+              @if (actionButton()) {
+                <lib-button
+                  [variant]="'primary'"
+                  [size]="'sm'"
+                  [leftIcon]="actionButton()!.icon"
+                  (clicked)="handleActionClick()"
+                >
+                  {{ actionButton()!.label }}
+                </lib-button>
+              }
+
+              <!-- Quick Actions -->
+              <div class="layout_quick-actions">
+                <app-language-switcher />
+              </div>
+
+              <!-- Notifications -->
+              <div class="layout_notifications">
+                <app-notification-bell />
+              </div>
+
+              <!-- User Menu -->
+              <div class="layout_user-menu">
+                <app-user-menu />
+              </div>
             </div>
           </div>
-          <!-- Global Search (Center) -->
-          <div class="layout_search">
-            <ng-content select="[slot=search]"></ng-content>
-          </div>
-          <!-- Header Right Actions -->
-          <div class="layout_header-right">
-            <!-- Navigation Menu -->
-            <nav class="layout_nav" [class.layout_nav--hidden]="!showNav()">
-              <ng-content select="[slot=nav]"></ng-content>
-            </nav>
-            <!-- Quick Actions -->
-            <div class="layout_quick-actions">
-              <ng-content select="[slot=quick-actions]"></ng-content>
-            </div>
-            <!-- Notifications -->
-            <div class="layout_notifications">
-              <ng-content select="[slot=notifications]"></ng-content>
-            </div>
-            <!-- User Menu -->
-            <div class="layout_user-menu">
-              <ng-content select="[slot=user-menu]"></ng-content>
-            </div>
-          </div>
+        </header>
+
+        <!-- Content Area (scrollable) -->
+        <div class="layout_content">
+          <router-outlet />
         </div>
-      </header>
-
-      <div class="layout_body">
-        <!-- Sidebar -->
-        <aside class="layout_sidebar" [class.layout_sidebar--hidden]="!sidebarOpen()">
-          <nav class="layout_sidebar-nav">
-            <ng-content select="[slot=sidebar-nav]"></ng-content>
-          </nav>
-        </aside>
-
-        <!-- Main Content Area (Notion Style: Generous padding, wide readable max-width) -->
-        <main class="layout_main">
-          <div class="layout_main-content">
-            <router-outlet></router-outlet>
-          </div>
-        </main>
-      </div>
-
-      <!-- Footer -->
-      @if (showFooter()) {
-        <footer class="layout_footer">
-          <div class="layout_footer-content">
-            <div class="layout_footer-links">
-              <ng-content select="[slot=footer-links]"></ng-content>
-            </div>
-            <div class="layout_footer-copyright">
-              <p>&copy; {{ currentYear() }} Pages. All rights reserved.</p>
-            </div>
-          </div>
-        </footer>
-      }
+      </main>
     </div>
   `,
   styles: [
@@ -89,66 +114,76 @@ import { RouterOutlet } from '@angular/router';
       @reference "#mainstyles";
 
       .layout {
-        @apply flex flex-col min-h-screen;
-        @apply bg-bg-primary;
+        @apply flex w-full;
+        height: 100vh;
+        @apply bg-background;
       }
 
-      /* Header Toolbar (Jira/Confluence Style) */
+      /* Sidebar */
+      .layout_sidebar {
+        @apply flex flex-col;
+        width: 17.5rem; /* 280px */
+        height: 100%;
+        @apply bg-navigation;
+        @apply border-r border-navigation-border;
+        @apply transition-all duration-300 ease-in-out;
+        flex-shrink: 0;
+        overflow: hidden;
+      }
+
+      .layout_sidebar--hidden {
+        width: 0;
+        min-width: 0;
+        border-right: none;
+        transform: translateX(-100%);
+      }
+
+      /* Main Content Area */
+      .layout_main {
+        @apply flex-1 flex flex-col;
+        @apply bg-background;
+        min-width: 0; /* Prevent flex item from overflowing */
+        overflow: hidden;
+      }
+
+      /* Header Toolbar */
       .layout_header {
-        @apply sticky top-0 z-50;
-        @apply bg-bg-primary;
-        @apply border-b;
-        @apply border-border-default;
-        @apply shadow-sm;
+        @apply flex items-center;
+        height: 4rem; /* 64px - matches React implementation */
+        @apply bg-background;
+        @apply border-b border-border;
+        padding: 0 1rem;
+        @apply lg:px-4;
+        flex-shrink: 0;
       }
 
       .layout_header-content {
         @apply flex items-center justify-between;
-        height: 3.5rem; /* 56px - Jira/Confluence style */
-        padding: 0 1rem;
-        @apply lg:px-6;
+        width: 100%;
+        gap: 1rem;
       }
 
       .layout_header-left {
         @apply flex items-center;
-        gap: 1rem;
+        gap: 0.5rem;
         flex: 0 0 auto;
         min-width: 0;
       }
 
       .layout_sidebar-toggle {
-        @apply lg:hidden p-2 rounded-md transition-colors;
+        @apply p-2 rounded-md transition-colors;
         @apply border-none bg-transparent cursor-pointer;
-        @apply text-text-secondary;
-      }
-
-      .layout_sidebar-toggle:hover {
-        @apply text-text-primary;
-        @apply bg-bg-hover;
+        @apply text-muted-foreground;
+        @apply hover:text-foreground hover:bg-accent;
+        margin-right: 0.5rem;
       }
 
       .layout_sidebar-toggle-icon {
-        @apply text-xl;
+        @apply transition-transform duration-300 ease-in-out;
       }
 
-      /* Logo/Branding Area */
-      .layout_logo {
-        @apply flex items-center;
-        flex-shrink: 0;
-      }
-
-      .layout_logo-text {
-        @apply text-xl font-bold;
-        @apply text-text-primary;
-      }
-
-      /* Breadcrumb Navigation (Jira/Confluence Style) */
-      .layout_breadcrumbs {
-        @apply flex items-center;
-        flex: 1;
-        min-width: 0;
-        margin-left: 1.5rem;
-        @apply hidden md:flex;
+      .layout_sidebar-toggle--open .layout_sidebar-toggle-icon {
+        @apply rotate-90;
       }
 
       /* Global Search (Center) */
@@ -156,10 +191,8 @@ import { RouterOutlet } from '@angular/router';
         @apply flex items-center justify-center;
         flex: 1 1 auto;
         min-width: 0;
-        max-width: none; /* Remove max-width constraint */
-        margin: 0 1rem;
+        max-width: none;
         @apply hidden lg:flex;
-        width: 100%;
       }
 
       .layout_search > * {
@@ -173,14 +206,9 @@ import { RouterOutlet } from '@angular/router';
         flex-shrink: 0;
       }
 
-      /* Navigation Menu */
-      .layout_nav {
-        @apply hidden lg:flex items-center;
-        gap: 1.5rem;
-      }
-
-      .layout_nav--hidden {
-        @apply hidden;
+      .layout_avatars {
+        @apply flex items-center;
+        @apply -space-x-2;
       }
 
       /* Quick Actions */
@@ -199,113 +227,26 @@ import { RouterOutlet } from '@angular/router';
         @apply flex items-center;
       }
 
-      /* Body */
-      .layout_body {
-        @apply flex flex-1 overflow-hidden;
-      }
-
-      /* Sidebar (Notion Style) */
-      .layout_sidebar {
-        @apply hidden lg:flex lg:flex-col;
-        width: 17.5rem; /* 280px - Notion style, wider than typical */
-        @apply bg-bg-secondary; /* Notion's light beige */
-        @apply border-r;
-        @apply border-border-default;
-        @apply transition-transform duration-300 ease-in-out;
-      }
-
-      .layout_sidebar--hidden {
-        @apply hidden;
-      }
-
-      .layout_sidebar-nav {
-        @apply flex flex-col overflow-y-auto flex-1;
-        padding: 1rem;
-        gap: 0.25rem; /* Generous spacing between items (Notion style) */
-      }
-
-      /* Mobile sidebar overlay */
-      @media (max-width: 1023px) {
-        .layout--sidebar-open .layout_sidebar {
-          @apply fixed inset-y-0 left-0 z-40 flex flex-col shadow-lg;
-          width: 17.5rem;
-          @apply bg-bg-secondary;
-          top: 3.5rem; /* Match header height */
-        }
-
-        .layout--sidebar-open::before {
-          content: '';
-          @apply fixed inset-0 z-30;
-          @apply bg-bg-overlay;
-          @apply lg:hidden;
-        }
-      }
-
-      /* Main Content Area (Notion Style: Generous padding, wide readable max-width) */
-      .layout_main {
+      /* Content Area (scrollable) */
+      .layout_content {
         @apply flex-1 overflow-y-auto;
-        @apply bg-bg-primary;
-      }
-
-      .layout_main-content {
-        @apply w-full;
-        padding: 2rem;
-        @apply lg:px-24; /* ~96px sides on desktop (Notion style) */
-        @apply lg:py-8;
-      }
-
-      /* Footer */
-      .layout_footer {
-        @apply mt-auto;
-        @apply bg-bg-primary;
-        @apply border-t;
-        @apply border-border-default;
-      }
-
-      .layout_footer-content {
-        @apply mx-auto;
-        max-width: 62.5rem; /* Match main content max-width */
-        padding: 1.5rem 2rem;
-        @apply lg:px-24;
-      }
-
-      .layout_footer-links {
-        @apply flex flex-wrap;
-        gap: 1rem;
-        margin-bottom: 0.75rem;
-      }
-
-      .layout_footer-copyright {
-        @apply text-sm;
-        @apply text-text-secondary;
+        @apply bg-muted/30;
       }
 
       /* Responsive adjustments */
       @media (max-width: 1023px) {
-        .layout_header-content {
+        .layout_header {
           padding: 0 0.75rem;
         }
 
         .layout_search {
           @apply hidden;
         }
-
-        .layout_breadcrumbs {
-          @apply hidden;
-        }
       }
 
       @media (max-width: 639px) {
-        .layout_main-content {
-          padding: 1rem;
-        }
-
-        .layout_header-content {
+        .layout_header {
           padding: 0 0.5rem;
-        }
-
-        .layout_footer-content {
-          padding: 1rem;
         }
       }
     `,
@@ -313,16 +254,52 @@ import { RouterOutlet } from '@angular/router';
   standalone: true,
 })
 export class BaseLayout {
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+
   // Inputs
-  showNav = input(true);
-  showFooter = input(true);
-  initialSidebarOpen = input(false);
+  initialSidebarOpen = input(true); // Default to open
 
   // Sidebar state
   readonly sidebarOpen = signal(this.initialSidebarOpen());
 
+  // Team members for avatar stack
+  readonly teamMembers = teamMembers;
+
+  // Make router URL reactive using toSignal
+  private readonly currentUrl = toSignal(
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map(() => this.router.url),
+    ),
+    { initialValue: this.router.url },
+  );
+
   // Computed
   readonly currentYear = computed(() => new Date().getFullYear());
+
+  readonly breadcrumbs = computed<BreadcrumbItem[]>(() => {
+    const url = this.currentUrl();
+    // Simple breadcrumb logic - can be enhanced
+    if (url.startsWith('/app/organizations')) {
+      return [{ label: 'Organizations' }];
+    }
+    if (url.startsWith('/app/organizations') && url.includes('/projects')) {
+      return [{ label: 'Organizations', href: '/app/organizations' }, { label: 'Projects' }];
+    }
+    return [{ label: 'Dashboard' }];
+  });
+
+  readonly actionButton = computed<{ label: string; icon: IconName } | null>(() => {
+    const url = this.currentUrl();
+    if (url.includes('/projects')) {
+      return { label: 'New Task', icon: 'plus' };
+    }
+    if (url.includes('/docs')) {
+      return { label: 'Upload', icon: 'upload' };
+    }
+    return null;
+  });
 
   // Methods
   toggleSidebar(): void {
@@ -331,5 +308,13 @@ export class BaseLayout {
 
   closeSidebar(): void {
     this.sidebarOpen.set(false);
+  }
+
+  handleActionClick(): void {
+    const action = this.actionButton();
+    if (action) {
+      // Handle action button click
+      // TODO: Implement action handlers
+    }
   }
 }

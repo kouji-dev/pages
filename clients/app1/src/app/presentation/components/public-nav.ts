@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Button, Icon } from 'shared-ui';
-import { ThemeToggle } from './theme-toggle';
+import { ThemeToggle } from '../../shared/components/theme-toggle/theme-toggle';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
@@ -123,8 +123,8 @@ import { TranslatePipe } from '@ngx-translate/core';
       .public-nav {
         @apply w-full;
         @apply border-b;
-        @apply border-border-default;
-        @apply bg-bg-primary;
+        @apply border-border;
+        @apply bg-background/80 backdrop-blur-md;
         @apply sticky top-0;
         z-index: 50;
         position: sticky;
@@ -140,7 +140,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       .public-nav_logo {
         @apply flex items-center gap-2;
         @apply font-bold text-lg;
-        @apply text-text-primary;
+        @apply text-foreground;
         text-decoration: none;
         @apply hover:opacity-80 transition-opacity;
       }
@@ -159,7 +159,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
       .public-nav_link {
         @apply text-sm font-medium;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         text-decoration: none;
         @apply transition-colors;
         @apply relative;
@@ -167,7 +167,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       }
 
       .public-nav_link:hover {
-        @apply text-primary-500;
+        @apply text-primary;
       }
 
       .public-nav_link::after {
@@ -175,7 +175,7 @@ import { TranslatePipe } from '@ngx-translate/core';
         @apply absolute bottom-0 left-0;
         @apply h-0.5;
         width: 0;
-        @apply bg-primary-500;
+        @apply bg-primary;
         @apply transform -translate-y-1;
         @apply transition-all duration-300 ease-in-out;
       }
@@ -185,7 +185,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       }
 
       .public-nav_link--active {
-        @apply text-text-primary;
+        @apply text-foreground;
       }
 
       .public-nav_link--active::after {
@@ -193,16 +193,16 @@ import { TranslatePipe } from '@ngx-translate/core';
       }
 
       .public-nav_link--demo {
-        @apply text-primary-500;
+        @apply text-primary;
         font-weight: 600;
       }
 
       .public-nav_link--demo:hover {
-        @apply text-primary-600;
+        @apply text-primary;
       }
 
       .public-nav_link--demo::after {
-        @apply bg-primary-500;
+        @apply bg-primary;
       }
 
       .public-nav_actions {
@@ -213,17 +213,17 @@ import { TranslatePipe } from '@ngx-translate/core';
         @apply md:hidden;
         @apply p-2;
         @apply border-none bg-transparent;
-        @apply text-text-primary;
+        @apply text-foreground;
         @apply cursor-pointer;
-        @apply hover:bg-gray-100 rounded;
+        @apply hover:bg-muted rounded;
       }
 
       .public-nav_mobile {
         @apply md:hidden;
         @apply border-t;
-        @apply border-border-default;
+        @apply border-border;
         @apply px-4 py-4;
-        @apply bg-bg-primary;
+        @apply bg-background;
       }
 
       .public-nav_mobile-links {
@@ -233,7 +233,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
       .public-nav_mobile-link {
         @apply text-base font-medium;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         text-decoration: none;
         @apply transition-colors;
         @apply py-2;
@@ -241,26 +241,26 @@ import { TranslatePipe } from '@ngx-translate/core';
       }
 
       .public-nav_mobile-link:hover {
-        @apply text-primary-500;
+        @apply text-primary;
       }
 
       .public-nav_mobile-link--active {
-        @apply text-text-primary;
+        @apply text-foreground;
       }
 
       .public-nav_mobile-link--demo {
-        @apply text-primary-500;
+        @apply text-primary;
         font-weight: 600;
       }
 
       .public-nav_mobile-link--demo:hover {
-        @apply text-primary-600;
+        @apply text-primary;
       }
 
       .public-nav_mobile-actions {
         @apply flex flex-col gap-3;
         @apply pt-4 border-t;
-        @apply border-border-default;
+        @apply border-border;
       }
 
       .public-nav_mobile-theme {
