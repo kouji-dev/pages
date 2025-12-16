@@ -40,6 +40,13 @@ class UserModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         Text,
         nullable=True,
     )
+    language: Mapped[str] = mapped_column(
+        String(5),
+        nullable=False,
+        default="en",
+        server_default="en",
+        index=True,
+    )
 
     # Status
     is_active: Mapped[bool] = mapped_column(

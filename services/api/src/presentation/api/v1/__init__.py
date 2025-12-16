@@ -7,6 +7,7 @@ from src.presentation.api.v1.auth import router as auth_router
 from src.presentation.api.v1.comments import router as comments_router
 from src.presentation.api.v1.health import router as health_router
 from src.presentation.api.v1.issues import router as issues_router
+from src.presentation.api.v1.languages import router as languages_router
 from src.presentation.api.v1.notifications import router as notifications_router
 from src.presentation.api.v1.organizations import router as organizations_router
 from src.presentation.api.v1.pages import router as pages_router
@@ -22,6 +23,7 @@ router = APIRouter(prefix="/api/v1")
 router.include_router(health_router, tags=["Health"])
 router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
 router.include_router(users_router, prefix="/users", tags=["Users"])
+router.include_router(languages_router, tags=["Languages"])
 router.include_router(organizations_router, prefix="/organizations", tags=["Organizations"])
 router.include_router(notifications_router, tags=["Notifications"])
 router.include_router(search_router, tags=["Search"])
