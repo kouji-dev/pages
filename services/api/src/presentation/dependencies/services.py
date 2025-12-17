@@ -23,23 +23,35 @@ from src.domain.repositories import (
     SprintRepository,
     TemplateRepository,
     UserRepository,
+    WorkflowRepository,
 )
+from src.domain.repositories.custom_field_repository import CustomFieldRepository
+from src.domain.repositories.dashboard_repository import DashboardRepository
+from src.domain.repositories.issue_link_repository import IssueLinkRepository
+from src.domain.repositories.saved_filter_repository import SavedFilterRepository
+from src.domain.repositories.time_entry_repository import TimeEntryRepository
 from src.domain.services import PasswordService, PermissionService, StorageService
 from src.infrastructure.database import get_session
 from src.infrastructure.database.repositories import (
     SQLAlchemyAttachmentRepository,
     SQLAlchemyCommentRepository,
+    SQLAlchemyCustomFieldRepository,
+    SQLAlchemyDashboardRepository,
     SQLAlchemyInvitationRepository,
     SQLAlchemyIssueActivityRepository,
+    SQLAlchemyIssueLinkRepository,
     SQLAlchemyIssueRepository,
     SQLAlchemyNotificationRepository,
     SQLAlchemyOrganizationRepository,
     SQLAlchemyPageRepository,
     SQLAlchemyProjectRepository,
+    SQLAlchemySavedFilterRepository,
     SQLAlchemySpaceRepository,
     SQLAlchemySprintRepository,
     SQLAlchemyTemplateRepository,
+    SQLAlchemyTimeEntryRepository,
     SQLAlchemyUserRepository,
+    SQLAlchemyWorkflowRepository,
 )
 from src.infrastructure.security import BcryptPasswordService, JWTTokenService
 from src.infrastructure.services.local_storage_service import LocalStorageService
@@ -237,6 +249,90 @@ async def get_sprint_repository(
         SQLAlchemy implementation of SprintRepository
     """
     return SQLAlchemySprintRepository(session)
+
+
+async def get_workflow_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> WorkflowRepository:
+    """Get workflow repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of WorkflowRepository
+    """
+    return SQLAlchemyWorkflowRepository(session)
+
+
+async def get_custom_field_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> CustomFieldRepository:
+    """Get custom field repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of CustomFieldRepository
+    """
+    return SQLAlchemyCustomFieldRepository(session)
+
+
+async def get_time_entry_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> TimeEntryRepository:
+    """Get time entry repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of TimeEntryRepository
+    """
+    return SQLAlchemyTimeEntryRepository(session)
+
+
+async def get_issue_link_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> IssueLinkRepository:
+    """Get issue link repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of IssueLinkRepository
+    """
+    return SQLAlchemyIssueLinkRepository(session)
+
+
+async def get_dashboard_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> DashboardRepository:
+    """Get dashboard repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of DashboardRepository
+    """
+    return SQLAlchemyDashboardRepository(session)
+
+
+async def get_saved_filter_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> SavedFilterRepository:
+    """Get saved filter repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of SavedFilterRepository
+    """
+    return SQLAlchemySavedFilterRepository(session)
 
 
 async def get_search_query_service(

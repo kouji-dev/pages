@@ -97,6 +97,14 @@ class IssueModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         index=True,
     )  # Order in backlog (lower = higher priority)
 
+    # Subtasks
+    parent_issue_id: Mapped[UUID | None] = mapped_column(
+        PGUUID(as_uuid=True),
+        ForeignKey("issues.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
     # Relationships
     project = relationship(
         "ProjectModel",
@@ -131,6 +139,32 @@ class IssueModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         lazy="selectin",
         cascade="all, delete-orphan",
         order_by="IssueActivityModel.created_at.desc()",
+    )
+    custom_field_values = relationship(
+        "CustomFieldValueModel",
+        back_populates="issue",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+    )
+    outgoing_links = relationship(
+        "IssueLinkModel",
+        foreign_keys="IssueLinkModel.source_issue_id",
+        back_populates="source_issue",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+    )
+    incoming_links = relationship(
+        "IssueLinkModel",
+        foreign_keys="IssueLinkModel.target_issue_id",
+        back_populates="target_issue",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+    )
+    time_entries = relationship(
+        "TimeEntryModel",
+        back_populates="issue",
+        lazy="selectin",
+        cascade="all, delete-orphan",
     )
 
     def __repr__(self) -> str:
