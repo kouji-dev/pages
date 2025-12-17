@@ -44,6 +44,7 @@ class Project:
     key: str
     description: str | None = None
     settings: dict[str, Any] | None = None
+    folder_id: UUID | None = None
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)
     deleted_at: datetime | None = None
@@ -78,6 +79,7 @@ class Project:
         key: str | None = None,
         description: str | None = None,
         settings: dict[str, Any] | None = None,
+        folder_id: UUID | None = None,
     ) -> Self:
         """Create a new project.
 
@@ -109,6 +111,7 @@ class Project:
             key=key,
             description=description,
             settings=settings,
+            folder_id=folder_id,
             created_at=now,
             updated_at=now,
             deleted_at=None,
@@ -179,6 +182,15 @@ class Project:
             settings: New project settings dictionary (can be None)
         """
         self.settings = settings
+        self._touch()
+
+    def update_folder(self, folder_id: UUID | None) -> None:
+        """Update project folder assignment.
+
+        Args:
+            folder_id: New folder ID (None to unassign from folder)
+        """
+        self.folder_id = folder_id
         self._touch()
 
     def delete(self) -> None:

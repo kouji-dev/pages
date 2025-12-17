@@ -46,6 +46,7 @@ from src.application.use_cases.template import (
     ListTemplatesUseCase,
     UpdateTemplateUseCase,
 )
+from src.application.use_cases.unified import ListFoldersAndNodesUseCase
 from src.application.use_cases.user import (
     DeactivateUserUseCase,
     DeleteAvatarUseCase,
@@ -122,4 +123,6 @@ __all__ = [
     "ListTemplatesUseCase",
     "UpdateTemplateUseCase",
     "DeleteTemplateUseCase",
+    # Unified use cases
+    "ListFoldersAndNodesUseCase",
 ]

@@ -26,6 +26,7 @@ from src.presentation.api.v1.sprints import router as sprints_router
 from src.presentation.api.v1.subtasks import router as subtasks_router
 from src.presentation.api.v1.templates import router as templates_router
 from src.presentation.api.v1.time_entries import router as time_entries_router
+from src.presentation.api.v1.unified import router as unified_router
 from src.presentation.api.v1.users import router as users_router
 from src.presentation.api.v1.workflows import router as workflows_router
 
@@ -46,6 +47,7 @@ router.include_router(issues_router, prefix="/issues", tags=["Issues"])
 router.include_router(comments_router, tags=["Comments"])
 router.include_router(folders_router, tags=["Folders"])
 router.include_router(nodes_router, tags=["Nodes"])
+router.include_router(unified_router, tags=["Unified"])
 router.include_router(favorites_router, tags=["Favorites"])
 router.include_router(attachments_router, tags=["Attachments"])
 router.include_router(spaces_router, prefix="/spaces", tags=["Spaces"])
@@ -58,6 +60,3 @@ router.include_router(issue_links_router, tags=["Issue Links"])
 router.include_router(dashboards_router, tags=["Dashboards"])
 router.include_router(subtasks_router, tags=["Subtasks"])
 router.include_router(saved_filters_router, tags=["Saved Filters"])
-router.include_router(folders_router, tags=["Folders"])
-router.include_router(nodes_router, tags=["Nodes"])
-router.include_router(favorites_router, tags=["Favorites"])
