@@ -78,4 +78,3 @@ class ListFavoritesUseCase:
         logger.info("Favorites listed", count=len(favorite_responses), total=total)
 
         return FavoriteListResponse(favorites=favorite_responses, total=total)
-

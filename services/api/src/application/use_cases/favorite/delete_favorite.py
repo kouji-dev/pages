@@ -42,4 +42,3 @@ class DeleteFavoriteUseCase:
         await self._favorite_repository.delete(favorite_uuid)
 
         logger.info("Favorite deleted successfully", favorite_id=favorite_id)
-

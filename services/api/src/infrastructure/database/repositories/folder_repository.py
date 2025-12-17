@@ -38,9 +38,7 @@ class SQLAlchemyFolderRepository(FolderRepository):
             ConflictException: If folder name conflicts in organization/parent
         """
         # Check for existing name in organization/parent
-        if await self.exists_by_name(
-            folder.organization_id, folder.name, folder.parent_id
-        ):
+        if await self.exists_by_name(folder.organization_id, folder.name, folder.parent_id):
             raise ConflictException(
                 f"Folder with name '{folder.name}' already exists in this location",
                 field="name",
@@ -73,9 +71,7 @@ class SQLAlchemyFolderRepository(FolderRepository):
         Returns:
             Folder if found, None otherwise
         """
-        result = await self._session.execute(
-            select(FolderModel).where(FolderModel.id == folder_id)
-        )
+        result = await self._session.execute(select(FolderModel).where(FolderModel.id == folder_id))
         model = result.scalar_one_or_none()
 
         if model is None:
@@ -96,9 +92,7 @@ class SQLAlchemyFolderRepository(FolderRepository):
             EntityNotFoundException: If folder not found
             ConflictException: If name conflicts with another folder
         """
-        result = await self._session.execute(
-            select(FolderModel).where(FolderModel.id == folder.id)
-        )
+        result = await self._session.execute(select(FolderModel).where(FolderModel.id == folder.id))
         model = result.scalar_one_or_none()
 
         if model is None:
@@ -139,9 +133,7 @@ class SQLAlchemyFolderRepository(FolderRepository):
         Raises:
             EntityNotFoundException: If folder not found
         """
-        result = await self._session.execute(
-            select(FolderModel).where(FolderModel.id == folder_id)
-        )
+        result = await self._session.execute(select(FolderModel).where(FolderModel.id == folder_id))
         model = result.scalar_one_or_none()
 
         if model is None:
@@ -296,4 +288,3 @@ class SQLAlchemyFolderRepository(FolderRepository):
             updated_at=model.updated_at,
             deleted_at=model.deleted_at,
         )
-

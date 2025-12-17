@@ -139,7 +139,7 @@ async def test_folder_workflow_create_list_update_delete(
     # Should only have root folder (child is soft-deleted and not included by default)
     assert list_after_delete_data["total"] == 1
     assert list_after_delete_data["folders"][0]["name"] == "Updated Root Folder"
-    
+
     # Verify child folder is soft-deleted by checking with include_deleted
     # Note: When parent_id is not specified, it defaults to None which means root folders only
     # So we need to check the child folder specifically by its parent_id
@@ -156,9 +156,7 @@ async def test_folder_workflow_create_list_update_delete(
 
 
 @pytest.mark.asyncio
-async def test_folder_node_assignment_workflow(
-    client: AsyncClient, test_user, db_session
-):
+async def test_folder_node_assignment_workflow(client: AsyncClient, test_user, db_session):
     """Test workflow for assigning nodes to folders."""
     # Create organization
     org = OrganizationModel(name="Test Org", slug="test-org")
@@ -363,4 +361,3 @@ async def test_folder_hierarchy_workflow(client: AsyncClient, test_user, db_sess
     )
     assert list_level1_children_after.status_code == 200
     assert list_level1_children_after.json()["total"] == 2  # level2 and level3
-

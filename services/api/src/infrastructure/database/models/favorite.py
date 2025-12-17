@@ -20,9 +20,7 @@ class FavoriteModel(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     """
 
     __tablename__ = "favorites"
-    __table_args__ = (
-        UniqueConstraint("user_id", "entity_type", "entity_id", name="uq_favorite"),
-    )
+    __table_args__ = (UniqueConstraint("user_id", "entity_type", "entity_id", name="uq_favorite"),)
 
     user_id: Mapped[UUID] = mapped_column(
         PGUUID(as_uuid=True),
@@ -49,4 +47,3 @@ class FavoriteModel(Base, UUIDPrimaryKeyMixin, TimestampMixin):
 
     def __repr__(self) -> str:
         return f"<Favorite(id={self.id}, user_id={self.user_id}, entity_type={self.entity_type}, entity_id={self.entity_id})>"
-

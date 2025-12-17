@@ -94,9 +94,7 @@ class TestListNodesUseCase:
             count_result,  # space page_count
         ]
 
-        use_case = ListNodesUseCase(
-            mock_project_repository, mock_space_repository, mock_session
-        )
+        use_case = ListNodesUseCase(mock_project_repository, mock_space_repository, mock_session)
 
         result = await use_case.execute(str(test_organization.id))
 
@@ -137,13 +135,9 @@ class TestListNodesUseCase:
             count_result,  # project issue_count
         ]
 
-        use_case = ListNodesUseCase(
-            mock_project_repository, mock_space_repository, mock_session
-        )
+        use_case = ListNodesUseCase(mock_project_repository, mock_space_repository, mock_session)
 
-        result = await use_case.execute(
-            str(test_organization.id), folder_id=str(folder_id)
-        )
+        result = await use_case.execute(str(test_organization.id), folder_id=str(folder_id))
 
         assert len(result.nodes) == 1
         assert result.nodes[0].type == "project"
@@ -169,9 +163,7 @@ class TestListNodesUseCase:
         mock_project_repository.get_all.return_value = []
         mock_space_repository.get_all.return_value = []
 
-        use_case = ListNodesUseCase(
-            mock_project_repository, mock_space_repository, mock_session
-        )
+        use_case = ListNodesUseCase(mock_project_repository, mock_space_repository, mock_session)
 
         result = await use_case.execute(str(test_organization.id))
 
@@ -222,14 +214,9 @@ class TestListNodesUseCase:
             count_result,
         ] * 3
 
-        use_case = ListNodesUseCase(
-            mock_project_repository, mock_space_repository, mock_session
-        )
+        use_case = ListNodesUseCase(mock_project_repository, mock_space_repository, mock_session)
 
-        result = await use_case.execute(
-            str(test_organization.id), skip=0, limit=10
-        )
+        result = await use_case.execute(str(test_organization.id), skip=0, limit=10)
 
         assert len(result.nodes) == 8  # 5 projects + 3 spaces
         assert result.total == 8
-

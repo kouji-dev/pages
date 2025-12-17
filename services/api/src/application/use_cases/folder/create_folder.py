@@ -29,9 +29,7 @@ class CreateFolderUseCase:
         self._folder_repository = folder_repository
         self._organization_repository = organization_repository
 
-    async def execute(
-        self, request: CreateFolderRequest, creator_user_id: str
-    ) -> FolderResponse:
+    async def execute(self, request: CreateFolderRequest, creator_user_id: str) -> FolderResponse:
         """Execute folder creation.
 
         Args:
@@ -123,4 +121,3 @@ class CreateFolderUseCase:
             created_at=created_folder.created_at,
             updated_at=created_folder.updated_at,
         )
-

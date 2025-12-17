@@ -46,4 +46,3 @@ class DeleteFolderUseCase:
         await self._folder_repository.update(folder)
 
         logger.info("Folder deleted successfully", folder_id=folder_id)
-

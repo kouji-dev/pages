@@ -14,9 +14,7 @@ from src.infrastructure.database.models import (
 
 
 @pytest.mark.asyncio
-async def test_favorite_workflow_create_list_delete(
-    client: AsyncClient, test_user, db_session
-):
+async def test_favorite_workflow_create_list_delete(client: AsyncClient, test_user, db_session):
     """Test complete favorite workflow: create, list, delete."""
     # Create organization
     org = OrganizationModel(name="Test Org", slug="test-org")
@@ -180,9 +178,7 @@ async def test_favorite_workflow_create_list_delete(
 
 
 @pytest.mark.asyncio
-async def test_favorite_heterogeneous_list_workflow(
-    client: AsyncClient, test_user, db_session
-):
+async def test_favorite_heterogeneous_list_workflow(client: AsyncClient, test_user, db_session):
     """Test workflow for managing heterogeneous favorites list."""
     # Create organization
     org = OrganizationModel(name="Test Org", slug="test-org")
@@ -315,4 +311,3 @@ async def test_favorite_heterogeneous_list_workflow(
     )
     assert list_empty_response.status_code == 200
     assert list_empty_response.json()["total"] == 0
-

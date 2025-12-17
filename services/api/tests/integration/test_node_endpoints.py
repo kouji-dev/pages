@@ -220,4 +220,3 @@ async def test_list_nodes_requires_org_membership(client: AsyncClient, test_user
     )
 
     assert list_response.status_code == 403
-

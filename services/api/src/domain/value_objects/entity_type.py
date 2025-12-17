@@ -123,4 +123,3 @@ class EntityType:
             True if page, False otherwise
         """
         return self.value == self.PAGE
-

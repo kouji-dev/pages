@@ -259,9 +259,7 @@ async def test_list_favorites_success(client: AsyncClient, test_user, db_session
 
 
 @pytest.mark.asyncio
-async def test_list_favorites_with_entity_type_filter(
-    client: AsyncClient, test_user, db_session
-):
+async def test_list_favorites_with_entity_type_filter(client: AsyncClient, test_user, db_session):
     """Test favorite listing with entity type filter."""
     # Create organization
     org = OrganizationModel(name="Test Org", slug="test-org")
@@ -392,9 +390,7 @@ async def test_delete_favorite_success(client: AsyncClient, test_user, db_sessio
     # Instead, verify it doesn't exist
     from sqlalchemy import select
 
-    result = await db_session.execute(
-        select(FavoriteModel).where(FavoriteModel.id == favorite.id)
-    )
+    result = await db_session.execute(select(FavoriteModel).where(FavoriteModel.id == favorite.id))
     assert result.scalar_one_or_none() is None
 
 
@@ -440,4 +436,3 @@ async def test_list_favorites_requires_auth(client: AsyncClient):
     """Test favorite listing requires authentication."""
     response = await client.get("/api/v1/users/me/favorites")
     assert response.status_code == 401
-

@@ -128,4 +128,3 @@ class FavoriteRepository(ABC):
             Favorite if found, None otherwise
         """
         ...
-

@@ -39,9 +39,7 @@ class SQLAlchemyFavoriteRepository(FavoriteRepository):
             ConflictException: If favorite already exists (user + entity_type + entity_id)
         """
         # Check if favorite already exists
-        if await self.exists(
-            favorite.user_id, favorite.entity_type, favorite.entity_id
-        ):
+        if await self.exists(favorite.user_id, favorite.entity_type, favorite.entity_id):
             raise ConflictException(
                 f"Favorite already exists for this {favorite.entity_type.value}",
                 field="entity_id",
@@ -147,9 +145,7 @@ class SQLAlchemyFavoriteRepository(FavoriteRepository):
             Total count of favorites
         """
         query = (
-            select(func.count())
-            .select_from(FavoriteModel)
-            .where(FavoriteModel.user_id == user_id)
+            select(func.count()).select_from(FavoriteModel).where(FavoriteModel.user_id == user_id)
         )
 
         if entity_type:
@@ -233,4 +229,3 @@ class SQLAlchemyFavoriteRepository(FavoriteRepository):
             created_at=model.created_at,
             updated_at=model.updated_at,
         )
-

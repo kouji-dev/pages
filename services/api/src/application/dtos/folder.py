@@ -84,4 +84,3 @@ class AssignNodesToFolderRequest(BaseModel):
     """Request DTO for assigning nodes to a folder."""
 
     node_ids: list[UUID] = Field(..., description="List of node IDs (projects or spaces) to assign")
-

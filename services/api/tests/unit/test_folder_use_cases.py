@@ -225,7 +225,7 @@ class TestCreateFolderUseCase:
         # ConflictException should be raised before create is called
         with pytest.raises(ConflictException):
             await use_case.execute(request, str(uuid4()))
-        
+
         # Verify create was not called
         mock_folder_repository.create.assert_not_called()
 
@@ -293,9 +293,7 @@ class TestListFoldersUseCase:
 
         use_case = ListFoldersUseCase(mock_folder_repository)
 
-        result = await use_case.execute(
-            str(test_organization.id), parent_id=str(test_folder.id)
-        )
+        result = await use_case.execute(str(test_organization.id), parent_id=str(test_folder.id))
 
         assert len(result.folders) == 1
         assert result.folders[0].parent_id == test_folder.id
@@ -305,9 +303,7 @@ class TestUpdateFolderUseCase:
     """Tests for UpdateFolderUseCase."""
 
     @pytest.mark.asyncio
-    async def test_update_folder_name_success(
-        self, mock_folder_repository, test_folder
-    ):
+    async def test_update_folder_name_success(self, mock_folder_repository, test_folder):
         """Test successful folder name update."""
         mock_folder_repository.get_by_id.return_value = test_folder
 
@@ -376,9 +372,7 @@ class TestUpdateFolderUseCase:
             await use_case.execute(str(uuid4()), request)
 
     @pytest.mark.asyncio
-    async def test_update_folder_self_parent(
-        self, mock_folder_repository, test_folder
-    ):
+    async def test_update_folder_self_parent(self, mock_folder_repository, test_folder):
         """Test folder update with self as parent."""
         mock_folder_repository.get_by_id.return_value = test_folder
 
@@ -547,4 +541,3 @@ class TestAssignNodesToFolderUseCase:
         request = AssignNodesToFolderRequest(node_ids=[uuid4()])
         with pytest.raises(EntityNotFoundException):
             await use_case.execute(str(test_folder.id), request)
-

@@ -30,9 +30,7 @@ class CreateFavoriteUseCase:
         self._favorite_repository = favorite_repository
         self._user_repository = user_repository
 
-    async def execute(
-        self, request: CreateFavoriteRequest, user_id: str
-    ) -> FavoriteResponse:
+    async def execute(self, request: CreateFavoriteRequest, user_id: str) -> FavoriteResponse:
         """Execute favorite creation.
 
         Args:
@@ -64,9 +62,7 @@ class CreateFavoriteUseCase:
         entity_type = EntityType.from_string(request.entity_type)
 
         # Check if favorite already exists
-        if await self._favorite_repository.exists(
-            user_uuid, entity_type, request.entity_id
-        ):
+        if await self._favorite_repository.exists(user_uuid, entity_type, request.entity_id):
             logger.warning(
                 "Favorite already exists",
                 user_id=user_id,
@@ -102,4 +98,3 @@ class CreateFavoriteUseCase:
             created_at=created_favorite.created_at,
             updated_at=created_favorite.updated_at,
         )
-

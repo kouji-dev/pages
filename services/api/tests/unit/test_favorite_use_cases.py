@@ -190,9 +190,7 @@ class TestListFavoritesUseCase:
     """Tests for ListFavoritesUseCase."""
 
     @pytest.mark.asyncio
-    async def test_list_favorites_success(
-        self, mock_favorite_repository, test_user, test_favorite
-    ):
+    async def test_list_favorites_success(self, mock_favorite_repository, test_user, test_favorite):
         """Test successful favorite listing."""
         favorites = [test_favorite]
         mock_favorite_repository.get_all.return_value = favorites
@@ -241,9 +239,7 @@ class TestListFavoritesUseCase:
         assert result.total == 0
 
     @pytest.mark.asyncio
-    async def test_list_favorites_with_pagination(
-        self, mock_favorite_repository, test_user
-    ):
+    async def test_list_favorites_with_pagination(self, mock_favorite_repository, test_user):
         """Test favorite listing with pagination."""
         favorites = [
             Favorite.create(
@@ -268,9 +264,7 @@ class TestDeleteFavoriteUseCase:
     """Tests for DeleteFavoriteUseCase."""
 
     @pytest.mark.asyncio
-    async def test_delete_favorite_success(
-        self, mock_favorite_repository, test_favorite
-    ):
+    async def test_delete_favorite_success(self, mock_favorite_repository, test_favorite):
         """Test successful favorite deletion."""
         mock_favorite_repository.get_by_id.return_value = test_favorite
         mock_favorite_repository.delete = AsyncMock()
@@ -290,4 +284,3 @@ class TestDeleteFavoriteUseCase:
 
         with pytest.raises(EntityNotFoundException):
             await use_case.execute(str(uuid4()))
-

@@ -63,4 +63,3 @@ class CreateFavoriteRequest(BaseModel):
         # This will raise ValidationException if invalid
         EntityType.from_string(v)
         return v.lower().strip()
-

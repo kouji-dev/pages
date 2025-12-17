@@ -129,9 +129,7 @@ async def test_node_filtering_workflow(client: AsyncClient, test_user, db_sessio
 
 
 @pytest.mark.asyncio
-async def test_node_organization_isolation_workflow(
-    client: AsyncClient, test_user, db_session
-):
+async def test_node_organization_isolation_workflow(client: AsyncClient, test_user, db_session):
     """Test that nodes are properly isolated by organization."""
     # Create two organizations
     org1 = OrganizationModel(name="Org 1", slug="org-1")
@@ -201,4 +199,3 @@ async def test_node_organization_isolation_workflow(
     list_org2_data = list_org2_response.json()
     assert list_org2_data["total"] == 1
     assert list_org2_data["nodes"][0]["name"] == "Org2 Project"
-

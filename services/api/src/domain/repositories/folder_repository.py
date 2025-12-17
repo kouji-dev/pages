@@ -141,4 +141,3 @@ class FolderRepository(ABC):
             True if folder exists, False otherwise
         """
         ...
-

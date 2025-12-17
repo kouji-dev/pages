@@ -130,4 +130,3 @@ def downgrade() -> None:
     op.drop_index("ix_folders_parent_id", table_name="folders")
     op.drop_index("ix_folders_organization_id", table_name="folders")
     op.drop_table("folders")
-

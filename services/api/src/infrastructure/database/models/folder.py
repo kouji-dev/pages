@@ -63,4 +63,3 @@ class FolderModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
 
     def __repr__(self) -> str:
         return f"<Folder(id={self.id}, name={self.name}, organization_id={self.organization_id})>"
-

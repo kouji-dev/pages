@@ -308,9 +308,7 @@ async def assign_nodes_to_folder(
     folder_id: UUID,
     request: AssignNodesToFolderRequest,
     current_user: Annotated[User, Depends(get_current_active_user)],
-    use_case: Annotated[
-        AssignNodesToFolderUseCase, Depends(get_assign_nodes_to_folder_use_case)
-    ],
+    use_case: Annotated[AssignNodesToFolderUseCase, Depends(get_assign_nodes_to_folder_use_case)],
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
 ) -> None:
     """Assign nodes (projects/spaces) to a folder.
@@ -336,4 +334,3 @@ async def assign_nodes_to_folder(
     )
 
     await use_case.execute(str(folder_id), request)
-

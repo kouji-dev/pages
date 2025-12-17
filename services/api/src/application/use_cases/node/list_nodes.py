@@ -8,7 +8,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dtos.node import NodeListResponse, NodeListItemResponse
 from src.domain.repositories import ProjectRepository, SpaceRepository
-from src.infrastructure.database.models import IssueModel, PageModel, ProjectMemberModel, ProjectModel, SpaceModel
+from src.infrastructure.database.models import (
+    IssueModel,
+    PageModel,
+    ProjectMemberModel,
+    ProjectModel,
+    SpaceModel,
+)
 
 logger = structlog.get_logger()
 
@@ -131,9 +137,7 @@ class ListNodesUseCase:
 
             # Count pages
             result = await self._session.execute(
-                select(func.count())
-                .select_from(PageModel)
-                .where(PageModel.space_id == space.id)
+                select(func.count()).select_from(PageModel).where(PageModel.space_id == space.id)
             )
             page_count: int = result.scalar_one()
 
@@ -157,4 +161,3 @@ class ListNodesUseCase:
         logger.info("Nodes listed", count=total, organization_id=organization_id)
 
         return NodeListResponse(nodes=node_responses, total=total)
-

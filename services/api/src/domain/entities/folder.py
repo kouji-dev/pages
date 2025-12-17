@@ -140,4 +140,3 @@ class Folder:
     def _touch(self) -> None:
         """Update the updated_at timestamp."""
         self.updated_at = datetime.utcnow()
-

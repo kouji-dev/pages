@@ -422,4 +422,3 @@ async def test_get_folder_not_found(client: AsyncClient, test_user, db_session):
     )
 
     assert get_response.status_code == 404
-

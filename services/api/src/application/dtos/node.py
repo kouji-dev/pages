@@ -43,4 +43,3 @@ class NodeListResponse(BaseModel):
 
     nodes: list[NodeListItemResponse]
     total: int = Field(..., description="Total number of nodes")
-

@@ -79,4 +79,3 @@ class ListFoldersUseCase:
         logger.info("Folders listed", count=len(folder_responses), total=total)
 
         return FolderListResponse(folders=folder_responses, total=total)
-

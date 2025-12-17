@@ -36,9 +36,7 @@ class AssignNodesToFolderUseCase:
         self._space_repository = space_repository
         self._session = session
 
-    async def execute(
-        self, folder_id: str, request: AssignNodesToFolderRequest
-    ) -> None:
+    async def execute(self, folder_id: str, request: AssignNodesToFolderRequest) -> None:
         """Execute node assignment to folder.
 
         Args:
@@ -120,4 +118,3 @@ class AssignNodesToFolderUseCase:
             raise EntityNotFoundException("Node", str(node_id))
 
         logger.info("Nodes assigned to folder successfully", folder_id=folder_id)
-

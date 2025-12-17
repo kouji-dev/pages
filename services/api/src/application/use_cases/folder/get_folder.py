@@ -54,4 +54,3 @@ class GetFolderUseCase:
             created_at=folder.created_at,
             updated_at=folder.updated_at,
         )
-

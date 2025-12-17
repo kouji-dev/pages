@@ -22,9 +22,7 @@ class UpdateFolderUseCase:
         """
         self._folder_repository = folder_repository
 
-    async def execute(
-        self, folder_id: str, request: UpdateFolderRequest
-    ) -> FolderResponse:
+    async def execute(self, folder_id: str, request: UpdateFolderRequest) -> FolderResponse:
         """Execute folder update.
 
         Args:
@@ -52,9 +50,7 @@ class UpdateFolderUseCase:
             if request.parent_id == folder.id:
                 from src.domain.exceptions import ValidationException
 
-                raise ValidationException(
-                    "Folder cannot be its own parent", field="parent_id"
-                )
+                raise ValidationException("Folder cannot be its own parent", field="parent_id")
 
             parent_folder = await self._folder_repository.get_by_id(request.parent_id)
             if parent_folder is None:
@@ -98,4 +94,3 @@ class UpdateFolderUseCase:
             created_at=updated_folder.created_at,
             updated_at=updated_folder.updated_at,
         )
-
