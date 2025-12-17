@@ -106,7 +106,6 @@ import { CreateProjectModal } from '../../components/create-project-modal/create
       .projects-page {
         @apply min-h-screen;
         @apply flex flex-col;
-        @apply bg-background;
       }
 
       .projects-page_header {

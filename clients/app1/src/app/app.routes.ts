@@ -3,6 +3,7 @@ import { Demo } from './presentation/pages/demo';
 import { Landing } from './presentation/pages/landing';
 import { FeaturesPage } from './presentation/pages/features-page';
 import { PricingPage } from './presentation/pages/pricing-page';
+import { DashboardPage } from './features/dashboard/pages/dashboard/dashboard-page';
 import { OrganizationsPage } from './features/organizations/pages/organizations/organizations-page.component';
 import { OrganizationSettingsPage } from './features/organizations/pages/settings/organization-settings-page.component';
 import { InvitationAcceptancePage } from './features/organizations/pages/invitation/invitation-acceptance-page.component';
@@ -23,6 +24,12 @@ import { AuthenticatedLayout } from './presentation/layout/authenticated-layout'
 import { OrganizationLayout } from './presentation/layout/organization-layout';
 import { authGuard } from './core/auth/guards/auth.guard';
 import { loginGuard } from './core/auth/guards/login.guard';
+import { OnboardingPage } from './core/onboarding/pages/onboarding-page/onboarding-page';
+import { onboardingGuard } from './core/onboarding/guards/onboarding.guard';
+import { redirectOnboardingGuard } from './core/onboarding/guards/redirect-onboarding.guard';
+import { redirectToOrganizationGuard } from './core/organization/guards/redirect-to-organization.guard';
+import { organizationExistsGuard } from './core/organization/guards/organization-exists.guard';
+import { redirectOrganizationsGuard } from './core/organization/guards/redirect-organizations.guard';
 
 export const routes: Routes = [
   {
@@ -72,25 +79,40 @@ export const routes: Routes = [
     component: ResetPasswordPage,
     title: 'Reset Password - Pages',
   },
+  // Onboarding route (requires authentication, but before app routes)
+  {
+    path: 'onboarding',
+    component: OnboardingPage,
+    canActivate: [authGuard, onboardingGuard],
+    title: 'Onboarding - Pages',
+  },
   // Protected routes (require authentication)
   {
     path: 'app',
     component: AuthenticatedLayout,
-    canActivate: [authGuard],
+    canActivate: [authGuard, redirectOnboardingGuard],
     children: [
       {
         path: '',
-        redirectTo: 'organizations',
+        canActivate: [redirectToOrganizationGuard],
+        redirectTo: '',
         pathMatch: 'full',
       },
       {
         path: 'organizations',
         component: OrganizationsPage,
+        canActivate: [redirectOrganizationsGuard],
         title: 'Organizations - Pages',
+      },
+      {
+        path: 'organizations/settings',
+        component: OrganizationSettingsPage,
+        title: 'Organization Settings - Pages',
       },
       {
         path: 'organizations/:organizationId',
         component: OrganizationLayout,
+        canActivate: [organizationExistsGuard],
         children: [
           {
             path: '',
@@ -98,61 +120,71 @@ export const routes: Routes = [
             pathMatch: 'full',
           },
           {
+            path: 'dashboard',
+            component: DashboardPage,
+            title: 'Dashboard - Pages',
+          },
+          {
             path: 'projects',
-            component: ProjectsPage,
-            title: 'Projects - Pages',
+            children: [
+              {
+                path: '',
+                component: ProjectsPage,
+                title: 'Projects - Pages',
+              },
+              {
+                path: ':projectId',
+                children: [
+                  {
+                    path: '',
+                    loadComponent: () =>
+                      import('./features/projects/pages/detail/project-detail-page').then(
+                        (m) => m.ProjectDetailPage,
+                      ),
+                    title: 'Project Details - Pages',
+                  },
+                  {
+                    path: 'settings',
+                    loadComponent: () =>
+                      import('./features/projects/pages/settings/project-settings-page').then(
+                        (m) => m.ProjectSettingsPage,
+                      ),
+                    title: 'Project Settings - Pages',
+                  },
+                  {
+                    path: 'issues/:issueId',
+                    component: IssueDetailPage,
+                    title: 'Issue Details - Pages',
+                  },
+                ],
+              },
+            ],
           },
           {
             path: 'spaces',
-            component: SpacesPage,
-            title: 'Spaces - Pages',
-          },
-        ],
-      },
-      {
-        path: 'organizations/:organizationId/settings',
-        component: OrganizationSettingsPage,
-        title: 'Organization Settings - Pages',
-      },
-      {
-        path: 'organizations/:organizationId/spaces/:spaceId',
-        component: SpaceDetailPage,
-        children: [
-          {
-            path: 'pages/:pageId',
-            component: PageDetailPage,
-            title: 'Page Details - Pages',
-          },
-        ],
-      },
-      {
-        path: 'organizations/:organizationId/spaces/:spaceId/settings',
-        component: SpaceSettingsPage,
-        title: 'Space Settings - Pages',
-      },
-      {
-        path: 'organizations/:organizationId/projects/:projectId',
-        children: [
-          {
-            path: '',
-            loadComponent: () =>
-              import('./features/projects/pages/detail/project-detail-page').then(
-                (m) => m.ProjectDetailPage,
-              ),
-            title: 'Project Details - Pages',
-          },
-          {
-            path: 'settings',
-            loadComponent: () =>
-              import('./features/projects/pages/settings/project-settings-page').then(
-                (m) => m.ProjectSettingsPage,
-              ),
-            title: 'Project Settings - Pages',
-          },
-          {
-            path: 'issues/:issueId',
-            component: IssueDetailPage,
-            title: 'Issue Details - Pages',
+            children: [
+              {
+                path: '',
+                component: SpacesPage,
+                title: 'Spaces - Pages',
+              },
+              {
+                path: ':spaceId',
+                component: SpaceDetailPage,
+                children: [
+                  {
+                    path: 'pages/:pageId',
+                    component: PageDetailPage,
+                    title: 'Page Details - Pages',
+                  },
+                  {
+                    path: 'settings',
+                    component: SpaceSettingsPage,
+                    title: 'Space Settings - Pages',
+                  },
+                ],
+              },
+            ],
           },
         ],
       },

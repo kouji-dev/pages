@@ -85,7 +85,7 @@ export type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 })
 export class Avatar {
   name = input.required<string>();
-  avatarUrl = input<string>();
+  avatarUrl = input<string | undefined>();
   initials = input<string>();
   size = input<AvatarSize>('md');
 }

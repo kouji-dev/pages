@@ -115,7 +115,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
                   </p>
                 </div>
                 <lib-button
-                  variant="danger"
+                  variant="destructive"
                   size="md"
                   (clicked)="handleDeleteSpace()"
                   [disabled]="isDeleting()"

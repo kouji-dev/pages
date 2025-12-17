@@ -33,7 +33,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
           {{ 'common.cancel' | translate }}
         </lib-button>
         <lib-button
-          variant="danger"
+          variant="destructive"
           (clicked)="handleDelete()"
           [loading]="isDeleting()"
           [disabled]="!isConfirmed()"

@@ -35,7 +35,7 @@ export interface DeleteOrganizationModalData {
         <lib-button variant="secondary" (clicked)="handleCancel()" [disabled]="isDeleting()">
           {{ 'common.cancel' | translate }}
         </lib-button>
-        <lib-button variant="danger" (clicked)="handleConfirm()" [loading]="isDeleting()">
+        <lib-button variant="destructive" (clicked)="handleConfirm()" [loading]="isDeleting()">
           {{ 'organizations.modals.deleteOrganization' | translate }}
         </lib-button>
       </lib-modal-footer>

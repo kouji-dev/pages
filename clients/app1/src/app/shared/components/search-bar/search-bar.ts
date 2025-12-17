@@ -76,6 +76,13 @@ import { SearchDropdown } from '../search-dropdown/search-dropdown';
         min-height: 3rem;
       }
 
+      /* Compact mode - smaller search bar to fit header */
+      :host-context([data-density='compact']) .search-bar_input ::ng-deep .input {
+        @apply py-1.5;
+        @apply text-base;
+        min-height: 2rem;
+      }
+
       .search-bar_hint {
         @apply absolute right-3;
         @apply flex items-center gap-1;

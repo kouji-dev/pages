@@ -12,14 +12,13 @@ import { LanguageService, SupportedLanguage } from '../../../core/i18n/language.
       <lib-button
         variant="ghost"
         size="md"
-        leftIcon="globe"
         [rightIcon]="isDropdownOpen() ? 'chevron-up' : 'chevron-down'"
         (clicked)="toggleDropdown()"
         [attr.aria-label]="'language.switchLanguage' | translate"
         [attr.aria-expanded]="isDropdownOpen()"
         class="language-switcher_button"
       >
-        {{ currentLanguageName() }}
+        {{ currentLanguageCode() }}
       </lib-button>
 
       @if (isDropdownOpen()) {
@@ -34,7 +33,7 @@ import { LanguageService, SupportedLanguage } from '../../../core/i18n/language.
               [fullWidth]="true"
               class="language-switcher_item"
             >
-              {{ lang.name }}
+              {{ lang.code.toUpperCase() }}
             </lib-button>
           }
         </div>
@@ -86,9 +85,9 @@ export class LanguageSwitcher {
   readonly currentLanguage = this.languageService.currentLanguage;
   readonly supportedLanguages = computed(() => this.languageService.getSupportedLanguages());
 
-  readonly currentLanguageName = computed(() => {
+  readonly currentLanguageCode = computed(() => {
     const lang = this.currentLanguage();
-    return this.languageService.getLanguageName(lang);
+    return lang.toUpperCase();
   });
 
   toggleDropdown(): void {

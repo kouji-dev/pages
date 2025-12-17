@@ -72,7 +72,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
           @if (hasAvatar() && !previewUrl()) {
             <lib-button
-              variant="danger"
+              variant="destructive"
               [disabled]="isUploading() || isDeleting()"
               [loading]="isDeleting()"
               (clicked)="handleRemoveAvatar()"

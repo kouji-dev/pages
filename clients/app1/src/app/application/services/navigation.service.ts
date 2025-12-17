@@ -209,6 +209,13 @@ export class NavigationService {
   }
 
   /**
+   * Navigate to organization's dashboard
+   */
+  navigateToOrganizationDashboard(organizationId: string): void {
+    this.router.navigate(['/app/organizations', organizationId, 'dashboard']);
+  }
+
+  /**
    * Navigate to organization's projects
    */
   navigateToOrganizationProjects(organizationId: string): void {
@@ -216,10 +223,11 @@ export class NavigationService {
   }
 
   /**
-   * Navigate to organization settings
+   * Navigate to organization settings (lists all organizations)
    */
-  navigateToOrganizationSettings(organizationId: string): void {
-    this.router.navigate(['/app/organizations', organizationId, 'settings']);
+  navigateToOrganizationSettings(organizationId?: string): void {
+    // Settings page now lists all organizations, so organizationId is optional
+    this.router.navigate(['/app/organizations/settings']);
   }
 
   /**
@@ -237,9 +245,7 @@ export class NavigationService {
    * Navigate to project settings
    */
   navigateToProjectSettings(organizationId: string, projectId: string): void {
-    this.router.navigate(['/app/organizations', organizationId, 'projects', projectId], {
-      queryParams: { tab: 'settings' },
-    });
+    this.router.navigate(['/app/organizations', organizationId, 'projects', projectId, 'settings']);
   }
 
   /**
@@ -264,10 +270,10 @@ export class NavigationService {
   }
 
   /**
-   * Get route for organization settings
+   * Get route for organization settings (lists all organizations)
    */
-  getOrganizationSettingsRoute(organizationId: string): string[] {
-    return ['/app/organizations', organizationId, 'settings'];
+  getOrganizationSettingsRoute(organizationId?: string): string[] {
+    return ['/app/organizations/settings'];
   }
 
   /**

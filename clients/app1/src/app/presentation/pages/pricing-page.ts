@@ -11,7 +11,7 @@ interface PricingTier {
   description: string;
   features: string[];
   ctaLabel: string;
-  ctaVariant: 'primary' | 'secondary' | 'danger' | 'ghost';
+  ctaVariant: 'primary' | 'link' | 'ghost' | 'secondary' | 'destructive' | 'outline';
   popular?: boolean;
 }
 

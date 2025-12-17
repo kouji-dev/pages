@@ -156,7 +156,7 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
                           </p>
                         </div>
                         <lib-button
-                          variant="danger"
+                          variant="destructive"
                           size="md"
                           (clicked)="handleDeleteProject()"
                           [disabled]="isDeleting()"

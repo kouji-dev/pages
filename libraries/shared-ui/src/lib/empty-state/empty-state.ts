@@ -78,7 +78,9 @@ export class EmptyState {
   iconLabel = input<string>('');
   actionLabel = input<string>('');
   actionIcon = input<IconName | undefined>(undefined);
-  actionVariant = input<'primary' | 'secondary' | 'danger' | 'ghost'>('primary');
+  actionVariant = input<'primary' | 'link' | 'ghost' | 'secondary' | 'destructive' | 'outline'>(
+    'primary',
+  );
 
   onAction = output<void>();
 }

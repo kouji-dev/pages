@@ -128,7 +128,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
               <div class="demo_item-content">
                 <lib-button variant="primary">Primary</lib-button>
                 <lib-button variant="secondary">Secondary</lib-button>
-                <lib-button variant="danger">Danger</lib-button>
+                <lib-button variant="destructive">Danger</lib-button>
                 <lib-button variant="ghost">Ghost</lib-button>
               </div>
             </div>
@@ -157,7 +157,7 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
               <div class="demo_item-content">
                 <lib-button variant="primary" leftIcon="plus">Add Item</lib-button>
                 <lib-button variant="secondary" leftIcon="pencil">Edit</lib-button>
-                <lib-button variant="danger" leftIcon="trash">Delete</lib-button>
+                <lib-button variant="destructive" leftIcon="trash">Delete</lib-button>
               </div>
             </div>
 
@@ -992,7 +992,9 @@ import { DemoAttachmentService, DemoMentionListProvider } from './demo-text-edit
                   <div
                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;"
                   >
-                    <p style="font-size: 0.875rem; color: var(--color-muted-foreground); margin: 0;">
+                    <p
+                      style="font-size: 0.875rem; color: var(--color-muted-foreground); margin: 0;"
+                    >
                       {{ editorMode() === 'html' ? 'HTML' : 'JSON' }} Output:
                     </p>
                     <div style="display: flex; gap: 0.5rem;">

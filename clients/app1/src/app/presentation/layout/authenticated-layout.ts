@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy} from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { BaseLayout } from './base-layout';
 
 @Component({

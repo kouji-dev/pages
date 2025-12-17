@@ -6,26 +6,33 @@ import { ListItem, ListItemData } from './list-item';
   selector: 'lib-list',
   imports: [CommonModule, ListItem],
   template: `
-    <ul class="list">
-      @if (items(); as itemsList) {
-        @for (item of itemsList; track item.id || $index) {
-          <li class="list_item-wrapper">
-            <lib-list-item [item]="item" [itemTemplate]="itemTemplate()" />
-            @if (item.children && item.children.length > 0) {
-              <div class="list_children">
-                <lib-list [items]="item.children" [itemTemplate]="itemTemplate()" />
-              </div>
-            }
-          </li>
+    <div class="list-container">
+      <ng-content select="lib-list-header" />
+      <ul class="list">
+        @if (items(); as itemsList) {
+          @for (item of itemsList; track item.type === 'separator' ? $index : item.id || $index) {
+            <li class="list_item-wrapper">
+              <lib-list-item [item]="item" [itemTemplate]="itemTemplate()" />
+              @if (item.type !== 'separator' && item.children && item.children.length > 0) {
+                <div class="list_children">
+                  <lib-list [items]="item.children" [itemTemplate]="itemTemplate()" />
+                </div>
+              }
+            </li>
+          }
+        } @else {
+          <ng-content />
         }
-      } @else {
-        <ng-content />
-      }
-    </ul>
+      </ul>
+    </div>
   `,
   styles: [
     `
       @reference "#theme";
+
+      .list-container {
+        @apply flex flex-col;
+      }
 
       .list {
         @apply flex flex-col;
@@ -43,7 +50,6 @@ import { ListItem, ListItemData } from './list-item';
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class List {
   items = input<ListItemData[]>();

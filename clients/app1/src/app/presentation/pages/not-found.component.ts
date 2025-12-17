@@ -13,7 +13,7 @@ import { TranslatePipe } from '@ngx-translate/core';
         <p class="not-found_description">
           {{ 'common.notFound.description' | translate }}
         </p>
-        <lib-button variant="primary" [link]="['/']">{{
+        <lib-button variant="primary" [link]="['/app']">{{
           'common.notFound.goToHome' | translate
         }}</lib-button>
       </div>

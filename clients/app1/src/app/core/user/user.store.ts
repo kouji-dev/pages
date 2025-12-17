@@ -51,7 +51,7 @@ export class UserStore {
   readonly profile = httpResource<UserProfileResponse>(() => this.apiUrl);
 
   // Public accessors (mapped to camelCase)
-  readonly userProfile: Signal<UserProfile | undefined> = computed(() => {
+  readonly userProfile = computed(() => {
     const response = this.profile.value();
     if (!response) {
       return undefined;

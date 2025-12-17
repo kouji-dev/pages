@@ -99,7 +99,6 @@ import { CreateSpaceModal } from '../../components/create-space-modal/create-spa
       .spaces-page {
         @apply min-h-screen;
         @apply flex flex-col;
-        @apply bg-background;
       }
 
       .spaces-page_header {

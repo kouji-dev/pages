@@ -24,6 +24,8 @@
     "reset": "Réinitialiser",
     "switchToLightMode": "Passer en mode clair",
     "switchToDarkMode": "Passer en mode sombre",
+    "switchToDefaultDensity": "Par défaut",
+    "switchToCompactDensity": "Compact",
     "notFound": {
       "title": "Page introuvable",
       "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
@@ -31,6 +33,7 @@
     }
   },
   "navigation": {
+    "dashboard": "Tableau de bord",
     "organizations": "Organisations",
     "projects": "Projets",
     "spaces": "Espaces",
@@ -39,6 +42,12 @@
     "profile": "Profil",
     "settings": "Paramètres",
     "notifications": "Notifications"
+  },
+  "breadcrumbs": {
+    "project": "Projet",
+    "space": "Espace",
+    "page": "Page",
+    "issue": "Problème"
   },
   "notifications": {
     "title": "Notifications",
@@ -65,7 +74,8 @@
   "language": {
     "english": "English",
     "french": "Français",
-    "switchLanguage": "Changer de langue"
+    "switchLanguage": "Changer de langue",
+    "language": "Langue"
   },
   "issues": {
     "title": "Tâches",
@@ -191,6 +201,19 @@
     "switchTo": "Basculer vers",
     "members": "membre(s)",
     "viewSpace": "Voir",
+    "settings": "Paramètres",
+    "organizationMenu": "Menu de l'organisation",
+    "editOrganization": "Modifier l'organisation",
+    "deleteOrganization": "Supprimer l'organisation",
+    "updateSuccess": "Organisation mise à jour avec succès !",
+    "updateError": "Échec de la mise à jour de l'organisation. Veuillez réessayer.",
+    "deleteSuccess": "Organisation supprimée avec succès !",
+    "deleteError": "Échec de la suppression de l'organisation. Veuillez réessayer.",
+    "loadError": "Échec du chargement de l'organisation",
+    "settingsPage": {
+      "title": "Paramètres des organisations",
+      "subtitle": "Gérez toutes vos organisations en un seul endroit. Modifiez, supprimez ou créez de nouvelles organisations."
+    },
     "modals": {
       "createOrganization": "Créer une organisation",
       "organizationName": "Nom de l'organisation",
@@ -218,6 +241,15 @@
       "deleteWarningLabel": "Avertissement :",
       "deleteWarningText": "Cette action est permanente et irréversible."
     }
+  },
+  "onboarding": {
+    "title": "Bienvenue sur Pages !",
+    "description": "Commençons par créer votre première organisation. Les organisations vous aident à organiser vos projets, espaces et membres de l'équipe.",
+    "step": {
+      "title": "Créer votre organisation",
+      "description": "Configurez votre espace de travail et commencez à organiser vos projets et documents."
+    },
+    "createButton": "Créer une organisation"
   },
   "projects": {
     "title": "Projets",
@@ -437,6 +469,8 @@
     "ariaLabel": "Menu utilisateur",
     "profile": "Profil",
     "settings": "Paramètres",
+    "theme": "Thème",
+    "density": "Densité",
     "logout": "Déconnexion"
   },
   "profile": {

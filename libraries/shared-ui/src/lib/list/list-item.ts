@@ -1,14 +1,28 @@
-import { Component, input, ChangeDetectionStrategy, TemplateRef, ContentChild } from '@angular/core';
+import {
+  Component,
+  input,
+  ChangeDetectionStrategy,
+  TemplateRef,
+  ContentChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Icon, IconName } from '../icon/icon';
+import { ListItemRow } from './list-item-row';
+import { ListItemIcon } from './list-item-icon';
+import { ListItemLabel } from './list-item-label';
 
-export interface ListItemData {
+export type ListItemDataSeparator = {
+  type: 'separator';
+  [key: string]: any; // Allow additional properties
+};
+
+export interface ListItemDataWithChildren {
   id?: string;
   label: string;
+  type?: 'item';
   icon?: IconName;
   iconSize?: 'xs' | 'sm' | 'md' | 'lg';
-  iconColor?: string;
   href?: string;
   routerLink?: string | any[];
   active?: boolean;
@@ -16,100 +30,131 @@ export interface ListItemData {
   onClick?: () => void;
   rightIcon?: IconName;
   rightIconSize?: 'xs' | 'sm' | 'md' | 'lg';
-  rightIconColor?: string;
+  variant?: 'primary' | 'secondary' | 'ghost' | 'destructive' | 'outline' | 'link';
   children?: ListItemData[];
+  itemTemplate?: TemplateRef<any>;
   [key: string]: any; // Allow additional properties
 }
 
+export type ListItemData = ListItemDataSeparator | ListItemDataWithChildren;
+
 @Component({
   selector: 'lib-list-item',
-  imports: [CommonModule, RouterLink, RouterLinkActive, Icon],
+  imports: [
+    CommonModule,
+    RouterLink,
+    RouterLinkActive,
+    Icon,
+    ListItemRow,
+    ListItemIcon,
+    ListItemLabel,
+  ],
   template: `
-    @if (itemTemplate(); as template) {
-      <ng-container
-        [ngTemplateOutlet]="template"
-        [ngTemplateOutletContext]="{ $implicit: item(), item: item() }"
-      />
+    @if (item().itemTemplate) {
+      <div
+        [class.list-item--disabled]="item().disabled"
+        [class.list-item--destructive]="item().variant === 'destructive'"
+        class="list-item"
+        [class.list-item--active]="item().active"
+        [attr.data-item-id]="item().id"
+      >
+        <ng-container
+          [ngTemplateOutlet]="item().itemTemplate!"
+          [ngTemplateOutletContext]="{ $implicit: item(), item: item() }"
+        />
+      </div>
+    } @else if (itemTemplate(); as template) {
+      <div
+        [class.list-item--disabled]="item().disabled"
+        [class.list-item--destructive]="item().variant === 'destructive'"
+        class="list-item"
+        [class.list-item--active]="item().active"
+        [attr.data-item-id]="item().id"
+      >
+        <ng-container
+          [ngTemplateOutlet]="template"
+          [ngTemplateOutletContext]="{ $implicit: item(), item: item() }"
+        />
+      </div>
+    } @else if (item().type === 'separator') {
+      <div class="list-item_separator"></div>
     } @else {
-      @if (item().routerLink) {
-        <a
-          [routerLink]="item().routerLink!"
-          [routerLinkActive]="'list-item--active'"
-          [routerLinkActiveOptions]="routerLinkActiveOptions()"
-          [class.list-item--disabled]="item().disabled"
-          class="list-item"
-          [class.list-item--active]="item().active"
-        >
-          @if (item().icon) {
-            <lib-icon
-              [name]="item().icon!"
-              [size]="item().iconSize || 'sm'"
-              [color]="item().iconColor"
-              class="list-item_icon"
-            />
-          }
-          <span class="list-item_label">{{ item().label }}</span>
-          @if (item().rightIcon) {
-            <lib-icon
-              [name]="item().rightIcon!"
-              [size]="item().rightIconSize || 'xs'"
-              [color]="item().rightIconColor"
-              class="list-item_right-icon"
-            />
-          }
-        </a>
-      } @else if (item().href) {
-        <a
-          [href]="item().href!"
-          [class.list-item--disabled]="item().disabled"
-          [class.list-item--active]="item().active"
-          class="list-item"
-        >
-          @if (item().icon) {
-            <lib-icon
-              [name]="item().icon!"
-              [size]="item().iconSize || 'sm'"
-              [color]="item().iconColor"
-              class="list-item_icon"
-            />
-          }
-          <span class="list-item_label">{{ item().label }}</span>
-          @if (item().rightIcon) {
-            <lib-icon
-              [name]="item().rightIcon!"
-              [size]="item().rightIconSize || 'xs'"
-              [color]="item().rightIconColor"
-              class="list-item_right-icon"
-            />
-          }
-        </a>
-      } @else {
-        <button
-          [class.list-item--disabled]="item().disabled"
-          [class.list-item--active]="item().active"
-          [disabled]="item().disabled"
-          class="list-item"
-          (click)="handleClick()"
-          type="button"
-        >
-          @if (item().icon) {
-            <lib-icon
-              [name]="item().icon!"
-              [size]="item().iconSize || 'sm'"
-              [color]="item().iconColor"
-              class="list-item_icon"
-            />
-          }
-          <span class="list-item_label">{{ item().label }}</span>
-          @if (item().rightIcon) {
-            <lib-icon
-              [name]="item().rightIcon!"
-              [size]="item().rightIconSize || 'xs'"
-              [color]="item().rightIconColor"
-              class="list-item_right-icon"
-            />
-          }
-        </button>
+      @if (item().type !== 'separator') {
+        @let itemData = item();
+        @if (itemData.routerLink) {
+          <a
+            [routerLink]="itemData.routerLink"
+            [routerLinkActive]="'list-item--active'"
+            [routerLinkActiveOptions]="routerLinkActiveOptions()"
+            [class.list-item--disabled]="itemData.disabled"
+            [class.list-item--destructive]="itemData.variant === 'destructive'"
+            class="list-item"
+            [class.list-item--active]="itemData.active"
+            [attr.data-item-id]="itemData.id"
+          >
+            <lib-list-item-row>
+              @if (itemData.icon) {
+                <lib-list-item-icon [name]="itemData.icon" [size]="itemData.iconSize || 'sm'" />
+              }
+              <lib-list-item-label>{{ itemData.label }}</lib-list-item-label>
+              @if (itemData.rightIcon) {
+                <lib-icon
+                  [name]="itemData.rightIcon"
+                  [size]="itemData.rightIconSize || 'xs'"
+                  class="list-item_right-icon"
+                />
+              }
+            </lib-list-item-row>
+          </a>
+        } @else if (itemData.href) {
+          <a
+            [href]="itemData.href"
+            [class.list-item--disabled]="itemData.disabled"
+            [class.list-item--active]="itemData.active"
+            [class.list-item--destructive]="itemData.variant === 'destructive'"
+            class="list-item"
+            [attr.data-item-id]="itemData.id"
+          >
+            <lib-list-item-row>
+              @if (itemData.icon) {
+                <lib-list-item-icon [name]="itemData.icon" [size]="itemData.iconSize || 'sm'" />
+              }
+              <lib-list-item-label>{{ itemData.label }}</lib-list-item-label>
+              @if (itemData.rightIcon) {
+                <lib-icon
+                  [name]="itemData.rightIcon"
+                  [size]="itemData.rightIconSize || 'xs'"
+                  class="list-item_right-icon"
+                />
+              }
+            </lib-list-item-row>
+          </a>
+        } @else {
+          <button
+            [class.list-item--disabled]="itemData.disabled"
+            [class.list-item--active]="itemData.active"
+            [class.list-item--destructive]="itemData.variant === 'destructive'"
+            [disabled]="itemData.disabled"
+            class="list-item"
+            [attr.data-item-id]="itemData.id"
+            (click)="handleClick()"
+            type="button"
+          >
+            <lib-list-item-row>
+              @if (itemData.icon) {
+                <lib-list-item-icon [name]="itemData.icon" [size]="itemData.iconSize || 'sm'" />
+              }
+              <lib-list-item-label>{{ itemData.label }}</lib-list-item-label>
+              @if (itemData.rightIcon) {
+                <lib-icon
+                  [name]="itemData.rightIcon"
+                  [size]="itemData.rightIconSize || 'xs'"
+                  class="list-item_right-icon"
+                />
+              }
+            </lib-list-item-row>
+          </button>
+        }
       }
     }
   `,
@@ -118,42 +163,34 @@ export interface ListItemData {
       @reference "#theme";
 
       .list-item {
-        @apply flex items-center gap-3;
-        @apply px-2 py-2;
-        @apply rounded-md;
-        @apply text-sm;
-        @apply text-navigation-foreground;
-        @apply transition-colors;
-        @apply w-full text-left;
-        @apply border-none bg-transparent cursor-pointer;
-        @apply no-underline;
-        @apply hover:bg-navigation-accent hover:text-navigation-accent-foreground;
-      }
-
-      .list-item--active {
-        @apply bg-navigation-accent text-navigation-accent-foreground font-medium;
-      }
-
-      .list-item--disabled {
-        @apply opacity-50 cursor-not-allowed;
-        @apply pointer-events-none;
+        @apply w-full;
+        @apply p-0;
       }
 
       .list-item_icon {
         @apply flex-shrink-0;
+        @apply flex items-center;
       }
 
       .list-item_label {
         @apply flex-1 truncate;
+        @apply flex items-center;
       }
 
       .list-item_right-icon {
         @apply flex-shrink-0 ml-auto;
+        @apply flex items-center;
+      }
+
+      .list-item_separator {
+        @apply h-px;
+        @apply bg-border;
+        @apply my-1;
+        @apply mx-2;
       }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class ListItem {
   item = input.required<ListItemData>();
@@ -161,8 +198,12 @@ export class ListItem {
   routerLinkActiveOptions = input<{ exact: boolean }>({ exact: false });
 
   handleClick(): void {
-    if (!this.item().disabled && this.item().onClick) {
-      this.item().onClick!();
+    if (this.item().type === 'separator') {
+      return;
+    }
+    const item = this.item() as ListItemDataWithChildren;
+    if (!item.disabled && item.onClick) {
+      item.onClick();
     }
   }
 }

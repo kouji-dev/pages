@@ -25,7 +25,7 @@ class TestHostComponent {
   iconLabel = '';
   actionLabel = '';
   actionIcon: string | undefined = undefined;
-  actionVariant: 'primary' | 'secondary' | 'danger' | 'ghost' = 'primary';
+  actionVariant: 'primary' | 'link' | 'ghost' | 'secondary' | 'destructive' | 'outline' = 'primary';
   actionClicked = false;
 
   onAction(): void {
