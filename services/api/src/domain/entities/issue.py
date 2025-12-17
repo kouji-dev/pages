@@ -24,6 +24,7 @@ class Issue:
     priority: str = "medium"  # low, medium, high, critical
     reporter_id: UUID | None = None
     assignee_id: UUID | None = None
+    parent_issue_id: UUID | None = None  # For subtasks
     due_date: date | None = None
     story_points: int | None = None
     created_at: datetime = field(default_factory=datetime.utcnow)
@@ -73,6 +74,7 @@ class Issue:
         priority: str = "medium",
         reporter_id: UUID | None = None,
         assignee_id: UUID | None = None,
+        parent_issue_id: UUID | None = None,
         due_date: date | None = None,
         story_points: int | None = None,
     ) -> Self:
@@ -112,6 +114,7 @@ class Issue:
             priority=priority,
             reporter_id=reporter_id,
             assignee_id=assignee_id,
+            parent_issue_id=parent_issue_id,
             due_date=due_date,
             story_points=story_points,
             created_at=now,
@@ -222,6 +225,15 @@ class Issue:
             raise ValueError("Story points cannot be negative")
 
         self.story_points = story_points
+        self._touch()
+
+    def update_parent(self, parent_issue_id: UUID | None) -> None:
+        """Update issue parent (for subtasks).
+
+        Args:
+            parent_issue_id: New parent issue ID (can be None)
+        """
+        self.parent_issue_id = parent_issue_id
         self._touch()
 
     def delete(self) -> None:

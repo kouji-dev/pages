@@ -104,6 +104,23 @@ class UserModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         back_populates="user",
         lazy="selectin",
     )
+    time_entries = relationship(
+        "TimeEntryModel",
+        back_populates="user",
+        lazy="selectin",
+    )
+    dashboards = relationship(
+        "DashboardModel",
+        back_populates="user",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+    )
+    saved_filters = relationship(
+        "SavedFilterModel",
+        back_populates="user",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+    )
 
     def __repr__(self) -> str:
         return f"<User(id={self.id}, email={self.email}, name={self.name})>"

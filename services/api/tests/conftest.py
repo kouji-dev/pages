@@ -14,10 +14,24 @@ from src.infrastructure.database.config import Base
 
 # Import all models to ensure they are registered in Base.metadata
 from src.infrastructure.database.models import (  # noqa: F401
+    attachment,
+    comment,
+    custom_field,
+    dashboard,
+    invitation,
+    issue,
+    issue_activity,
+    issue_link,
+    notification,
     organization,
     page,
     project,
+    saved_filter,
+    sprint,
+    template,
+    time_entry,
     user,
+    workflow,
 )
 from src.infrastructure.security import BcryptPasswordService, JWTTokenService
 

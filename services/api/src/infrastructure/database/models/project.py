@@ -70,6 +70,30 @@ class ProjectModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         lazy="selectin",
         cascade="all, delete-orphan",
     )
+    workflows = relationship(
+        "WorkflowModel",
+        back_populates="project",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+    )
+    custom_fields = relationship(
+        "CustomFieldModel",
+        back_populates="project",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+    )
+    dashboards = relationship(
+        "DashboardModel",
+        back_populates="project",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+    )
+    saved_filters = relationship(
+        "SavedFilterModel",
+        back_populates="project",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+    )
 
     def __repr__(self) -> str:
         return f"<Project(id={self.id}, key={self.key}, name={self.name})>"

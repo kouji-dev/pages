@@ -88,6 +88,15 @@ class CreateIssueUseCase:
         # Get next issue number (atomic operation)
         issue_number = await self._issue_repository.get_next_issue_number(request.project_id)
 
+        # Verify parent issue exists if provided
+        if request.parent_issue_id:
+            parent_issue = await self._issue_repository.get_by_id(request.parent_issue_id)
+            if parent_issue is None:
+                logger.warning(
+                    "Parent issue not found", parent_issue_id=str(request.parent_issue_id)
+                )
+                raise EntityNotFoundException("Issue", str(request.parent_issue_id))
+
         # Create issue entity
         issue = Issue.create(
             project_id=request.project_id,
@@ -99,6 +108,7 @@ class CreateIssueUseCase:
             priority=request.priority,
             reporter_id=reporter_uuid,
             assignee_id=request.assignee_id,
+            parent_issue_id=request.parent_issue_id,
             due_date=request.due_date,
             story_points=request.story_points,
         )
