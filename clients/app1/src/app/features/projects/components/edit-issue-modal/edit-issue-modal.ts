@@ -223,36 +223,33 @@ export class EditIssueModal {
     );
   });
 
-  private readonly initializeEffect = effect(
-    () => {
-      const issue = this.issue();
-      if (issue) {
-        this.title.set(issue.title);
-        const desc = issue.description || '';
-        this.description.set(desc);
-        this.descriptionHtml.set(desc);
-        this.status.set(issue.status);
-        this.statusModel.set(issue.status);
-        this.priority.set(issue.priority);
-        this.priorityModel.set(issue.priority);
-        this.assigneeId.set(issue.assignee_id || null);
-        this.assigneeModel.set(issue.assignee_id || null);
-        // Format due_date for date input (YYYY-MM-DD)
-        if (issue.due_date) {
-          const date = new Date(issue.due_date);
-          const formattedDate = date.toISOString().split('T')[0];
-          this.dueDate.set(formattedDate);
-        } else {
-          this.dueDate.set(null);
-        }
-        // Set HTML in editor if it's HTML content
-        if (this.descriptionEditor && desc) {
-          this.descriptionEditor.setHtml(desc);
-        }
+  private readonly initializeEffect = effect(() => {
+    const issue = this.issue();
+    if (issue) {
+      this.title.set(issue.title);
+      const desc = issue.description || '';
+      this.description.set(desc);
+      this.descriptionHtml.set(desc);
+      this.status.set(issue.status);
+      this.statusModel.set(issue.status);
+      this.priority.set(issue.priority);
+      this.priorityModel.set(issue.priority);
+      this.assigneeId.set(issue.assignee_id || null);
+      this.assigneeModel.set(issue.assignee_id || null);
+      // Format due_date for date input (YYYY-MM-DD)
+      if (issue.due_date) {
+        const date = new Date(issue.due_date);
+        const formattedDate = date.toISOString().split('T')[0];
+        this.dueDate.set(formattedDate);
+      } else {
+        this.dueDate.set(null);
       }
-    },
-    { allowSignalWrites: true },
-  );
+      // Set HTML in editor if it's HTML content
+      if (this.descriptionEditor && desc) {
+        this.descriptionEditor.setHtml(desc);
+      }
+    }
+  });
 
   readonly titleError = computed(() => {
     const value = this.title();

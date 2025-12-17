@@ -170,21 +170,18 @@ export class CommentList {
 
   readonly comments = computed(() => this.commentService.commentsList());
 
-  private readonly initializeEffect = effect(
-    () => {
-      const issueId = this.issueId();
-      const pageId = this.pageId();
+  private readonly initializeEffect = effect(() => {
+    const issueId = this.issueId();
+    const pageId = this.pageId();
 
-      if (issueId) {
-        this.commentService.setIssue(issueId);
-        this.commentService.loadComments();
-      } else if (pageId) {
-        this.commentService.setPage(pageId);
-        this.commentService.loadComments();
-      }
-    },
-    { allowSignalWrites: true },
-  );
+    if (issueId) {
+      this.commentService.setIssue(issueId);
+      this.commentService.loadComments();
+    } else if (pageId) {
+      this.commentService.setPage(pageId);
+      this.commentService.loadComments();
+    }
+  });
 
   handleEditComment(comment: Comment): void {
     this.modal.open(EditCommentModal, this.viewContainerRef, {

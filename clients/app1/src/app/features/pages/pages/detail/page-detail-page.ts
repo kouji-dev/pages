@@ -332,18 +332,15 @@ export class PageDetailPage {
   readonly isSaving = signal(false);
 
   // Initialize form when page loads
-  private readonly initializeEffect = effect(
-    () => {
-      const page = this.page();
-      if (page && !this.isEditMode()) {
-        this.title.set(page.title);
-        this.contentHtml.set(page.content || '');
-        this.content.set(page.content || '');
-        this.initialContent.set(page.content || undefined);
-      }
-    },
-    { allowSignalWrites: true },
-  );
+  private readonly initializeEffect = effect(() => {
+    const page = this.page();
+    if (page && !this.isEditMode()) {
+      this.title.set(page.title);
+      this.contentHtml.set(page.content || '');
+      this.content.set(page.content || '');
+      this.initialContent.set(page.content || undefined);
+    }
+  });
 
   readonly errorMessage = computed(() => {
     const error = this.pageService.pageError();

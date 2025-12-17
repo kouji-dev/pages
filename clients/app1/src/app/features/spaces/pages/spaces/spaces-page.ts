@@ -6,37 +6,39 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { Button, LoadingState, ErrorState, EmptyState, Modal, Input } from 'shared-ui';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { SpaceService, Space } from '../../../../application/services/space.service';
 import { OrganizationService } from '../../../../application/services/organization.service';
 import { NavigationService } from '../../../../application/services/navigation.service';
 import { SpaceCard } from '../../components/space-card/space-card';
 import { CreateSpaceModal } from '../../components/create-space-modal/create-space-modal';
+import { PageHeader, PageHeaderAction } from '../../../../shared/layout/page-header/page-header';
+import { PageBody } from '../../../../shared/layout/page-body/page-body';
+import { PageContent } from '../../../../shared/layout/page-content/page-content';
 
 @Component({
   selector: 'app-spaces-page',
-  imports: [Button, LoadingState, ErrorState, EmptyState, SpaceCard, Input, TranslatePipe],
+  imports: [
+    Button,
+    LoadingState,
+    ErrorState,
+    EmptyState,
+    SpaceCard,
+    Input,
+    TranslatePipe,
+    PageHeader,
+    PageBody,
+    PageContent,
+  ],
   template: `
-    <div class="spaces-page">
-      <div class="spaces-page_header">
-        <div class="spaces-page_header-content">
-          <div>
-            <h1 class="spaces-page_title">{{ 'spaces.title' | translate }}</h1>
-            <p class="spaces-page_subtitle">{{ 'spaces.subtitle' | translate }}</p>
-          </div>
-          <lib-button
-            variant="primary"
-            size="md"
-            leftIcon="plus"
-            (clicked)="handleCreateSpace()"
-            [disabled]="!organizationId()"
-          >
-            {{ 'spaces.createSpace' | translate }}
-          </lib-button>
-        </div>
-      </div>
+    <app-page-body>
+      <app-page-header
+        title="spaces.title"
+        subtitle="spaces.subtitle"
+        [action]="createSpaceAction()"
+      />
 
-      <div class="spaces-page_content">
+      <app-page-content>
         @if (!organizationId()) {
           <lib-empty-state
             [title]="'spaces.noOrganizationSelected' | translate"
@@ -89,51 +91,12 @@ import { CreateSpaceModal } from '../../components/create-space-modal/create-spa
             </div>
           }
         }
-      </div>
-    </div>
+      </app-page-content>
+    </app-page-body>
   `,
   styles: [
     `
       @reference "#mainstyles";
-
-      .spaces-page {
-        @apply min-h-screen;
-        @apply flex flex-col;
-      }
-
-      .spaces-page_header {
-        @apply w-full;
-        @apply py-8;
-        @apply px-4 sm:px-6 lg:px-8;
-        @apply border-b;
-        @apply border-border;
-      }
-
-      .spaces-page_header-content {
-        @apply max-w-7xl mx-auto;
-        @apply flex items-center justify-between;
-        @apply gap-4;
-        @apply flex-wrap;
-      }
-
-      .spaces-page_title {
-        @apply text-3xl font-bold;
-        @apply text-foreground;
-        margin: 0 0 0.5rem 0;
-      }
-
-      .spaces-page_subtitle {
-        @apply text-base;
-        @apply text-muted-foreground;
-        margin: 0;
-      }
-
-      .spaces-page_content {
-        @apply flex-1;
-        @apply w-full;
-        @apply py-8;
-        @apply px-4 sm:px-6 lg:px-8;
-      }
 
       .spaces-page_search {
         @apply max-w-7xl mx-auto;
@@ -159,6 +122,7 @@ export class SpacesPage {
   readonly navigationService = inject(NavigationService);
   readonly modal = inject(Modal);
   readonly viewContainerRef = inject(ViewContainerRef);
+  readonly translateService = inject(TranslateService);
 
   readonly organizationId = computed(() => {
     return this.navigationService.currentOrganizationId();
@@ -177,6 +141,15 @@ export class SpacesPage {
     }
     return 'An unknown error occurred.';
   });
+
+  readonly createSpaceAction = computed<PageHeaderAction>(() => ({
+    label: this.translateService.instant('spaces.createSpace'),
+    icon: 'plus',
+    variant: 'primary',
+    size: 'md',
+    disabled: !this.organizationId(),
+    onClick: () => this.handleCreateSpace(),
+  }));
 
   handleCreateSpace(): void {
     const orgId = this.organizationId();

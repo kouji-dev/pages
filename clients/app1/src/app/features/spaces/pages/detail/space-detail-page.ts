@@ -15,6 +15,7 @@ import { PageList } from '../../../pages/components/page-list/page-list';
 import { PagesTree } from '../../../pages/components/pages-tree/pages-tree';
 import { CreatePageModal } from '../../../pages/components/create-page-modal/create-page-modal';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { PageContent } from '../../../../shared/layout/page-content/page-content';
 
 @Component({
   selector: 'app-space-detail-page',
@@ -27,107 +28,97 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
     PagesTree,
     Button,
     TranslatePipe,
+    PageContent,
   ],
   template: `
-    <div class="space-detail-page">
-      @if (spaceService.isFetchingSpace()) {
-        <lib-loading-state [message]="'spaces.loadingSpace' | translate" />
-      } @else if (spaceService.hasSpaceError()) {
-        <lib-error-state
-          [title]="'spaces.failedToLoad' | translate"
-          [message]="errorMessage()"
-          [retryLabel]="'common.retry' | translate"
-          (onRetry)="handleRetry()"
-        />
-      } @else if (!space()) {
-        <lib-error-state
-          [title]="'spaces.notFound' | translate"
-          [message]="'spaces.notFoundDescription' | translate"
-          [showRetry]="false"
-        />
-      } @else {
-        <div class="space-detail-page_header">
-          <div class="space-detail-page_header-content">
-            <app-back-to-page
-              [label]="'spaces.backToSpaces' | translate"
-              (onClick)="handleBackToSpaces()"
-            />
-            <div class="space-detail-page_header-main">
-              <div class="space-detail-page_header-info">
-                <div class="space-detail-page_key">{{ space()?.key }}</div>
-                <h1 class="space-detail-page_title">{{ space()?.name }}</h1>
-                @if (space()?.description) {
-                  <p class="space-detail-page_description">{{ space()?.description }}</p>
-                }
-              </div>
-              <div class="space-detail-page_header-actions">
-                <lib-button
-                  variant="primary"
-                  size="sm"
-                  (clicked)="handleCreatePage()"
-                  leftIcon="plus"
-                >
-                  {{ 'pages.createPage' | translate }}
-                </lib-button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="space-detail-page_content">
-          <div class="space-detail-page_container">
-            <div class="space-detail-page_sidebar">
-              <app-pages-tree [spaceId]="spaceId()" />
-            </div>
-            <div class="space-detail-page_main">
-              @if (showDefaultContent()) {
-                <!-- Default content when no page is selected -->
-                <div class="space-detail-page_default-content">
-                  <div class="space-detail-page_section">
-                    <h2 class="space-detail-page_section-title">{{ 'pages.title' | translate }}</h2>
-                    <app-page-list [spaceId]="spaceId()" />
-                  </div>
-
-                  @if (space()?.recentPages && space()!.recentPages!.length > 0) {
-                    <div class="space-detail-page_section">
-                      <h2 class="space-detail-page_section-title">
-                        {{ 'pages.recentPages' | translate }}
-                      </h2>
-                      <div class="space-detail-page_recent-pages">
-                        @for (page of space()!.recentPages; track page.id) {
-                          <div
-                            class="space-detail-page_recent-page"
-                            (click)="handlePageClick(page)"
-                          >
-                            <h3 class="space-detail-page_recent-page-title">{{ page.title }}</h3>
-                            <p class="space-detail-page_recent-page-meta">
-                              {{ 'pages.updated' | translate }} {{ formatDate(page.updatedAt) }}
-                            </p>
-                          </div>
-                        }
-                      </div>
-                    </div>
-                  }
-                </div>
-              } @else {
-                <!-- Page detail content when a page is selected -->
-                <router-outlet />
+    @if (spaceService.isFetchingSpace()) {
+      <lib-loading-state [message]="'spaces.loadingSpace' | translate" />
+    } @else if (spaceService.hasSpaceError()) {
+      <lib-error-state
+        [title]="'spaces.failedToLoad' | translate"
+        [message]="errorMessage()"
+        [retryLabel]="'common.retry' | translate"
+        (onRetry)="handleRetry()"
+      />
+    } @else if (!space()) {
+      <lib-error-state
+        [title]="'spaces.notFound' | translate"
+        [message]="'spaces.notFoundDescription' | translate"
+        [showRetry]="false"
+      />
+    } @else {
+      <div class="space-detail-page_header">
+        <div class="space-detail-page_header-content">
+          <app-back-to-page
+            [label]="'spaces.backToSpaces' | translate"
+            (onClick)="handleBackToSpaces()"
+          />
+          <div class="space-detail-page_header-main">
+            <div class="space-detail-page_header-info">
+              <div class="space-detail-page_key">{{ space()?.key }}</div>
+              <h1 class="space-detail-page_title">{{ space()?.name }}</h1>
+              @if (space()?.description) {
+                <p class="space-detail-page_description">{{ space()?.description }}</p>
               }
             </div>
+            <div class="space-detail-page_header-actions">
+              <lib-button
+                variant="primary"
+                size="sm"
+                (clicked)="handleCreatePage()"
+                leftIcon="plus"
+              >
+                {{ 'pages.createPage' | translate }}
+              </lib-button>
+            </div>
           </div>
         </div>
-      }
-    </div>
+      </div>
+
+      <app-page-content>
+        <div class="space-detail-page_container">
+          <div class="space-detail-page_sidebar">
+            <app-pages-tree [spaceId]="spaceId()" />
+          </div>
+          <div class="space-detail-page_main">
+            @if (showDefaultContent()) {
+              <!-- Default content when no page is selected -->
+              <div class="space-detail-page_default-content">
+                <div class="space-detail-page_section">
+                  <h2 class="space-detail-page_section-title">{{ 'pages.title' | translate }}</h2>
+                  <app-page-list [spaceId]="spaceId()" />
+                </div>
+
+                @if (space()?.recentPages && space()!.recentPages!.length > 0) {
+                  <div class="space-detail-page_section">
+                    <h2 class="space-detail-page_section-title">
+                      {{ 'pages.recentPages' | translate }}
+                    </h2>
+                    <div class="space-detail-page_recent-pages">
+                      @for (page of space()!.recentPages; track page.id) {
+                        <div class="space-detail-page_recent-page" (click)="handlePageClick(page)">
+                          <h3 class="space-detail-page_recent-page-title">{{ page.title }}</h3>
+                          <p class="space-detail-page_recent-page-meta">
+                            {{ 'pages.updated' | translate }} {{ formatDate(page.updatedAt) }}
+                          </p>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <!-- Page detail content when a page is selected -->
+              <router-outlet />
+            }
+          </div>
+        </div>
+      </app-page-content>
+    }
   `,
   styles: [
     `
       @reference "#mainstyles";
-
-      .space-detail-page {
-        @apply min-h-screen;
-        @apply flex flex-col;
-        @apply bg-background;
-      }
 
       .space-detail-page_header {
         @apply w-full;
@@ -184,13 +175,6 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
         @apply text-muted-foreground;
         margin: 0;
         @apply flex-shrink-0;
-      }
-
-      .space-detail-page_content {
-        @apply flex-1;
-        @apply w-full;
-        @apply flex;
-        @apply min-h-0;
       }
 
       .space-detail-page_container {

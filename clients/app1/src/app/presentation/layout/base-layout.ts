@@ -157,7 +157,7 @@ const teamMembers: AvatarStackItem[] = [
 
       .layout_header-content {
         display: grid;
-        grid-template-columns: 20rem 1fr 18rem;
+        grid-template-columns: 25rem 1fr 18rem;
         @apply items-center;
         width: 100%;
         gap: 1rem;

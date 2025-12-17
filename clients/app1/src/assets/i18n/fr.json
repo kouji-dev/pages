@@ -251,6 +251,10 @@
     },
     "createButton": "Créer une organisation"
   },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "subtitle": "Bon retour ! Voici un aperçu de votre espace de travail."
+  },
   "projects": {
     "title": "Projets",
     "subtitle": "Gérez vos projets et suivez les tâches en un seul endroit.",

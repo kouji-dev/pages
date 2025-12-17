@@ -292,29 +292,23 @@ export class ProjectSettingsPage {
     return this.translateService.instant('common.unknownError');
   });
 
-  private readonly initializeFormEffect = effect(
-    () => {
-      const project = this.project();
-      if (project) {
-        this.name.set(project.name);
-        this.key.set(project.key);
-        this.description.set(project.description || '');
-        this.originalName.set(project.name);
-        this.originalDescription.set(project.description || '');
-      }
-    },
-    { allowSignalWrites: true },
-  );
+  private readonly initializeFormEffect = effect(() => {
+    const project = this.project();
+    if (project) {
+      this.name.set(project.name);
+      this.key.set(project.key);
+      this.description.set(project.description || '');
+      this.originalName.set(project.name);
+      this.originalDescription.set(project.description || '');
+    }
+  });
 
-  private readonly initializeEffect = effect(
-    () => {
-      const id = this.projectId();
-      if (id) {
-        this.projectService.fetchProject(id);
-      }
-    },
-    { allowSignalWrites: true },
-  );
+  private readonly initializeEffect = effect(() => {
+    const id = this.projectId();
+    if (id) {
+      this.projectService.fetchProject(id);
+    }
+  });
 
   async handleSaveProject(): Promise<void> {
     if (!this.isFormValid() || !this.hasChanges()) {

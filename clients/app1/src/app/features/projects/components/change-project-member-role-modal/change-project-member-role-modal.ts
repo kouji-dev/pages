@@ -274,15 +274,12 @@ export class ChangeProjectMemberRoleModal {
   readonly selectedRole = signal<'admin' | 'member' | 'viewer'>('member');
   readonly isSubmitting = signal(false);
 
-  private readonly syncSelectedRoleEffect = effect(
-    () => {
-      const member = this.member();
-      if (member) {
-        this.selectedRole.set(member.role);
-      }
-    },
-    { allowSignalWrites: true },
-  );
+  private readonly syncSelectedRoleEffect = effect(() => {
+    const member = this.member();
+    if (member) {
+      this.selectedRole.set(member.role);
+    }
+  });
 
   readonly availableRoles = computed(() => [
     {

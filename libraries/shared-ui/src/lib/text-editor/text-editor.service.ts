@@ -3,6 +3,8 @@ import {
   LexicalEditor,
   createEditor,
   $getRoot,
+  $getSelection,
+  $insertNodes,
   RootNode,
   ParagraphNode,
   TextNode,
@@ -124,12 +126,20 @@ export class TextEditorService {
     // Set initial value if provided
     if (initialValue) {
       editor.update(() => {
+        // Clear the root
         const root = $getRoot();
         root.clear();
+
+        // Parse HTML string to DOM
         const parser = new DOMParser();
         const dom = parser.parseFromString(initialValue, 'text/html');
+
+        // Generate Lexical nodes from DOM
         const nodes = $generateNodesFromDOM(editor, dom);
-        root.append(...nodes);
+
+        // Select the root and insert nodes using Lexical's recommended approach
+        root.select();
+        $insertNodes(nodes);
       });
     }
 

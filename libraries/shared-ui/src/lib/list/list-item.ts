@@ -23,6 +23,7 @@ export interface ListItemDataWithChildren {
   type?: 'item';
   icon?: IconName;
   iconSize?: 'xs' | 'sm' | 'md' | 'lg';
+  iconColor?: string;
   href?: string;
   routerLink?: string | any[];
   active?: boolean;
@@ -94,7 +95,11 @@ export type ListItemData = ListItemDataSeparator | ListItemDataWithChildren;
           >
             <lib-list-item-row>
               @if (itemData.icon) {
-                <lib-list-item-icon [name]="itemData.icon" [size]="itemData.iconSize || 'sm'" />
+                <lib-list-item-icon
+                  [name]="itemData.icon"
+                  [size]="itemData.iconSize || 'sm'"
+                  [color]="itemData.iconColor"
+                />
               }
               <lib-list-item-label>{{ itemData.label }}</lib-list-item-label>
               @if (itemData.rightIcon) {
@@ -117,7 +122,11 @@ export type ListItemData = ListItemDataSeparator | ListItemDataWithChildren;
           >
             <lib-list-item-row>
               @if (itemData.icon) {
-                <lib-list-item-icon [name]="itemData.icon" [size]="itemData.iconSize || 'sm'" />
+                <lib-list-item-icon
+                  [name]="itemData.icon"
+                  [size]="itemData.iconSize || 'sm'"
+                  [color]="itemData.iconColor"
+                />
               }
               <lib-list-item-label>{{ itemData.label }}</lib-list-item-label>
               @if (itemData.rightIcon) {
@@ -142,7 +151,11 @@ export type ListItemData = ListItemDataSeparator | ListItemDataWithChildren;
           >
             <lib-list-item-row>
               @if (itemData.icon) {
-                <lib-list-item-icon [name]="itemData.icon" [size]="itemData.iconSize || 'sm'" />
+                <lib-list-item-icon
+                  [name]="itemData.icon"
+                  [size]="itemData.iconSize || 'sm'"
+                  [color]="itemData.iconColor"
+                />
               }
               <lib-list-item-label>{{ itemData.label }}</lib-list-item-label>
               @if (itemData.rightIcon) {

@@ -1,6 +1,7 @@
 import { Component, input, output, computed, booleanAttribute } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Icon, IconName } from '../icon/icon';
+import { Size, DEFAULT_SIZE } from '../types';
 
 @Component({
   selector: 'lib-button',
@@ -260,7 +261,7 @@ export class Button {
   variant = input<
     'primary' | 'link' | 'ghost' | 'secondary' | 'destructive' | 'outline' | undefined
   >('primary');
-  size = input<'xs' | 'sm' | 'md' | 'lg'>('md');
+  size = input<Size>(DEFAULT_SIZE);
   disabled = input(false, { transform: booleanAttribute });
   loading = input(false, { transform: booleanAttribute });
   iconOnly = input(false, { transform: booleanAttribute });

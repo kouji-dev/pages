@@ -91,19 +91,16 @@ export class EditCommentModal {
   readonly initialHtml = signal<string | undefined>(undefined);
   readonly isSubmitting = signal(false);
 
-  private readonly initializeEffect = effect(
-    () => {
-      const comment = this.comment();
-      if (comment) {
-        // Set initial HTML content for the editor
-        this.initialHtml.set(comment.content);
-        this.htmlContent.set(comment.content);
-        // Also set text content for validation
-        this.content.set(comment.content);
-      }
-    },
-    { allowSignalWrites: true },
-  );
+  private readonly initializeEffect = effect(() => {
+    const comment = this.comment();
+    if (comment) {
+      // Set initial HTML content for the editor
+      this.initialHtml.set(comment.content);
+      this.htmlContent.set(comment.content);
+      // Also set text content for validation
+      this.content.set(comment.content);
+    }
+  });
 
   readonly contentError = computed(() => {
     const html = this.htmlContent();

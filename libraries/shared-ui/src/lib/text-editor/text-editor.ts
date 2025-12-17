@@ -79,6 +79,7 @@ import { TranslateService } from '../i18n/translate.service';
           [contentEditable]="editable()"
           [class.text-editor_container--disabled]="isDisabled()"
           [class.text-editor_container--error]="errorMessage()"
+          [class.text-editor_container--readonly]="readOnly()"
           spellcheck="true"
           role="textbox"
           [attr.aria-multiline]="true"
@@ -96,8 +97,12 @@ import { TranslateService } from '../i18n/translate.service';
 
       .text-editor {
         @apply flex flex-col;
-        @apply border border-border rounded-lg;
+        @apply rounded-lg;
         @apply bg-background;
+      }
+
+      .text-editor:not(:has(.text-editor_container--readonly)) {
+        @apply border border-border;
       }
 
       .text-editor_toolbar {
@@ -149,6 +154,10 @@ import { TranslateService } from '../i18n/translate.service';
         @apply min-h-0;
       }
 
+      :host:has(.text-editor_container--readonly) .text-editor_wrapper {
+        @apply border-none;
+      }
+
       .text-editor_container {
         @apply min-h-[120px];
         @apply p-3;
@@ -163,6 +172,16 @@ import { TranslateService } from '../i18n/translate.service';
 
       .text-editor_container--error {
         @apply border-destructive;
+      }
+
+      .text-editor_container--readonly {
+        @apply border-none;
+        @apply focus-within:ring-0;
+        @apply focus-within:outline-none;
+      }
+
+      :host:has(.text-editor_container--readonly) .text-editor {
+        @apply border-none;
       }
 
       .text-editor_error {

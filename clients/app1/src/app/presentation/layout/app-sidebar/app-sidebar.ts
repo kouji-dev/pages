@@ -13,18 +13,21 @@ const favorites: ListItemData[] = [
     id: '1',
     label: 'Marketing Website',
     icon: 'star',
+    iconColor: '#fbbf24',
     rightIcon: 'kanban',
   },
   {
     id: '2',
     label: 'API Documentation',
     icon: 'star',
+    iconColor: '#fbbf24',
     rightIcon: 'file-text',
   },
   {
     id: '3',
     label: 'Design System',
     icon: 'star',
+    iconColor: '#fbbf24',
     rightIcon: 'kanban',
   },
 ];

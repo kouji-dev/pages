@@ -429,16 +429,13 @@ export class IssueList {
     return 'An unknown error occurred.';
   });
 
-  private readonly initializeEffect = effect(
-    () => {
-      const projectId = this.projectId();
-      if (projectId) {
-        this.issueService.setProject(projectId);
-        this.issueService.loadIssues();
-      }
-    },
-    { allowSignalWrites: true },
-  );
+  private readonly initializeEffect = effect(() => {
+    const projectId = this.projectId();
+    if (projectId) {
+      this.issueService.setProject(projectId);
+      this.issueService.loadIssues();
+    }
+  });
 
   handleCreateIssue(): void {
     const projectId = this.projectId();

@@ -224,17 +224,14 @@ export class ProfilePage {
   });
 
   // Update form fields when profile loads
-  private readonly initializeFormEffect = effect(
-    () => {
-      const profile = this.userStore.userProfile();
-      if (profile) {
-        this.name.set(profile.name);
-        this.email.set(profile.email);
-        this.originalName.set(profile.name);
-      }
-    },
-    { allowSignalWrites: true },
-  );
+  private readonly initializeFormEffect = effect(() => {
+    const profile = this.userStore.userProfile();
+    if (profile) {
+      this.name.set(profile.name);
+      this.email.set(profile.email);
+      this.originalName.set(profile.name);
+    }
+  });
 
   async handleSaveProfile(): Promise<void> {
     if (!this.isFormValid() || !this.hasChanges()) {

@@ -186,16 +186,13 @@ export class AttachmentList {
 
   readonly attachments = computed(() => this.attachmentService.attachmentsList());
 
-  private readonly initializeEffect = effect(
-    () => {
-      const issueId = this.issueId();
-      if (issueId) {
-        this.attachmentService.setIssue(issueId);
-        this.attachmentService.loadAttachments();
-      }
-    },
-    { allowSignalWrites: true },
-  );
+  private readonly initializeEffect = effect(() => {
+    const issueId = this.issueId();
+    if (issueId) {
+      this.attachmentService.setIssue(issueId);
+      this.attachmentService.loadAttachments();
+    }
+  });
 
   getDownloadUrl(attachmentId: string): string {
     return this.attachmentService.getDownloadUrl(attachmentId);

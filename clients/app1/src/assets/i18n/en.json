@@ -251,6 +251,10 @@
     },
     "createButton": "Create Organization"
   },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Welcome back! Here's an overview of your workspace."
+  },
   "projects": {
     "title": "Projects",
     "subtitle": "Manage your projects and track issues in one place.",

@@ -10,6 +10,7 @@ import {
   inject,
 } from '@angular/core';
 import { Icon, IconName } from '../icon/icon';
+import { Size, DEFAULT_SIZE } from '../types';
 import { TranslateService } from '../i18n/translate.service';
 
 export type InputType =
@@ -50,6 +51,10 @@ export type InputType =
           <textarea
             [id]="inputId()"
             class="input input--textarea"
+            [class.input--xs]="size() === 'xs'"
+            [class.input--sm]="size() === 'sm'"
+            [class.input--md]="size() === 'md'"
+            [class.input--lg]="size() === 'lg'"
             [class.input--error]="errorMessage()"
             [class.input--disabled]="disabled()"
             [class.input--readonly]="readonly()"
@@ -70,6 +75,10 @@ export type InputType =
           <input
             [id]="inputId()"
             class="input"
+            [class.input--xs]="size() === 'xs'"
+            [class.input--sm]="size() === 'sm'"
+            [class.input--md]="size() === 'md'"
+            [class.input--lg]="size() === 'lg'"
             [class.input--error]="errorMessage()"
             [class.input--disabled]="disabled()"
             [class.input--readonly]="readonly()"
@@ -186,8 +195,6 @@ export type InputType =
 
       .input {
         @apply w-full;
-        @apply px-3 py-2;
-        @apply text-base;
         @apply border rounded-md;
         @apply bg-background;
         @apply transition-colors;
@@ -195,7 +202,27 @@ export type InputType =
         @apply text-foreground;
         @apply border-input;
         @apply font-sans;
+      }
+
+      /* Sizes */
+      .input--xs {
+        @apply px-2 py-1 text-xs;
+        min-height: 1.75rem;
+      }
+
+      .input--sm {
+        @apply px-3 py-1.5 text-sm;
+        min-height: 2rem;
+      }
+
+      .input--md {
+        @apply px-3 py-2 text-base;
         min-height: 2.5rem;
+      }
+
+      .input--lg {
+        @apply px-4 py-3 text-lg;
+        min-height: 3rem;
       }
 
       .input--textarea {
@@ -374,6 +401,7 @@ export class Input {
   type = input<InputType>('text');
   placeholder = input<string>('');
   label = input<string>('');
+  size = input<Size>(DEFAULT_SIZE);
   helperText = input<string>('');
   errorMessage = input<string>('');
   required = input(false, { transform: booleanAttribute });

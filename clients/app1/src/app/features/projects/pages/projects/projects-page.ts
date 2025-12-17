@@ -8,39 +8,39 @@ import {
   effect,
 } from '@angular/core';
 import { Button, LoadingState, ErrorState, EmptyState, Modal, Input } from 'shared-ui';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ProjectService, Project } from '../../../../application/services/project.service';
 import { OrganizationService } from '../../../../application/services/organization.service';
 import { NavigationService } from '../../../../application/services/navigation.service';
 import { ProjectCard } from '../../components/project-card/project-card';
 import { CreateProjectModal } from '../../components/create-project-modal/create-project-modal';
+import { PageHeader, PageHeaderAction } from '../../../../shared/layout/page-header/page-header';
+import { PageBody } from '../../../../shared/layout/page-body/page-body';
+import { PageContent } from '../../../../shared/layout/page-content/page-content';
 
 @Component({
   selector: 'app-projects-page',
-  imports: [Button, LoadingState, ErrorState, EmptyState, ProjectCard, Input, TranslatePipe],
+  imports: [
+    Button,
+    LoadingState,
+    ErrorState,
+    EmptyState,
+    ProjectCard,
+    Input,
+    TranslatePipe,
+    PageHeader,
+    PageBody,
+    PageContent,
+  ],
   template: `
-    <div class="projects-page">
-      <div class="projects-page_header">
-        <div class="projects-page_header-content">
-          <div>
-            <h1 class="projects-page_title">{{ 'projects.title' | translate }}</h1>
-            <p class="projects-page_subtitle">
-              {{ 'projects.subtitle' | translate }}
-            </p>
-          </div>
-          <lib-button
-            variant="primary"
-            size="md"
-            leftIcon="plus"
-            (clicked)="handleCreateProject()"
-            [disabled]="!organizationId()"
-          >
-            {{ 'projects.createProject' | translate }}
-          </lib-button>
-        </div>
-      </div>
+    <app-page-body>
+      <app-page-header
+        title="projects.title"
+        subtitle="projects.subtitle"
+        [action]="createProjectAction()"
+      />
 
-      <div class="projects-page_content">
+      <app-page-content>
         @if (!organizationId()) {
           <lib-empty-state
             [title]="'projects.noOrganizationSelected' | translate"
@@ -96,51 +96,12 @@ import { CreateProjectModal } from '../../components/create-project-modal/create
             </div>
           }
         }
-      </div>
-    </div>
+      </app-page-content>
+    </app-page-body>
   `,
   styles: [
     `
       @reference "#mainstyles";
-
-      .projects-page {
-        @apply min-h-screen;
-        @apply flex flex-col;
-      }
-
-      .projects-page_header {
-        @apply w-full;
-        @apply py-8;
-        @apply px-4 sm:px-6 lg:px-8;
-        @apply border-b;
-        @apply border-border;
-      }
-
-      .projects-page_header-content {
-        @apply max-w-7xl mx-auto;
-        @apply flex items-center justify-between;
-        @apply gap-4;
-        @apply flex-wrap;
-      }
-
-      .projects-page_title {
-        @apply text-3xl font-bold;
-        @apply text-foreground;
-        margin: 0 0 0.5rem 0;
-      }
-
-      .projects-page_subtitle {
-        @apply text-base;
-        @apply text-muted-foreground;
-        margin: 0;
-      }
-
-      .projects-page_content {
-        @apply flex-1;
-        @apply w-full;
-        @apply py-8;
-        @apply px-4 sm:px-6 lg:px-8;
-      }
 
       .projects-page_search {
         @apply max-w-7xl mx-auto;
@@ -166,6 +127,7 @@ export class ProjectsPage {
   readonly navigationService = inject(NavigationService);
   readonly modal = inject(Modal);
   readonly viewContainerRef = inject(ViewContainerRef);
+  readonly translateService = inject(TranslateService);
 
   readonly searchQuery = signal('');
 
@@ -203,6 +165,15 @@ export class ProjectsPage {
     }
     return 'An unknown error occurred.';
   });
+
+  readonly createProjectAction = computed<PageHeaderAction>(() => ({
+    label: this.translateService.instant('projects.createProject'),
+    icon: 'plus',
+    variant: 'primary',
+    size: 'md',
+    disabled: !this.organizationId(),
+    onClick: () => this.handleCreateProject(),
+  }));
 
   // Projects are now automatically loaded when URL organizationId changes
   // No need for manual initialization effect

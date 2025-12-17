@@ -288,19 +288,16 @@ export class SpaceSettingsPage {
     return this.translateService.instant('common.unknownError');
   });
 
-  private readonly initializeFormEffect = effect(
-    () => {
-      const space = this.space();
-      if (space) {
-        this.name.set(space.name);
-        this.key.set(space.key);
-        this.description.set(space.description || '');
-        this.originalName.set(space.name);
-        this.originalDescription.set(space.description || '');
-      }
-    },
-    { allowSignalWrites: true },
-  );
+  private readonly initializeFormEffect = effect(() => {
+    const space = this.space();
+    if (space) {
+      this.name.set(space.name);
+      this.key.set(space.key);
+      this.description.set(space.description || '');
+      this.originalName.set(space.name);
+      this.originalDescription.set(space.description || '');
+    }
+  });
 
   async handleSaveSpace(): Promise<void> {
     if (!this.isFormValid() || !this.hasChanges()) {

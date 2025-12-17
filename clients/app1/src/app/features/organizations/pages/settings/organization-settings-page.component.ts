@@ -235,13 +235,10 @@ export class OrganizationSettingsPage {
     return 'An unknown error occurred.';
   });
 
-  private readonly initializeEffect = effect(
-    () => {
-      // Load organizations when component initializes
-      this.organizationService.loadOrganizations();
-    },
-    { allowSignalWrites: true },
-  );
+  private readonly initializeEffect = effect(() => {
+    // Load organizations when component initializes
+    this.organizationService.loadOrganizations();
+  });
 
   getOrgInitials(name: string): string {
     const words = name.trim().split(/\s+/);

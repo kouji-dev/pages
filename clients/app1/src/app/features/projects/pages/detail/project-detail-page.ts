@@ -21,6 +21,7 @@ import { BackToPage } from '../../../../shared/components/back-to-page/back-to-p
 import { SidebarNav, SidebarNavItem } from '../../components/sidebar-nav/sidebar-nav';
 import { DeleteProjectModal } from '../../components/delete-project-modal/delete-project-modal';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { PageContent } from '../../../../shared/layout/page-content/page-content';
 
 type TabType = 'issues' | 'board' | 'settings' | 'members';
 
@@ -37,152 +38,145 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
     BackToPage,
     SidebarNav,
     TranslatePipe,
+    PageContent,
   ],
   template: `
-    <div class="project-detail-page">
-      @if (projectService.isFetchingProject()) {
-        <lib-loading-state [message]="'projects.loadingProject' | translate" />
-      } @else if (projectService.hasProjectError()) {
-        <lib-error-state
-          [title]="'projects.failedToLoad' | translate"
-          [message]="errorMessage()"
-          [retryLabel]="'common.retry' | translate"
-          (onRetry)="handleRetry()"
-        />
-      } @else if (!project()) {
-        <lib-error-state
-          [title]="'projects.notFound' | translate"
-          [message]="'projects.notFoundDescription' | translate"
-          [showRetry]="false"
-        />
-      } @else {
-        <div class="project-detail-page_header">
-          <div class="project-detail-page_header-content">
-            <app-back-to-page
-              [label]="'projects.backToProjects' | translate"
-              (onClick)="handleBackToProjects()"
-            />
-            <div class="project-detail-page_header-main">
-              <div class="project-detail-page_key">{{ project()?.key }}</div>
-              <h1 class="project-detail-page_title">{{ project()?.name }}</h1>
-              @if (project()?.description) {
-                <p class="project-detail-page_description">{{ project()?.description }}</p>
-              }
-            </div>
+    @if (projectService.isFetchingProject()) {
+      <lib-loading-state [message]="'projects.loadingProject' | translate" />
+    } @else if (projectService.hasProjectError()) {
+      <lib-error-state
+        [title]="'projects.failedToLoad' | translate"
+        [message]="errorMessage()"
+        [retryLabel]="'common.retry' | translate"
+        (onRetry)="handleRetry()"
+      />
+    } @else if (!project()) {
+      <lib-error-state
+        [title]="'projects.notFound' | translate"
+        [message]="'projects.notFoundDescription' | translate"
+        [showRetry]="false"
+      />
+    } @else {
+      <div class="project-detail-page_header">
+        <div class="project-detail-page_header-content">
+          <app-back-to-page
+            [label]="'projects.backToProjects' | translate"
+            (onClick)="handleBackToProjects()"
+          />
+          <div class="project-detail-page_header-main">
+            <div class="project-detail-page_key">{{ project()?.key }}</div>
+            <h1 class="project-detail-page_title">{{ project()?.name }}</h1>
+            @if (project()?.description) {
+              <p class="project-detail-page_description">{{ project()?.description }}</p>
+            }
           </div>
         </div>
+      </div>
 
-        <div class="project-detail-page_content">
-          <div class="project-detail-page_container">
-            <div class="project-detail-page_sidebar">
-              <app-sidebar-nav [items]="navItems()" />
-            </div>
-            <div class="project-detail-page_main">
-              @if (activeTab() === 'issues') {
-                <app-issue-list [projectId]="projectId()" />
-              } @else if (activeTab() === 'board') {
-                <app-kanban-board [projectId]="projectId()" />
-              } @else if (activeTab() === 'members') {
-                <app-project-member-list [projectId]="projectId()" />
-              } @else if (activeTab() === 'settings') {
-                <div class="project-detail-page_settings">
-                  <div class="project-detail-page_settings-container">
-                    <!-- Project Details Section -->
-                    <div class="project-detail-page_settings-section">
-                      <h2 class="project-detail-page_settings-section-title">
-                        {{ 'projects.settings.details' | translate }}
-                      </h2>
-                      <form
-                        class="project-detail-page_settings-form"
-                        (ngSubmit)="handleSaveProject()"
-                      >
-                        <lib-input
-                          [label]="'projects.settings.name' | translate"
-                          [placeholder]="'projects.settings.namePlaceholder' | translate"
-                          [(model)]="name"
-                          [required]="true"
-                          [errorMessage]="nameError()"
-                          [helperText]="'projects.settings.nameHelper' | translate"
-                        />
-                        <lib-input
-                          [label]="'projects.settings.key' | translate"
-                          placeholder="PROJ"
-                          [(model)]="key"
-                          [readonly]="true"
-                          [helperText]="'projects.settings.keyHelper' | translate"
-                        />
-                        <lib-input
-                          [label]="'projects.settings.description' | translate"
-                          type="textarea"
-                          [placeholder]="'projects.settings.descriptionPlaceholder' | translate"
-                          [(model)]="description"
-                          [rows]="4"
-                          [helperText]="'projects.settings.descriptionHelper' | translate"
-                        />
-                        <div class="project-detail-page_settings-form-actions">
-                          <lib-button
-                            variant="primary"
-                            type="submit"
-                            [loading]="isSaving()"
-                            [disabled]="!isFormValid() || !hasChanges()"
-                          >
-                            {{ 'common.saveChanges' | translate }}
-                          </lib-button>
-                          <lib-button
-                            variant="secondary"
-                            (clicked)="handleReset()"
-                            [disabled]="!hasChanges() || isSaving()"
-                          >
-                            {{ 'common.cancel' | translate }}
-                          </lib-button>
-                        </div>
-                      </form>
-                    </div>
-
-                    <!-- Danger Zone Section -->
-                    <div
-                      class="project-detail-page_settings-section project-detail-page_settings-section--danger"
+      <app-page-content>
+        <div class="project-detail-page_container">
+          <div class="project-detail-page_sidebar">
+            <app-sidebar-nav [items]="navItems()" />
+          </div>
+          <div class="project-detail-page_main">
+            @if (activeTab() === 'issues') {
+              <app-issue-list [projectId]="projectId()" />
+            } @else if (activeTab() === 'board') {
+              <app-kanban-board [projectId]="projectId()" />
+            } @else if (activeTab() === 'members') {
+              <app-project-member-list [projectId]="projectId()" />
+            } @else if (activeTab() === 'settings') {
+              <div class="project-detail-page_settings">
+                <div class="project-detail-page_settings-container">
+                  <!-- Project Details Section -->
+                  <div class="project-detail-page_settings-section">
+                    <h2 class="project-detail-page_settings-section-title">
+                      {{ 'projects.settings.details' | translate }}
+                    </h2>
+                    <form
+                      class="project-detail-page_settings-form"
+                      (ngSubmit)="handleSaveProject()"
                     >
-                      <h2 class="project-detail-page_settings-section-title">
-                        {{ 'projects.settings.dangerZone' | translate }}
-                      </h2>
-                      <div class="project-detail-page_settings-danger-content">
-                        <div>
-                          <h3 class="project-detail-page_settings-danger-title">
-                            {{ 'projects.settings.deleteTitle' | translate }}
-                          </h3>
-                          <p class="project-detail-page_settings-danger-description">
-                            {{ 'projects.settings.deleteDescription' | translate }}
-                          </p>
-                        </div>
+                      <lib-input
+                        [label]="'projects.settings.name' | translate"
+                        [placeholder]="'projects.settings.namePlaceholder' | translate"
+                        [(model)]="name"
+                        [required]="true"
+                        [errorMessage]="nameError()"
+                        [helperText]="'projects.settings.nameHelper' | translate"
+                      />
+                      <lib-input
+                        [label]="'projects.settings.key' | translate"
+                        placeholder="PROJ"
+                        [(model)]="key"
+                        [readonly]="true"
+                        [helperText]="'projects.settings.keyHelper' | translate"
+                      />
+                      <lib-input
+                        [label]="'projects.settings.description' | translate"
+                        type="textarea"
+                        [placeholder]="'projects.settings.descriptionPlaceholder' | translate"
+                        [(model)]="description"
+                        [rows]="4"
+                        [helperText]="'projects.settings.descriptionHelper' | translate"
+                      />
+                      <div class="project-detail-page_settings-form-actions">
                         <lib-button
-                          variant="destructive"
-                          size="md"
-                          (clicked)="handleDeleteProject()"
-                          [disabled]="isDeleting()"
+                          variant="primary"
+                          type="submit"
+                          [loading]="isSaving()"
+                          [disabled]="!isFormValid() || !hasChanges()"
                         >
-                          {{ 'projects.deleteProject' | translate }}
+                          {{ 'common.saveChanges' | translate }}
+                        </lib-button>
+                        <lib-button
+                          variant="secondary"
+                          (clicked)="handleReset()"
+                          [disabled]="!hasChanges() || isSaving()"
+                        >
+                          {{ 'common.cancel' | translate }}
                         </lib-button>
                       </div>
+                    </form>
+                  </div>
+
+                  <!-- Danger Zone Section -->
+                  <div
+                    class="project-detail-page_settings-section project-detail-page_settings-section--danger"
+                  >
+                    <h2 class="project-detail-page_settings-section-title">
+                      {{ 'projects.settings.dangerZone' | translate }}
+                    </h2>
+                    <div class="project-detail-page_settings-danger-content">
+                      <div>
+                        <h3 class="project-detail-page_settings-danger-title">
+                          {{ 'projects.settings.deleteTitle' | translate }}
+                        </h3>
+                        <p class="project-detail-page_settings-danger-description">
+                          {{ 'projects.settings.deleteDescription' | translate }}
+                        </p>
+                      </div>
+                      <lib-button
+                        variant="destructive"
+                        size="md"
+                        (clicked)="handleDeleteProject()"
+                        [disabled]="isDeleting()"
+                      >
+                        {{ 'projects.deleteProject' | translate }}
+                      </lib-button>
                     </div>
                   </div>
                 </div>
-              }
-            </div>
+              </div>
+            }
           </div>
         </div>
-      }
-    </div>
+      </app-page-content>
+    }
   `,
   styles: [
     `
       @reference "#mainstyles";
-
-      .project-detail-page {
-        @apply min-h-screen;
-        @apply flex flex-col;
-        @apply bg-background;
-      }
 
       .project-detail-page_header {
         @apply w-full;
@@ -227,23 +221,12 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
         @apply flex-shrink-0;
       }
 
-      .project-detail-page_content {
-        @apply flex-1;
-        @apply w-full;
-        @apply py-8;
-        @apply px-4 sm:px-6 lg:px-8;
-        @apply min-h-0;
-        @apply flex;
-        @apply flex-col;
-      }
-
       .project-detail-page_container {
         @apply w-full;
         @apply flex-1;
         @apply flex;
         @apply gap-8;
         @apply min-h-0;
-        @apply h-full;
         @apply items-stretch;
       }
 
@@ -400,19 +383,16 @@ export class ProjectDetailPage {
   });
 
   // Initialize form when project changes
-  private readonly initializeFormEffect = effect(
-    () => {
-      const project = this.project();
-      if (project) {
-        this.name.set(project.name);
-        this.key.set(project.key);
-        this.description.set(project.description || '');
-        this.originalName.set(project.name);
-        this.originalDescription.set(project.description || '');
-      }
-    },
-    { allowSignalWrites: true },
-  );
+  private readonly initializeFormEffect = effect(() => {
+    const project = this.project();
+    if (project) {
+      this.name.set(project.name);
+      this.key.set(project.key);
+      this.description.set(project.description || '');
+      this.originalName.set(project.name);
+      this.originalDescription.set(project.description || '');
+    }
+  });
 
   readonly errorMessage = computed(() => {
     const error = this.projectService.projectError();

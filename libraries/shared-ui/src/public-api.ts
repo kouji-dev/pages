@@ -33,6 +33,8 @@ export * from './lib/sidenav/sidenav';
 export type { SidenavItem } from './lib/sidenav/sidenav';
 export * from './lib/select/select';
 export type { SelectOption } from './lib/select/select';
+export type { Size } from './lib/types';
+export { DEFAULT_SIZE } from './lib/types';
 export * from './lib/list/list';
 export * from './lib/list/list-item';
 export type { ListItemData } from './lib/list/list-item';

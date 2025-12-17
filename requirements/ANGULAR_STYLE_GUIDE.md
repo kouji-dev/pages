@@ -232,6 +232,30 @@ handleSubmit(): void {}
 
 **Note**: This applies only to Angular components, not HTML elements. HTML elements should always use full tags or valid self-closing syntax per HTML5 spec.
 
+### Property Binding for Constant Strings
+
+- **Use attribute binding** (without brackets) for constant string values
+- **Use property binding** (with brackets) only for dynamic values, expressions, or variables
+
+**Examples**:
+
+```html
+<!-- ✅ Use attribute binding for constant strings -->
+<lib-button leftIcon="link-2" variant="ghost" />
+<lib-icon name="home" size="sm" />
+<lib-badge variant="primary" size="md" />
+
+<!-- ✅ Use property binding for dynamic values -->
+<lib-button [leftIcon]="iconName()" [variant]="buttonVariant" />
+<lib-icon [name]="currentIcon" [size]="iconSize" />
+
+<!-- ❌ Don't use property binding for constant strings -->
+<lib-button [leftIcon]="'link-2'" variant="ghost" />
+<lib-icon [name]="'home'" [size]="'sm'" />
+```
+
+**Rule**: If the value is a constant string literal, use attribute binding. If it's a variable, expression, or computed value, use property binding.
+
 ### CSS Classes (BOM Methodology)
 
 - **BOM naming**: `block`, `block_object`, `block--modifier`, `block_object--modifier`

@@ -171,6 +171,7 @@ export const routes: Routes = [
               {
                 path: ':spaceId',
                 component: SpaceDetailPage,
+                title: 'Space Details - Pages',
                 children: [
                   {
                     path: 'pages/:pageId',

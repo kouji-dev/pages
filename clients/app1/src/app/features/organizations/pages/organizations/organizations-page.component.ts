@@ -146,13 +146,10 @@ export class OrganizationsPage {
     return 'An unknown error occurred.';
   });
 
-  private readonly initializeEffect = effect(
-    () => {
-      // Load organizations when component initializes
-      this.organizationService.loadOrganizations();
-    },
-    { allowSignalWrites: true },
-  );
+  private readonly initializeEffect = effect(() => {
+    // Load organizations when component initializes
+    this.organizationService.loadOrganizations();
+  });
 
   handleCreateOrganization(): void {
     this.modal.open(CreateOrganizationModal, this.viewContainerRef, {
