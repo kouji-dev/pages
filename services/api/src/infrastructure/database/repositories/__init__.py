@@ -28,6 +28,12 @@ from src.infrastructure.database.repositories.issue_repository import (
 from src.infrastructure.database.repositories.notification_repository import (
     SQLAlchemyNotificationRepository,
 )
+from src.infrastructure.database.repositories.favorite_repository import (
+    SQLAlchemyFavoriteRepository,
+)
+from src.infrastructure.database.repositories.folder_repository import (
+    SQLAlchemyFolderRepository,
+)
 from src.infrastructure.database.repositories.organization_repository import (
     SQLAlchemyOrganizationRepository,
 )
@@ -80,4 +86,6 @@ __all__ = [
     "SQLAlchemyTimeEntryRepository",
     "SQLAlchemyDashboardRepository",
     "SQLAlchemySavedFilterRepository",
+    "SQLAlchemyFolderRepository",
+    "SQLAlchemyFavoriteRepository",
 ]

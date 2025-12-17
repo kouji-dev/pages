@@ -192,6 +192,7 @@ class SQLAlchemySpaceRepository(SpaceRepository):
     async def get_all(
         self,
         organization_id: UUID,
+        folder_id: UUID | None = None,
         skip: int = 0,
         limit: int = 20,
         include_deleted: bool = False,
@@ -200,6 +201,7 @@ class SQLAlchemySpaceRepository(SpaceRepository):
 
         Args:
             organization_id: Organization UUID
+            folder_id: Optional folder ID to filter by
             skip: Number of records to skip
             limit: Maximum number of records to return
             include_deleted: Whether to include soft-deleted spaces
@@ -208,6 +210,10 @@ class SQLAlchemySpaceRepository(SpaceRepository):
             List of spaces
         """
         query = select(SpaceModel).where(SpaceModel.organization_id == organization_id)
+
+        # Filter by folder_id if provided
+        if folder_id is not None:
+            query = query.where(SpaceModel.folder_id == folder_id)
 
         if not include_deleted:
             query = query.where(SpaceModel.deleted_at.is_(None))

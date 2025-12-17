@@ -8,10 +8,13 @@ from src.presentation.api.v1.backlog import router as backlog_router
 from src.presentation.api.v1.comments import router as comments_router
 from src.presentation.api.v1.custom_fields import router as custom_fields_router
 from src.presentation.api.v1.dashboards import router as dashboards_router
+from src.presentation.api.v1.favorites import router as favorites_router
+from src.presentation.api.v1.folders import router as folders_router
 from src.presentation.api.v1.health import router as health_router
 from src.presentation.api.v1.issue_links import router as issue_links_router
 from src.presentation.api.v1.issues import router as issues_router
 from src.presentation.api.v1.languages import router as languages_router
+from src.presentation.api.v1.nodes import router as nodes_router
 from src.presentation.api.v1.notifications import router as notifications_router
 from src.presentation.api.v1.organizations import router as organizations_router
 from src.presentation.api.v1.pages import router as pages_router
@@ -41,6 +44,9 @@ router.include_router(sprints_router, tags=["Sprints"])
 router.include_router(backlog_router, tags=["Backlog"])
 router.include_router(issues_router, prefix="/issues", tags=["Issues"])
 router.include_router(comments_router, tags=["Comments"])
+router.include_router(folders_router, tags=["Folders"])
+router.include_router(nodes_router, tags=["Nodes"])
+router.include_router(favorites_router, tags=["Favorites"])
 router.include_router(attachments_router, tags=["Attachments"])
 router.include_router(spaces_router, prefix="/spaces", tags=["Spaces"])
 router.include_router(pages_router, prefix="/pages", tags=["Pages"])
@@ -52,3 +58,6 @@ router.include_router(issue_links_router, tags=["Issue Links"])
 router.include_router(dashboards_router, tags=["Dashboards"])
 router.include_router(subtasks_router, tags=["Subtasks"])
 router.include_router(saved_filters_router, tags=["Saved Filters"])
+router.include_router(folders_router, tags=["Folders"])
+router.include_router(nodes_router, tags=["Nodes"])
+router.include_router(favorites_router, tags=["Favorites"])

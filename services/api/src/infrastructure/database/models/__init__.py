@@ -10,6 +10,8 @@ from src.infrastructure.database.models.dashboard import (
     DashboardModel,
     DashboardWidgetModel,
 )
+from src.infrastructure.database.models.favorite import FavoriteModel
+from src.infrastructure.database.models.folder import FolderModel
 from src.infrastructure.database.models.invitation import InvitationModel
 from src.infrastructure.database.models.issue import IssueModel
 from src.infrastructure.database.models.issue_activity import IssueActivityModel
@@ -62,4 +64,6 @@ __all__ = [
     "DashboardModel",
     "DashboardWidgetModel",
     "SavedFilterModel",
+    "FolderModel",
+    "FavoriteModel",
 ]

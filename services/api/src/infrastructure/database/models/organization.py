@@ -72,6 +72,12 @@ class OrganizationModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMix
         lazy="selectin",
         cascade="all, delete-orphan",
     )
+    folders = relationship(
+        "FolderModel",
+        back_populates="organization",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+    )
 
     def __repr__(self) -> str:
         return f"<Organization(id={self.id}, name={self.name}, slug={self.slug})>"

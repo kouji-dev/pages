@@ -7,6 +7,8 @@ from src.domain.repositories.custom_field_repository import (
     CustomFieldValueRepository,
 )
 from src.domain.repositories.dashboard_repository import DashboardRepository
+from src.domain.repositories.favorite_repository import FavoriteRepository
+from src.domain.repositories.folder_repository import FolderRepository
 from src.domain.repositories.invitation_repository import InvitationRepository
 from src.domain.repositories.issue_activity_repository import IssueActivityRepository
 from src.domain.repositories.issue_link_repository import IssueLinkRepository
@@ -44,4 +46,6 @@ __all__ = [
     "TimeEntryRepository",
     "DashboardRepository",
     "SavedFilterRepository",
+    "FolderRepository",
+    "FavoriteRepository",
 ]
