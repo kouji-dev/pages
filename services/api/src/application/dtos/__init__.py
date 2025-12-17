@@ -81,6 +81,18 @@ from src.application.dtos.sprint import (
     SprintWithIssuesResponse,
     UpdateSprintRequest,
 )
+from src.application.dtos.unified import (
+    ITEM_TYPE_FOLDER,
+    ITEM_TYPE_PROJECT,
+    ITEM_TYPE_SPACE,
+    DTOItemFolder,
+    DTOItemProject,
+    DTOItemSpace,
+    DTOResponseFolder,
+    DTOResponseProject,
+    DTOResponseSpace,
+    UnifiedListResponse,
+)
 from src.application.dtos.user import (
     EmailUpdateRequest,
     PasswordUpdateRequest,
@@ -167,4 +179,15 @@ __all__ = [
     "AttachmentListItemResponse",
     "AttachmentListResponse",
     "UploadAttachmentResponse",
+    # Unified DTOs
+    "UnifiedListResponse",
+    "DTOItemFolder",
+    "DTOItemProject",
+    "DTOItemSpace",
+    "DTOResponseFolder",
+    "DTOResponseProject",
+    "DTOResponseSpace",
+    "ITEM_TYPE_FOLDER",
+    "ITEM_TYPE_PROJECT",
+    "ITEM_TYPE_SPACE",
 ]

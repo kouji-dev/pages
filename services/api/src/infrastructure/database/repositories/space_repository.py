@@ -53,6 +53,7 @@ class SQLAlchemySpaceRepository(SpaceRepository):
             key=space.key,
             description=space.description,
             settings=json.dumps(space.settings) if space.settings else None,
+            folder_id=space.folder_id,
             created_at=space.created_at,
             updated_at=space.updated_at,
             deleted_at=space.deleted_at,
@@ -138,6 +139,7 @@ class SQLAlchemySpaceRepository(SpaceRepository):
         model.key = space.key
         model.description = space.description
         model.settings = json.dumps(space.settings) if space.settings else None
+        model.folder_id = space.folder_id
         model.updated_at = space.updated_at
         model.deleted_at = space.deleted_at
 
@@ -302,6 +304,7 @@ class SQLAlchemySpaceRepository(SpaceRepository):
             key=model.key,
             description=model.description,
             settings=settings,
+            folder_id=model.folder_id,
             created_at=model.created_at,
             updated_at=model.updated_at,
             deleted_at=model.deleted_at,

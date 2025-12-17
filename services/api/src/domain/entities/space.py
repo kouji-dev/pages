@@ -45,6 +45,7 @@ class Space:
     key: str
     description: str | None = None
     settings: dict[str, Any] | None = None
+    folder_id: UUID | None = None
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)
     deleted_at: datetime | None = None
@@ -79,6 +80,7 @@ class Space:
         key: str | None = None,
         description: str | None = None,
         settings: dict[str, Any] | None = None,
+        folder_id: UUID | None = None,
     ) -> Self:
         """Create a new space.
 
@@ -110,6 +112,7 @@ class Space:
             key=key,
             description=description,
             settings=settings,
+            folder_id=folder_id,
             created_at=now,
             updated_at=now,
             deleted_at=None,
@@ -180,6 +183,15 @@ class Space:
             settings: New space settings dictionary (can be None)
         """
         self.settings = settings
+        self._touch()
+
+    def update_folder(self, folder_id: UUID | None) -> None:
+        """Update space folder assignment.
+
+        Args:
+            folder_id: New folder ID (None to unassign from folder)
+        """
+        self.folder_id = folder_id
         self._touch()
 
     def delete(self) -> None:

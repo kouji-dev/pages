@@ -53,6 +53,7 @@ class SQLAlchemyProjectRepository(ProjectRepository):
             key=project.key,
             description=project.description,
             settings=json.dumps(project.settings) if project.settings else None,
+            folder_id=project.folder_id,
             created_at=project.created_at,
             updated_at=project.updated_at,
             deleted_at=project.deleted_at,
@@ -144,6 +145,7 @@ class SQLAlchemyProjectRepository(ProjectRepository):
         model.key = project.key
         model.description = project.description
         model.settings = json.dumps(project.settings) if project.settings else None
+        model.folder_id = project.folder_id
         model.updated_at = project.updated_at
         model.deleted_at = project.deleted_at
 
@@ -303,8 +305,6 @@ class SQLAlchemyProjectRepository(ProjectRepository):
         """
         settings = json.loads(model.settings) if model.settings else None
 
-        # Note: folder_id is not part of the Project entity domain model
-        # It's only used for filtering in the infrastructure layer
         return Project(
             id=model.id,
             organization_id=model.organization_id,
@@ -312,6 +312,7 @@ class SQLAlchemyProjectRepository(ProjectRepository):
             key=model.key,
             description=model.description,
             settings=settings,
+            folder_id=model.folder_id,
             created_at=model.created_at,
             updated_at=model.updated_at,
             deleted_at=model.deleted_at,
