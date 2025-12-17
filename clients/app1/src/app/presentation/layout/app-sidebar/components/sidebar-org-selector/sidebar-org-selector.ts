@@ -113,12 +113,12 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
       }
 
       .sidebar-org-selector_trigger {
-        width: 100%;
-        min-width: 0;
-        display: flex;
-        @apply items-center justify-center;
-        overflow: hidden;
-        height: 100%;
+        @apply w-full;
+        @apply min-w-0;
+        @apply flex;
+        @apply items-center;
+        @apply overflow-hidden;
+        @apply h-full;
       }
 
       .sidebar-org-selector_trigger .button {
@@ -126,8 +126,6 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
         min-width: 0;
         overflow: hidden;
         height: 100%;
-        display: flex;
-        @apply items-center;
       }
 
       .sidebar-org-selector_trigger .button_content {
