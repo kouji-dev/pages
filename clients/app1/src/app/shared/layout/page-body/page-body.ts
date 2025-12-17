@@ -46,7 +46,13 @@ export class PageBody {
   constructor() {
     effect(() => {
       const headerElement = this.headerRef()?.nativeElement;
-      if (!headerElement) return;
+
+      if (!headerElement) {
+        // No header - use full viewport height
+        this.bodyHeight.set(window.innerHeight);
+        this.setupWindowResizeObserver();
+        return;
+      }
 
       this.updateHeight(headerElement);
       this.setupResizeObserver(headerElement);
@@ -59,6 +65,25 @@ export class PageBody {
     const calculatedHeight = Math.max(0, viewportHeight - headerHeight);
 
     this.bodyHeight.set(calculatedHeight);
+  }
+
+  private setupWindowResizeObserver(): void {
+    // Clean up existing handler
+    if (this.windowResizeHandler) {
+      window.removeEventListener('resize', this.windowResizeHandler);
+    }
+
+    // Observe window resize for full-height case
+    this.windowResizeHandler = () => {
+      this.bodyHeight.set(window.innerHeight);
+    };
+    window.addEventListener('resize', this.windowResizeHandler);
+
+    this.destroyRef.onDestroy(() => {
+      if (this.windowResizeHandler) {
+        window.removeEventListener('resize', this.windowResizeHandler);
+      }
+    });
   }
 
   private setupResizeObserver(header: HTMLElement): void {

@@ -5,7 +5,7 @@ import {
   inject,
   ViewContainerRef,
 } from '@angular/core';
-import { Button, LoadingState, ErrorState, EmptyState, Modal, Input } from 'shared-ui';
+import { LoadingState, ErrorState, EmptyState, Modal, Input } from 'shared-ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { SpaceService, Space } from '../../../../application/services/space.service';
 import { OrganizationService } from '../../../../application/services/organization.service';
@@ -19,7 +19,6 @@ import { PageContent } from '../../../../shared/layout/page-content/page-content
 @Component({
   selector: 'app-spaces-page',
   imports: [
-    Button,
     LoadingState,
     ErrorState,
     EmptyState,

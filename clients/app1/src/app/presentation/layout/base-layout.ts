@@ -242,9 +242,10 @@ const teamMembers: AvatarStackItem[] = [
         @apply flex items-center;
       }
 
-      /* Content Area (scrollable) */
+      /* Content Area - scrolling handled by page-content */
       .layout_content {
-        @apply flex-1 overflow-y-auto;
+        @apply flex-1;
+        @apply min-h-0;
         @apply bg-muted/30;
       }
 
