@@ -12,6 +12,8 @@ from src.application.services.search_query_service import SearchQueryService
 from src.domain.repositories import (
     AttachmentRepository,
     CommentRepository,
+    FavoriteRepository,
+    FolderRepository,
     InvitationRepository,
     IssueActivityRepository,
     IssueRepository,
@@ -37,6 +39,8 @@ from src.infrastructure.database.repositories import (
     SQLAlchemyCommentRepository,
     SQLAlchemyCustomFieldRepository,
     SQLAlchemyDashboardRepository,
+    SQLAlchemyFavoriteRepository,
+    SQLAlchemyFolderRepository,
     SQLAlchemyInvitationRepository,
     SQLAlchemyIssueActivityRepository,
     SQLAlchemyIssueLinkRepository,
@@ -333,6 +337,34 @@ async def get_saved_filter_repository(
         SQLAlchemy implementation of SavedFilterRepository
     """
     return SQLAlchemySavedFilterRepository(session)
+
+
+async def get_folder_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> FolderRepository:
+    """Get folder repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of FolderRepository
+    """
+    return SQLAlchemyFolderRepository(session)
+
+
+async def get_favorite_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> FavoriteRepository:
+    """Get favorite repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of FavoriteRepository
+    """
+    return SQLAlchemyFavoriteRepository(session)
 
 
 async def get_search_query_service(

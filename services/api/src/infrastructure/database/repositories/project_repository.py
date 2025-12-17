@@ -200,6 +200,7 @@ class SQLAlchemyProjectRepository(ProjectRepository):
     async def get_all(
         self,
         organization_id: UUID,
+        folder_id: UUID | None = None,
         skip: int = 0,
         limit: int = 20,
         include_deleted: bool = False,
@@ -208,6 +209,7 @@ class SQLAlchemyProjectRepository(ProjectRepository):
 
         Args:
             organization_id: Organization UUID
+            folder_id: Optional folder ID to filter by
             skip: Number of records to skip
             limit: Maximum number of records to return
             include_deleted: Whether to include soft-deleted projects
@@ -216,6 +218,10 @@ class SQLAlchemyProjectRepository(ProjectRepository):
             List of projects
         """
         query = select(ProjectModel).where(ProjectModel.organization_id == organization_id)
+
+        # Filter by folder_id if provided
+        if folder_id is not None:
+            query = query.where(ProjectModel.folder_id == folder_id)
 
         if not include_deleted:
             query = query.where(ProjectModel.deleted_at.is_(None))
@@ -297,6 +303,8 @@ class SQLAlchemyProjectRepository(ProjectRepository):
         """
         settings = json.loads(model.settings) if model.settings else None
 
+        # Note: folder_id is not part of the Project entity domain model
+        # It's only used for filtering in the infrastructure layer
         return Project(
             id=model.id,
             organization_id=model.organization_id,

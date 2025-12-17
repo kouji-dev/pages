@@ -101,6 +101,7 @@ class SpaceRepository(ABC):
     async def get_all(
         self,
         organization_id: UUID,
+        folder_id: UUID | None = None,
         skip: int = 0,
         limit: int = 20,
         include_deleted: bool = False,
@@ -109,6 +110,7 @@ class SpaceRepository(ABC):
 
         Args:
             organization_id: Organization UUID
+            folder_id: Optional folder ID to filter by
             skip: Number of records to skip
             limit: Maximum number of records to return
             include_deleted: Whether to include soft-deleted spaces

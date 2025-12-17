@@ -13,6 +13,12 @@ from src.infrastructure.database.repositories.custom_field_repository import (
 from src.infrastructure.database.repositories.dashboard_repository import (
     SQLAlchemyDashboardRepository,
 )
+from src.infrastructure.database.repositories.favorite_repository import (
+    SQLAlchemyFavoriteRepository,
+)
+from src.infrastructure.database.repositories.folder_repository import (
+    SQLAlchemyFolderRepository,
+)
 from src.infrastructure.database.repositories.invitation_repository import (
     SQLAlchemyInvitationRepository,
 )
@@ -80,4 +86,6 @@ __all__ = [
     "SQLAlchemyTimeEntryRepository",
     "SQLAlchemyDashboardRepository",
     "SQLAlchemySavedFilterRepository",
+    "SQLAlchemyFolderRepository",
+    "SQLAlchemyFavoriteRepository",
 ]

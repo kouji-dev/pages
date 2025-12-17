@@ -18,6 +18,8 @@ from src.infrastructure.database.models import (  # noqa: F401
     comment,
     custom_field,
     dashboard,
+    favorite,
+    folder,
     invitation,
     issue,
     issue_activity,

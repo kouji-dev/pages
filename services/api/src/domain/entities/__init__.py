@@ -4,6 +4,8 @@ from src.domain.entities.attachment import Attachment
 from src.domain.entities.comment import Comment
 from src.domain.entities.custom_field import CustomField, CustomFieldValue
 from src.domain.entities.dashboard import Dashboard, DashboardWidget
+from src.domain.entities.favorite import Favorite
+from src.domain.entities.folder import Folder
 from src.domain.entities.invitation import Invitation
 from src.domain.entities.issue import Issue
 from src.domain.entities.issue_link import IssueLink
@@ -42,4 +44,6 @@ __all__ = [
     "Dashboard",
     "DashboardWidget",
     "SavedFilter",
+    "Folder",
+    "Favorite",
 ]
