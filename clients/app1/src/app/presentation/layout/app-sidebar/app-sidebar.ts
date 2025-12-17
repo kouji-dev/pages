@@ -1,11 +1,10 @@
 import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
-import { Button, Icon, Avatar, List, ListItemData, ListHeader, ListHeaderAction } from 'shared-ui';
+import { List, ListItemData, ListHeader, ListHeaderAction } from 'shared-ui';
 import { UserMenu } from '../../../shared/components/user-menu/user-menu';
 import { WorkspaceTreeItem, WorkspaceNode } from './workspace-tree-item';
 import { SidebarOrgSelector } from './components/sidebar-org-selector/sidebar-org-selector';
-import { NavigationService } from '../../../application/services/navigation.service';
 import { OrganizationService } from '../../../application/services/organization.service';
 import { LanguageService } from '../../../core/i18n/language.service';
 
@@ -63,15 +62,7 @@ const workspaces: WorkspaceNode[] = [
 
 @Component({
   selector: 'app-app-sidebar',
-  imports: [
-    CommonModule,
-    Button,
-    List,
-    ListHeader,
-    UserMenu,
-    WorkspaceTreeItem,
-    SidebarOrgSelector,
-  ],
+  imports: [CommonModule, List, ListHeader, UserMenu, WorkspaceTreeItem, SidebarOrgSelector],
   template: `
     <aside class="app-sidebar">
       <header class="app-sidebar_header">

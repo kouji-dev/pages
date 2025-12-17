@@ -6,7 +6,6 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import {
   Icon,
   Dropdown,
@@ -29,7 +28,6 @@ import { LanguageService, SupportedLanguage } from '../../../core/i18n/language.
   selector: 'app-user-menu',
   imports: [
     Icon,
-    RouterLink,
     Dropdown,
     TranslatePipe,
     ListHeader,
