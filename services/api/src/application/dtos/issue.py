@@ -118,9 +118,7 @@ class CreateIssueRequest(BaseModel):
     assignee_id: UUID | None = Field(None, description="ID of the user assigned to the issue")
     due_date: date | None = Field(None, description="Issue due date")
     story_points: int | None = Field(None, ge=0, description="Story points estimation")
-    parent_issue_id: UUID | None = Field(
-        None, description="ID of the parent issue (for subtasks)"
-    )
+    parent_issue_id: UUID | None = Field(None, description="ID of the parent issue (for subtasks)")
 
     @field_validator("title")
     @classmethod

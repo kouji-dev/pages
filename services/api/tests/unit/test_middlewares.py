@@ -1,6 +1,5 @@
 """Unit tests for middlewares."""
 
-
 import pytest
 from fastapi import FastAPI, Request
 

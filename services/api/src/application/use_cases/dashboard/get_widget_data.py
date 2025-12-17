@@ -105,14 +105,15 @@ class GetWidgetDataUseCase:
         elif request.widget_type == "assigned_issues_list":
             # Get assigned issues (limit to 10)
             # Query issues directly from the session
-            from sqlalchemy import select
-            from src.infrastructure.database.models.issue import IssueModel
-
-            stmt = select(IssueModel).where(
-                IssueModel.project_id == project_id,
-                IssueModel.assignee_id.is_not(None),
-                IssueModel.deleted_at.is_(None),
-            ).limit(10)
+            stmt = (
+                select(IssueModel)
+                .where(
+                    IssueModel.project_id == project_id,
+                    IssueModel.assignee_id.is_not(None),
+                    IssueModel.deleted_at.is_(None),
+                )
+                .limit(10)
+            )
             result = await self._session.execute(stmt)
             issue_models = result.scalars().all()
             # Convert to dict format for widget data
