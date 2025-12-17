@@ -1,7 +1,5 @@
 """Create folder use case."""
 
-from uuid import UUID
-
 import structlog
 
 from src.application.dtos.folder import CreateFolderRequest, FolderResponse

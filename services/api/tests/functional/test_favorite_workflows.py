@@ -4,7 +4,6 @@ import pytest
 from httpx import AsyncClient
 
 from src.infrastructure.database.models import (
-    FavoriteModel,
     OrganizationMemberModel,
     OrganizationModel,
     PageModel,
@@ -92,7 +91,6 @@ async def test_favorite_workflow_create_list_delete(client: AsyncClient, test_us
     )
     assert create_space_fav_response.status_code == 201
     space_fav_data = create_space_fav_response.json()
-    space_fav_id = space_fav_data["id"]
     assert space_fav_data["entity_type"] == "space"
 
     # 3. Create favorite for page
@@ -106,7 +104,6 @@ async def test_favorite_workflow_create_list_delete(client: AsyncClient, test_us
     )
     assert create_page_fav_response.status_code == 201
     page_fav_data = create_page_fav_response.json()
-    page_fav_id = page_fav_data["id"]
     assert page_fav_data["entity_type"] == "page"
 
     # 4. List all favorites

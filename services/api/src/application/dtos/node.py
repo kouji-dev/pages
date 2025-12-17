@@ -1,6 +1,6 @@
 """Node DTOs."""
 
-from typing import Literal, Union
+from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -16,7 +16,7 @@ class NodeResponse(BaseModel):
     """
 
     type: Literal["project", "space"] = Field(..., description="Type of node: project or space")
-    data: Union[ProjectListItemResponse, SpaceListItemResponse] = Field(
+    data: ProjectListItemResponse | SpaceListItemResponse = Field(
         ..., description="Node data (project or space)"
     )
 

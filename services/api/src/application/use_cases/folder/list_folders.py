@@ -4,7 +4,7 @@ from uuid import UUID
 
 import structlog
 
-from src.application.dtos.folder import FolderListResponse, FolderListItemResponse
+from src.application.dtos.folder import FolderListItemResponse, FolderListResponse
 from src.domain.repositories import FolderRepository
 
 logger = structlog.get_logger()

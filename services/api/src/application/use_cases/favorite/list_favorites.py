@@ -4,7 +4,7 @@ from uuid import UUID
 
 import structlog
 
-from src.application.dtos.favorite import FavoriteListResponse, FavoriteListItemResponse
+from src.application.dtos.favorite import FavoriteListItemResponse, FavoriteListResponse
 from src.domain.repositories import FavoriteRepository
 from src.domain.value_objects.entity_type import EntityType
 

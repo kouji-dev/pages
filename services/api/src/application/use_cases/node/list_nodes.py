@@ -6,7 +6,7 @@ import structlog
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.application.dtos.node import NodeListResponse, NodeListItemResponse
+from src.application.dtos.node import NodeListItemResponse, NodeListResponse
 from src.domain.repositories import ProjectRepository, SpaceRepository
 from src.infrastructure.database.models import (
     IssueModel,
@@ -91,26 +91,26 @@ class ListNodesUseCase:
         # Add projects as nodes
         for project in projects:
             # Get folder_id from model
-            result = await self._session.execute(
+            folder_result = await self._session.execute(
                 select(ProjectModel.folder_id).where(ProjectModel.id == project.id)
             )
-            project_folder_id = result.scalar_one_or_none()
+            project_folder_id = folder_result.scalar_one_or_none()
 
             # Count members
-            result = await self._session.execute(
+            member_result = await self._session.execute(
                 select(func.count())
                 .select_from(ProjectMemberModel)
                 .where(ProjectMemberModel.project_id == project.id)
             )
-            member_count: int = result.scalar_one()
+            member_count: int = member_result.scalar_one()
 
             # Count issues
-            result = await self._session.execute(
+            issue_result = await self._session.execute(
                 select(func.count())
                 .select_from(IssueModel)
                 .where(IssueModel.project_id == project.id)
             )
-            issue_count: int = result.scalar_one()
+            issue_count: int = issue_result.scalar_one()
 
             node_responses.append(
                 NodeListItemResponse(
@@ -130,16 +130,16 @@ class ListNodesUseCase:
         # Add spaces as nodes
         for space in spaces:
             # Get folder_id from model
-            result = await self._session.execute(
+            space_folder_result = await self._session.execute(
                 select(SpaceModel.folder_id).where(SpaceModel.id == space.id)
             )
-            space_folder_id = result.scalar_one_or_none()
+            space_folder_id = space_folder_result.scalar_one_or_none()
 
             # Count pages
-            result = await self._session.execute(
+            page_count_result = await self._session.execute(
                 select(func.count()).select_from(PageModel).where(PageModel.space_id == space.id)
             )
-            page_count: int = result.scalar_one()
+            page_count: int = page_count_result.scalar_one()
 
             node_responses.append(
                 NodeListItemResponse(
