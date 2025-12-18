@@ -81,8 +81,8 @@ class ExportPageUseCase:
             Tuple of (PDF bytes, mime_type, filename)
         """
         try:
-            from weasyprint import HTML  # type: ignore[import-untyped]
-            from weasyprint.text.fonts import FontConfiguration  # type: ignore[import-untyped]
+            from weasyprint import HTML  # type: ignore[import-untyped,import-not-found]  # noqa: I001
+            from weasyprint.text.fonts import FontConfiguration  # type: ignore[import-untyped,import-not-found]  # noqa: I001
         except ImportError as err:
             raise ImportError(
                 "weasyprint is required for PDF export. Install it with: pip install weasyprint"
@@ -137,7 +137,7 @@ class ExportPageUseCase:
             Tuple of (Markdown bytes, mime_type, filename)
         """
         try:
-            import html2text
+            import html2text  # type: ignore[import-untyped,import-not-found]
         except ImportError as err:
             raise ImportError(
                 "html2text is required for Markdown export. Install it with: pip install html2text"

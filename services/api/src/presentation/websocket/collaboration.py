@@ -3,7 +3,7 @@
 import json
 from uuid import UUID
 
-import socketio  # type: ignore[import-untyped]
+import socketio  # type: ignore[import-untyped,import-not-found]
 import structlog
 
 from src.application.services.collaboration_service import CollaborationService

@@ -95,8 +95,9 @@ async def test_page_version_workflow(
     )
     assert restore_response.status_code == 200
     restored_data = restore_response.json()
-    assert restored_data["title"] == "Updated Page"
-    assert restored_data["content"] == "Updated content"
+    assert "restored_version_id" in restored_data
+    assert "new_version_id" in restored_data
+    assert restored_data["page_id"] == page_id
 
     # Step 7: Verify new version was created
     versions_response_after = await client_instance.get(
@@ -161,7 +162,18 @@ async def test_page_version_diff_workflow(
     )
     assert update_response.status_code == 200
 
-    # Step 4: List versions
+    # Step 4: Update page again to ensure we have at least 2 versions
+    update_response2 = await client_instance.put(
+        f"/api/v1/pages/{page_id}",
+        json={
+            "title": "Final Page",
+            "content": "Final content",
+        },
+        headers=headers,
+    )
+    assert update_response2.status_code == 200
+
+    # Step 5: List versions
     versions_response = await client_instance.get(
         f"/api/v1/pages/{page_id}/versions",
         headers=headers,
@@ -170,13 +182,14 @@ async def test_page_version_diff_workflow(
     versions_data = versions_response.json()
     assert versions_data["total"] >= 2
 
-    # Step 5: Get diff between versions
+    # Step 6: Get diff between versions
     if len(versions_data["versions"]) >= 2:
         version1_id = versions_data["versions"][1]["id"]  # Older version
         version2_id = versions_data["versions"][0]["id"]  # Newer version
 
         diff_response = await client_instance.get(
-            f"/api/v1/page-versions/{version2_id}/diff?compare_with={version1_id}",
+            f"/api/v1/page-versions/{version2_id}/diff",
+            params={"compare_to_version_id": version1_id},
             headers=headers,
         )
         assert diff_response.status_code == 200

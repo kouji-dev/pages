@@ -171,7 +171,7 @@ class SQLAlchemyPageVersionRepository(PageVersionRepository):
                 PageVersionModel.page_id == page_id
             )
         )
-        max_version = result.scalar_one()
+        max_version: int | None = result.scalar_one()
 
         if max_version is None:
             return 1

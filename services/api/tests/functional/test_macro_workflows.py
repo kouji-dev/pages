@@ -47,7 +47,7 @@ async def test_macro_workflow(
             "organization_id": org["id"],
             "name": "Test Macro",
             "code": "return 'Hello, World!';",
-            "type": "javascript",
+            "macro_type": "code_block",
         },
         headers=headers,
     )

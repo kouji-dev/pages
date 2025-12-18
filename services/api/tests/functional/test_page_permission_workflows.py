@@ -71,11 +71,7 @@ async def test_page_permission_workflow(
             "permissions": [
                 {
                     "user_id": str(other_user_id),
-                    "role": "viewer",
-                    "can_read": True,
-                    "can_edit": False,
-                    "can_delete": False,
-                    "can_admin": False,
+                    "role": "read",
                 }
             ]
         },
@@ -146,11 +142,7 @@ async def test_space_permission_workflow(
             "permissions": [
                 {
                     "user_id": str(other_user_id),
-                    "role": "editor",
-                    "can_read": True,
-                    "can_edit": True,
-                    "can_delete": False,
-                    "can_admin": False,
+                    "role": "edit",
                 }
             ]
         },
@@ -159,7 +151,7 @@ async def test_space_permission_workflow(
     assert update_response.status_code == 200
     permissions_data = update_response.json()
     assert len(permissions_data["permissions"]) == 1
-    assert permissions_data["permissions"][0]["role"] == "editor"
+    assert permissions_data["permissions"][0]["role"] == "edit"
 
     # Step 4: Get space permissions
     get_response = await client_instance.get(

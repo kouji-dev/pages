@@ -57,11 +57,14 @@ class CreateWhiteboardUseCase:
         # Convert created_by to UUID if provided
         created_by_uuid = UUID(created_by) if created_by else None
 
+        # Ensure data is a string (validator should have converted dict to JSON string)
+        data_str: str | None = request.data if isinstance(request.data, str) else None
+
         # Create whiteboard entity
         whiteboard = Whiteboard.create(
             space_id=request.space_id,
             name=request.name,
-            data=request.data,
+            data=data_str,
             created_by=created_by_uuid,
         )
 

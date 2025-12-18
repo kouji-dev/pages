@@ -1,9 +1,11 @@
 """Whiteboard DTOs."""
 
+import json
 from datetime import datetime
+from typing import Any
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class WhiteboardResponse(BaseModel):
@@ -56,11 +58,31 @@ class CreateWhiteboardRequest(BaseModel):
 
     space_id: UUID = Field(..., description="ID of the space")
     name: str = Field(..., min_length=1, max_length=100, description="Whiteboard name")
-    data: str | None = Field(None, description="Initial whiteboard data (JSON)")
+    data: str | dict[str, Any] | None = Field(None, description="Initial whiteboard data (JSON)")
+
+    @field_validator("data", mode="before")
+    @classmethod
+    def validate_data(cls, v: str | dict[str, Any] | None) -> str | None:
+        """Convert dict to JSON string if needed."""
+        if v is None:
+            return None
+        if isinstance(v, dict):
+            return json.dumps(v)
+        return v
 
 
 class UpdateWhiteboardRequest(BaseModel):
     """Request DTO for updating a whiteboard."""
 
     name: str | None = Field(None, min_length=1, max_length=100, description="Whiteboard name")
-    data: str | None = Field(None, description="Whiteboard data (JSON)")
+    data: str | dict[str, Any] | None = Field(None, description="Whiteboard data (JSON)")
+
+    @field_validator("data", mode="before")
+    @classmethod
+    def validate_data(cls, v: str | dict[str, Any] | None) -> str | None:
+        """Convert dict to JSON string if needed."""
+        if v is None:
+            return None
+        if isinstance(v, dict):
+            return json.dumps(v)
+        return v

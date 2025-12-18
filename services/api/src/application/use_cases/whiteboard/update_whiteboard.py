@@ -55,7 +55,9 @@ class UpdateWhiteboardUseCase:
             whiteboard.update_name(request.name, updated_by=updated_by_uuid)
 
         if request.data is not None:
-            whiteboard.update_data(request.data, updated_by=updated_by_uuid)
+            # Ensure data is a string (validator should have converted dict to JSON string)
+            data_str: str | None = request.data if isinstance(request.data, str) else None
+            whiteboard.update_data(data_str, updated_by=updated_by_uuid)
 
         # Persist changes
         updated_whiteboard = await self._whiteboard_repository.update(whiteboard)

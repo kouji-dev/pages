@@ -49,7 +49,6 @@ def test_space(test_user):
         organization_id=uuid4(),
         name="Test Space",
         key="TEST",
-        created_by=test_user.id,
     )
 
 

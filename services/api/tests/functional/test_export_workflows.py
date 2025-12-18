@@ -80,7 +80,7 @@ async def test_page_export_workflow(
         headers=headers,
     )
     assert md_response.status_code == 200
-    assert md_response.headers["content-type"] == "text/markdown"
+    assert md_response.headers["content-type"].startswith("text/markdown")
     assert b"Test Content" in md_response.content
 
     # Step 5: Export to HTML
