@@ -25,6 +25,7 @@ from src.domain.entities import User
 from src.domain.exceptions import EntityNotFoundException
 from src.domain.repositories import (
     PageRepository,
+    PageVersionRepository,
     SpaceRepository,
     UserRepository,
 )
@@ -38,6 +39,7 @@ from src.presentation.dependencies.permissions import (
 )
 from src.presentation.dependencies.services import (
     get_page_repository,
+    get_page_version_repository,
     get_permission_service,
     get_space_repository,
     get_user_repository,
@@ -75,10 +77,11 @@ def get_list_pages_use_case(
 
 def get_update_page_use_case(
     page_repository: Annotated[PageRepository, Depends(get_page_repository)],
+    page_version_repository: Annotated[PageVersionRepository, Depends(get_page_version_repository)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> UpdatePageUseCase:
     """Get update page use case with dependencies."""
-    return UpdatePageUseCase(page_repository, session)
+    return UpdatePageUseCase(page_repository, page_version_repository, session)
 
 
 def get_delete_page_use_case(

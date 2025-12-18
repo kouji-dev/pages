@@ -18,6 +18,7 @@ class Template:
     id: UUID
     organization_id: UUID
     name: str
+    category: str | None = None  # Template category
     description: str | None = None
     content: str | None = None  # Template content (HTML or Markdown)
     is_default: bool = False  # Whether this is a default template
@@ -46,6 +47,7 @@ class Template:
         name: str,
         content: str | None = None,
         description: str | None = None,
+        category: str | None = None,
         is_default: bool = False,
         created_by: UUID | None = None,
     ) -> Self:
@@ -73,6 +75,7 @@ class Template:
             id=uuid4(),
             organization_id=organization_id,
             name=name,
+            category=category,
             description=description,
             content=content,
             is_default=is_default,

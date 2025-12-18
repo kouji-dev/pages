@@ -31,14 +31,27 @@ from src.infrastructure.database.repositories.issue_link_repository import (
 from src.infrastructure.database.repositories.issue_repository import (
     SQLAlchemyIssueRepository,
 )
+from src.infrastructure.database.repositories.macro_repository import (
+    SQLAlchemyMacroRepository,
+)
 from src.infrastructure.database.repositories.notification_repository import (
     SQLAlchemyNotificationRepository,
 )
 from src.infrastructure.database.repositories.organization_repository import (
     SQLAlchemyOrganizationRepository,
 )
+from src.infrastructure.database.repositories.page_permission_repository import (
+    SQLAlchemyPagePermissionRepository,
+    SQLAlchemySpacePermissionRepository,
+)
 from src.infrastructure.database.repositories.page_repository import (
     SQLAlchemyPageRepository,
+)
+from src.infrastructure.database.repositories.page_version_repository import (
+    SQLAlchemyPageVersionRepository,
+)
+from src.infrastructure.database.repositories.presence_repository import (
+    SQLAlchemyPresenceRepository,
 )
 from src.infrastructure.database.repositories.project_repository import (
     SQLAlchemyProjectRepository,
@@ -61,6 +74,9 @@ from src.infrastructure.database.repositories.time_entry_repository import (
 from src.infrastructure.database.repositories.user_repository import (
     SQLAlchemyUserRepository,
 )
+from src.infrastructure.database.repositories.whiteboard_repository import (
+    SQLAlchemyWhiteboardRepository,
+)
 from src.infrastructure.database.repositories.workflow_repository import (
     SQLAlchemyWorkflowRepository,
 )
@@ -76,6 +92,12 @@ __all__ = [
     "SQLAlchemyAttachmentRepository",
     "SQLAlchemySpaceRepository",
     "SQLAlchemyPageRepository",
+    "SQLAlchemyPageVersionRepository",
+    "SQLAlchemyPagePermissionRepository",
+    "SQLAlchemySpacePermissionRepository",
+    "SQLAlchemyMacroRepository",
+    "SQLAlchemyPresenceRepository",
+    "SQLAlchemyWhiteboardRepository",
     "SQLAlchemyTemplateRepository",
     "SQLAlchemyNotificationRepository",
     "SQLAlchemySprintRepository",

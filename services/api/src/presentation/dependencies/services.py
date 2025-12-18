@@ -17,14 +17,20 @@ from src.domain.repositories import (
     InvitationRepository,
     IssueActivityRepository,
     IssueRepository,
+    MacroRepository,
     NotificationRepository,
     OrganizationRepository,
+    PagePermissionRepository,
     PageRepository,
+    PageVersionRepository,
+    PresenceRepository,
     ProjectRepository,
+    SpacePermissionRepository,
     SpaceRepository,
     SprintRepository,
     TemplateRepository,
     UserRepository,
+    WhiteboardRepository,
     WorkflowRepository,
 )
 from src.domain.repositories.custom_field_repository import CustomFieldRepository
@@ -45,16 +51,22 @@ from src.infrastructure.database.repositories import (
     SQLAlchemyIssueActivityRepository,
     SQLAlchemyIssueLinkRepository,
     SQLAlchemyIssueRepository,
+    SQLAlchemyMacroRepository,
     SQLAlchemyNotificationRepository,
     SQLAlchemyOrganizationRepository,
+    SQLAlchemyPagePermissionRepository,
     SQLAlchemyPageRepository,
+    SQLAlchemyPageVersionRepository,
+    SQLAlchemyPresenceRepository,
     SQLAlchemyProjectRepository,
     SQLAlchemySavedFilterRepository,
+    SQLAlchemySpacePermissionRepository,
     SQLAlchemySpaceRepository,
     SQLAlchemySprintRepository,
     SQLAlchemyTemplateRepository,
     SQLAlchemyTimeEntryRepository,
     SQLAlchemyUserRepository,
+    SQLAlchemyWhiteboardRepository,
     SQLAlchemyWorkflowRepository,
 )
 from src.infrastructure.security import BcryptPasswordService, JWTTokenService
@@ -211,6 +223,90 @@ async def get_page_repository(
         SQLAlchemy implementation of PageRepository
     """
     return SQLAlchemyPageRepository(session)
+
+
+async def get_page_version_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> PageVersionRepository:
+    """Get page version repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of PageVersionRepository
+    """
+    return SQLAlchemyPageVersionRepository(session)
+
+
+async def get_presence_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> PresenceRepository:
+    """Get presence repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of PresenceRepository
+    """
+    return SQLAlchemyPresenceRepository(session)
+
+
+async def get_page_permission_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> PagePermissionRepository:
+    """Get page permission repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of PagePermissionRepository
+    """
+    return SQLAlchemyPagePermissionRepository(session)
+
+
+async def get_space_permission_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> SpacePermissionRepository:
+    """Get space permission repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of SpacePermissionRepository
+    """
+    return SQLAlchemySpacePermissionRepository(session)
+
+
+async def get_macro_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> MacroRepository:
+    """Get macro repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of MacroRepository
+    """
+    return SQLAlchemyMacroRepository(session)
+
+
+async def get_whiteboard_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> WhiteboardRepository:
+    """Get whiteboard repository instance with database session.
+
+    Args:
+        session: Async database session from dependency injection
+
+    Returns:
+        SQLAlchemy implementation of WhiteboardRepository
+    """
+    return SQLAlchemyWhiteboardRepository(session)
 
 
 async def get_template_repository(

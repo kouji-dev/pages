@@ -9,9 +9,13 @@ from src.domain.entities.folder import Folder
 from src.domain.entities.invitation import Invitation
 from src.domain.entities.issue import Issue
 from src.domain.entities.issue_link import IssueLink
+from src.domain.entities.macro import Macro
 from src.domain.entities.notification import Notification
 from src.domain.entities.organization import Organization
 from src.domain.entities.page import Page
+from src.domain.entities.page_permission import PagePermission, SpacePermission
+from src.domain.entities.page_version import PageVersion
+from src.domain.entities.presence import Presence
 from src.domain.entities.project import Project
 from src.domain.entities.saved_filter import SavedFilter
 from src.domain.entities.space import Space
@@ -19,6 +23,7 @@ from src.domain.entities.sprint import Sprint
 from src.domain.entities.template import Template
 from src.domain.entities.time_entry import TimeEntry
 from src.domain.entities.user import User
+from src.domain.entities.whiteboard import Whiteboard
 from src.domain.entities.workflow import Workflow, WorkflowStatus, WorkflowTransition
 
 __all__ = [
@@ -31,6 +36,12 @@ __all__ = [
     "Attachment",
     "Space",
     "Page",
+    "PageVersion",
+    "PagePermission",
+    "SpacePermission",
+    "Presence",
+    "Macro",
+    "Whiteboard",
     "Template",
     "Notification",
     "Sprint",
