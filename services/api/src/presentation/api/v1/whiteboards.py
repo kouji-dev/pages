@@ -8,7 +8,6 @@ from fastapi import APIRouter, Depends, Query, Response, status
 from src.application.dtos.whiteboard import (
     CreateWhiteboardRequest,
     UpdateWhiteboardRequest,
-    WhiteboardListResponse,
     WhiteboardResponse,
 )
 from src.application.use_cases.whiteboard import (
