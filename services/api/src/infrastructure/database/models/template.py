@@ -32,6 +32,10 @@ class TemplateModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         String(100),
         nullable=False,
     )
+    category: Mapped[str | None] = mapped_column(
+        String(50),
+        nullable=True,
+    )  # Template category
     description: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,

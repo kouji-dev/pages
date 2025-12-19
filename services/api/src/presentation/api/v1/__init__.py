@@ -5,18 +5,23 @@ from fastapi import APIRouter
 from src.presentation.api.v1.attachments import router as attachments_router
 from src.presentation.api.v1.auth import router as auth_router
 from src.presentation.api.v1.backlog import router as backlog_router
+from src.presentation.api.v1.collaboration import router as collaboration_router
 from src.presentation.api.v1.comments import router as comments_router
 from src.presentation.api.v1.custom_fields import router as custom_fields_router
 from src.presentation.api.v1.dashboards import router as dashboards_router
+from src.presentation.api.v1.export import router as export_router
 from src.presentation.api.v1.favorites import router as favorites_router
 from src.presentation.api.v1.folders import router as folders_router
 from src.presentation.api.v1.health import router as health_router
 from src.presentation.api.v1.issue_links import router as issue_links_router
 from src.presentation.api.v1.issues import router as issues_router
 from src.presentation.api.v1.languages import router as languages_router
+from src.presentation.api.v1.macros import router as macros_router
 from src.presentation.api.v1.nodes import router as nodes_router
 from src.presentation.api.v1.notifications import router as notifications_router
 from src.presentation.api.v1.organizations import router as organizations_router
+from src.presentation.api.v1.page_permissions import router as page_permissions_router
+from src.presentation.api.v1.page_versions import router as page_versions_router
 from src.presentation.api.v1.pages import router as pages_router
 from src.presentation.api.v1.projects import router as projects_router
 from src.presentation.api.v1.saved_filters import router as saved_filters_router
@@ -28,6 +33,7 @@ from src.presentation.api.v1.templates import router as templates_router
 from src.presentation.api.v1.time_entries import router as time_entries_router
 from src.presentation.api.v1.unified import router as unified_router
 from src.presentation.api.v1.users import router as users_router
+from src.presentation.api.v1.whiteboards import router as whiteboards_router
 from src.presentation.api.v1.workflows import router as workflows_router
 
 router = APIRouter(prefix="/api/v1")
@@ -52,6 +58,12 @@ router.include_router(favorites_router, tags=["Favorites"])
 router.include_router(attachments_router, tags=["Attachments"])
 router.include_router(spaces_router, prefix="/spaces", tags=["Spaces"])
 router.include_router(pages_router, prefix="/pages", tags=["Pages"])
+router.include_router(page_versions_router, tags=["Page Versions"])
+router.include_router(page_permissions_router, tags=["Permissions"])
+router.include_router(collaboration_router, tags=["Collaboration"])
+router.include_router(macros_router, prefix="/macros", tags=["Macros"])
+router.include_router(whiteboards_router, prefix="/whiteboards", tags=["Whiteboards"])
+router.include_router(export_router, tags=["Export"])
 router.include_router(templates_router, prefix="/templates", tags=["Templates"])
 router.include_router(workflows_router, tags=["Workflows"])
 router.include_router(custom_fields_router, tags=["Custom Fields"])

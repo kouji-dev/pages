@@ -69,6 +69,18 @@ class SpaceModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         lazy="selectin",
         cascade="all, delete-orphan",
     )
+    permissions = relationship(
+        "SpacePermissionModel",
+        back_populates="space",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+    )
+    whiteboards = relationship(
+        "WhiteboardModel",
+        back_populates="space",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+    )
 
     def __repr__(self) -> str:
         return f"<Space(id={self.id}, key={self.key}, name={self.name})>"
@@ -159,6 +171,19 @@ class PageModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         "AttachmentModel.entity_type=='page')",
         lazy="selectin",
         viewonly=True,
+    )
+    versions = relationship(
+        "PageVersionModel",
+        back_populates="page",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+        order_by="PageVersionModel.version_number.desc()",
+    )
+    permissions = relationship(
+        "PagePermissionModel",
+        back_populates="page",
+        lazy="selectin",
+        cascade="all, delete-orphan",
     )
 
     def __repr__(self) -> str:

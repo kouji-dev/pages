@@ -884,6 +884,57 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 
 ---
 
+#### 2.2.15 Unified Folders and Nodes API
+
+**Priority**: High  
+**Estimated Time**: 3-4 days  
+**Dependencies**: FOLDERS_FAVORITES_NODES_IMPLEMENTATION (Folders & Nodes)  
+**Assigned To**: BATATA1  
+**Status**: ✅ **COMPLETED**
+
+**Backend Tasks**:
+
+- [x] Create unified DTOs for folders and nodes
+  - [x] DTOResponseFolder, DTOResponseProject, DTOResponseSpace
+  - [x] DTOItemFolder, DTOItemProject, DTOItemSpace
+  - [x] UnifiedListResponse with folders_count, nodes_count, total
+  - [x] Use constants (ITEM_TYPE_FOLDER, ITEM_TYPE_PROJECT, ITEM_TYPE_SPACE)
+- [x] Implement ListFoldersAndNodesUseCase
+  - [x] Combine folders, projects, and spaces in single response
+  - [x] Support filtering by folder_id (for nodes) and parent_id (for folders)
+  - [x] Support include_empty_folders parameter
+  - [x] Pagination support (skip, limit)
+  - [x] Follow DDD principles (repositories only, no direct DB access)
+  - [x] Structured logging with structlog
+  - [x] No hardcoding
+- [x] Create unified endpoint (GET /api/v1/organizations/{id}/items)
+  - [x] Return unified list of folders and nodes
+  - [x] Support query parameters (folder_id, parent_id, include_empty_folders, skip, limit)
+  - [x] Permission validation (organization membership required)
+  - [x] Error handling (401, 403, 422)
+- [x] Update domain entities
+  - [x] Add folder_id to Project and Space entities
+  - [x] Update repositories to map folder_id correctly
+- [x] Write comprehensive tests
+  - [x] 15 unit tests (100% coverage for use case)
+  - [x] 10 integration tests (94% coverage for endpoint)
+  - [x] 5 functional tests (complete workflows)
+- [x] Code quality checks
+  - [x] Black formatting
+  - [x] Ruff linting
+  - [x] MyPy type checking (347 files, 0 errors)
+  - [x] Bandit security scan
+
+**Deliverables**:
+
+- ✅ Unified API endpoint for folders and nodes
+- ✅ Comprehensive DTOs with type discrimination
+- ✅ Use case with 100% test coverage
+- ✅ All tests passing (30/30)
+- ✅ Code quality verified
+
+---
+
 ## Phase 2.3: Documentation Enhancements (Weeks 11-16)
 
 ### Dependencies: Phase 1.4
