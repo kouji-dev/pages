@@ -89,7 +89,7 @@ async def test_page_export_workflow(
         headers=headers,
     )
     assert html_response.status_code == 200
-    assert html_response.headers["content-type"] == "text/html"
+    assert html_response.headers["content-type"].startswith("text/html")
     assert b"Test Content" in html_response.content
 
 

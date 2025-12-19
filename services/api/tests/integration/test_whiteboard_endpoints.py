@@ -1,5 +1,7 @@
 """Integration tests for whiteboard endpoints."""
 
+import json
+
 import pytest
 from httpx import AsyncClient
 
@@ -89,7 +91,7 @@ async def test_get_whiteboard_success(client: AsyncClient, test_user, db_session
     whiteboard = WhiteboardModel(
         space_id=space.id,
         name="Test Whiteboard",
-        data={"nodes": [{"id": "1", "type": "text"}], "edges": []},
+        data=json.dumps({"nodes": [{"id": "1", "type": "text"}], "edges": []}),
         created_by=test_user.id,
     )
     db_session.add(whiteboard)
@@ -143,13 +145,13 @@ async def test_list_whiteboards_success(client: AsyncClient, test_user, db_sessi
     whiteboard1 = WhiteboardModel(
         space_id=space.id,
         name="Whiteboard 1",
-        data={"nodes": [], "edges": []},
+        data=json.dumps({"nodes": [], "edges": []}),
         created_by=test_user.id,
     )
     whiteboard2 = WhiteboardModel(
         space_id=space.id,
         name="Whiteboard 2",
-        data={"nodes": [], "edges": []},
+        data=json.dumps({"nodes": [], "edges": []}),
         created_by=test_user.id,
     )
     db_session.add(whiteboard1)
@@ -203,7 +205,7 @@ async def test_update_whiteboard_success(client: AsyncClient, test_user, db_sess
     whiteboard = WhiteboardModel(
         space_id=space.id,
         name="Test Whiteboard",
-        data={"nodes": [], "edges": []},
+        data=json.dumps({"nodes": [], "edges": []}),
         created_by=test_user.id,
     )
     db_session.add(whiteboard)
@@ -263,7 +265,7 @@ async def test_delete_whiteboard_success(client: AsyncClient, test_user, db_sess
     whiteboard = WhiteboardModel(
         space_id=space.id,
         name="Test Whiteboard",
-        data={"nodes": [], "edges": []},
+        data=json.dumps({"nodes": [], "edges": []}),
         created_by=test_user.id,
     )
     db_session.add(whiteboard)
