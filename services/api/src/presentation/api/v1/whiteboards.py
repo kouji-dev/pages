@@ -106,46 +106,6 @@ async def create_whiteboard(
     return await use_case.execute(request, str(current_user.id))
 
 
-@router.get("/{whiteboard_id}", response_model=WhiteboardResponse, status_code=status.HTTP_200_OK)
-async def get_whiteboard(
-    current_user: Annotated[User, Depends(get_current_active_user)],
-    whiteboard_id: UUID,
-    use_case: Annotated[GetWhiteboardUseCase, Depends(get_get_whiteboard_use_case)],
-    whiteboard_repository: Annotated[WhiteboardRepository, Depends(get_whiteboard_repository)],
-    space_repository: Annotated[SpaceRepository, Depends(get_space_repository)],
-    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
-) -> WhiteboardResponse:
-    """Get whiteboard by ID.
-
-    Requires space membership (via organization membership).
-
-    Args:
-        current_user: Current authenticated user
-        whiteboard_id: Whiteboard UUID (from path)
-        use_case: Get whiteboard use case
-        whiteboard_repository: Whiteboard repository
-        space_repository: Space repository
-        permission_service: Permission service
-
-    Returns:
-        Whiteboard response
-
-    Raises:
-        HTTPException: If whiteboard not found or user lacks permission
-    """
-    whiteboard = await whiteboard_repository.get_by_id(whiteboard_id)
-    if whiteboard is None:
-        raise EntityNotFoundException("Whiteboard", str(whiteboard_id))
-
-    space = await space_repository.get_by_id(whiteboard.space_id)
-    if space is None:
-        raise EntityNotFoundException("Space", str(whiteboard.space_id))
-
-    await require_organization_member(space.organization_id, current_user, permission_service)
-
-    return await use_case.execute(str(whiteboard_id))
-
-
 @router.get(
     "/spaces/{space_id}/whiteboards",
     response_model=WhiteboardListResponse,
@@ -186,6 +146,46 @@ async def list_whiteboards(
     await require_organization_member(space.organization_id, current_user, permission_service)
 
     return await use_case.execute(str(space_id), page=page, limit=limit)
+
+
+@router.get("/{whiteboard_id}", response_model=WhiteboardResponse, status_code=status.HTTP_200_OK)
+async def get_whiteboard(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    whiteboard_id: UUID,
+    use_case: Annotated[GetWhiteboardUseCase, Depends(get_get_whiteboard_use_case)],
+    whiteboard_repository: Annotated[WhiteboardRepository, Depends(get_whiteboard_repository)],
+    space_repository: Annotated[SpaceRepository, Depends(get_space_repository)],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+) -> WhiteboardResponse:
+    """Get whiteboard by ID.
+
+    Requires space membership (via organization membership).
+
+    Args:
+        current_user: Current authenticated user
+        whiteboard_id: Whiteboard UUID (from path)
+        use_case: Get whiteboard use case
+        whiteboard_repository: Whiteboard repository
+        space_repository: Space repository
+        permission_service: Permission service
+
+    Returns:
+        Whiteboard response
+
+    Raises:
+        HTTPException: If whiteboard not found or user lacks permission
+    """
+    whiteboard = await whiteboard_repository.get_by_id(whiteboard_id)
+    if whiteboard is None:
+        raise EntityNotFoundException("Whiteboard", str(whiteboard_id))
+
+    space = await space_repository.get_by_id(whiteboard.space_id)
+    if space is None:
+        raise EntityNotFoundException("Space", str(whiteboard.space_id))
+
+    await require_organization_member(space.organization_id, current_user, permission_service)
+
+    return await use_case.execute(str(whiteboard_id))
 
 
 @router.put("/{whiteboard_id}", response_model=WhiteboardResponse, status_code=status.HTTP_200_OK)

@@ -33,7 +33,7 @@ async def test_macro_workflow(
         name="Test User",
     )
     client_instance, headers, _ = await authenticated_client(client, user_data)
-    org = await create_test_organization(
+    await create_test_organization(
         client_instance,
         headers,
         name="Test Org",
@@ -44,7 +44,6 @@ async def test_macro_workflow(
     create_response = await client_instance.post(
         "/api/v1/macros/",
         json={
-            "organization_id": org["id"],
             "name": "Test Macro",
             "code": "return 'Hello, World!';",
             "macro_type": "code_block",
@@ -68,8 +67,11 @@ async def test_macro_workflow(
 
     # Step 4: Execute macro
     execute_response = await client_instance.post(
-        f"/api/v1/macros/{macro_id}/execute",
-        json={"variables": {}},
+        "/api/v1/macros/execute",
+        json={
+            "macro_name": "Test Macro",
+            "config": {},
+        },
         headers=headers,
     )
     assert execute_response.status_code == 200
@@ -91,7 +93,7 @@ async def test_macro_workflow(
 
     # Step 6: List macros
     list_response = await client_instance.get(
-        f"/api/v1/macros/?organization_id={org['id']}",
+        "/api/v1/macros/",
         headers=headers,
     )
     assert list_response.status_code == 200

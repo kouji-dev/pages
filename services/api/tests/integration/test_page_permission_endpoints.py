@@ -60,11 +60,8 @@ async def test_get_page_permissions_success(client: AsyncClient, test_user, db_s
     permission = PagePermissionModel(
         page_id=page.id,
         user_id=other_user.id,
-        role="viewer",
-        can_read=True,
-        can_edit=False,
-        can_delete=False,
-        can_admin=False,
+        role="read",
+        inherited_from_space=False,
     )
     db_session.add(permission)
     await db_session.flush()
@@ -88,7 +85,7 @@ async def test_get_page_permissions_success(client: AsyncClient, test_user, db_s
     data = get_response.json()
     assert len(data["permissions"]) == 1
     assert data["permissions"][0]["user_id"] == str(other_user.id)
-    assert data["permissions"][0]["role"] == "viewer"
+    assert data["permissions"][0]["role"] == "read"
 
 
 @pytest.mark.asyncio
@@ -152,11 +149,7 @@ async def test_update_page_permissions_success(client: AsyncClient, test_user, d
             "permissions": [
                 {
                     "user_id": str(other_user.id),
-                    "role": "editor",
-                    "can_read": True,
-                    "can_edit": True,
-                    "can_delete": False,
-                    "can_admin": False,
+                    "role": "edit",
                 }
             ]
         },
@@ -166,8 +159,7 @@ async def test_update_page_permissions_success(client: AsyncClient, test_user, d
     assert update_response.status_code == 200
     data = update_response.json()
     assert len(data["permissions"]) == 1
-    assert data["permissions"][0]["role"] == "editor"
-    assert data["permissions"][0]["can_edit"] is True
+    assert data["permissions"][0]["role"] == "edit"
 
 
 @pytest.mark.asyncio
@@ -206,11 +198,7 @@ async def test_get_space_permissions_success(client: AsyncClient, test_user, db_
     permission = SpacePermissionModel(
         space_id=space.id,
         user_id=other_user.id,
-        role="viewer",
-        can_read=True,
-        can_edit=False,
-        can_delete=False,
-        can_admin=False,
+        role="view",
     )
     db_session.add(permission)
     await db_session.flush()
@@ -234,7 +222,7 @@ async def test_get_space_permissions_success(client: AsyncClient, test_user, db_
     data = get_response.json()
     assert len(data["permissions"]) == 1
     assert data["permissions"][0]["user_id"] == str(other_user.id)
-    assert data["permissions"][0]["role"] == "viewer"
+    assert data["permissions"][0]["role"] == "view"
 
 
 @pytest.mark.asyncio
@@ -288,11 +276,7 @@ async def test_update_space_permissions_success(client: AsyncClient, test_user, 
             "permissions": [
                 {
                     "user_id": str(other_user.id),
-                    "role": "editor",
-                    "can_read": True,
-                    "can_edit": True,
-                    "can_delete": False,
-                    "can_admin": False,
+                    "role": "edit",
                 }
             ]
         },
@@ -302,8 +286,7 @@ async def test_update_space_permissions_success(client: AsyncClient, test_user, 
     assert update_response.status_code == 200
     data = update_response.json()
     assert len(data["permissions"]) == 1
-    assert data["permissions"][0]["role"] == "editor"
-    assert data["permissions"][0]["can_edit"] is True
+    assert data["permissions"][0]["role"] == "edit"
 
 
 @pytest.mark.asyncio

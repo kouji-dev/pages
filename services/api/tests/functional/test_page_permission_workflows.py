@@ -80,7 +80,7 @@ async def test_page_permission_workflow(
     assert update_response.status_code == 200
     permissions_data = update_response.json()
     assert len(permissions_data["permissions"]) == 1
-    assert permissions_data["permissions"][0]["role"] == "viewer"
+    assert permissions_data["permissions"][0]["role"] == "read"
 
     # Step 5: Get page permissions
     get_response = await client_instance.get(

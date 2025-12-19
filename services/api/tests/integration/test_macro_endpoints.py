@@ -43,10 +43,9 @@ async def test_create_macro_success(client: AsyncClient, test_user, db_session):
     create_response = await client.post(
         "/api/v1/macros/",
         json={
-            "organization_id": str(org.id),
             "name": "Test Macro",
             "code": "return 'Hello, World!';",
-            "type": "javascript",
+            "macro_type": "code_block",
         },
         headers=auth_headers,
     )
@@ -54,7 +53,7 @@ async def test_create_macro_success(client: AsyncClient, test_user, db_session):
     assert create_response.status_code == 201
     data = create_response.json()
     assert data["name"] == "Test Macro"
-    assert data["type"] == "javascript"
+    assert data["macro_type"] == "code_block"
     assert "id" in data
 
 
@@ -77,11 +76,9 @@ async def test_get_macro_success(client: AsyncClient, test_user, db_session):
 
     # Create macro
     macro = MacroModel(
-        organization_id=org.id,
         name="Test Macro",
         code="return 'Hello, World!';",
-        type="javascript",
-        created_by=test_user.id,
+        macro_type="code_block",
     )
     db_session.add(macro)
     await db_session.flush()
@@ -127,18 +124,14 @@ async def test_list_macros_success(client: AsyncClient, test_user, db_session):
 
     # Create macros
     macro1 = MacroModel(
-        organization_id=org.id,
         name="Macro 1",
         code="return 'Macro 1';",
-        type="javascript",
-        created_by=test_user.id,
+        macro_type="code_block",
     )
     macro2 = MacroModel(
-        organization_id=org.id,
         name="Macro 2",
         code="return 'Macro 2';",
-        type="javascript",
-        created_by=test_user.id,
+        macro_type="code_block",
     )
     db_session.add(macro1)
     db_session.add(macro2)
@@ -157,9 +150,7 @@ async def test_list_macros_success(client: AsyncClient, test_user, db_session):
     auth_headers = {"Authorization": f"Bearer {token}"}
 
     # List macros
-    list_response = await client.get(
-        f"/api/v1/macros/?organization_id={org.id}", headers=auth_headers
-    )
+    list_response = await client.get("/api/v1/macros/", headers=auth_headers)
 
     assert list_response.status_code == 200
     data = list_response.json()
@@ -186,11 +177,9 @@ async def test_update_macro_success(client: AsyncClient, test_user, db_session):
 
     # Create macro
     macro = MacroModel(
-        organization_id=org.id,
         name="Test Macro",
         code="return 'Hello, World!';",
-        type="javascript",
-        created_by=test_user.id,
+        macro_type="code_block",
     )
     db_session.add(macro)
     await db_session.flush()
@@ -242,11 +231,9 @@ async def test_delete_macro_success(client: AsyncClient, test_user, db_session):
 
     # Create macro
     macro = MacroModel(
-        organization_id=org.id,
         name="Test Macro",
         code="return 'Hello, World!';",
-        type="javascript",
-        created_by=test_user.id,
+        macro_type="code_block",
     )
     db_session.add(macro)
     await db_session.flush()
@@ -268,7 +255,7 @@ async def test_delete_macro_success(client: AsyncClient, test_user, db_session):
 
     assert delete_response.status_code == 204
 
-    # Verify macro is soft-deleted
+    # Verify macro is deleted
     get_response = await client.get(f"/api/v1/macros/{macro.id}", headers=auth_headers)
     assert get_response.status_code == 404
 
@@ -292,11 +279,9 @@ async def test_execute_macro_success(client: AsyncClient, test_user, db_session)
 
     # Create macro
     macro = MacroModel(
-        organization_id=org.id,
         name="Test Macro",
         code="return 'Hello, World!';",
-        type="javascript",
-        created_by=test_user.id,
+        macro_type="code_block",
     )
     db_session.add(macro)
     await db_session.flush()
@@ -315,8 +300,11 @@ async def test_execute_macro_success(client: AsyncClient, test_user, db_session)
 
     # Execute macro
     execute_response = await client.post(
-        f"/api/v1/macros/{macro.id}/execute",
-        json={"variables": {}},
+        "/api/v1/macros/execute",
+        json={
+            "macro_name": "Test Macro",
+            "config": {},
+        },
         headers=auth_headers,
     )
 
