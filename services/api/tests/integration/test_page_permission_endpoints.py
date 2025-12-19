@@ -49,8 +49,8 @@ async def test_get_page_permissions_success(client: AsyncClient, test_user, db_s
     # Create another user
     other_user = UserModel(
         email="other@example.com",
-        hashed_password="$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4yKJeyeQUzK6M5em",
-        full_name="Other User",
+        password_hash="$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4yKJeyeQUzK6M5em",
+        name="Other User",
         is_active=True,
     )
     db_session.add(other_user)
@@ -123,8 +123,8 @@ async def test_update_page_permissions_success(client: AsyncClient, test_user, d
     # Create another user
     other_user = UserModel(
         email="other@example.com",
-        hashed_password="$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4yKJeyeQUzK6M5em",
-        full_name="Other User",
+        password_hash="$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4yKJeyeQUzK6M5em",
+        name="Other User",
         is_active=True,
     )
     db_session.add(other_user)
@@ -187,8 +187,8 @@ async def test_get_space_permissions_success(client: AsyncClient, test_user, db_
     # Create another user
     other_user = UserModel(
         email="other@example.com",
-        hashed_password="$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4yKJeyeQUzK6M5em",
-        full_name="Other User",
+        password_hash="$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4yKJeyeQUzK6M5em",
+        name="Other User",
         is_active=True,
     )
     db_session.add(other_user)
@@ -250,8 +250,8 @@ async def test_update_space_permissions_success(client: AsyncClient, test_user, 
     # Create another user
     other_user = UserModel(
         email="other@example.com",
-        hashed_password="$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4yKJeyeQUzK6M5em",
-        full_name="Other User",
+        password_hash="$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4yKJeyeQUzK6M5em",
+        name="Other User",
         is_active=True,
     )
     db_session.add(other_user)

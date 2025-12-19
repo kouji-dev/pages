@@ -217,8 +217,10 @@ async def test_restore_page_version_success(client: AsyncClient, test_user, db_s
 
     assert restore_response.status_code == 200
     data = restore_response.json()
-    assert data["title"] == "Test Page"
-    assert data["content"] == "Old content to restore"
+    assert data["page_id"] == str(page.id)
+    assert data["restored_version_id"] == str(version.id)
+    assert "new_version_id" in data
+    assert "message" in data
 
     # Verify new version was created
     await db_session.refresh(page)

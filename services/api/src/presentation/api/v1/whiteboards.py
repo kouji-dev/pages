@@ -15,7 +15,6 @@ from src.application.use_cases.whiteboard import (
     CreateWhiteboardUseCase,
     DeleteWhiteboardUseCase,
     GetWhiteboardUseCase,
-    ListWhiteboardsUseCase,
     UpdateWhiteboardUseCase,
 )
 from src.domain.entities import User
@@ -47,14 +46,6 @@ def get_get_whiteboard_use_case(
 ) -> GetWhiteboardUseCase:
     """Get whiteboard use case with dependencies."""
     return GetWhiteboardUseCase(whiteboard_repository)
-
-
-def get_list_whiteboards_use_case(
-    whiteboard_repository: Annotated[WhiteboardRepository, Depends(get_whiteboard_repository)],
-    space_repository: Annotated[SpaceRepository, Depends(get_space_repository)],
-) -> ListWhiteboardsUseCase:
-    """Get list whiteboards use case with dependencies."""
-    return ListWhiteboardsUseCase(whiteboard_repository, space_repository)
 
 
 def get_update_whiteboard_use_case(
@@ -104,48 +95,6 @@ async def create_whiteboard(
     await require_organization_member(space.organization_id, current_user, permission_service)
 
     return await use_case.execute(request, str(current_user.id))
-
-
-@router.get(
-    "/spaces/{space_id}/whiteboards",
-    response_model=WhiteboardListResponse,
-    status_code=status.HTTP_200_OK,
-)
-async def list_whiteboards(
-    current_user: Annotated[User, Depends(get_current_active_user)],
-    space_id: UUID,
-    use_case: Annotated[ListWhiteboardsUseCase, Depends(get_list_whiteboards_use_case)],
-    space_repository: Annotated[SpaceRepository, Depends(get_space_repository)],
-    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
-    page: int = Query(1, ge=1, description="Page number (1-based)"),
-    limit: int = Query(20, ge=1, le=100, description="Number of whiteboards per page"),
-) -> WhiteboardListResponse:
-    """List whiteboards in a space.
-
-    Requires space membership (via organization membership).
-
-    Args:
-        current_user: Current authenticated user
-        space_id: Space UUID (from path)
-        use_case: List whiteboards use case
-        space_repository: Space repository
-        permission_service: Permission service
-        page: Page number (1-based)
-        limit: Number of whiteboards per page
-
-    Returns:
-        Whiteboard list response with pagination metadata
-
-    Raises:
-        HTTPException: If space not found or user lacks permission
-    """
-    space = await space_repository.get_by_id(space_id)
-    if space is None:
-        raise EntityNotFoundException("Space", str(space_id))
-
-    await require_organization_member(space.organization_id, current_user, permission_service)
-
-    return await use_case.execute(str(space_id), page=page, limit=limit)
 
 
 @router.get("/{whiteboard_id}", response_model=WhiteboardResponse, status_code=status.HTTP_200_OK)
