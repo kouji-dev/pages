@@ -16,7 +16,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 ENV PATH="$POETRY_HOME/bin:$PATH"
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Retry apt-get update up to 3 times to handle network issues in CI
+RUN (apt-get update || (sleep 5 && apt-get update || (sleep 10 && apt-get update))) && \
+    apt-get install -y --no-install-recommends \
     curl \
     build-essential \
     libpq-dev \
