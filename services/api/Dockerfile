@@ -10,25 +10,46 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     POETRY_VERSION=1.8.4 \
     POETRY_HOME="/opt/poetry" \
     POETRY_VIRTUALENVS_CREATE=false \
-    POETRY_NO_INTERACTION=1
+    POETRY_NO_INTERACTION=1 \
+    DEBIAN_FRONTEND=noninteractive
 
 # Add Poetry to PATH
 ENV PATH="$POETRY_HOME/bin:$PATH"
 
 # Install system dependencies
-# Retry apt-get update up to 3 times to handle network issues in CI
-RUN (apt-get update || (sleep 5 && apt-get update || (sleep 10 && apt-get update))) && \
-    apt-get install -y --no-install-recommends \
-    curl \
-    build-essential \
-    libpq-dev \
-    libpango-1.0-0 \
-    libpangoft2-1.0-0 \
-    libfontconfig1 \
-    libcairo2 \
-    libgdk-pixbuf2.0-0 \
-    shared-mime-info \
-    && rm -rf /var/lib/apt/lists/*
+# Use retries and handle network issues gracefully
+RUN set -eux; \
+    export DEBIAN_FRONTEND=noninteractive; \
+    for i in 1 2 3; do \
+        echo "Attempting apt-get update (attempt $i/3)..."; \
+        apt-get update && break || sleep $((i * 5)); \
+    done; \
+    apt-get install -y --no-install-recommends --fix-missing \
+        curl \
+        build-essential \
+        libpq-dev \
+        libpango-1.0-0 \
+        libpangoft2-1.0-0 \
+        libfontconfig1 \
+        libcairo2 \
+        libgdk-pixbuf2.0-0 \
+        shared-mime-info \
+    || { \
+        echo "Package installation failed, attempting recovery..."; \
+        apt-get clean; \
+        apt-get update; \
+        apt-get install -y --no-install-recommends --fix-missing \
+            curl \
+            build-essential \
+            libpq-dev \
+            libpango-1.0-0 \
+            libpangoft2-1.0-0 \
+            libfontconfig1 \
+            libcairo2 \
+            libgdk-pixbuf2.0-0 \
+            shared-mime-info; \
+    }; \
+    rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 # Install Poetry
 RUN curl -sSL https://install.python-poetry.org | python3 -
