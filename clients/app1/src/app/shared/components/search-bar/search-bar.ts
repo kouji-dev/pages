@@ -74,6 +74,12 @@ import { SearchDropdown } from '../search-dropdown/search-dropdown';
         @apply py-3;
         @apply text-lg;
         min-height: 3rem;
+        @apply bg-transparent;
+        @apply border-transparent;
+        @apply hover:border-border;
+        @apply focus:border-border;
+        @apply focus:bg-muted/30;
+        @apply transition-all;
       }
 
       /* Compact mode - smaller search bar to fit header */

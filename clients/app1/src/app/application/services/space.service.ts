@@ -4,6 +4,7 @@ import { httpResource } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { NavigationService } from './navigation.service';
+import { IssueUser } from './issue.service';
 
 export interface Space {
   id: string;
@@ -15,6 +16,12 @@ export interface Space {
   recentPages?: RecentPage[];
   createdAt?: string;
   updatedAt?: string;
+  // Design alignment fields (TODO: Add to backend)
+  status?: 'draft' | 'in-review' | 'published'; // Space/page status
+  owner?: IssueUser; // Space owner
+  viewCount?: number; // View count
+  lastUpdated?: string; // Formatted "X ago" timestamp
+  icon?: string; // Emoji icon for space
 }
 
 export interface RecentPage {

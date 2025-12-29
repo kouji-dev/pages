@@ -4,6 +4,7 @@ import { httpResource } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { NavigationService } from './navigation.service';
+import { IssueUser } from './issue.service';
 
 export interface Project {
   id: string;
@@ -14,6 +15,13 @@ export interface Project {
   memberCount?: number;
   createdAt?: string;
   updatedAt?: string;
+  // Design alignment fields (TODO: Add to backend)
+  color?: string; // Project color for icon background
+  taskCount?: number; // Total tasks
+  completedTasks?: number; // Completed tasks
+  status?: 'active' | 'completed' | 'on-hold'; // Project status
+  members?: IssueUser[]; // Project members
+  lastUpdated?: string; // Formatted "X ago" timestamp
 }
 
 export interface CreateProjectRequest {

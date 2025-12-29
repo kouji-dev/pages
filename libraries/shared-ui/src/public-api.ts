@@ -44,4 +44,5 @@ export * from './lib/list/list-item-icon';
 export * from './lib/list/list-item-label';
 export * from './lib/list/list-item-actions';
 export type { ListItemAction } from './lib/list/list-item-actions';
+export * from './lib/pagination/pagination';
 export * from './lib/i18n/translate.service';

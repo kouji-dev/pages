@@ -159,7 +159,7 @@ const workspaces: WorkspaceNode[] = [
       }
 
       .app-sidebar_section ::ng-deep .list-header_title {
-        @apply px-2 mb-1;
+        @apply text-xs font-medium text-muted-foreground uppercase tracking-wider px-2 mb-1;
       }
 
       .app-sidebar_footer {

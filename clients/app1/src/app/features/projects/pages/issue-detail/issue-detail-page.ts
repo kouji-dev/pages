@@ -30,6 +30,7 @@ import { AttachmentList } from '../../components/attachment-list/attachment-list
 import { IssueActivityList } from '../../components/issue-activity-list/issue-activity-list';
 import { PageBody } from '../../../../shared/layout/page-body/page-body';
 import { PageContent } from '../../../../shared/layout/page-content/page-content';
+import { PageHeader, PageHeaderAction } from '../../../../shared/layout/page-header/page-header';
 
 // Placeholder interfaces for future features
 interface Subtask {
@@ -66,42 +67,41 @@ interface LinkedIssue {
     TranslatePipe,
     PageBody,
     PageContent,
+    PageHeader,
   ],
   template: `
     <app-page-body>
-      <app-page-content>
-        @if (issueService.hasIssueError()) {
+      @if (issueService.hasIssueError()) {
+        <app-page-content>
           <lib-error-state
             [title]="'issueDetail.failedToLoad' | translate"
             [message]="errorMessage()"
             [retryLabel]="'common.retry' | translate"
             (onRetry)="handleRetry()"
           />
-        } @else if (!issue()) {
+        </app-page-content>
+      } @else if (!issue()) {
+        <app-page-content>
           <lib-error-state
             [title]="'issueDetail.notFound' | translate"
             [message]="'issueDetail.notFoundDescription' | translate"
             [showRetry]="false"
           />
-        } @else {
+        </app-page-content>
+      } @else {
+        <ng-template #headerActionsTemplate>
+          <div class="issue-detail-page_header-actions">
+            <lib-button variant="ghost" leftIcon="link-2" (clicked)="handleLink()" />
+            <lib-button variant="ghost" leftIcon="share-2" (clicked)="handleShare()" />
+            <lib-button variant="ghost" leftIcon="ellipsis-vertical" (clicked)="handleMore()" />
+          </div>
+        </ng-template>
+        <app-page-header [title]="issue()?.title || ''" [actionTemplate]="headerActionsTemplate" />
+        <app-page-content>
           <div class="issue-detail-page_container">
             <!-- Main Content -->
             <div class="issue-detail-page_main">
               <div class="issue-detail-page_content">
-                <!-- Top Actions -->
-                <div class="issue-detail-page_actions">
-                  <lib-button variant="ghost" leftIcon="link-2" (clicked)="handleLink()" />
-                  <lib-button variant="ghost" leftIcon="share-2" (clicked)="handleShare()" />
-                  <lib-button
-                    variant="ghost"
-                    leftIcon="ellipsis-vertical"
-                    (clicked)="handleMore()"
-                  />
-                </div>
-
-                <!-- Title -->
-                <h1 class="issue-detail-page_title">{{ issue()?.title }}</h1>
-
                 <!-- Status & Assignees -->
                 <div class="issue-detail-page_status-section">
                   <lib-select
@@ -369,8 +369,8 @@ interface LinkedIssue {
               </div>
             </div>
           </div>
-        }
-      </app-page-content>
+        </app-page-content>
+      }
     </app-page-body>
   `,
   styles: [
@@ -395,13 +395,9 @@ interface LinkedIssue {
         @apply w-full;
       }
 
-      .issue-detail-page_actions {
-        @apply flex items-center justify-end gap-2 mb-6;
-      }
-
-      .issue-detail-page_title {
-        @apply text-3xl font-bold text-foreground;
-        margin: 0 0 1.5rem 0;
+      .issue-detail-page_header-actions {
+        @apply flex items-center;
+        @apply gap-2;
       }
 
       .issue-detail-page_status-section {

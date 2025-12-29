@@ -27,11 +27,17 @@ import {
   ToastService,
   Select,
   SelectOption,
+  Avatar,
+  Badge,
+  IconName,
 } from 'shared-ui';
 import { IssueService, IssueListItem } from '../../../../application/services/issue.service';
 import { OrganizationService } from '../../../../application/services/organization.service';
 import { NavigationService } from '../../../../application/services/navigation.service';
-import { ProjectMembersService } from '../../../../application/services/project-members.service';
+import {
+  ProjectMembersService,
+  ProjectMember,
+} from '../../../../application/services/project-members.service';
 import { IssueTypeBadge } from '../issue-type-badge/issue-type-badge';
 import { IssuePriorityIndicator } from '../issue-priority-indicator/issue-priority-indicator';
 import { CreateIssueModal } from '../create-issue-modal/create-issue-modal';
@@ -67,6 +73,8 @@ interface BoardSettings {
     Dropdown,
     Select,
     TranslatePipe,
+    Avatar,
+    Badge,
   ],
   template: `
     <div class="kanban-board">
@@ -177,62 +185,83 @@ interface BoardSettings {
             (onRetry)="handleRetry()"
           />
         } @else {
-          <div
-            class="kanban-board_columns"
-            cdkDropListGroup
-            [style.grid-template-columns]="gridTemplateColumns()"
-          >
+          <div class="kanban-board_columns" cdkDropListGroup>
             @for (column of visibleColumns(); track column.status) {
               <div
                 class="kanban-board_column"
                 cdkDropList
                 [cdkDropListData]="column.issues"
                 (cdkDropListDropped)="handleDrop($event, column.status)"
-                [style.width]="column.width ? column.width + 'px' : 'auto'"
-                [style.min-width]="column.width ? column.width + 'px' : '250px'"
               >
                 <div class="kanban-board_column-header">
-                  <h3 class="kanban-board_column-title">
-                    {{ column.label }}
-                    <span class="kanban-board_column-count">({{ column.issues.length }})</span>
-                  </h3>
+                  <div class="kanban-board_column-header-left">
+                    <span
+                      class="kanban-board_column-title"
+                      [class]="getColumnColorClass(column.status)"
+                    >
+                      {{ column.label }}
+                    </span>
+                    <lib-badge variant="default" class="kanban-board_column-badge">
+                      {{ column.issues.length }}
+                    </lib-badge>
+                  </div>
+                  <div class="kanban-board_column-header-actions">
+                    <lib-button
+                      variant="ghost"
+                      size="sm"
+                      [iconOnly]="true"
+                      leftIcon="plus"
+                      class="kanban-board_column-action"
+                    >
+                    </lib-button>
+                    <lib-button
+                      variant="ghost"
+                      size="sm"
+                      [iconOnly]="true"
+                      leftIcon="grip-horizontal"
+                      class="kanban-board_column-action"
+                    >
+                    </lib-button>
+                  </div>
                 </div>
                 <div class="kanban-board_column-content">
                   @for (issue of column.issues; track issue.id) {
                     <div class="kanban-board_card" cdkDrag (click)="handleIssueClick(issue)">
-                      <div class="kanban-board_card-header">
-                        <span class="kanban-board_card-key">{{ issue.key }}</span>
-                        <div class="kanban-board_card-header-right">
-                          <app-issue-type-badge [type]="issue.type" />
-                          <lib-button
-                            variant="ghost"
-                            [iconOnly]="true"
-                            leftIcon="pen"
-                            class="kanban-board_card-action"
-                            (clicked)="handleEditIssue($event, issue)"
-                          >
-                          </lib-button>
-                        </div>
-                      </div>
-                      <div class="kanban-board_card-title">{{ issue.title }}</div>
+                      <p class="kanban-board_card-title">{{ issue.title }}</p>
+
                       <div class="kanban-board_card-footer">
                         <div class="kanban-board_card-footer-left">
-                          <app-issue-priority-indicator [priority]="issue.priority" />
-                          @if (issue.assignee_id) {
-                            <span class="kanban-board_card-assignee">{{
-                              'kanban.assigned' | translate
-                            }}</span>
+                          <lib-icon
+                            [name]="getTaskIcon(issue.type)"
+                            [size]="'xs'"
+                            [class]="getTaskIconClass(issue.type)"
+                          />
+                          <span class="kanban-board_card-key">{{ issue.key }}</span>
+                          @if (issue.priority === 'high' || issue.priority === 'critical') {
+                            <lib-badge [class]="getPriorityBadgeClass(issue.priority)">
+                              {{ getPriorityLabel(issue.priority) }}
+                            </lib-badge>
                           }
                         </div>
-                        @if (issue.due_date && isOverdue(issue.due_date)) {
-                          <div
-                            class="kanban-board_card-due-date"
-                            [title]="'kanban.due' | translate: { date: formatDate(issue.due_date) }"
-                          >
-                            <lib-icon name="calendar" size="xs" />
-                            <span>{{ 'kanban.overdue' | translate }}</span>
-                          </div>
-                        }
+                        <div class="kanban-board_card-footer-right">
+                          @if (issue.priority === 'high' || issue.priority === 'critical') {
+                            <lib-icon
+                              name="arrow-up"
+                              [size]="'xs'"
+                              class="kanban-board_card-priority-icon"
+                            />
+                          }
+                          @if (issue.assignee_id) {
+                            @if (getAssignee(issue.assignee_id); as assignee) {
+                              <lib-avatar
+                                [avatarUrl]="assignee.avatar_url || undefined"
+                                [name]="assignee.user_name"
+                                [initials]="getInitials(assignee.user_name)"
+                                size="sm"
+                              />
+                            }
+                          }
+                        </div>
                       </div>
                     </div>
                   }
@@ -351,88 +380,79 @@ interface BoardSettings {
       }
 
       .kanban-board_columns {
-        @apply grid;
+        @apply flex;
         @apply gap-4;
         @apply h-full;
-        @apply w-full;
         @apply overflow-x-auto;
+        @apply pb-4;
+        @apply min-w-max;
       }
 
       .kanban-board_column {
+        @apply w-72;
         @apply flex flex-col;
-        @apply min-w-0;
-        @apply bg-muted;
-        @apply rounded-lg;
-        @apply border;
-        @apply border-border;
+        @apply flex-shrink-0;
         @apply h-full;
       }
 
       .kanban-board_column-header {
-        @apply p-4;
-        @apply border-b;
-        @apply border-border;
+        @apply flex items-center justify-between;
+        @apply mb-4;
+      }
+
+      .kanban-board_column-header-left {
+        @apply flex items-center;
+        @apply gap-2;
       }
 
       .kanban-board_column-title {
-        @apply text-base font-semibold;
-        @apply text-foreground;
+        @apply text-sm font-semibold;
         margin: 0;
       }
 
-      .kanban-board_column-count {
-        @apply text-sm font-normal;
-        @apply text-muted-foreground;
+      .kanban-board_column-badge {
+        @apply text-xs;
+        @apply h-5 w-5;
+        @apply p-0;
+        @apply flex items-center justify-center;
+        @apply rounded-full;
+      }
+
+      .kanban-board_column-header-actions {
+        @apply flex items-center;
+        @apply gap-1;
+      }
+
+      .kanban-board_column-action {
+        @apply h-6 w-6;
       }
 
       .kanban-board_column-content {
         @apply flex-1;
-        @apply p-4;
-        @apply flex flex-col;
-        @apply gap-3;
-        @apply min-h-[200px];
+        @apply space-y-3;
+        @apply min-h-0;
       }
 
       .kanban-board_card {
         @apply p-4;
-        @apply bg-background;
+        @apply rounded-lg;
         @apply border;
         @apply border-border;
-        @apply rounded-lg;
-        @apply cursor-move;
-        @apply hover:shadow-md;
-        @apply transition-shadow;
+        @apply bg-card;
+        @apply cursor-pointer;
+        @apply hover:bg-accent/50;
+        @apply transition-colors;
       }
 
       .kanban-board_card.cdk-drag-animating {
         @apply transition-transform;
       }
 
-      .kanban-board_card-header {
-        @apply flex items-center justify-between;
-        @apply mb-2;
-        @apply gap-2;
-      }
-
-      .kanban-board_card-header-right {
-        @apply flex items-center;
-        @apply gap-1;
-      }
-
-      .kanban-board_card-action {
-        @apply flex-shrink-0;
-      }
-
-      .kanban-board_card-key {
-        @apply text-xs font-mono font-semibold;
-        @apply text-muted-foreground;
-      }
-
       .kanban-board_card-title {
         @apply text-sm font-medium;
         @apply text-foreground;
         @apply mb-3;
-        @apply line-clamp-2;
+        margin: 0 0 0.75rem 0;
       }
 
       .kanban-board_card-footer {
@@ -445,20 +465,19 @@ interface BoardSettings {
         @apply gap-2;
       }
 
-      .kanban-board_card-assignee {
-        @apply text-xs;
-        @apply text-muted-foreground;
+      .kanban-board_card-footer-right {
+        @apply flex items-center;
+        @apply gap-2;
       }
 
-      .kanban-board_card-due-date {
-        @apply flex items-center;
-        @apply gap-1;
+      .kanban-board_card-key {
         @apply text-xs;
-        @apply font-medium;
-        @apply text-destructive;
-        @apply px-2 py-1;
-        @apply rounded;
-        @apply bg-destructive/10;
+        @apply text-muted-foreground;
+        @apply font-mono;
+      }
+
+      .kanban-board_card-priority-icon {
+        @apply text-red-500;
       }
 
       .kanban-board_empty {
@@ -466,6 +485,19 @@ interface BoardSettings {
         @apply text-muted-foreground;
         @apply text-center;
         @apply py-8;
+      }
+
+      /* Column color classes */
+      .kanban-board_column-title.text-muted-foreground {
+        @apply text-muted-foreground;
+      }
+
+      .kanban-board_column-title.text-amber-500 {
+        @apply text-amber-500;
+      }
+
+      .kanban-board_column-title.text-green-500 {
+        @apply text-green-500;
       }
 
       .cdk-drag-preview {
@@ -895,5 +927,63 @@ export class KanbanBoard {
     } catch (error) {
       console.error('Failed to save board settings:', error);
     }
+  }
+
+  getColumnColorClass(status: IssueStatus): string {
+    const colorMap: Record<IssueStatus, string> = {
+      todo: 'text-muted-foreground',
+      in_progress: 'text-amber-500',
+      done: 'text-green-500',
+      cancelled: 'text-muted-foreground',
+    };
+    return colorMap[status];
+  }
+
+  getTaskIcon(type: 'task' | 'bug' | 'story' | 'epic'): IconName {
+    const iconMap: Record<string, IconName> = {
+      bug: 'bug',
+      task: 'folder',
+      story: 'file-text',
+      epic: 'folder',
+    };
+    return iconMap[type] || 'folder';
+  }
+
+  getTaskIconClass(type: 'task' | 'bug' | 'story' | 'epic'): string {
+    const classMap: Record<string, string> = {
+      bug: 'text-red-500',
+      task: 'text-amber-500',
+      story: 'text-blue-500',
+      epic: 'text-purple-500',
+    };
+    return classMap[type] || 'text-amber-500';
+  }
+
+  getPriorityBadgeClass(priority: 'low' | 'medium' | 'high' | 'critical'): string {
+    if (priority === 'high' || priority === 'critical') {
+      return 'bg-red-500/20 text-red-500 hover:bg-red-500/30 border-0 text-xs px-1.5';
+    }
+    return '';
+  }
+
+  getPriorityLabel(priority: 'low' | 'medium' | 'high' | 'critical'): string {
+    if (priority === 'high' || priority === 'critical') {
+      return this.translateService.instant(`issues.priority.${priority}`).toUpperCase();
+    }
+    return '';
+  }
+
+  getAssignee(assigneeId: string | undefined): ProjectMember | undefined {
+    if (!assigneeId) return undefined;
+    return this.projectMembers().find((member) => member.user_id === assigneeId);
+  }
+
+  getInitials(name: string): string {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   }
 }

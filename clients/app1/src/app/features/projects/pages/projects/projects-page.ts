@@ -7,26 +7,39 @@ import {
   signal,
   effect,
 } from '@angular/core';
-import { Button, LoadingState, ErrorState, EmptyState, Modal, Input } from 'shared-ui';
+import {
+  LoadingState,
+  ErrorState,
+  EmptyState,
+  Modal,
+  Input,
+  Select,
+  SelectOption,
+  Pagination,
+} from 'shared-ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ProjectService, Project } from '../../../../application/services/project.service';
 import { OrganizationService } from '../../../../application/services/organization.service';
 import { NavigationService } from '../../../../application/services/navigation.service';
 import { ProjectCard } from '../../components/project-card/project-card';
 import { CreateProjectModal } from '../../components/create-project-modal/create-project-modal';
-import { PageHeader, PageHeaderAction } from '../../../../shared/layout/page-header/page-header';
+import {
+  PageHeader,
+  PageHeaderAction,
+  PageHeaderSearchInput,
+  PageHeaderFilter,
+} from '../../../../shared/layout/page-header/page-header';
 import { PageBody } from '../../../../shared/layout/page-body/page-body';
 import { PageContent } from '../../../../shared/layout/page-content/page-content';
 
 @Component({
   selector: 'app-projects-page',
   imports: [
-    Button,
     LoadingState,
     ErrorState,
     EmptyState,
     ProjectCard,
-    Input,
+    Pagination,
     TranslatePipe,
     PageHeader,
     PageBody,
@@ -37,6 +50,8 @@ import { PageContent } from '../../../../shared/layout/page-content/page-content
       <app-page-header
         title="projects.title"
         subtitle="projects.subtitle"
+        [searchInput]="searchInputConfig()"
+        [filters]="filtersConfig()"
         [action]="createProjectAction()"
       />
 
@@ -60,16 +75,7 @@ import { PageContent } from '../../../../shared/layout/page-content/page-content
             (onRetry)="handleRetry()"
           />
         } @else {
-          @if (allProjects().length > 0) {
-            <div class="projects-page_search">
-              <lib-input
-                [placeholder]="'projects.searchPlaceholder' | translate"
-                [(model)]="searchQuery"
-                leftIcon="search"
-                class="projects-page_search-input"
-              />
-            </div>
-          }
+          <!-- Grid -->
           @if (filteredProjects().length === 0 && allProjects().length > 0) {
             <lib-empty-state
               [title]="'projects.noProjectsFound' | translate"
@@ -87,13 +93,22 @@ import { PageContent } from '../../../../shared/layout/page-content/page-content
             />
           } @else {
             <div class="projects-page_grid">
-              @for (project of filteredProjects(); track project.id) {
+              @for (project of paginatedProjects(); track project.id) {
                 <app-project-card
                   [project]="project"
                   (onSettings)="handleProjectSettings($event)"
                 />
               }
             </div>
+
+            <!-- Pagination -->
+            <lib-pagination
+              [currentPage]="currentPage()"
+              [totalItems]="filteredProjects().length"
+              [itemsPerPage]="ITEMS_PER_PAGE"
+              itemLabel="projects"
+              (pageChange)="goToPage($event)"
+            />
           }
         }
       </app-page-content>
@@ -103,19 +118,8 @@ import { PageContent } from '../../../../shared/layout/page-content/page-content
     `
       @reference "#mainstyles";
 
-      .projects-page_search {
-        @apply max-w-7xl mx-auto;
-        @apply mb-6;
-      }
-
-      .projects-page_search-input {
-        @apply max-w-md;
-      }
-
       .projects-page_grid {
-        @apply max-w-7xl mx-auto;
-        @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3;
-        @apply gap-6;
+        @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
       }
     `,
   ],
@@ -130,6 +134,9 @@ export class ProjectsPage {
   readonly translateService = inject(TranslateService);
 
   readonly searchQuery = signal('');
+  readonly statusFilter = signal<string>('all');
+  readonly currentPage = signal<number>(1);
+  readonly ITEMS_PER_PAGE = 6;
 
   readonly organizationId = computed(() => {
     // URL is the source of truth - organization service will sync automatically
@@ -142,20 +149,47 @@ export class ProjectsPage {
     return this.projectService.getProjectsByOrganization(orgId);
   });
 
+  readonly statusFilterOptions = computed<SelectOption<string>[]>(() => [
+    { value: 'all', label: 'All' },
+    { value: 'active', label: 'Active' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'on-hold', label: 'On Hold' },
+  ]);
+
   readonly filteredProjects = computed(() => {
     const projects = this.allProjects();
     const query = this.searchQuery().toLowerCase().trim();
+    const status = this.statusFilter();
 
-    if (!query) {
-      return projects;
+    let filtered = projects;
+
+    // Filter by search query
+    if (query) {
+      filtered = filtered.filter((project) => {
+        const nameMatch = project.name.toLowerCase().includes(query);
+        const keyMatch = project.key.toLowerCase().includes(query);
+        const descriptionMatch = project.description?.toLowerCase().includes(query) || false;
+        return nameMatch || keyMatch || descriptionMatch;
+      });
     }
 
-    return projects.filter((project) => {
-      const nameMatch = project.name.toLowerCase().includes(query);
-      const keyMatch = project.key.toLowerCase().includes(query);
-      const descriptionMatch = project.description?.toLowerCase().includes(query) || false;
-      return nameMatch || keyMatch || descriptionMatch;
-    });
+    // Filter by status
+    if (status !== 'all') {
+      filtered = filtered.filter((project) => project.status === status);
+    }
+
+    return filtered;
+  });
+
+  readonly totalPages = computed(() => {
+    return Math.ceil(this.filteredProjects().length / this.ITEMS_PER_PAGE);
+  });
+
+  readonly paginatedProjects = computed(() => {
+    const projects = this.filteredProjects();
+    const start = (this.currentPage() - 1) * this.ITEMS_PER_PAGE;
+    const end = start + this.ITEMS_PER_PAGE;
+    return projects.slice(start, end);
   });
 
   readonly errorMessage = computed(() => {
@@ -174,6 +208,32 @@ export class ProjectsPage {
     disabled: !this.organizationId(),
     onClick: () => this.handleCreateProject(),
   }));
+
+  readonly searchInputConfig = computed<PageHeaderSearchInput | null>(() => {
+    if (!this.organizationId() || this.allProjects().length === 0) {
+      return null;
+    }
+    return {
+      placeholder: this.translateService.instant('projects.searchPlaceholder'),
+      model: this.searchQuery,
+      leftIcon: 'search',
+      class: 'page-header_search-input',
+    };
+  });
+
+  readonly filtersConfig = computed<PageHeaderFilter[] | null>(() => {
+    if (!this.organizationId() || this.allProjects().length === 0) {
+      return null;
+    }
+    return [
+      {
+        type: 'select',
+        options: this.statusFilterOptions(),
+        model: this.statusFilter,
+        class: 'page-header_filter',
+      },
+    ];
+  });
 
   // Projects are now automatically loaded when URL organizationId changes
   // No need for manual initialization effect
@@ -202,5 +262,9 @@ export class ProjectsPage {
 
   handleGoToOrganizations(): void {
     this.navigationService.navigateToOrganizations();
+  }
+
+  goToPage(page: number): void {
+    this.currentPage.set(page);
   }
 }
