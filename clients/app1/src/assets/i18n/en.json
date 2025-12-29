@@ -340,7 +340,19 @@
       "deleteConfirmPlaceholder": "Enter space name",
       "deleteConfirmHelper": "Type the space name to confirm deletion",
       "deleteSuccess": "Space deleted successfully!",
-      "deleteError": "Failed to delete space. Please try again."
+      "deleteError": "Failed to delete space. Please try again.",
+      "createFolder": "Create Folder",
+      "folderName": "Folder Name",
+      "folderNamePlaceholder": "Enter folder name",
+      "folderNameHelper": "Choose a name for your folder",
+      "space": "Space",
+      "spacePlaceholder": "Select a space",
+      "spaceRequired": "Space is required",
+      "parentFolder": "Parent Folder (optional)",
+      "parentFolderPlaceholder": "None (root folder)",
+      "createFolderSuccess": "Folder created successfully!",
+      "createFolderError": "Failed to create folder. Please try again.",
+      "parentFolderHelper": "Select a parent folder to create a nested folder"
     }
   },
   "issueDetail": {
@@ -1051,6 +1063,21 @@
           }
         }
       }
+    }
+  },
+  "workspace": {
+    "modals": {
+      "createFolder": "Create Folder",
+      "folderName": "Folder Name",
+      "folderNamePlaceholder": "Enter folder name",
+      "folderNameHelper": "Choose a name for your folder",
+      "parentFolder": "Parent Folder (optional)",
+      "parentFolderPlaceholder": "None (root folder)",
+      "parentFolderHelper": "Select a parent folder to organize your folders hierarchically",
+      "nameRequired": "Folder name is required",
+      "nameMinLength": "Folder name must be at least 3 characters",
+      "createFolderSuccess": "Folder created successfully!",
+      "createFolderError": "Failed to create folder. Please try again."
     }
   }
 }

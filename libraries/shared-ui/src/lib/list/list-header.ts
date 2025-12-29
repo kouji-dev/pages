@@ -1,17 +1,18 @@
-import { Component, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Button } from '../button/button';
+import { Button, Dropdown } from 'shared-ui';
 import { IconName } from '../icon/icon';
 
 export interface ListHeaderAction {
   icon: IconName;
   label?: string;
   onClick?: () => void;
+  dropdownTemplate?: TemplateRef<any>; // Optional dropdown template for this action
 }
 
 @Component({
   selector: 'lib-list-header',
-  imports: [CommonModule, Button],
+  imports: [CommonModule, Button, Dropdown],
   template: `
     <div class="list-header">
       <div class="list-header_content">
@@ -21,18 +22,33 @@ export interface ListHeaderAction {
         @if (actions() && actions()!.length > 0) {
           <div class="list-header_actions">
             @for (action of actions(); track $index) {
-              <lib-button
-                variant="ghost"
-                size="sm"
-                [iconOnly]="!action.label"
-                [leftIcon]="action.icon"
-                (clicked)="action.onClick?.()"
-                [attr.aria-label]="action.label || action.icon"
-              >
-                @if (action.label) {
-                  {{ action.label }}
-                }
-              </lib-button>
+              @if (action.dropdownTemplate) {
+                <lib-button
+                  [libDropdown]="action.dropdownTemplate"
+                  variant="ghost"
+                  size="sm"
+                  [iconOnly]="!action.label"
+                  [leftIcon]="action.icon"
+                  [attr.aria-label]="action.label || action.icon"
+                >
+                  @if (action.label) {
+                    {{ action.label }}
+                  }
+                </lib-button>
+              } @else {
+                <lib-button
+                  variant="ghost"
+                  size="sm"
+                  [iconOnly]="!action.label"
+                  [leftIcon]="action.icon"
+                  (clicked)="action.onClick?.()"
+                  [attr.aria-label]="action.label || action.icon"
+                >
+                  @if (action.label) {
+                    {{ action.label }}
+                  }
+                </lib-button>
+              }
             }
           </div>
         }

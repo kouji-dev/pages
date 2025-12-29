@@ -1,71 +1,48 @@
-import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  computed,
+  viewChild,
+  TemplateRef,
+  ViewContainerRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
-import { List, ListItemData, ListHeader, ListHeaderAction } from 'shared-ui';
+import {
+  List,
+  ListItemData,
+  ListHeader,
+  ListHeaderAction,
+  LoadingState,
+  Icon,
+  Modal,
+  IconName,
+} from 'shared-ui';
 import { UserMenu } from '../../../shared/components/user-menu/user-menu';
 import { WorkspaceTreeItem, WorkspaceNode } from './workspace-tree-item';
 import { SidebarOrgSelector } from './components/sidebar-org-selector/sidebar-org-selector';
 import { OrganizationService } from '../../../application/services/organization.service';
+import { WorkspaceService } from '../../../application/services/workspace.service';
+import { FavoriteService } from '../../../application/services/favorite.service';
 import { LanguageService } from '../../../core/i18n/language.service';
-
-const favorites: ListItemData[] = [
-  {
-    id: '1',
-    label: 'Marketing Website',
-    icon: 'star',
-    iconColor: '#fbbf24',
-    rightIcon: 'kanban',
-  },
-  {
-    id: '2',
-    label: 'API Documentation',
-    icon: 'star',
-    iconColor: '#fbbf24',
-    rightIcon: 'file-text',
-  },
-  {
-    id: '3',
-    label: 'Design System',
-    icon: 'star',
-    iconColor: '#fbbf24',
-    rightIcon: 'kanban',
-  },
-];
-
-const workspaces: WorkspaceNode[] = [
-  {
-    id: 'w1',
-    title: 'Engineering',
-    type: 'folder',
-    children: [
-      { id: 'w1-1', title: 'Backend API', type: 'project' },
-      { id: 'w1-2', title: 'Frontend App', type: 'project' },
-      {
-        id: 'w1-3',
-        title: 'Documentation',
-        type: 'folder',
-        children: [
-          { id: 'w1-3-1', title: 'Getting Started', type: 'page' },
-          { id: 'w1-3-2', title: 'API Reference', type: 'page' },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'w2',
-    title: 'Product',
-    type: 'folder',
-    children: [
-      { id: 'w2-1', title: 'Roadmap', type: 'page' },
-      { id: 'w2-2', title: 'User Research', type: 'project' },
-    ],
-  },
-  { id: 'w3', title: 'Quick Notes', type: 'page' },
-];
+import { CreateProjectModal } from '../../../features/projects/components/create-project-modal/create-project-modal';
+import { CreateSpaceModal } from '../../../features/spaces/components/create-space-modal/create-space-modal';
+import { CreateFolderModal } from '../../../features/spaces/components/create-folder-modal/create-folder-modal';
+import { CreatePageModal } from '../../../features/pages/components/create-page-modal/create-page-modal';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-app-sidebar',
-  imports: [CommonModule, List, ListHeader, UserMenu, WorkspaceTreeItem, SidebarOrgSelector],
+  imports: [
+    CommonModule,
+    List,
+    ListHeader,
+    UserMenu,
+    WorkspaceTreeItem,
+    SidebarOrgSelector,
+    LoadingState,
+  ],
   template: `
     <aside class="app-sidebar">
       <header class="app-sidebar_header">
@@ -82,16 +59,47 @@ const workspaces: WorkspaceNode[] = [
         </div>
 
         <div class="app-sidebar_section">
-          <lib-list [items]="favoritesItems()">
+          <lib-list>
             <lib-list-header title="Favorites" />
+            @if (favoriteService.isLoading()) {
+              <lib-loading-state [message]="'Loading favorites...'" />
+            } @else if (favoriteService.error()) {
+              <div class="app-sidebar_error">
+                {{ 'Failed to load favorites' }}
+              </div>
+            } @else {
+              @if (favoriteService.favoritesItems().length > 0) {
+                <lib-list [items]="favoriteService.favoritesItems()" />
+              } @else {
+                <div class="app-sidebar_empty">
+                  {{ 'No favorites yet' }}
+                </div>
+              }
+            }
           </lib-list>
         </div>
 
         <div class="app-sidebar_section">
           <lib-list>
+            <ng-template #workspaceAddDropdown>
+              <lib-list [items]="workspaceAddOptions()" />
+            </ng-template>
             <lib-list-header title="Workspaces" [actions]="workspacesActions()" />
-            @for (node of workspaces; track node.id) {
-              <app-workspace-tree-item [node]="node" />
+            @if (workspaceService.isLoading()) {
+              <lib-loading-state [message]="'Loading workspaces...'" />
+            } @else if (workspaceService.error()) {
+              <div class="app-sidebar_error">
+                {{ 'Failed to load workspaces' }}
+              </div>
+            } @else {
+              @for (node of workspaceService.workspaceNodes(); track node.id) {
+                <app-workspace-tree-item [node]="node" />
+              }
+              @if (workspaceService.workspaceNodes().length === 0) {
+                <div class="app-sidebar_empty">
+                  {{ 'No workspaces found' }}
+                </div>
+              }
             }
           </lib-list>
         </div>
@@ -188,15 +196,29 @@ const workspaces: WorkspaceNode[] = [
       .app-sidebar_footer-content .user-menu_info {
         @apply flex;
       }
+
+      .app-sidebar_error {
+        @apply text-sm text-destructive px-2 py-2;
+      }
+
+      .app-sidebar_empty {
+        @apply text-sm text-muted-foreground px-2 py-2;
+      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
 })
 export class AppSidebar {
+  readonly workspaceAddDropdownTemplate = viewChild<TemplateRef<any>>('workspaceAddDropdown');
+
   private readonly organizationService = inject(OrganizationService);
   private readonly translateService = inject(TranslateService);
   private readonly languageService = inject(LanguageService);
+  private readonly modal = inject(Modal);
+  private readonly viewContainerRef = inject(ViewContainerRef);
+  readonly workspaceService = inject(WorkspaceService);
+  readonly favoriteService = inject(FavoriteService);
 
   readonly mainNavItems = computed<ListItemData[]>(() => {
     // Depend on currentLang to trigger recomputation when language changes
@@ -229,11 +251,97 @@ export class AppSidebar {
       },
     ];
   });
-  readonly favoritesItems = computed<ListItemData[]>(() => favorites);
-  readonly workspaces = workspaces;
 
-  readonly workspacesActions = computed<ListHeaderAction[]>(() => [
-    { icon: 'ellipsis', onClick: () => {} },
-    { icon: 'plus', onClick: () => {} },
-  ]);
+  readonly workspaceAddOptions = computed<ListItemData[]>(() => {
+    return [
+      {
+        id: 'space',
+        label: 'Folder (Space)',
+        icon: 'folder',
+        onClick: () => this.handleCreateSpace(),
+      },
+      {
+        id: 'project',
+        label: 'Project',
+        icon: 'kanban',
+        onClick: () => this.handleCreateProject(),
+      },
+      {
+        id: 'folder',
+        label: 'Folder',
+        icon: 'folder',
+        onClick: () => this.handleCreateFolder(),
+      },
+    ];
+  });
+
+  readonly workspacesActions = computed<ListHeaderAction[]>(() => {
+    const template = this.workspaceAddDropdownTemplate();
+    return [
+      { icon: 'ellipsis' as IconName, onClick: () => this.handleWorkspaceMenu() },
+      ...(template
+        ? [
+            {
+              icon: 'plus' as IconName,
+              dropdownTemplate: template,
+            },
+          ]
+        : []),
+    ];
+  });
+
+  handleWorkspaceMenu(): void {
+    // TODO: Implement workspace menu (settings, etc.)
+  }
+
+  async handleCreateSpace(): Promise<void> {
+    const orgId = this.organizationService.currentOrganization()?.id;
+    if (!orgId) return;
+
+    try {
+      await firstValueFrom(
+        this.modal.open(CreateSpaceModal, this.viewContainerRef, {
+          size: 'md',
+          data: { organizationId: orgId },
+        }),
+      );
+      this.workspaceService.reload();
+    } catch (error) {
+      // Modal was closed/cancelled
+    }
+  }
+
+  async handleCreateProject(): Promise<void> {
+    const orgId = this.organizationService.currentOrganization()?.id;
+    if (!orgId) return;
+
+    try {
+      await firstValueFrom(
+        this.modal.open(CreateProjectModal, this.viewContainerRef, {
+          size: 'md',
+          data: { organizationId: orgId },
+        }),
+      );
+      this.workspaceService.reload();
+    } catch (error) {
+      // Modal was closed/cancelled
+    }
+  }
+
+  async handleCreateFolder(): Promise<void> {
+    const orgId = this.organizationService.currentOrganization()?.id;
+    if (!orgId) return;
+
+    try {
+      await firstValueFrom(
+        this.modal.open(CreateFolderModal, this.viewContainerRef, {
+          size: 'md',
+          data: { organizationId: orgId },
+        }),
+      );
+      this.workspaceService.reload();
+    } catch (error) {
+      // Modal was closed/cancelled
+    }
+  }
 }

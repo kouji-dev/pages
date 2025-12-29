@@ -1,12 +1,16 @@
-import { Component, ChangeDetectionStrategy, input, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { Icon, IconName } from 'shared-ui';
+import { NavigationService } from '../../../application/services/navigation.service';
 
 export interface WorkspaceNode {
   id: string;
   title: string;
-  type: 'folder' | 'project' | 'page';
+  type: 'folder' | 'space' | 'project' | 'page';
   children?: WorkspaceNode[];
+  spaceId?: string; // For pages, store the space_id for navigation
+  organizationId?: string; // For folders, store the organization_id for navigation
 }
 
 @Component({
@@ -85,6 +89,9 @@ export interface WorkspaceNode {
   standalone: true,
 })
 export class WorkspaceTreeItem {
+  private readonly router = inject(Router);
+  private readonly navigationService = inject(NavigationService);
+
   node = input.required<WorkspaceNode>();
   level = input(0);
 
@@ -98,10 +105,14 @@ export class WorkspaceTreeItem {
     switch (this.node().type) {
       case 'folder':
         return 'folder';
+      case 'space':
+        return 'book';
       case 'project':
         return 'kanban';
       case 'page':
         return 'file-text';
+      default:
+        return 'folder';
     }
   });
 
@@ -114,8 +125,32 @@ export class WorkspaceTreeItem {
   }
 
   handleClick(): void {
-    // Handle navigation to workspace item
-    // TODO: Implement navigation
+    const node = this.node();
+    const orgId = this.navigationService.currentOrganizationId();
+
+    if (!orgId) {
+      return;
+    }
+
+    switch (node.type) {
+      case 'folder':
+        // Folders are workspace nodes - navigation TBD
+        // For now, folders don't have a dedicated route
+        break;
+      case 'space':
+        // Navigate to space
+        this.router.navigate(this.navigationService.getSpaceRoute(orgId, node.id));
+        break;
+      case 'project':
+        // Navigate to project
+        this.router.navigate(this.navigationService.getProjectRoute(orgId, node.id));
+        break;
+      case 'page':
+        // Navigate to page
+        if (node.spaceId) {
+          this.router.navigate(this.navigationService.getPageRoute(orgId, node.spaceId, node.id));
+        }
+        break;
+    }
   }
 }
-

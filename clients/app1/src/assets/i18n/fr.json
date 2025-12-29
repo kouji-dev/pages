@@ -340,7 +340,19 @@
       "deleteConfirmPlaceholder": "Saisir le nom de l'espace",
       "deleteConfirmHelper": "Tapez le nom de l'espace pour confirmer la suppression",
       "deleteSuccess": "Espace supprimé avec succès !",
-      "deleteError": "Échec de la suppression de l'espace. Veuillez réessayer."
+      "deleteError": "Échec de la suppression de l'espace. Veuillez réessayer.",
+      "createFolder": "Créer un dossier",
+      "folderName": "Nom du dossier",
+      "folderNamePlaceholder": "Entrez le nom du dossier",
+      "folderNameHelper": "Choisissez un nom pour votre dossier",
+      "space": "Espace",
+      "spacePlaceholder": "Sélectionnez un espace",
+      "spaceRequired": "L'espace est requis",
+      "parentFolder": "Dossier parent (optionnel)",
+      "parentFolderPlaceholder": "Aucun (dossier racine)",
+      "parentFolderHelper": "Sélectionnez un dossier parent pour créer un dossier imbriqué",
+      "createFolderSuccess": "Dossier créé avec succès !",
+      "createFolderError": "Échec de la création du dossier. Veuillez réessayer."
     }
   },
   "issueDetail": {
@@ -1051,6 +1063,21 @@
           }
         }
       }
+    }
+  },
+  "workspace": {
+    "modals": {
+      "createFolder": "Créer un dossier",
+      "folderName": "Nom du dossier",
+      "folderNamePlaceholder": "Entrez le nom du dossier",
+      "folderNameHelper": "Choisissez un nom pour votre dossier",
+      "parentFolder": "Dossier parent (optionnel)",
+      "parentFolderPlaceholder": "Aucun (dossier racine)",
+      "parentFolderHelper": "Sélectionnez un dossier parent pour organiser vos dossiers hiérarchiquement",
+      "nameRequired": "Le nom du dossier est requis",
+      "nameMinLength": "Le nom du dossier doit contenir au moins 3 caractères",
+      "createFolderSuccess": "Dossier créé avec succès !",
+      "createFolderError": "Échec de la création du dossier. Veuillez réessayer."
     }
   }
 }
