@@ -120,6 +120,16 @@ async def test_favorite_workflow_create_list_delete(client: AsyncClient, test_us
     assert "space" in entity_types
     assert "page" in entity_types
 
+    # Verify node data is present for project and space, but None for page
+    for fav in list_all_data["favorites"]:
+        assert "node" in fav
+        if fav["entity_type"] in ("project", "space"):
+            assert fav["node"] is not None
+            assert fav["node"]["type"] == fav["entity_type"]
+            assert fav["node"]["id"] == str(fav["entity_id"])
+        elif fav["entity_type"] == "page":
+            assert fav["node"] is None
+
     # 5. List favorites filtered by entity type (project)
     list_projects_response = await client.get(
         "/api/v1/users/me/favorites",
@@ -129,7 +139,13 @@ async def test_favorite_workflow_create_list_delete(client: AsyncClient, test_us
     assert list_projects_response.status_code == 200
     list_projects_data = list_projects_response.json()
     assert list_projects_data["total"] == 1
-    assert list_projects_data["favorites"][0]["entity_type"] == "project"
+    project_fav = list_projects_data["favorites"][0]
+    assert project_fav["entity_type"] == "project"
+    # Verify node data is present
+    assert project_fav["node"] is not None
+    assert project_fav["node"]["type"] == "project"
+    assert project_fav["node"]["id"] == str(project.id)
+    assert project_fav["node"]["name"] == project.name
 
     # 6. List favorites filtered by entity type (space)
     list_spaces_response = await client.get(
@@ -140,7 +156,13 @@ async def test_favorite_workflow_create_list_delete(client: AsyncClient, test_us
     assert list_spaces_response.status_code == 200
     list_spaces_data = list_spaces_response.json()
     assert list_spaces_data["total"] == 1
-    assert list_spaces_data["favorites"][0]["entity_type"] == "space"
+    space_fav = list_spaces_data["favorites"][0]
+    assert space_fav["entity_type"] == "space"
+    # Verify node data is present
+    assert space_fav["node"] is not None
+    assert space_fav["node"]["type"] == "space"
+    assert space_fav["node"]["id"] == str(space.id)
+    assert space_fav["node"]["name"] == space.name
 
     # 7. Delete project favorite
     delete_project_fav_response = await client.delete(
@@ -288,6 +310,13 @@ async def test_favorite_heterogeneous_list_workflow(client: AsyncClient, test_us
     for fav in list_all_data["favorites"]:
         entity_type = fav["entity_type"]
         entity_type_counts[entity_type] = entity_type_counts.get(entity_type, 0) + 1
+        # Verify node data structure
+        assert "node" in fav
+        if entity_type in ("project", "space"):
+            assert fav["node"] is not None
+            assert fav["node"]["type"] == entity_type
+        elif entity_type == "page":
+            assert fav["node"] is None
 
     assert entity_type_counts["project"] == 3
     assert entity_type_counts["space"] == 2

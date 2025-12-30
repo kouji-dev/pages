@@ -4,6 +4,7 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dtos.favorite import (
     CreateFavoriteRequest,
@@ -16,10 +17,18 @@ from src.application.use_cases.favorite import (
     ListFavoritesUseCase,
 )
 from src.domain.entities import User
-from src.domain.repositories import FavoriteRepository, UserRepository
+from src.domain.repositories import (
+    FavoriteRepository,
+    ProjectRepository,
+    SpaceRepository,
+    UserRepository,
+)
+from src.infrastructure.database import get_session
 from src.presentation.dependencies.auth import get_current_active_user
 from src.presentation.dependencies.services import (
     get_favorite_repository,
+    get_project_repository,
+    get_space_repository,
     get_user_repository,
 )
 
@@ -37,9 +46,12 @@ def get_create_favorite_use_case(
 
 def get_list_favorites_use_case(
     favorite_repository: Annotated[FavoriteRepository, Depends(get_favorite_repository)],
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+    space_repository: Annotated[SpaceRepository, Depends(get_space_repository)],
+    session: Annotated[AsyncSession, Depends(get_session)],
 ) -> ListFavoritesUseCase:
     """Get list favorites use case with dependencies."""
-    return ListFavoritesUseCase(favorite_repository)
+    return ListFavoritesUseCase(favorite_repository, project_repository, space_repository, session)
 
 
 def get_delete_favorite_use_case(

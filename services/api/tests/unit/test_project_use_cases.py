@@ -298,10 +298,40 @@ class TestListProjectsUseCase:
         self, mock_project_repository, mock_session, test_organization, test_project
     ):
         """Test successful project listing."""
+
         projects = [test_project]
         mock_project_repository.get_all.return_value = projects
         mock_project_repository.count.return_value = 1
-        mock_session.execute = AsyncMock(return_value=MagicMock(scalar_one=Mock(return_value=0)))
+
+        # Mock execute calls sequence:
+        # 1. Count members
+        # 2. Count issues
+        # 3. Count completed issues
+        # 4. Get top 5 members (returns empty list)
+        call_count = [0]
+
+        async def mock_execute(query):
+            call_count[0] += 1
+            query_str = str(query).upper()
+
+            # Count queries (members, issues, completed issues)
+            if "COUNT" in query_str:
+                result = MagicMock()
+                result.scalar_one.return_value = 0
+                return result
+
+            # Members query (join ProjectMemberModel and UserModel)
+            elif "PROJECTMEMBER" in query_str and "USER" in query_str:
+                result = MagicMock()
+                result.all.return_value = []  # Empty members list
+                return result
+
+            # Default
+            result = MagicMock()
+            result.scalar_one.return_value = 0
+            return result
+
+        mock_session.execute = AsyncMock(side_effect=mock_execute)
 
         use_case = ListProjectsUseCase(mock_project_repository, mock_session)
 
@@ -312,6 +342,11 @@ class TestListProjectsUseCase:
         assert result.page == 1
         assert result.limit == 20
         assert result.pages == 1
+        # Check new fields
+        project = result.projects[0]
+        assert project.deleted_at is None or project.deleted_at == test_project.deleted_at
+        assert project.completed_issues_count == 0
+        assert project.members == []
         mock_project_repository.get_all.assert_called_once()
 
     @pytest.mark.asyncio
@@ -321,7 +356,32 @@ class TestListProjectsUseCase:
         """Test project listing with search query."""
         projects = [test_project]
         mock_project_repository.search.return_value = projects
-        mock_session.execute = AsyncMock(return_value=MagicMock(scalar_one=Mock(return_value=1)))
+        mock_project_repository.count.return_value = 1
+
+        # Mock execute calls sequence
+        call_count = [0]
+
+        async def mock_execute(query):
+            call_count[0] += 1
+            query_str = str(query).upper()
+
+            # Count queries
+            if "COUNT" in query_str:
+                result = MagicMock()
+                result.scalar_one.return_value = 0
+                return result
+
+            # Members query
+            elif "PROJECTMEMBER" in query_str and "USER" in query_str:
+                result = MagicMock()
+                result.all.return_value = []
+                return result
+
+            result = MagicMock()
+            result.scalar_one.return_value = 0
+            return result
+
+        mock_session.execute = AsyncMock(side_effect=mock_execute)
 
         use_case = ListProjectsUseCase(mock_project_repository, mock_session)
 
@@ -329,6 +389,77 @@ class TestListProjectsUseCase:
 
         assert len(result.projects) == 1
         mock_project_repository.search.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_list_projects_with_members_and_issues(
+        self, mock_project_repository, mock_session, test_organization, test_project
+    ):
+        """Test project listing with members and completed issues."""
+        from datetime import datetime
+
+        projects = [test_project]
+        mock_project_repository.get_all.return_value = projects
+        mock_project_repository.count.return_value = 1
+
+        # Create mock member and user
+        member = MagicMock()
+        member.user_id = uuid4()
+        member.project_id = test_project.id
+        member.role = "admin"
+        member.created_at = datetime.utcnow()
+
+        user = MagicMock()
+        user.name = "Test User"
+        user.email = "test@example.com"
+        user.avatar_url = None
+
+        call_count = [0]
+
+        async def mock_execute(query):
+            call_count[0] += 1
+
+            # Count members
+            if call_count[0] == 1:
+                result = MagicMock()
+                result.scalar_one.return_value = 1
+                return result
+
+            # Count issues
+            elif call_count[0] == 2:
+                result = MagicMock()
+                result.scalar_one.return_value = 10
+                return result
+
+            # Count completed issues
+            elif call_count[0] == 3:
+                result = MagicMock()
+                result.scalar_one.return_value = 5
+                return result
+
+            # Get members
+            elif call_count[0] == 4:
+                result = MagicMock()
+                result.all.return_value = [(member, user)]
+                return result
+
+            result = MagicMock()
+            result.scalar_one.return_value = 0
+            return result
+
+        mock_session.execute = AsyncMock(side_effect=mock_execute)
+
+        use_case = ListProjectsUseCase(mock_project_repository, mock_session)
+
+        result = await use_case.execute(str(test_organization.id), page=1, limit=20, search=None)
+
+        assert len(result.projects) == 1
+        project = result.projects[0]
+        assert project.member_count == 1
+        assert project.issue_count == 10
+        assert project.completed_issues_count == 5
+        assert len(project.members) == 1
+        assert project.members[0].user_name == "Test User"
+        assert project.members[0].role == "admin"
 
 
 class TestUpdateProjectUseCase:

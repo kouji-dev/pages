@@ -6,6 +6,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, field_validator
 
+from src.application.dtos.node import NodeListItemResponse
 from src.domain.value_objects.entity_type import EntityType
 
 
@@ -28,12 +29,15 @@ class FavoriteResponse(BaseModel):
 class FavoriteListItemResponse(BaseModel):
     """Response DTO for favorite in list view."""
 
-    id: UUID
+    id: UUID = Field(..., description="Favorite ID")
     user_id: UUID
     entity_type: str = Field(..., description="Type of entity: project, space, or page")
     entity_id: UUID = Field(..., description="ID of the favorited entity")
     created_at: datetime
     updated_at: datetime
+    node: NodeListItemResponse | None = Field(
+        None, description="Node data (for project and space types only)"
+    )
 
     class Config:
         """Pydantic config."""

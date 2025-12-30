@@ -6,6 +6,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, field_validator
 
+from src.application.dtos.project_member import ProjectMemberResponse
+
 
 class ProjectResponse(BaseModel):
     """Response DTO for project data."""
@@ -35,8 +37,15 @@ class ProjectListItemResponse(BaseModel):
     name: str
     key: str
     description: str | None = None
+    deleted_at: datetime | None = Field(None, description="Deletion timestamp (null if active)")
     member_count: int = Field(0, description="Number of members in the project")
     issue_count: int = Field(0, description="Number of issues in the project")
+    completed_issues_count: int = Field(
+        0, description="Number of completed (done) issues in the project"
+    )
+    members: list[ProjectMemberResponse] = Field(
+        default_factory=list, description="Top 5 project members"
+    )
     created_at: datetime
     updated_at: datetime
 

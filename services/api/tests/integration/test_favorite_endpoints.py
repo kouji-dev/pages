@@ -257,6 +257,16 @@ async def test_list_favorites_success(client: AsyncClient, test_user, db_session
     assert "project" in entity_types
     assert "space" in entity_types
 
+    # Verify node data is present for project and space favorites
+    for fav in data["favorites"]:
+        assert "node" in fav
+        if fav["entity_type"] in ("project", "space"):
+            assert fav["node"] is not None
+            assert fav["node"]["type"] == fav["entity_type"]
+            assert fav["node"]["id"] == str(fav["entity_id"])
+            assert "name" in fav["node"]
+            assert "organization_id" in fav["node"]
+
 
 @pytest.mark.asyncio
 async def test_list_favorites_with_entity_type_filter(client: AsyncClient, test_user, db_session):
@@ -328,7 +338,14 @@ async def test_list_favorites_with_entity_type_filter(client: AsyncClient, test_
     data = list_response.json()
     assert data["total"] == 1
     assert len(data["favorites"]) == 1
-    assert data["favorites"][0]["entity_type"] == "project"
+    favorite = data["favorites"][0]
+    assert favorite["entity_type"] == "project"
+    # Verify node data is present for project favorite
+    assert favorite["node"] is not None
+    assert favorite["node"]["type"] == "project"
+    assert favorite["node"]["id"] == str(project.id)
+    assert favorite["node"]["name"] == project.name
+    assert favorite["node"]["organization_id"] == str(org.id)
 
 
 @pytest.mark.asyncio
