@@ -29,7 +29,7 @@ def upgrade() -> None:
         DO $$
         BEGIN
             IF NOT EXISTS (
-                SELECT 1 FROM information_schema.columns 
+                SELECT 1 FROM information_schema.columns
                 WHERE table_name = 'users' AND column_name = 'language'
             ) THEN
                 ALTER TABLE users ADD COLUMN language VARCHAR(5) NOT NULL DEFAULT 'en';
@@ -49,7 +49,7 @@ def upgrade() -> None:
         DO $$
         BEGIN
             IF NOT EXISTS (
-                SELECT 1 FROM information_schema.columns 
+                SELECT 1 FROM information_schema.columns
                 WHERE table_name = 'issues' AND column_name = 'backlog_order'
             ) THEN
                 ALTER TABLE issues ADD COLUMN backlog_order INTEGER;
@@ -69,7 +69,7 @@ def upgrade() -> None:
         DO $$
         BEGIN
             IF NOT EXISTS (
-                SELECT 1 FROM information_schema.columns 
+                SELECT 1 FROM information_schema.columns
                 WHERE table_name = 'issues' AND column_name = 'parent_issue_id'
             ) THEN
                 ALTER TABLE issues ADD COLUMN parent_issue_id UUID;
@@ -82,10 +82,10 @@ def upgrade() -> None:
         DO $$
         BEGIN
             IF NOT EXISTS (
-                SELECT 1 FROM information_schema.table_constraints 
+                SELECT 1 FROM information_schema.table_constraints
                 WHERE constraint_name = 'fk_issues_parent_issue_id'
             ) THEN
-                ALTER TABLE issues ADD CONSTRAINT fk_issues_parent_issue_id 
+                ALTER TABLE issues ADD CONSTRAINT fk_issues_parent_issue_id
                     FOREIGN KEY (parent_issue_id) REFERENCES issues(id) ON DELETE SET NULL;
             END IF;
         END $$;
@@ -103,7 +103,7 @@ def upgrade() -> None:
         DO $$
         BEGIN
             IF NOT EXISTS (
-                SELECT 1 FROM information_schema.columns 
+                SELECT 1 FROM information_schema.columns
                 WHERE table_name = 'projects' AND column_name = 'folder_id'
             ) THEN
                 ALTER TABLE projects ADD COLUMN folder_id UUID;
@@ -116,10 +116,10 @@ def upgrade() -> None:
         DO $$
         BEGIN
             IF NOT EXISTS (
-                SELECT 1 FROM information_schema.table_constraints 
+                SELECT 1 FROM information_schema.table_constraints
                 WHERE constraint_name = 'fk_projects_folder_id'
             ) THEN
-                ALTER TABLE projects ADD CONSTRAINT fk_projects_folder_id 
+                ALTER TABLE projects ADD CONSTRAINT fk_projects_folder_id
                     FOREIGN KEY (folder_id) REFERENCES folders(id) ON DELETE SET NULL;
             END IF;
         END $$;
@@ -137,7 +137,7 @@ def upgrade() -> None:
         DO $$
         BEGIN
             IF NOT EXISTS (
-                SELECT 1 FROM information_schema.columns 
+                SELECT 1 FROM information_schema.columns
                 WHERE table_name = 'spaces' AND column_name = 'folder_id'
             ) THEN
                 ALTER TABLE spaces ADD COLUMN folder_id UUID;
@@ -150,10 +150,10 @@ def upgrade() -> None:
         DO $$
         BEGIN
             IF NOT EXISTS (
-                SELECT 1 FROM information_schema.table_constraints 
+                SELECT 1 FROM information_schema.table_constraints
                 WHERE constraint_name = 'fk_spaces_folder_id'
             ) THEN
-                ALTER TABLE spaces ADD CONSTRAINT fk_spaces_folder_id 
+                ALTER TABLE spaces ADD CONSTRAINT fk_spaces_folder_id
                     FOREIGN KEY (folder_id) REFERENCES folders(id) ON DELETE SET NULL;
             END IF;
         END $$;
@@ -171,7 +171,7 @@ def upgrade() -> None:
         DO $$
         BEGIN
             IF NOT EXISTS (
-                SELECT 1 FROM information_schema.columns 
+                SELECT 1 FROM information_schema.columns
                 WHERE table_name = 'templates' AND column_name = 'category'
             ) THEN
                 ALTER TABLE templates ADD COLUMN category VARCHAR(50);
