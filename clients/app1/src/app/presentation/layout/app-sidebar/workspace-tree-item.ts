@@ -4,14 +4,56 @@ import { Router } from '@angular/router';
 import { Icon, IconName } from 'shared-ui';
 import { NavigationService } from '../../../application/services/navigation.service';
 
-export interface WorkspaceNode {
-  id: string;
-  title: string;
-  type: 'folder' | 'space' | 'project' | 'page';
-  children?: WorkspaceNode[];
-  spaceId?: string; // For pages, store the space_id for navigation
-  organizationId?: string; // For folders, store the organization_id for navigation
+// DTOs matching backend structure
+export interface DTOFolderDetails {
+  name: string;
 }
+
+export interface DTOProjectDetails {
+  name: string;
+  key?: string | null;
+  description?: string | null;
+  folder_id?: string | null;
+}
+
+export interface DTOSpaceDetails {
+  name: string;
+  key?: string | null;
+  description?: string | null;
+  folder_id?: string | null;
+}
+
+export interface DTOItemFolder {
+  type: 'folder';
+  id: string;
+  organization_id: string;
+  position: number;
+  details: DTOFolderDetails;
+  parent_id?: string | null; // Added for folder hierarchy
+}
+
+export interface DTOItemProject {
+  type: 'project';
+  id: string;
+  organization_id: string;
+  details: DTOProjectDetails;
+}
+
+export interface DTOItemSpace {
+  type: 'space';
+  id: string;
+  organization_id: string;
+  details: DTOSpaceDetails;
+}
+
+// Workspace node is a union of the three types
+export type WorkspaceNode = DTOItemFolder | DTOItemProject | DTOItemSpace;
+
+// Helper type for workspace nodes with children (for tree structure)
+export type WorkspaceNodeWithChildren =
+  | (DTOItemFolder & { children?: WorkspaceNodeWithChildren[] })
+  | (DTOItemProject & { children?: WorkspaceNodeWithChildren[] })
+  | (DTOItemSpace & { children?: WorkspaceNodeWithChildren[] });
 
 @Component({
   selector: 'app-workspace-tree-item',
@@ -32,7 +74,7 @@ export interface WorkspaceNode {
             class="workspace-tree-item_chevron"
           />
           <lib-icon [name]="iconName()" size="sm" />
-          <span class="workspace-tree-item_title">{{ node().title }}</span>
+          <span class="workspace-tree-item_title">{{ getNodeName() }}</span>
         </button>
         @if (isOpen()) {
           <div class="workspace-tree-item_children">
@@ -49,7 +91,7 @@ export interface WorkspaceNode {
         (click)="handleClick()"
       >
         <lib-icon [name]="iconName()" size="sm" />
-        <span class="workspace-tree-item_title">{{ node().title }}</span>
+        <span class="workspace-tree-item_title">{{ getNodeName() }}</span>
       </button>
     }
   `,
@@ -92,7 +134,7 @@ export class WorkspaceTreeItem {
   private readonly router = inject(Router);
   private readonly navigationService = inject(NavigationService);
 
-  node = input.required<WorkspaceNode>();
+  node = input.required<WorkspaceNodeWithChildren>();
   level = input(0);
 
   readonly isOpen = signal(false);
@@ -109,8 +151,6 @@ export class WorkspaceTreeItem {
         return 'book';
       case 'project':
         return 'kanban';
-      case 'page':
-        return 'file-text';
       default:
         return 'folder';
     }
@@ -123,6 +163,18 @@ export class WorkspaceTreeItem {
   setIsOpen(open: boolean): void {
     this.isOpen.set(open);
   }
+
+  readonly getNodeName = computed(() => {
+    const node = this.node();
+    switch (node.type) {
+      case 'folder':
+        return node.details.name;
+      case 'project':
+        return node.details.name;
+      case 'space':
+        return node.details.name;
+    }
+  });
 
   handleClick(): void {
     const node = this.node();
@@ -144,12 +196,6 @@ export class WorkspaceTreeItem {
       case 'project':
         // Navigate to project
         this.router.navigate(this.navigationService.getProjectRoute(orgId, node.id));
-        break;
-      case 'page':
-        // Navigate to page
-        if (node.spaceId) {
-          this.router.navigate(this.navigationService.getPageRoute(orgId, node.spaceId, node.id));
-        }
         break;
     }
   }

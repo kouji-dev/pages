@@ -171,6 +171,13 @@ export class SpaceService {
   }
 
   /**
+   * Get space by ID (from cached list)
+   */
+  getSpaceById(spaceId: string): Space | undefined {
+    return this.spacesList().find((space) => space.id === spaceId);
+  }
+
+  /**
    * Create a new space
    */
   async createSpace(request: CreateSpaceRequest): Promise<Space> {

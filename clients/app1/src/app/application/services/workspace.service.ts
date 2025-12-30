@@ -5,25 +5,20 @@ import { environment } from '../../../environments/environment';
 import { SpaceService } from './space.service';
 import { ProjectService } from './project.service';
 import { NavigationService } from './navigation.service';
-import { WorkspaceNode } from '../../presentation/layout/app-sidebar/workspace-tree-item';
+import {
+  WorkspaceNode,
+  DTOItemFolder,
+  DTOItemProject,
+  DTOItemSpace,
+  WorkspaceNodeWithChildren,
+} from '../../presentation/layout/app-sidebar/workspace-tree-item';
 
-export interface PageTreeItem {
-  id: string;
-  space_id: string;
-  title: string;
-  slug: string;
-  content?: string | null;
-  parent_id?: string | null;
-  created_by?: string | null;
-  updated_by?: string | null;
-  position: number;
-  children: PageTreeItem[];
-  created_at: string;
-  updated_at: string;
-}
-
-export interface PageTreeResponse {
-  pages: PageTreeItem[];
+// Backend API response types
+export interface UnifiedListApiResponse {
+  items: Array<DTOItemFolder | DTOItemProject | DTOItemSpace>;
+  folders_count: number;
+  nodes_count: number;
+  total: number;
 }
 
 @Injectable({
@@ -36,8 +31,8 @@ export class WorkspaceService {
   private readonly navigationService = inject(NavigationService);
   private readonly apiUrl = `${environment.apiUrl}/pages`;
 
-  // Workspace nodes signal
-  private readonly _workspaceNodes = signal<WorkspaceNode[]>([]);
+  // Workspace nodes signal (with children for tree structure)
+  private readonly _workspaceNodes = signal<WorkspaceNodeWithChildren[]>([]);
   readonly workspaceNodes = this._workspaceNodes.asReadonly();
 
   readonly isLoading = signal(false);
@@ -60,50 +55,19 @@ export class WorkspaceService {
 
   /**
    * Load workspace tree for current organization
+   * Uses the unified API endpoint to get folders, projects, and spaces
    */
   async loadWorkspaces(organizationId: string): Promise<void> {
     this.isLoading.set(true);
     this.error.set(null);
 
     try {
-      // Get spaces and projects for the organization
-      const spaces = this.spaceService.getSpacesByOrganization(organizationId);
-      const projects = this.projectService.getProjectsByOrganization(organizationId);
+      // Use unified API endpoint to get folders and nodes
+      const url = `${environment.apiUrl}/organizations/${organizationId}/items`;
+      const response = await firstValueFrom(this.http.get<UnifiedListApiResponse>(url));
 
-      const workspaceNodes: WorkspaceNode[] = [];
-
-      // Add spaces with their page trees
-      for (const space of spaces) {
-        try {
-          const pageTree = await this.getPageTree(space.id);
-          const spaceNode: WorkspaceNode = {
-            id: space.id,
-            title: space.name,
-            type: 'space',
-            children: this.convertPageTreeToNodes(pageTree.pages, space.id),
-          };
-          workspaceNodes.push(spaceNode);
-        } catch (error) {
-          // If page tree fails, still add the space without pages
-          console.warn(`Failed to load page tree for space ${space.id}:`, error);
-          const spaceNode: WorkspaceNode = {
-            id: space.id,
-            title: space.name,
-            type: 'space',
-            children: [],
-          };
-          workspaceNodes.push(spaceNode);
-        }
-      }
-
-      // Add projects as separate items
-      for (const project of projects) {
-        workspaceNodes.push({
-          id: project.id,
-          title: project.name,
-          type: 'project',
-        });
-      }
+      // Convert API response to workspace nodes with tree structure
+      const workspaceNodes = this.buildWorkspaceTree(response.items, organizationId);
 
       this._workspaceNodes.set(workspaceNodes);
     } catch (error) {
@@ -116,30 +80,97 @@ export class WorkspaceService {
   }
 
   /**
-   * Get page tree for a space
+   * Build workspace tree structure from flat list of items
+   * Groups items by folders and builds hierarchy
    */
-  async getPageTree(spaceId: string): Promise<PageTreeResponse> {
-    const url = `${this.apiUrl}/spaces/${spaceId}/tree`;
-    return firstValueFrom(this.http.get<PageTreeResponse>(url));
+  private buildWorkspaceTree(
+    items: Array<DTOItemFolder | DTOItemProject | DTOItemSpace>,
+    organizationId: string,
+  ): WorkspaceNodeWithChildren[] {
+    // Separate items by type
+    const folders = items.filter((item): item is DTOItemFolder => item.type === 'folder');
+    const projects = items.filter((item): item is DTOItemProject => item.type === 'project');
+    const spaces = items.filter((item): item is DTOItemSpace => item.type === 'space');
+
+    // Build folder tree with hierarchy
+    const folderTree = this.buildFolderTree(folders);
+
+    // Add projects and spaces to their respective folders or root
+    const result: WorkspaceNodeWithChildren[] = [];
+
+    // Process root folders (no parent_id)
+    const rootFolders = folderTree.filter((f) => !f.parent_id);
+    for (const folder of rootFolders) {
+      const folderWithChildren: WorkspaceNodeWithChildren = {
+        ...folder,
+        children: [
+          ...this.getFolderChildren(folder.id, folderTree),
+          ...this.getItemsInFolder(folder.id, projects, spaces),
+        ],
+      };
+      result.push(folderWithChildren);
+    }
+
+    // Add root-level projects and spaces (not in any folder)
+    const rootProjects = projects.filter((p) => !p.details.folder_id);
+    const rootSpaces = spaces.filter((s) => !s.details.folder_id);
+
+    result.push(...rootProjects.map((p) => ({ ...p, children: undefined })));
+    result.push(...rootSpaces.map((s) => ({ ...s, children: undefined })));
+
+    // Sort by position for folders, then by name
+    return result.sort((a, b) => {
+      if (a.type === 'folder' && b.type === 'folder') {
+        return a.position - b.position;
+      }
+      if (a.type === 'folder') return -1;
+      if (b.type === 'folder') return 1;
+      return a.details.name.localeCompare(b.details.name);
+    });
   }
 
   /**
-   * Convert page tree items to workspace nodes
+   * Build folder tree structure (handles folder hierarchy)
    */
-  private convertPageTreeToNodes(pages: PageTreeItem[], spaceId: string): WorkspaceNode[] {
-    return pages.map((page) => {
-      const node: WorkspaceNode = {
-        id: page.id,
-        title: page.title,
-        type: 'page',
-        spaceId: spaceId, // Store space_id for navigation
-        children:
-          page.children.length > 0
-            ? this.convertPageTreeToNodes(page.children, spaceId)
-            : undefined,
-      };
-      return node;
-    });
+  private buildFolderTree(folders: DTOItemFolder[]): DTOItemFolder[] {
+    // Folders are returned as-is from API, with parent_id already set
+    return folders;
+  }
+
+  /**
+   * Get child folders of a parent folder
+   */
+  private getFolderChildren(
+    parentFolderId: string,
+    folders: DTOItemFolder[],
+  ): WorkspaceNodeWithChildren[] {
+    return folders
+      .filter((f) => f.parent_id === parentFolderId)
+      .map((f) => {
+        // Recursively build children for nested folders
+        const children: WorkspaceNodeWithChildren[] = [...this.getFolderChildren(f.id, folders)];
+        return {
+          ...f,
+          children: children.length > 0 ? children : undefined,
+        } as WorkspaceNodeWithChildren;
+      });
+  }
+
+  /**
+   * Get projects and spaces assigned to a folder
+   */
+  private getItemsInFolder(
+    folderId: string,
+    projects: DTOItemProject[],
+    spaces: DTOItemSpace[],
+  ): WorkspaceNodeWithChildren[] {
+    const folderProjects = projects
+      .filter((p) => p.details.folder_id === folderId)
+      .map((p) => ({ ...p, children: undefined }));
+    const folderSpaces = spaces
+      .filter((s) => s.details.folder_id === folderId)
+      .map((s) => ({ ...s, children: undefined }));
+    return [...folderProjects, ...folderSpaces];
   }
 
   /**
@@ -159,19 +190,28 @@ export class WorkspaceService {
     organizationId: string;
     title: string;
     parentId?: string;
-  }): Promise<{ id: string; title: string }> {
-    const url = `${environment.apiUrl}/workspaces/folders`;
+  }): Promise<{ id: string; name: string }> {
+    const url = `${environment.apiUrl}/organizations/${request.organizationId}/folders`;
     const response = await firstValueFrom(
-      this.http.post<{ id: string; title: string }>(url, {
+      this.http.post<{
+        id: string;
+        organization_id: string;
+        name: string;
+        parent_id: string | null;
+        position: number;
+        created_at: string;
+        updated_at: string;
+      }>(url, {
         organization_id: request.organizationId,
-        title: request.title,
+        name: request.title, // Backend expects "name" not "title"
         parent_id: request.parentId || null,
+        position: 0,
       }),
     );
 
     // Reload workspaces after creating folder
     this.reload();
 
-    return response;
+    return { id: response.id, name: response.name };
   }
 }

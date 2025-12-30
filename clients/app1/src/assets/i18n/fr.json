@@ -406,6 +406,7 @@
     "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
     "nameRequired": "Le nom est requis",
     "nameMinLength": "Le nom doit contenir au moins 2 caractères",
+    "forgotPasswordLink": "Mot de passe oublié ?",
     "forgotPassword": {
       "title": "Mot de passe oublié ?",
       "subtitle": "Saisissez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.",

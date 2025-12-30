@@ -201,6 +201,13 @@ export class ProjectService {
   }
 
   /**
+   * Get project by ID (from cached list)
+   */
+  getProjectById(projectId: string): Project | undefined {
+    return this.projectsList().find((project) => project.id === projectId);
+  }
+
+  /**
    * Persist current project to localStorage
    */
   private persistCurrentProjectToStorage(project: Project): void {

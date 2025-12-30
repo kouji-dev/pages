@@ -19,16 +19,18 @@ export interface Favorite {
   createdAt?: string;
 }
 
-export interface FavoriteResponse {
+export interface FavoriteApiResponse {
   id: string;
-  type: 'project' | 'space' | 'page';
-  item_id: string;
-  title: string;
-  icon?: string;
-  icon_color?: string;
-  right_icon?: string;
-  organization_id: string;
+  user_id: string;
+  entity_type: 'project' | 'space' | 'page';
+  entity_id: string;
   created_at: string;
+  updated_at: string;
+}
+
+export interface FavoriteListApiResponse {
+  favorites: FavoriteApiResponse[];
+  total: number;
 }
 
 @Injectable({
@@ -39,7 +41,7 @@ export class FavoriteService {
   private readonly navigationService = inject(NavigationService);
   private readonly spaceService = inject(SpaceService);
   private readonly projectService = inject(ProjectService);
-  private readonly apiUrl = `${environment.apiUrl}/favorites`;
+  private readonly apiUrl = `${environment.apiUrl}/users/me/favorites`;
 
   // Favorites signal
   private readonly _favorites = signal<Favorite[]>([]);
@@ -70,11 +72,22 @@ export class FavoriteService {
     try {
       // Try to fetch from API first
       try {
-        const response = await firstValueFrom(
-          this.http.get<FavoriteResponse[]>(`${this.apiUrl}?organization_id=${organizationId}`),
+        const response = await firstValueFrom(this.http.get<FavoriteListApiResponse>(this.apiUrl));
+        // Filter favorites by organization and enrich with entity details
+        const favorites = await Promise.all(
+          response.favorites
+            .filter((f) => {
+              // We need to check if the entity belongs to this organization
+              // For now, we'll fetch all and filter by checking entity details
+              return true; // Will filter after fetching entity details
+            })
+            .map(async (f) => await this.enrichFavorite(f, organizationId)),
         );
-        const favorites = response.map((f) => this.mapToFavorite(f));
-        this._favorites.set(favorites);
+        // Filter out favorites that don't belong to this organization
+        const orgFavorites = favorites.filter(
+          (f) => f !== null && f.organizationId === organizationId,
+        ) as Favorite[];
+        this._favorites.set(orgFavorites);
       } catch (apiError: any) {
         // If API doesn't exist yet, fall back to local storage
         if (apiError.status === 404 || apiError.status === 0) {
@@ -110,38 +123,37 @@ export class FavoriteService {
     iconColor?: string,
     rightIcon?: IconName,
   ): Promise<Favorite> {
-    const favorite: Favorite = {
-      id: `${type}-${itemId}`,
-      type,
-      itemId,
-      title,
-      icon: icon || this.getDefaultIcon(type),
-      iconColor: iconColor || '#fbbf24',
-      rightIcon: rightIcon || this.getDefaultRightIcon(type),
-      organizationId,
-      createdAt: new Date().toISOString(),
-    };
-
     try {
       // Try to save to API
       try {
         const response = await firstValueFrom(
-          this.http.post<FavoriteResponse>(this.apiUrl, {
-            type,
-            item_id: itemId,
-            title,
-            icon: favorite.icon,
-            icon_color: favorite.iconColor,
-            right_icon: favorite.rightIcon,
-            organization_id: organizationId,
+          this.http.post<FavoriteApiResponse>(this.apiUrl, {
+            entity_type: type,
+            entity_id: itemId,
           }),
         );
-        const savedFavorite = this.mapToFavorite(response);
-        this._favorites.update((favs) => [...favs, savedFavorite]);
-        return savedFavorite;
+        // Enrich with entity details
+        const enrichedFavorite = await this.enrichFavorite(response, organizationId);
+        if (enrichedFavorite) {
+          this._favorites.update((favs) => [...favs, enrichedFavorite]);
+          return enrichedFavorite;
+        } else {
+          throw new Error('Failed to enrich favorite');
+        }
       } catch (apiError: any) {
         // If API doesn't exist, save to local storage
         if (apiError.status === 404 || apiError.status === 0) {
+          const favorite: Favorite = {
+            id: `${type}-${itemId}`,
+            type,
+            itemId,
+            title,
+            icon: icon || this.getDefaultIcon(type),
+            iconColor: iconColor || '#fbbf24',
+            rightIcon: rightIcon || this.getDefaultRightIcon(type),
+            organizationId,
+            createdAt: new Date().toISOString(),
+          };
           this.saveToLocalStorage(favorite);
           this._favorites.update((favs) => [...favs, favorite]);
           return favorite;
@@ -152,6 +164,17 @@ export class FavoriteService {
     } catch (error) {
       console.error('Error adding favorite:', error);
       // Fall back to local storage
+      const favorite: Favorite = {
+        id: `${type}-${itemId}`,
+        type,
+        itemId,
+        title,
+        icon: icon || this.getDefaultIcon(type),
+        iconColor: iconColor || '#fbbf24',
+        rightIcon: rightIcon || this.getDefaultRightIcon(type),
+        organizationId,
+        createdAt: new Date().toISOString(),
+      };
       this.saveToLocalStorage(favorite);
       this._favorites.update((favs) => [...favs, favorite]);
       return favorite;
@@ -259,20 +282,73 @@ export class FavoriteService {
   }
 
   /**
-   * Map API response to Favorite
+   * Enrich favorite API response with entity details (title, icon, etc.)
    */
-  private mapToFavorite(response: FavoriteResponse): Favorite {
-    return {
-      id: response.id,
-      type: response.type,
-      itemId: response.item_id,
-      title: response.title,
-      icon: response.icon ? (response.icon as IconName) : undefined,
-      iconColor: response.icon_color,
-      rightIcon: response.right_icon ? (response.right_icon as IconName) : undefined,
-      organizationId: response.organization_id,
-      createdAt: response.created_at,
-    };
+  private async enrichFavorite(
+    apiResponse: FavoriteApiResponse,
+    organizationId: string,
+  ): Promise<Favorite | null> {
+    try {
+      let title = '';
+      let orgId = organizationId;
+      let icon: IconName | undefined;
+      let iconColor: string | undefined;
+      let rightIcon: IconName | undefined;
+
+      switch (apiResponse.entity_type) {
+        case 'project': {
+          const project = this.projectService.getProjectById(apiResponse.entity_id);
+          if (project) {
+            title = project.name;
+            orgId = project.organizationId;
+            icon = 'kanban';
+            rightIcon = 'kanban';
+          } else {
+            // Project not found in cache, skip this favorite
+            return null;
+          }
+          break;
+        }
+        case 'space': {
+          const space = this.spaceService.getSpaceById(apiResponse.entity_id);
+          if (space) {
+            title = space.name;
+            orgId = space.organizationId;
+            icon = space.icon ? (space.icon as IconName) : 'book';
+            rightIcon = 'book';
+          } else {
+            // Space not found in cache, skip this favorite
+            return null;
+          }
+          break;
+        }
+        case 'page': {
+          // For pages, we'd need to fetch from space service
+          // This is more complex - for now, use a generic approach
+          title = `Page ${apiResponse.entity_id.substring(0, 8)}`;
+          icon = 'file-text';
+          rightIcon = 'file-text';
+          // Note: Pages don't have organizationId directly, they're under spaces
+          // We might need to store spaceId in favorites or fetch page details
+          break;
+        }
+      }
+
+      return {
+        id: apiResponse.id,
+        type: apiResponse.entity_type,
+        itemId: apiResponse.entity_id,
+        title,
+        icon: icon || this.getDefaultIcon(apiResponse.entity_type),
+        iconColor: iconColor || '#fbbf24',
+        rightIcon: rightIcon || this.getDefaultRightIcon(apiResponse.entity_type),
+        organizationId: orgId,
+        createdAt: apiResponse.created_at,
+      };
+    } catch (error) {
+      console.error('Error enriching favorite:', error);
+      return null;
+    }
   }
 
   /**

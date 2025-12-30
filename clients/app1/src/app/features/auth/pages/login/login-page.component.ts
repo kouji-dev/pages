@@ -63,7 +63,7 @@ import { NavigationService } from '../../../../application/services/navigation.s
               <a routerLink="/register" class="login-page_link">{{ 'auth.signUp' | translate }}</a>
             </p>
             <a routerLink="/forgot-password" class="login-page_forgot-link">{{
-              'auth.forgotPassword' | translate
+              'auth.forgotPasswordLink' | translate
             }}</a>
           </div>
         </div>
@@ -116,13 +116,14 @@ import { NavigationService } from '../../../../application/services/navigation.s
       }
 
       .login-page_actions {
-        @apply flex flex-col;
+        @apply flex;
+        @apply justify-end;
         @apply gap-3;
         @apply pt-2;
       }
 
       .login-page_submit-button {
-        @apply w-full;
+        @apply ml-auto;
       }
 
       .login-page_footer {
