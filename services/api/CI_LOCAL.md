@@ -4,9 +4,10 @@ Ce document explique comment exécuter les mêmes vérifications que GitHub Acti
 
 ## 📊 État actuel
 
-✅ **Couverture de tests : 81%** (11,542 lignes, 2,138 non couvertes)  
-✅ **Tests : 852 tests passent**  
-✅ **Qualité de code : Black ✓ | Ruff ✓ | MyPy ✓**
+✅ **Couverture de tests : 81%** (14,514 lignes, 2,755 non couvertes)  
+✅ **Tests : 942 tests passent** (604 unitaires + 338 intégration)  
+✅ **Qualité de code : Black ✓ | Ruff ✓ | MyPy ✓**  
+✅ **Migrations : Base de données synchronisée**
 
 ---
 
@@ -45,7 +46,7 @@ poetry run mypy src
 **Résultats attendus :**
 - ✅ Black : Tous les fichiers formatés
 - ✅ Ruff : Aucune erreur de linting
-- ✅ MyPy : 315 fichiers vérifiés sans erreur
+- ✅ MyPy : 407 fichiers vérifiés sans erreur
 
 ---
 
@@ -63,8 +64,8 @@ poetry run pytest tests/unit/ -v \
 ```
 
 **Résultats attendus :**
-- ✅ ~49 tests unitaires passent
-- 📊 Couverture partielle générée
+- ✅ ~604 tests unitaires passent
+- 📊 Couverture partielle générée (~74%)
 
 **Rapports générés :**
 - `coverage.xml` - Pour Codecov/CI
@@ -95,8 +96,8 @@ poetry run pytest tests/integration/ -v \
 ```
 
 **Résultats attendus :**
-- ✅ ~33 tests d'intégration passent
-- 📊 Couverture cumulée avec tests unitaires
+- ✅ ~338 tests d'intégration passent
+- 📊 Couverture cumulée avec tests unitaires (~81%)
 
 **Note :** `--cov-append` ajoute la couverture aux tests unitaires.
 
@@ -112,7 +113,7 @@ poetry run pytest tests/functional/ -v
 ```
 
 **Résultats attendus :**
-- ✅ ~23 tests fonctionnels passent
+- ✅ Tests fonctionnels passent
 - ⚠️ Ignorer `test_custom_field_workflow.py` si besoin
 
 ---
@@ -136,9 +137,9 @@ poetry run pytest \
 ```
 
 **Résultats attendus :**
-- ✅ **852 tests passent**
+- ✅ **942 tests passent** (604 unitaires + 338 intégration)
 - 📊 **Couverture : 81%**
-- ⚠️ ~3000 warnings (deprecations, peuvent être ignorés)
+- ⚠️ ~1800+ warnings (deprecations, peuvent être ignorés)
 
 ---
 
@@ -164,22 +165,41 @@ poetry run bandit -r src
 
 **⚠️ Prérequis :** PostgreSQL doit être en cours d'exécution
 
+#### Option A : Via Docker (recommandé)
+
 ```bash
 cd services/api
 
 # Démarrer la base de données principale
-docker-compose up -d postgres
+docker-compose -f ../../docker-compose.dev.yml up -d db
 
 # Vérifier l'état actuel
-poetry run alembic current
+docker-compose -f ../../docker-compose.dev.yml run --rm api poetry run alembic current
 
 # Tester les migrations (upgrade)
-poetry run alembic upgrade head
+docker-compose -f ../../docker-compose.dev.yml run --rm api poetry run alembic upgrade head
 
 # Tester le downgrade (optionnel)
-poetry run alembic downgrade -1
-poetry run alembic upgrade head
+docker-compose -f ../../docker-compose.dev.yml run --rm api poetry run alembic downgrade -1
+docker-compose -f ../../docker-compose.dev.yml run --rm api poetry run alembic upgrade head
 ```
+
+#### Option B : Audit des migrations
+
+```bash
+cd services/api
+
+# Audit complet : comparer DB vs modèles SQLAlchemy
+docker-compose -f ../../docker-compose.dev.yml run --rm api poetry run python scripts/migration_audit.py
+
+# Avec détails supplémentaires
+docker-compose -f ../../docker-compose.dev.yml run --rm api poetry run python scripts/migration_audit.py --verbose
+
+# Générer un script SQL de correction si nécessaire
+docker-compose -f ../../docker-compose.dev.yml run --rm api poetry run python scripts/migration_audit.py --generate-sql
+```
+
+**Voir aussi :** `scripts/README.md` pour la documentation complète de l'audit des migrations.
 
 ---
 
@@ -200,11 +220,22 @@ docker-compose -f docker-compose.test.yml down
 ```
 
 **Configuration automatique :**
-- Port : `5434` (pour éviter les conflits avec PostgreSQL principal sur 5433)
+- Port : `5434` (pour éviter les conflits avec PostgreSQL principal sur 5432)
 - User : `postgres`
 - Password : `postgres`
 - Database : `pages_test`
 - Les données sont en `tmpfs` (volatiles, plus rapides)
+
+### Base de données principale (pour migrations)
+
+```bash
+# Démarrer la base de données principale
+cd services/api
+docker-compose -f ../../docker-compose.dev.yml up -d db
+
+# Vérifier que le container est healthy
+docker ps | grep pages-db
+```
 
 ---
 
@@ -212,13 +243,14 @@ docker-compose -f docker-compose.test.yml down
 
 1. **Lint & Format** (~30 secondes) ✅
 2. **Type checking** (~20 secondes) ✅
-3. **Tests unitaires** (~10 secondes) ✅
-4. **Tests d'intégration** (~30 secondes, nécessite DB) ✅
+3. **Tests unitaires** (~20 secondes) ✅
+4. **Tests d'intégration** (~3 minutes, nécessite DB) ✅
 5. **Tests fonctionnels** (~60 secondes, nécessite DB) ✅
 6. **Security scanning** (~1 minute) 🔒
 7. **Migrations** (~10 secondes, nécessite DB) 🗃️
+8. **Audit migrations** (~5 secondes, nécessite DB) 🔍
 
-**Temps total : ~3-4 minutes**
+**Temps total : ~5-6 minutes**
 
 ---
 
@@ -229,11 +261,14 @@ docker-compose -f docker-compose.test.yml down
 ```bash
 cd services/api && \
 docker-compose -f docker-compose.test.yml up -d && \
+docker-compose -f ../../docker-compose.dev.yml up -d db && \
 sleep 5 && \
 poetry run black . && \
 poetry run ruff check --fix . && \
 poetry run mypy src && \
-poetry run pytest --cov=src --cov-report=term --ignore=tests/functional/test_custom_field_workflow.py -q
+poetry run pytest --cov=src --cov-report=term --ignore=tests/functional/test_custom_field_workflow.py -q && \
+docker-compose -f ../../docker-compose.dev.yml run --rm api poetry run alembic current && \
+docker-compose -f ../../docker-compose.dev.yml run --rm api poetry run python scripts/migration_audit.py
 ```
 
 ### Tests uniquement (rapide)
@@ -262,6 +297,14 @@ poetry run pytest --cov=src --cov-report=html --ignore=tests/functional/test_cus
 open htmlcov/index.html
 ```
 
+### Audit des migrations uniquement
+
+```bash
+cd services/api && \
+docker-compose -f ../../docker-compose.dev.yml up -d db && \
+docker-compose -f ../../docker-compose.dev.yml run --rm api poetry run python scripts/migration_audit.py
+```
+
 ---
 
 ## 📝 Notes importantes
@@ -269,9 +312,11 @@ open htmlcov/index.html
 ### ✅ Améliorations récentes (Décembre 2024)
 
 - **Couverture améliorée** : Passée de 67% à 81% (+14 points)
-- **Tests corrigés** : Tous les 852 tests passent maintenant
+- **Tests corrigés** : Tous les 942 tests passent maintenant
 - **Qualité de code** : Black, Ruff et MyPy 100% OK
 - **Nouveaux tests** : 10 tests ajoutés pour les middlewares
+- **Script d'audit migrations** : Nouveau script unifié `migration_audit.py`
+- **Migrations propres** : Toutes les colonnes manquantes ajoutées via migrations Alembic
 
 ### 🔍 Zones de couverture
 
@@ -297,6 +342,15 @@ open htmlcov/index.html
 - Deprecations datetime (utcnow → datetime.now(UTC))
 
 Ces warnings n'empêchent pas le CI de passer et seront corrigés dans une PR dédiée.
+
+### 🔧 Outils de migration
+
+**Script d'audit :** `scripts/migration_audit.py`
+- Compare la base de données avec les modèles SQLAlchemy
+- Détecte les colonnes, index et tables manquants
+- Génère un script SQL de correction (optionnel)
+
+**Documentation :** Voir `scripts/README.md` pour l'utilisation complète.
 
 ---
 
@@ -354,6 +408,19 @@ rm -rf htmlcov/ coverage.xml .coverage
 poetry run pytest --cov=src --cov-report=html --cov-report=term
 ```
 
+### Erreurs de migration
+
+```bash
+# Vérifier l'état actuel
+docker-compose -f ../../docker-compose.dev.yml run --rm api poetry run alembic current
+
+# Voir l'historique
+docker-compose -f ../../docker-compose.dev.yml run --rm api poetry run alembic history
+
+# Auditer les différences
+docker-compose -f ../../docker-compose.dev.yml run --rm api poetry run python scripts/migration_audit.py
+```
+
 ---
 
 ## 📚 Ressources
@@ -363,9 +430,11 @@ poetry run pytest --cov=src --cov-report=html --cov-report=term
 - [Black code style](https://black.readthedocs.io/)
 - [Ruff linter](https://docs.astral.sh/ruff/)
 - [MyPy type checking](https://mypy.readthedocs.io/)
+- [Alembic migrations](https://alembic.sqlalchemy.org/)
 
 ---
 
 **Dernière mise à jour :** Décembre 2024  
 **Couverture actuelle :** 81%  
-**Tests passants :** 852/852 ✅
+**Tests passants :** 942/942 ✅  
+**Migrations :** Synchronisées ✅
