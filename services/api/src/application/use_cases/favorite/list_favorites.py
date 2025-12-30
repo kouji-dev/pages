@@ -3,10 +3,20 @@
 from uuid import UUID
 
 import structlog
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dtos.favorite import FavoriteListItemResponse, FavoriteListResponse
-from src.domain.repositories import FavoriteRepository
+from src.application.dtos.node import NodeListItemResponse
+from src.domain.repositories import FavoriteRepository, ProjectRepository, SpaceRepository
 from src.domain.value_objects.entity_type import EntityType
+from src.infrastructure.database.models import (
+    IssueModel,
+    PageModel,
+    ProjectMemberModel,
+    ProjectModel,
+    SpaceModel,
+)
 
 logger = structlog.get_logger()
 
@@ -14,13 +24,25 @@ logger = structlog.get_logger()
 class ListFavoritesUseCase:
     """Use case for listing favorites for a user."""
 
-    def __init__(self, favorite_repository: FavoriteRepository) -> None:
+    def __init__(
+        self,
+        favorite_repository: FavoriteRepository,
+        project_repository: ProjectRepository,
+        space_repository: SpaceRepository,
+        session: AsyncSession,
+    ) -> None:
         """Initialize use case with dependencies.
 
         Args:
             favorite_repository: Favorite repository
+            project_repository: Project repository
+            space_repository: Space repository
+            session: Database session for getting folder_id and counts
         """
         self._favorite_repository = favorite_repository
+        self._project_repository = project_repository
+        self._space_repository = space_repository
+        self._session = session
 
     async def execute(
         self,
@@ -63,17 +85,93 @@ class ListFavoritesUseCase:
             entity_type=entity_type_vo,
         )
 
-        favorite_responses = [
-            FavoriteListItemResponse(
-                id=favorite.id,
-                user_id=favorite.user_id,
-                entity_type=favorite.entity_type.value,
-                entity_id=favorite.entity_id,
-                created_at=favorite.created_at,
-                updated_at=favorite.updated_at,
+        favorite_responses = []
+
+        for favorite in favorites:
+            node_data: NodeListItemResponse | None = None
+
+            # Enrich with node data for projects and spaces
+            if favorite.entity_type.is_project():
+                project = await self._project_repository.get_by_id(favorite.entity_id)
+                if project:
+                    # Get folder_id from model
+                    folder_result = await self._session.execute(
+                        select(ProjectModel.folder_id).where(ProjectModel.id == project.id)
+                    )
+                    project_folder_id = folder_result.scalar_one_or_none()
+
+                    # Count members
+                    member_result = await self._session.execute(
+                        select(func.count())
+                        .select_from(ProjectMemberModel)
+                        .where(ProjectMemberModel.project_id == project.id)
+                    )
+                    member_count: int = member_result.scalar_one()
+
+                    # Count issues
+                    issue_result = await self._session.execute(
+                        select(func.count())
+                        .select_from(IssueModel)
+                        .where(IssueModel.project_id == project.id)
+                    )
+                    issue_count: int = issue_result.scalar_one()
+
+                    node_data = NodeListItemResponse(
+                        type="project",
+                        id=project.id,
+                        organization_id=project.organization_id,
+                        name=project.name,
+                        key=project.key,
+                        description=project.description,
+                        folder_id=project_folder_id,
+                        member_count=member_count,
+                        issue_count=issue_count,
+                        page_count=None,
+                    )
+
+            elif favorite.entity_type.is_space():
+                space = await self._space_repository.get_by_id(favorite.entity_id)
+                if space:
+                    # Get folder_id from model
+                    space_folder_result = await self._session.execute(
+                        select(SpaceModel.folder_id).where(SpaceModel.id == space.id)
+                    )
+                    space_folder_id = space_folder_result.scalar_one_or_none()
+
+                    # Count pages
+                    page_count_result = await self._session.execute(
+                        select(func.count())
+                        .select_from(PageModel)
+                        .where(PageModel.space_id == space.id)
+                    )
+                    page_count: int = page_count_result.scalar_one()
+
+                    node_data = NodeListItemResponse(
+                        type="space",
+                        id=space.id,
+                        organization_id=space.organization_id,
+                        name=space.name,
+                        key=space.key,
+                        description=space.description,
+                        folder_id=space_folder_id,
+                        member_count=None,
+                        issue_count=None,
+                        page_count=page_count,
+                    )
+
+            # For pages or if entity doesn't exist, node_data remains None
+
+            favorite_responses.append(
+                FavoriteListItemResponse(
+                    id=favorite.id,
+                    user_id=favorite.user_id,
+                    entity_type=favorite.entity_type.value,
+                    entity_id=favorite.entity_id,
+                    created_at=favorite.created_at,
+                    updated_at=favorite.updated_at,
+                    node=node_data,
+                )
             )
-            for favorite in favorites
-        ]
 
         logger.info("Favorites listed", count=len(favorite_responses), total=total)
 

@@ -8,8 +8,9 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dtos.project import ProjectListItemResponse, ProjectListResponse
+from src.application.dtos.project_member import ProjectMemberResponse
 from src.domain.repositories import ProjectRepository
-from src.infrastructure.database.models import IssueModel, ProjectMemberModel
+from src.infrastructure.database.models import IssueModel, ProjectMemberModel, UserModel
 
 logger = structlog.get_logger()
 
@@ -89,9 +90,50 @@ class ListProjectsUseCase:
             result = await self._session.execute(
                 select(func.count())
                 .select_from(IssueModel)
-                .where(IssueModel.project_id == project.id)
+                .where(
+                    IssueModel.project_id == project.id,
+                    IssueModel.deleted_at.is_(None),
+                )
             )
             issue_count: int = result.scalar_one()
+
+            # Count completed (done) issues
+            result = await self._session.execute(
+                select(func.count())
+                .select_from(IssueModel)
+                .where(
+                    IssueModel.project_id == project.id,
+                    IssueModel.status == "done",
+                    IssueModel.deleted_at.is_(None),
+                )
+            )
+            completed_issues_count: int = result.scalar_one()
+
+            # Get top 5 members with user details
+            members_query = (
+                select(ProjectMemberModel, UserModel)
+                .join(UserModel, ProjectMemberModel.user_id == UserModel.id)
+                .where(
+                    ProjectMemberModel.project_id == project.id,
+                    UserModel.deleted_at.is_(None),
+                )
+                .order_by(ProjectMemberModel.created_at)
+                .limit(5)
+            )
+            members_result = await self._session.execute(members_query)
+            members_list = []
+            for project_member, user_model in members_result.all():
+                members_list.append(
+                    ProjectMemberResponse(
+                        user_id=project_member.user_id,
+                        project_id=project_member.project_id,
+                        role=project_member.role,
+                        user_name=user_model.name,
+                        user_email=user_model.email,
+                        avatar_url=user_model.avatar_url,
+                        joined_at=project_member.created_at,
+                    )
+                )
 
             project_responses.append(
                 ProjectListItemResponse(
@@ -100,8 +142,11 @@ class ListProjectsUseCase:
                     name=project.name,
                     key=project.key,
                     description=project.description,
+                    deleted_at=project.deleted_at,
                     member_count=member_count,
                     issue_count=issue_count,
+                    completed_issues_count=completed_issues_count,
+                    members=members_list,
                     created_at=project.created_at,
                     updated_at=project.updated_at,
                 )

@@ -382,6 +382,15 @@ async def test_list_projects_success(client: AsyncClient, test_user, db_session)
     assert data["page"] == 1
     assert data["limit"] == 20
 
+    # Check new fields
+    for project in data["projects"]:
+        assert "deleted_at" in project
+        assert project["deleted_at"] is None  # Active projects
+        assert "completed_issues_count" in project
+        assert project["completed_issues_count"] == 0  # No issues yet
+        assert "members" in project
+        assert isinstance(project["members"], list)
+
 
 @pytest.mark.asyncio
 async def test_list_projects_with_search(client: AsyncClient, test_user, db_session):
@@ -437,6 +446,128 @@ async def test_list_projects_with_search(client: AsyncClient, test_user, db_sess
     data = list_response.json()
     assert len(data["projects"]) == 1
     assert data["projects"][0]["name"] == "Frontend Project"
+
+    # Check new fields
+    project = data["projects"][0]
+    assert "deleted_at" in project
+    assert "completed_issues_count" in project
+    assert "members" in project
+
+
+@pytest.mark.asyncio
+async def test_list_projects_with_members_and_issues(client: AsyncClient, test_user, db_session):
+    """Test project listing with members and completed issues."""
+    from src.infrastructure.database.models import IssueModel, ProjectMemberModel, UserModel
+
+    # Create organization
+    org = OrganizationModel(name="Test Org", slug="test-org")
+    db_session.add(org)
+    await db_session.flush()
+
+    # Add user as member
+    org_member = OrganizationMemberModel(
+        organization_id=org.id,
+        user_id=test_user.id,
+        role="member",
+    )
+    db_session.add(org_member)
+    await db_session.flush()
+
+    # Create another user
+    other_user = UserModel(
+        email="other@example.com",
+        password_hash="hash",
+        name="Other User",
+    )
+    db_session.add(other_user)
+    await db_session.flush()
+
+    # Create project
+    project = ProjectModel(
+        organization_id=org.id,
+        name="Test Project",
+        key="TEST",
+    )
+    db_session.add(project)
+    await db_session.flush()
+
+    # Add members to project
+    project_member1 = ProjectMemberModel(
+        project_id=project.id,
+        user_id=test_user.id,
+        role="admin",
+    )
+    project_member2 = ProjectMemberModel(
+        project_id=project.id,
+        user_id=other_user.id,
+        role="member",
+    )
+    db_session.add_all([project_member1, project_member2])
+    await db_session.flush()
+
+    # Create issues
+    issue1 = IssueModel(
+        project_id=project.id,
+        issue_number=1,
+        title="Done Issue",
+        status="done",
+    )
+    issue2 = IssueModel(
+        project_id=project.id,
+        issue_number=2,
+        title="Todo Issue",
+        status="todo",
+    )
+    issue3 = IssueModel(
+        project_id=project.id,
+        issue_number=3,
+        title="Another Done Issue",
+        status="done",
+    )
+    db_session.add_all([issue1, issue2, issue3])
+    await db_session.flush()
+
+    # Login to get token
+    login_response = await client.post(
+        "/api/v1/auth/login",
+        json={
+            "email": test_user.email.value,
+            "password": "TestPassword123!",
+        },
+    )
+    assert login_response.status_code == 200
+    token = login_response.json()["access_token"]
+    auth_headers = {"Authorization": f"Bearer {token}"}
+
+    # List projects
+    list_response = await client.get(
+        "/api/v1/projects/",
+        headers=auth_headers,
+        params={"organization_id": str(org.id), "page": 1, "limit": 20},
+    )
+
+    assert list_response.status_code == 200
+    data = list_response.json()
+    assert len(data["projects"]) == 1
+
+    project_data = data["projects"][0]
+    assert project_data["name"] == "Test Project"
+    assert project_data["deleted_at"] is None
+    assert project_data["member_count"] == 2
+    assert project_data["issue_count"] == 3
+    assert project_data["completed_issues_count"] == 2  # 2 issues with status "done"
+    assert len(project_data["members"]) == 2  # Top 5, but we have only 2
+
+    # Check members data
+    member_user_ids = [m["user_id"] for m in project_data["members"]]
+    assert str(test_user.id) in member_user_ids
+    assert str(other_user.id) in member_user_ids
+
+    # Check member details
+    test_user_member = next(m for m in project_data["members"] if m["user_id"] == str(test_user.id))
+    assert test_user_member["user_name"] == test_user.name
+    assert test_user_member["role"] == "admin"
+    assert test_user_member["project_id"] == str(project.id)
 
 
 @pytest.mark.asyncio
