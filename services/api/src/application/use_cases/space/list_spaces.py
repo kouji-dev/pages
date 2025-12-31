@@ -8,8 +8,9 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dtos.space import SpaceListItemResponse, SpaceListResponse
+from src.application.dtos.user import UserDTO
 from src.domain.repositories import SpaceRepository
-from src.infrastructure.database.models import PageModel, SpaceModel
+from src.infrastructure.database.models import PageModel, SpaceModel, UserModel
 
 logger = structlog.get_logger()
 
@@ -74,14 +75,31 @@ class ListSpacesUseCase:
         # Calculate total pages
         pages = ceil(total / limit) if total > 0 else 0
 
-        # Get page counts for each space
+        # Get page counts and owner for each space
         space_responses = []
         for space in spaces:
             # Count pages
             result = await self._session.execute(
-                select(func.count()).select_from(PageModel).where(PageModel.space_id == space.id)
+                select(func.count())
+                .select_from(PageModel)
+                .where(PageModel.space_id == space.id, PageModel.deleted_at.is_(None))
             )
             page_count: int = result.scalar_one()
+
+            # Get owner if created_by exists
+            owner: UserDTO | None = None
+            if space.created_by:
+                owner_result = await self._session.execute(
+                    select(UserModel).where(UserModel.id == space.created_by)
+                )
+                owner_user = owner_result.scalar_one_or_none()
+                if owner_user:
+                    owner = UserDTO(
+                        id=owner_user.id,
+                        name=owner_user.name,
+                        email=owner_user.email,
+                        avatar_url=owner_user.avatar_url,
+                    )
 
             space_responses.append(
                 SpaceListItemResponse(
@@ -90,7 +108,12 @@ class ListSpacesUseCase:
                     name=space.name,
                     key=space.key,
                     description=space.description,
+                    deleted_at=space.deleted_at,
+                    icon=space.icon,
+                    status=space.status,
+                    view_count=space.view_count,
                     page_count=page_count,
+                    owner=owner,
                     created_at=space.created_at,
                     updated_at=space.updated_at,
                 )

@@ -2,7 +2,7 @@
 
 from uuid import UUID
 
-from sqlalchemy import ForeignKey, String, Text, UniqueConstraint
+from sqlalchemy import ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -51,6 +51,15 @@ class ProjectModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
     settings: Mapped[str | None] = mapped_column(
         Text,  # Store as JSON string
         nullable=True,
+    )
+    color: Mapped[str | None] = mapped_column(
+        String(7),  # Hex color code (e.g., "#3b82f6")
+        nullable=True,
+    )
+    status: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default="in-progress",  # in-progress, complete, on-hold
     )
 
     # Relationships

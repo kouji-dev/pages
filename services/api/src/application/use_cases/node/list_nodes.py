@@ -6,7 +6,12 @@ import structlog
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.application.dtos.node import NodeListItemResponse, NodeListResponse
+from src.application.dtos.node import (
+    NodeDetailsProject,
+    NodeDetailsSpace,
+    NodeListItemResponse,
+    NodeListResponse,
+)
 from src.domain.repositories import ProjectRepository, SpaceRepository
 from src.infrastructure.database.models import (
     IssueModel,
@@ -117,13 +122,14 @@ class ListNodesUseCase:
                     type="project",
                     id=project.id,
                     organization_id=project.organization_id,
-                    name=project.name,
-                    key=project.key,
-                    description=project.description,
-                    folder_id=project_folder_id,
-                    member_count=member_count,
-                    issue_count=issue_count,
-                    page_count=None,
+                    details=NodeDetailsProject(
+                        name=project.name,
+                        key=project.key,
+                        description=project.description,
+                        folder_id=project_folder_id,
+                        member_count=member_count,
+                        issue_count=issue_count,
+                    ),
                 )
             )
 
@@ -146,13 +152,13 @@ class ListNodesUseCase:
                     type="space",
                     id=space.id,
                     organization_id=space.organization_id,
-                    name=space.name,
-                    key=space.key,
-                    description=space.description,
-                    folder_id=space_folder_id,
-                    member_count=None,
-                    issue_count=None,
-                    page_count=page_count,
+                    details=NodeDetailsSpace(
+                        name=space.name,
+                        key=space.key,
+                        description=space.description,
+                        folder_id=space_folder_id,
+                        page_count=page_count,
+                    ),
                 )
             )
 

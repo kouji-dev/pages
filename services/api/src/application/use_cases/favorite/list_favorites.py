@@ -7,7 +7,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dtos.favorite import FavoriteListItemResponse, FavoriteListResponse
-from src.application.dtos.node import NodeListItemResponse
+from src.application.dtos.node import NodeDetailsProject, NodeDetailsSpace, NodeListItemResponse
 from src.domain.repositories import FavoriteRepository, ProjectRepository, SpaceRepository
 from src.domain.value_objects.entity_type import EntityType
 from src.infrastructure.database.models import (
@@ -55,7 +55,7 @@ class ListFavoritesUseCase:
 
         Args:
             user_id: User UUID
-            entity_type: Optional entity type to filter by (project, space, page)
+            entity_type: Optional entity type to filter by (project or space only)
             skip: Number of records to skip
             limit: Maximum number of records to return
 
@@ -88,9 +88,19 @@ class ListFavoritesUseCase:
         favorite_responses = []
 
         for favorite in favorites:
+            # Favorites are only allowed for projects and spaces
+            # Skip any favorites that are not projects or spaces (shouldn't happen, but safety check)
+            if not favorite.entity_type.is_project() and not favorite.entity_type.is_space():
+                logger.warning(
+                    "Skipping favorite with unsupported entity type",
+                    favorite_id=str(favorite.id),
+                    entity_type=favorite.entity_type.value,
+                )
+                continue
+
             node_data: NodeListItemResponse | None = None
 
-            # Enrich with node data for projects and spaces
+            # Enrich with node data for projects and spaces only (no folders)
             if favorite.entity_type.is_project():
                 project = await self._project_repository.get_by_id(favorite.entity_id)
                 if project:
@@ -120,13 +130,14 @@ class ListFavoritesUseCase:
                         type="project",
                         id=project.id,
                         organization_id=project.organization_id,
-                        name=project.name,
-                        key=project.key,
-                        description=project.description,
-                        folder_id=project_folder_id,
-                        member_count=member_count,
-                        issue_count=issue_count,
-                        page_count=None,
+                        details=NodeDetailsProject(
+                            name=project.name,
+                            key=project.key,
+                            description=project.description,
+                            folder_id=project_folder_id,
+                            member_count=member_count,
+                            issue_count=issue_count,
+                        ),
                     )
 
             elif favorite.entity_type.is_space():
@@ -150,16 +161,24 @@ class ListFavoritesUseCase:
                         type="space",
                         id=space.id,
                         organization_id=space.organization_id,
-                        name=space.name,
-                        key=space.key,
-                        description=space.description,
-                        folder_id=space_folder_id,
-                        member_count=None,
-                        issue_count=None,
-                        page_count=page_count,
+                        details=NodeDetailsSpace(
+                            name=space.name,
+                            key=space.key,
+                            description=space.description,
+                            folder_id=space_folder_id,
+                            page_count=page_count,
+                        ),
                     )
 
-            # For pages or if entity doesn't exist, node_data remains None
+            # If node_data is None, skip this favorite (entity not found)
+            if node_data is None:
+                logger.warning(
+                    "Skipping favorite - entity not found",
+                    favorite_id=str(favorite.id),
+                    entity_type=favorite.entity_type.value,
+                    entity_id=str(favorite.entity_id),
+                )
+                continue
 
             favorite_responses.append(
                 FavoriteListItemResponse(

@@ -7,6 +7,7 @@ from uuid import UUID
 from pydantic import BaseModel, Field, field_validator
 
 from src.application.dtos.page import PageListItemResponse
+from src.application.dtos.user import UserDTO
 
 
 class SpaceResponse(BaseModel):
@@ -39,7 +40,12 @@ class SpaceListItemResponse(BaseModel):
     name: str
     key: str
     description: str | None = None
+    deleted_at: datetime | None = Field(None, description="Deletion timestamp (null if active)")
+    icon: str | None = Field(None, description="Space icon (emoji or icon name)")
+    status: str = Field("published", description="Space status: draft, in-review, published")
+    view_count: int = Field(0, description="Number of views for the space")
     page_count: int = Field(0, description="Number of pages in the space")
+    owner: UserDTO | None = Field(None, description="Space owner")
     created_at: datetime
     updated_at: datetime
 

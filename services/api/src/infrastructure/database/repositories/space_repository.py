@@ -54,6 +54,10 @@ class SQLAlchemySpaceRepository(SpaceRepository):
             description=space.description,
             settings=json.dumps(space.settings) if space.settings else None,
             folder_id=space.folder_id,
+            icon=space.icon,
+            status=space.status,
+            view_count=space.view_count,
+            created_by=space.created_by,
             created_at=space.created_at,
             updated_at=space.updated_at,
             deleted_at=space.deleted_at,
@@ -140,6 +144,10 @@ class SQLAlchemySpaceRepository(SpaceRepository):
         model.description = space.description
         model.settings = json.dumps(space.settings) if space.settings else None
         model.folder_id = space.folder_id
+        model.icon = space.icon
+        model.status = space.status
+        model.view_count = space.view_count
+        model.created_by = space.created_by
         model.updated_at = space.updated_at
         model.deleted_at = space.deleted_at
 
@@ -305,6 +313,10 @@ class SQLAlchemySpaceRepository(SpaceRepository):
             description=model.description,
             settings=settings,
             folder_id=model.folder_id,
+            icon=model.icon,
+            status=model.status,
+            view_count=model.view_count,
+            created_by=model.created_by,
             created_at=model.created_at,
             updated_at=model.updated_at,
             deleted_at=model.deleted_at,

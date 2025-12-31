@@ -38,6 +38,8 @@ class ProjectListItemResponse(BaseModel):
     key: str
     description: str | None = None
     deleted_at: datetime | None = Field(None, description="Deletion timestamp (null if active)")
+    color: str | None = Field(None, description="Project color for icon background (hex code)")
+    status: str = Field("active", description="Project status for UI: active, completed, on-hold")
     member_count: int = Field(0, description="Number of members in the project")
     issue_count: int = Field(0, description="Number of issues in the project")
     completed_issues_count: int = Field(

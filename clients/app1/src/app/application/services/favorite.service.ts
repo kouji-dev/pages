@@ -9,7 +9,7 @@ import { ListItemData, IconName } from 'shared-ui';
 
 export interface Favorite {
   id: string;
-  type: 'project' | 'space' | 'page';
+  type: 'project' | 'space';
   itemId: string;
   title: string;
   icon?: IconName;
@@ -19,13 +19,38 @@ export interface Favorite {
   createdAt?: string;
 }
 
+export interface NodeDetailsProject {
+  name: string;
+  key: string | null;
+  description: string | null;
+  folder_id: string | null;
+  member_count: number;
+  issue_count: number;
+}
+
+export interface NodeDetailsSpace {
+  name: string;
+  key: string | null;
+  description: string | null;
+  folder_id: string | null;
+  page_count: number;
+}
+
+export interface NodeListItemResponse {
+  type: 'project' | 'space';
+  id: string;
+  organization_id: string;
+  details: NodeDetailsProject | NodeDetailsSpace;
+}
+
 export interface FavoriteApiResponse {
   id: string;
   user_id: string;
-  entity_type: 'project' | 'space' | 'page';
+  entity_type: 'project' | 'space';
   entity_id: string;
   created_at: string;
   updated_at: string;
+  node: NodeListItemResponse;
 }
 
 export interface FavoriteListApiResponse {
@@ -112,10 +137,10 @@ export class FavoriteService {
   }
 
   /**
-   * Add a favorite
+   * Add a favorite (only for projects and spaces)
    */
   async addFavorite(
-    type: 'project' | 'space' | 'page',
+    type: 'project' | 'space',
     itemId: string,
     title: string,
     organizationId: string,
@@ -207,9 +232,9 @@ export class FavoriteService {
   }
 
   /**
-   * Check if an item is favorited
+   * Check if an item is favorited (only for projects and spaces)
    */
-  isFavorited(type: 'project' | 'space' | 'page', itemId: string): boolean {
+  isFavorited(type: 'project' | 'space', itemId: string): boolean {
     return this.favorites().some((f) => f.type === type && f.itemId === itemId);
   }
 
@@ -244,10 +269,6 @@ export class FavoriteService {
         return this.navigationService.getProjectRoute(orgId, favorite.itemId);
       case 'space':
         return this.navigationService.getSpaceRoute(orgId, favorite.itemId);
-      case 'page':
-        // For pages, we'd need spaceId - this is a limitation
-        // We could store spaceId in the favorite if needed
-        return ['/app/organizations', orgId, 'spaces', favorite.itemId];
       default:
         return ['/app/organizations', orgId];
     }
@@ -256,82 +277,64 @@ export class FavoriteService {
   /**
    * Get default icon for favorite type
    */
-  private getDefaultIcon(type: 'project' | 'space' | 'page'): IconName {
+  private getDefaultIcon(type: 'project' | 'space'): IconName {
     switch (type) {
       case 'project':
         return 'kanban';
       case 'space':
-        return 'file-text';
-      case 'page':
-        return 'file-text';
+        return 'book';
     }
   }
 
   /**
    * Get default right icon for favorite type
    */
-  private getDefaultRightIcon(type: 'project' | 'space' | 'page'): IconName {
+  private getDefaultRightIcon(type: 'project' | 'space'): IconName {
     switch (type) {
       case 'project':
         return 'kanban';
       case 'space':
-        return 'file-text';
-      case 'page':
-        return 'file-text';
+        return 'book';
     }
   }
 
   /**
    * Enrich favorite API response with entity details (title, icon, etc.)
+   * Uses node data from API (node is always present for project/space favorites)
    */
   private async enrichFavorite(
     apiResponse: FavoriteApiResponse,
     organizationId: string,
   ): Promise<Favorite | null> {
     try {
+      // Node is always present for project/space favorites
+      if (!apiResponse.node) {
+        console.warn('Favorite missing node data', apiResponse);
+        return null;
+      }
+
+      const node = apiResponse.node;
       let title = '';
-      let orgId = organizationId;
+      let orgId = node.organization_id;
       let icon: IconName | undefined;
       let iconColor: string | undefined;
       let rightIcon: IconName | undefined;
 
-      switch (apiResponse.entity_type) {
-        case 'project': {
-          const project = this.projectService.getProjectById(apiResponse.entity_id);
-          if (project) {
-            title = project.name;
-            orgId = project.organizationId;
-            icon = 'kanban';
-            rightIcon = 'kanban';
-          } else {
-            // Project not found in cache, skip this favorite
-            return null;
-          }
-          break;
-        }
-        case 'space': {
-          const space = this.spaceService.getSpaceById(apiResponse.entity_id);
-          if (space) {
-            title = space.name;
-            orgId = space.organizationId;
-            icon = space.icon ? (space.icon as IconName) : 'book';
-            rightIcon = 'book';
-          } else {
-            // Space not found in cache, skip this favorite
-            return null;
-          }
-          break;
-        }
-        case 'page': {
-          // For pages, we'd need to fetch from space service
-          // This is more complex - for now, use a generic approach
-          title = `Page ${apiResponse.entity_id.substring(0, 8)}`;
-          icon = 'file-text';
-          rightIcon = 'file-text';
-          // Note: Pages don't have organizationId directly, they're under spaces
-          // We might need to store spaceId in favorites or fetch page details
-          break;
-        }
+      // Extract data from node details
+      if (node.type === 'project') {
+        const details = node.details as NodeDetailsProject;
+        title = details.name;
+        icon = 'kanban';
+        rightIcon = 'kanban';
+      } else if (node.type === 'space') {
+        const details = node.details as NodeDetailsSpace;
+        title = details.name;
+        icon = 'book';
+        rightIcon = 'book';
+      } else {
+        // Should not happen, but safety check
+        console.warn('Unknown node type in favorite', node);
+        return null;
       }
 
       return {

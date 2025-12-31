@@ -2,7 +2,7 @@
 
 from uuid import UUID
 
-from sqlalchemy import ForeignKey, String, Text, UniqueConstraint
+from sqlalchemy import ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -53,6 +53,26 @@ class SpaceModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         Text,  # Store as JSON string
         nullable=True,
     )
+    icon: Mapped[str | None] = mapped_column(
+        String(50),  # Emoji or icon name
+        nullable=True,
+    )
+    status: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default="published",  # draft, in-review, published
+    )
+    view_count: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=0,
+    )
+    created_by: Mapped[UUID | None] = mapped_column(
+        PGUUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
 
     # Relationships
     organization = relationship(
@@ -80,6 +100,11 @@ class SpaceModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         back_populates="space",
         lazy="selectin",
         cascade="all, delete-orphan",
+    )
+    owner = relationship(
+        "UserModel",
+        foreign_keys=[created_by],
+        lazy="selectin",
     )
 
     def __repr__(self) -> str:
