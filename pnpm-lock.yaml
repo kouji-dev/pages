@@ -243,6 +243,9 @@ importers:
       lexical:
         specifier: ^0.38.2
         version: 0.38.2
+      lucide-static:
+        specifier: ^0.561.0
+        version: 0.561.0
       tailwindcss:
         specifier: ^4.0.0
         version: 4.1.17
@@ -4541,6 +4544,9 @@ packages:
     peerDependencies:
       '@angular/common': 13.x - 21.x
       '@angular/core': 13.x - 21.x
+
+  lucide-static@0.561.0:
+    resolution: {integrity: sha512-g8ZH7FmkASB/fxutFHXqsBdJnM9S9/p1Mei005CskWTws7+U+evwZUVWUyz8CSquJ8p4G/CBJ488Ip3ZlamxfQ==}
 
   luxon@3.7.2:
     resolution: {integrity: sha512-vtEhXh/gNjI9Yg1u4jX/0YVPMvxzHuGgCm6tC5kZyb08yjGWGnqAjGJvcXbqQR2P3MyMEFnRbpcdFS6PBcLqew==}
@@ -10739,6 +10745,8 @@ snapshots:
       '@angular/common': 21.0.3(@angular/core@21.0.3(@angular/compiler@21.0.3)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2)
       '@angular/core': 21.0.3(@angular/compiler@21.0.3)(rxjs@7.8.2)(zone.js@0.15.1)
       tslib: 2.8.1
+
+  lucide-static@0.561.0: {}
 
   luxon@3.7.2: {}
 

@@ -45,6 +45,8 @@ class Project:
     description: str | None = None
     settings: dict[str, Any] | None = None
     folder_id: UUID | None = None
+    color: str | None = None  # Hex color code (e.g., "#3b82f6")
+    status: str = "in-progress"  # in-progress, complete, on-hold
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)
     deleted_at: datetime | None = None
@@ -112,6 +114,8 @@ class Project:
             description=description,
             settings=settings,
             folder_id=folder_id,
+            color=None,
+            status="in-progress",
             created_at=now,
             updated_at=now,
             deleted_at=None,

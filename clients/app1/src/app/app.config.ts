@@ -6,11 +6,11 @@ import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
 import { provideAttachmentService, provideMentionListProvider } from 'shared-ui';
 
 import { routes } from './app.routes';
-import { authInterceptor } from './infrastructure/interceptors/auth.interceptor';
-import { errorInterceptor } from './infrastructure/interceptors/error.interceptor';
+import { authInterceptor } from './core/http/interceptors/auth.interceptor';
+import { errorInterceptor } from './core/http/interceptors/error.interceptor';
 import { MultiLoaderFactory } from './infrastructure/i18n/multi-loader.factory';
-import { ThemeService } from './application/services/theme.service';
-import { LanguageService } from './application/services/language.service';
+import { ThemeService } from './core/theme/theme.service';
+import { LanguageService } from './core/i18n/language.service';
 import { TextEditorAttachmentService } from './application/services/text-editor-attachment.service';
 import { TextEditorMentionService } from './application/services/text-editor-mention.service';
 

@@ -29,7 +29,8 @@ import { Component, input, output, model, computed } from '@angular/core';
       @reference "#theme";
 
       .card {
-        @apply rounded-lg shadow-md bg-white p-6;
+        @apply rounded-lg shadow-sm bg-card text-card-foreground border border-border;
+        @apply p-6;
       }
 
       .card_header {
@@ -37,11 +38,11 @@ import { Component, input, output, model, computed } from '@angular/core';
       }
 
       .card_title {
-        @apply text-xl font-semibold text-gray-900;
+        @apply text-xl font-semibold text-foreground;
       }
 
       .card_close {
-        @apply text-gray-400 hover:text-gray-600 transition-colors cursor-pointer;
+        @apply text-muted-foreground hover:text-foreground transition-colors cursor-pointer;
         @apply border-none bg-transparent p-1 rounded;
       }
 
@@ -50,7 +51,7 @@ import { Component, input, output, model, computed } from '@angular/core';
       }
 
       .card_body {
-        @apply text-gray-700;
+        @apply text-foreground;
       }
 
       /* Modifiers */
@@ -63,7 +64,7 @@ import { Component, input, output, model, computed } from '@angular/core';
       }
 
       .card--empty {
-        @apply text-gray-500 italic p-4 border border-dashed rounded-md;
+        @apply text-muted-foreground italic p-4 border border-dashed rounded-md;
       }
     `,
   ],

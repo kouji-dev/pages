@@ -22,12 +22,12 @@ export class ToolbarHeadingButton {
   private readonly plugin = inject(HeadingPlugin);
   readonly tag = input.required<HeadingTagType>();
 
-  readonly iconName = computed<IconName | null>(() => {
+  readonly iconName = computed<IconName | undefined>(() => {
     const tag = this.tag();
-    if (tag === 'h1') return 'heading1';
-    if (tag === 'h2') return 'heading2';
-    if (tag === 'h3') return 'heading3';
-    return null;
+    if (tag === 'h1') return 'heading-1';
+    if (tag === 'h2') return 'heading-2';
+    if (tag === 'h3') return 'heading-3';
+    return undefined;
   });
 
   insertHeading(): void {

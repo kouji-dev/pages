@@ -24,6 +24,8 @@
     "reset": "Reset",
     "switchToLightMode": "Switch to light mode",
     "switchToDarkMode": "Switch to dark mode",
+    "switchToDefaultDensity": "Default",
+    "switchToCompactDensity": "Compact",
     "notFound": {
       "title": "Page not found",
       "description": "The page you're looking for doesn't exist or has been moved.",
@@ -31,6 +33,7 @@
     }
   },
   "navigation": {
+    "dashboard": "Dashboard",
     "organizations": "Organizations",
     "projects": "Projects",
     "spaces": "Spaces",
@@ -39,6 +42,12 @@
     "profile": "Profile",
     "settings": "Settings",
     "notifications": "Notifications"
+  },
+  "breadcrumbs": {
+    "project": "Project",
+    "space": "Space",
+    "page": "Page",
+    "issue": "Issue"
   },
   "notifications": {
     "title": "Notifications",
@@ -65,7 +74,8 @@
   "language": {
     "english": "English",
     "french": "Français",
-    "switchLanguage": "Switch Language"
+    "switchLanguage": "Switch Language",
+    "language": "Language"
   },
   "issues": {
     "title": "Issues",
@@ -191,6 +201,19 @@
     "switchTo": "Switch to",
     "members": "member(s)",
     "viewSpace": "View",
+    "settings": "Settings",
+    "organizationMenu": "Organization menu",
+    "editOrganization": "Edit Organization",
+    "deleteOrganization": "Delete Organization",
+    "updateSuccess": "Organization updated successfully!",
+    "updateError": "Failed to update organization. Please try again.",
+    "deleteSuccess": "Organization deleted successfully!",
+    "deleteError": "Failed to delete organization. Please try again.",
+    "loadError": "Failed to load organization",
+    "settingsPage": {
+      "title": "Organization Settings",
+      "subtitle": "Manage all your organizations in one place. Edit, delete, or create new organizations."
+    },
     "modals": {
       "createOrganization": "Create Organization",
       "organizationName": "Organization Name",
@@ -218,6 +241,19 @@
       "deleteWarningLabel": "Warning:",
       "deleteWarningText": "This action is permanent and irreversible."
     }
+  },
+  "onboarding": {
+    "title": "Welcome to Pages!",
+    "description": "Let's get you started by creating your first organization. Organizations help you organize your projects, spaces, and team members.",
+    "step": {
+      "title": "Create Your Organization",
+      "description": "Set up your workspace and start organizing your projects and documents."
+    },
+    "createButton": "Create Organization"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Welcome back! Here's an overview of your workspace."
   },
   "projects": {
     "title": "Projects",
@@ -304,7 +340,19 @@
       "deleteConfirmPlaceholder": "Enter space name",
       "deleteConfirmHelper": "Type the space name to confirm deletion",
       "deleteSuccess": "Space deleted successfully!",
-      "deleteError": "Failed to delete space. Please try again."
+      "deleteError": "Failed to delete space. Please try again.",
+      "createFolder": "Create Folder",
+      "folderName": "Folder Name",
+      "folderNamePlaceholder": "Enter folder name",
+      "folderNameHelper": "Choose a name for your folder",
+      "space": "Space",
+      "spacePlaceholder": "Select a space",
+      "spaceRequired": "Space is required",
+      "parentFolder": "Parent Folder (optional)",
+      "parentFolderPlaceholder": "None (root folder)",
+      "createFolderSuccess": "Folder created successfully!",
+      "createFolderError": "Failed to create folder. Please try again.",
+      "parentFolderHelper": "Select a parent folder to create a nested folder"
     }
   },
   "issueDetail": {
@@ -358,6 +406,7 @@
     "passwordsDoNotMatch": "Passwords do not match",
     "nameRequired": "Name is required",
     "nameMinLength": "Name must be at least 2 characters",
+    "forgotPasswordLink": "Forgot Password?",
     "forgotPassword": {
       "title": "Forgot Password?",
       "subtitle": "Enter your email address and we'll send you a link to reset your password.",
@@ -437,6 +486,8 @@
     "ariaLabel": "User menu",
     "profile": "Profile",
     "settings": "Settings",
+    "theme": "Theme",
+    "density": "Density",
     "logout": "Logout"
   },
   "profile": {
@@ -1013,6 +1064,21 @@
           }
         }
       }
+    }
+  },
+  "workspace": {
+    "modals": {
+      "createFolder": "Create Folder",
+      "folderName": "Folder Name",
+      "folderNamePlaceholder": "Enter folder name",
+      "folderNameHelper": "Choose a name for your folder",
+      "parentFolder": "Parent Folder (optional)",
+      "parentFolderPlaceholder": "None (root folder)",
+      "parentFolderHelper": "Select a parent folder to organize your folders hierarchically",
+      "nameRequired": "Folder name is required",
+      "nameMinLength": "Folder name must be at least 3 characters",
+      "createFolderSuccess": "Folder created successfully!",
+      "createFolderError": "Failed to create folder. Please try again."
     }
   }
 }

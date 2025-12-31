@@ -21,7 +21,7 @@ import { CommonModule } from '@angular/common';
         @apply px-6 py-4;
         @apply flex-1;
         @apply min-h-0;
-        @apply text-text-primary;
+        @apply text-foreground;
       }
     `,
   ],

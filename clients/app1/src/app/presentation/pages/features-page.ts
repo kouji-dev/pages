@@ -96,16 +96,16 @@ interface FeatureCategory {
       .features-page {
         @apply min-h-screen;
         @apply flex flex-col;
-        @apply bg-bg-primary;
+        @apply bg-background;
       }
 
       .features-page_header {
         @apply w-full;
         @apply py-16 md:py-24;
         @apply px-4 sm:px-6 lg:px-8;
-        @apply bg-bg-secondary;
+        @apply bg-muted;
         @apply border-b;
-        @apply border-border-default;
+        @apply border-border;
       }
 
       .features-page_header-container {
@@ -118,13 +118,13 @@ interface FeatureCategory {
       .features-page_title {
         @apply text-4xl sm:text-5xl md:text-6xl;
         @apply font-bold;
-        @apply text-text-primary;
+        @apply text-foreground;
         margin: 0;
       }
 
       .features-page_subtitle {
         @apply text-lg sm:text-xl md:text-2xl;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         margin: 0;
         @apply max-w-2xl;
       }
@@ -161,13 +161,13 @@ interface FeatureCategory {
       .features-page_category-title {
         @apply text-3xl sm:text-4xl md:text-5xl;
         @apply font-bold;
-        @apply text-text-primary;
+        @apply text-foreground;
         margin: 0 0 1rem 0;
       }
 
       .features-page_category-description {
         @apply text-lg sm:text-xl;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         margin: 0;
       }
 
@@ -182,9 +182,9 @@ interface FeatureCategory {
         @apply gap-4;
         @apply p-6;
         @apply rounded-lg;
-        @apply bg-bg-primary;
+        @apply bg-background;
         @apply border;
-        @apply border-border-default;
+        @apply border-border;
         @apply transition-shadow;
         @apply hover:shadow-lg;
       }
@@ -193,18 +193,18 @@ interface FeatureCategory {
         @apply flex items-center justify-center;
         @apply w-12 h-12;
         @apply rounded-lg;
-        @apply bg-bg-tertiary;
+        @apply bg-accent;
       }
 
       .features-page_feature-title {
         @apply text-xl font-semibold;
-        @apply text-text-primary;
+        @apply text-foreground;
         margin: 0;
       }
 
       .features-page_feature-description {
         @apply text-base leading-relaxed;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         margin: 0;
       }
 
@@ -220,7 +220,7 @@ interface FeatureCategory {
       .features-page_feature-detail {
         @apply flex items-start gap-2;
         @apply text-sm;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
       }
 
       .features-page_feature-detail lib-icon {
@@ -236,9 +236,9 @@ interface FeatureCategory {
         @apply w-full;
         @apply py-16 md:py-24;
         @apply px-4 sm:px-6 lg:px-8;
-        @apply bg-bg-secondary;
+        @apply bg-muted;
         @apply border-t;
-        @apply border-border-default;
+        @apply border-border;
       }
 
       .features-page_cta-container {
@@ -251,13 +251,13 @@ interface FeatureCategory {
       .features-page_cta-title {
         @apply text-3xl sm:text-4xl md:text-5xl;
         @apply font-bold;
-        @apply text-text-primary;
+        @apply text-foreground;
         margin: 0;
       }
 
       .features-page_cta-description {
         @apply text-lg sm:text-xl;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         margin: 0;
       }
     `,

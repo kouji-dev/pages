@@ -46,7 +46,7 @@ import type { MentionOption } from '../interfaces/mention-list-provider.interfac
       }
 
       .te-mention-autocomplete_item--selected {
-        @apply bg-primary-50;
+        @apply bg-primary/10;
       }
 
       .te-mention-autocomplete_avatar {
@@ -60,15 +60,15 @@ import type { MentionOption } from '../interfaces/mention-list-provider.interfac
         @apply w-8 h-8;
         @apply rounded-full;
         @apply flex items-center justify-center;
-        @apply bg-bg-tertiary;
+        @apply bg-muted;
         @apply text-xs font-semibold;
-        @apply text-text-primary;
+        @apply text-foreground;
         @apply flex-shrink-0;
       }
 
       .te-mention-autocomplete_label {
         @apply text-sm;
-        @apply text-text-primary;
+        @apply text-foreground;
       }
 
       .te-mention-autocomplete_empty {
@@ -78,7 +78,7 @@ import type { MentionOption } from '../interfaces/mention-list-provider.interfac
 
       .te-mention-autocomplete_empty-text {
         @apply text-sm;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         @apply italic;
       }
     `,

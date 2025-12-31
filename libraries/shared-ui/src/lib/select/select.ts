@@ -19,7 +19,8 @@ import {
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Overlay, OverlayRef, OverlayConfig, ConnectedPosition } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
-import { Icon, IconName } from '../icon/icon';
+import { Icon, IconName, IconSize } from '../icon/icon';
+import { Size, DEFAULT_SIZE } from '../types';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -27,6 +28,7 @@ export interface SelectOption<T = any> {
   value: T;
   label: string;
   icon?: IconName;
+  iconSize?: IconSize;
   iconColor?: string;
   disabled?: boolean;
   [key: string]: any; // Allow additional properties for custom templates
@@ -58,6 +60,10 @@ export interface SelectOption<T = any> {
           type="button"
           [id]="selectId()"
           class="select-trigger"
+          [class.select-trigger--xs]="size() === 'xs'"
+          [class.select-trigger--sm]="size() === 'sm'"
+          [class.select-trigger--md]="size() === 'md'"
+          [class.select-trigger--lg]="size() === 'lg'"
           [class.select-trigger--error]="errorMessage()"
           [class.select-trigger--disabled]="isDisabled()"
           [class.select-trigger--open]="isOpen()"
@@ -80,7 +86,11 @@ export interface SelectOption<T = any> {
                 />
               } @else {
                 @if (option.icon) {
-                  <lib-icon [name]="option.icon" [size]="'xs'" [ngClass]="option.iconColor || ''" />
+                  <lib-icon
+                    [name]="option.icon"
+                    [size]="option.iconSize || 'xs'"
+                    [ngClass]="option.iconColor || ''"
+                  />
                 }
                 <span>{{ option.label }}</span>
               }
@@ -90,7 +100,7 @@ export interface SelectOption<T = any> {
           </span>
           <lib-icon
             name="chevron-down"
-            [size]="'xs'"
+            [size]="chevronIconSize()"
             class="select-chevron"
             [class.select-chevron--open]="isOpen()"
           />
@@ -149,7 +159,7 @@ export interface SelectOption<T = any> {
                     @if (option.icon) {
                       <lib-icon
                         [name]="option.icon"
-                        [size]="'xs'"
+                        [size]="option.iconSize || 'xs'"
                         [ngClass]="option.iconColor || ''"
                       />
                     }
@@ -181,7 +191,7 @@ export interface SelectOption<T = any> {
 
       .select-label {
         @apply text-sm font-medium;
-        @apply text-text-primary;
+        @apply text-foreground;
       }
 
       .select-label-required {
@@ -204,19 +214,19 @@ export interface SelectOption<T = any> {
         @apply px-3 py-2;
         @apply flex items-center justify-between;
         @apply gap-2;
-        @apply border border-border-default;
+        @apply border border-border;
         @apply rounded-md;
-        @apply bg-bg-primary;
-        @apply text-text-primary;
+        @apply bg-background;
+        @apply text-foreground;
         @apply text-left;
         @apply text-sm;
-        @apply focus:outline-none focus:ring-2 focus:ring-primary-500;
+        @apply focus:outline-none focus:ring-2 focus:ring-primary;
         @apply transition-colors;
         @apply cursor-pointer;
       }
 
       .select-trigger:hover:not(:disabled) {
-        @apply border-border-hover;
+        @apply border-primary;
       }
 
       .select-trigger--error {
@@ -230,8 +240,29 @@ export interface SelectOption<T = any> {
       }
 
       .select-trigger--open {
-        @apply border-primary-500;
-        @apply ring-2 ring-primary-500;
+        @apply border-primary;
+        @apply ring-2 ring-primary;
+      }
+
+      /* Sizes */
+      .select-trigger--xs {
+        @apply px-2 py-1 text-xs;
+        min-height: 1.75rem;
+      }
+
+      .select-trigger--sm {
+        @apply px-3 py-1.5 text-sm;
+        min-height: 2rem;
+      }
+
+      .select-trigger--md {
+        @apply px-3 py-2 text-sm;
+        min-height: 2.5rem;
+      }
+
+      .select-trigger--lg {
+        @apply px-4 py-3 text-base;
+        min-height: 3rem;
       }
 
       .select-trigger-content {
@@ -241,12 +272,12 @@ export interface SelectOption<T = any> {
       }
 
       .select-placeholder {
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
       }
 
       .select-chevron {
         @apply flex-shrink-0;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         @apply transition-transform;
       }
 
@@ -256,17 +287,17 @@ export interface SelectOption<T = any> {
 
       .select-helper-text {
         @apply text-xs;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
       }
 
       .select-error-text {
         @apply text-xs;
-        @apply text-error;
+        @apply text-destructive;
       }
 
       .select-dropdown {
-        @apply bg-bg-primary;
-        @apply border border-border-default;
+        @apply bg-card;
+        @apply border border-border;
         @apply rounded-md;
         @apply shadow-lg;
         @apply w-full;
@@ -277,18 +308,18 @@ export interface SelectOption<T = any> {
 
       .select-search {
         @apply p-2;
-        @apply border-b border-border-default;
+        @apply border-b border-border;
       }
 
       .select-search-input {
         @apply w-full;
         @apply px-2 py-1.5;
         @apply text-sm;
-        @apply border border-border-default;
+        @apply border border-border;
         @apply rounded;
-        @apply bg-bg-primary;
-        @apply text-text-primary;
-        @apply focus:outline-none focus:ring-2 focus:ring-primary-500;
+        @apply bg-background;
+        @apply text-foreground;
+        @apply focus:outline-none focus:ring-2 focus:ring-ring;
       }
 
       .select-options {
@@ -300,7 +331,7 @@ export interface SelectOption<T = any> {
       .select-empty {
         @apply px-3 py-2;
         @apply text-sm;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         @apply text-center;
       }
 
@@ -310,16 +341,18 @@ export interface SelectOption<T = any> {
         @apply flex items-center gap-1.5;
         @apply text-left;
         @apply text-sm;
-        @apply text-text-primary;
+        @apply text-foreground;
         @apply bg-transparent;
         @apply border-none;
         @apply cursor-pointer;
         @apply transition-colors;
-        @apply hover:bg-bg-hover;
+        @apply hover:bg-muted;
       }
 
       .select-option--selected {
-        @apply bg-bg-secondary;
+        @apply bg-primary/10;
+        @apply text-primary;
+        @apply font-medium;
       }
 
       .select-option--disabled {
@@ -331,7 +364,7 @@ export interface SelectOption<T = any> {
       .select-option-check {
         @apply ml-auto;
         @apply flex-shrink-0;
-        @apply text-primary-500;
+        @apply text-primary;
       }
     `,
   ],
@@ -348,6 +381,7 @@ export class Select<T = any> implements ControlValueAccessor {
   readonly model = model<T | null>(null);
   readonly label = input<string>('');
   readonly placeholder = input<string>('Select an option...');
+  readonly size = input<Size>(DEFAULT_SIZE);
   readonly required = input(false, { transform: booleanAttribute });
   readonly disabled = input(false, { transform: booleanAttribute });
   readonly searchable = input(false, { transform: booleanAttribute });
@@ -410,6 +444,17 @@ export class Select<T = any> implements ControlValueAccessor {
       ids.push(this.errorId());
     }
     return ids.length > 0 ? ids.join(' ') : null;
+  });
+
+  readonly chevronIconSize = computed(() => {
+    const size = this.size();
+    const sizeMap: Record<Size, IconSize> = {
+      xs: 'xs',
+      sm: 'xs',
+      md: 'xs',
+      lg: 'sm',
+    };
+    return sizeMap[size] || 'xs';
   });
 
   // Effect to sync overlay with isOpen state

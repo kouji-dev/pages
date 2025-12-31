@@ -13,7 +13,7 @@ import { Component } from '@angular/core';
       @reference "#theme";
 
       .test-button {
-        @apply bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-colors;
+        @apply bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2 px-4 rounded-lg transition-colors;
         @apply shadow-md hover:shadow-lg;
       }
 

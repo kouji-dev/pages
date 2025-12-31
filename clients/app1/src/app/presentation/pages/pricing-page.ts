@@ -11,7 +11,7 @@ interface PricingTier {
   description: string;
   features: string[];
   ctaLabel: string;
-  ctaVariant: 'primary' | 'secondary' | 'danger' | 'ghost';
+  ctaVariant: 'primary' | 'link' | 'ghost' | 'secondary' | 'destructive' | 'outline';
   popular?: boolean;
 }
 
@@ -131,7 +131,7 @@ interface ComparisonRow {
                       } @else if (row.free === true) {
                         <lib-icon name="check" size="sm" color="success" />
                       } @else {
-                        <lib-icon name="x" size="sm" color="text-tertiary" />
+                        <lib-icon name="x" size="sm" color="muted-foreground" />
                       }
                     </td>
                     <td class="pricing-page_table-value">
@@ -140,7 +140,7 @@ interface ComparisonRow {
                       } @else if (row.starter === true) {
                         <lib-icon name="check" size="sm" color="success" />
                       } @else {
-                        <lib-icon name="x" size="sm" color="text-tertiary" />
+                        <lib-icon name="x" size="sm" color="muted-foreground" />
                       }
                     </td>
                     <td class="pricing-page_table-value">
@@ -149,7 +149,7 @@ interface ComparisonRow {
                       } @else if (row.professional === true) {
                         <lib-icon name="check" size="sm" color="success" />
                       } @else {
-                        <lib-icon name="x" size="sm" color="text-tertiary" />
+                        <lib-icon name="x" size="sm" color="muted-foreground" />
                       }
                     </td>
                     <td class="pricing-page_table-value">
@@ -158,7 +158,7 @@ interface ComparisonRow {
                       } @else if (row.business === true) {
                         <lib-icon name="check" size="sm" color="success" />
                       } @else {
-                        <lib-icon name="x" size="sm" color="text-tertiary" />
+                        <lib-icon name="x" size="sm" color="muted-foreground" />
                       }
                     </td>
                     <td class="pricing-page_table-value">
@@ -167,7 +167,7 @@ interface ComparisonRow {
                       } @else if (row.enterprise === true) {
                         <lib-icon name="check" size="sm" color="success" />
                       } @else {
-                        <lib-icon name="x" size="sm" color="text-tertiary" />
+                        <lib-icon name="x" size="sm" color="muted-foreground" />
                       }
                     </td>
                   </tr>
@@ -222,15 +222,15 @@ interface ComparisonRow {
       .pricing-page {
         @apply min-h-screen;
         @apply flex flex-col;
-        background: var(--color-bg-primary);
+        @apply bg-background;
       }
 
       .pricing-page_header {
         @apply w-full;
         @apply py-16 md:py-24;
         @apply px-4 sm:px-6 lg:px-8;
-        background: var(--color-bg-secondary);
-        border-bottom: 1px solid var(--color-border-default);
+        @apply bg-muted;
+        @apply border-b border-border;
       }
 
       .pricing-page_header-container {
@@ -243,13 +243,13 @@ interface ComparisonRow {
       .pricing-page_title {
         @apply text-4xl sm:text-5xl md:text-6xl;
         @apply font-bold;
-        color: var(--color-text-primary);
+        @apply text-foreground;
         margin: 0;
       }
 
       .pricing-page_subtitle {
         @apply text-lg sm:text-xl md:text-2xl;
-        color: var(--color-text-secondary);
+        @apply text-muted-foreground;
         margin: 0;
         @apply max-w-2xl;
       }
@@ -261,18 +261,18 @@ interface ComparisonRow {
 
       .pricing-page_toggle-label {
         @apply text-sm font-medium;
-        color: var(--color-text-secondary);
+        @apply text-muted-foreground;
       }
 
       .pricing-page_toggle-label--active {
-        color: var(--color-primary-500);
+        @apply text-primary;
       }
 
       .pricing-page_toggle-badge {
         @apply text-xs font-medium;
         @apply px-2 py-1;
         @apply rounded;
-        background: var(--color-success);
+        @apply bg-success;
         color: white;
       }
 
@@ -297,14 +297,14 @@ interface ComparisonRow {
         @apply flex flex-col;
         @apply p-6 md:p-8;
         @apply rounded-lg;
-        background: var(--color-bg-primary);
-        border: 1px solid var(--color-border-default);
+        @apply bg-background;
+        @apply border border-border;
         @apply transition-shadow;
         @apply hover:shadow-lg;
       }
 
       .pricing-page_tier--popular {
-        border: 2px solid var(--color-primary-500);
+        @apply border-2 border-primary;
         @apply shadow-lg;
       }
 
@@ -314,7 +314,7 @@ interface ComparisonRow {
         @apply px-3 py-1;
         @apply text-xs font-semibold;
         @apply rounded-full;
-        background: var(--color-primary-500);
+        @apply bg-primary;
         color: white;
       }
 
@@ -327,7 +327,7 @@ interface ComparisonRow {
 
       .pricing-page_tier-name {
         @apply text-2xl font-bold;
-        color: var(--color-text-primary);
+        @apply text-foreground;
         margin: 0;
       }
 
@@ -338,17 +338,17 @@ interface ComparisonRow {
 
       .pricing-page_tier-price-amount {
         @apply text-4xl font-bold;
-        color: var(--color-text-primary);
+        @apply text-foreground;
       }
 
       .pricing-page_tier-price-subtext {
         @apply text-sm;
-        color: var(--color-text-secondary);
+        @apply text-muted-foreground;
       }
 
       .pricing-page_tier-description {
         @apply text-sm;
-        color: var(--color-text-secondary);
+        @apply text-muted-foreground;
         margin: 0;
       }
 
@@ -369,7 +369,7 @@ interface ComparisonRow {
       .pricing-page_tier-feature {
         @apply flex items-start gap-2;
         @apply text-sm;
-        color: var(--color-text-secondary);
+        @apply text-muted-foreground;
       }
 
       .pricing-page_tier-feature lib-icon {
@@ -393,9 +393,9 @@ interface ComparisonRow {
         @apply w-full;
         @apply py-16 md:py-24;
         @apply px-4 sm:px-6 lg:px-8;
-        background: var(--color-bg-secondary);
-        border-top: 1px solid var(--color-border-default);
-        border-bottom: 1px solid var(--color-border-default);
+        @apply bg-muted;
+        @apply border-t border-border;
+        @apply border-b border-border;
       }
 
       .pricing-page_comparison-header {
@@ -406,13 +406,13 @@ interface ComparisonRow {
       .pricing-page_comparison-title {
         @apply text-3xl sm:text-4xl md:text-5xl;
         @apply font-bold;
-        color: var(--color-text-primary);
+        @apply text-foreground;
         margin: 0 0 1rem 0;
       }
 
       .pricing-page_comparison-description {
         @apply text-lg;
-        color: var(--color-text-secondary);
+        @apply text-muted-foreground;
         margin: 0;
       }
 
@@ -426,36 +426,36 @@ interface ComparisonRow {
       }
 
       .pricing-page_table thead {
-        background: var(--color-bg-tertiary);
+        @apply bg-accent;
       }
 
       .pricing-page_table th {
         @apply px-4 py-3;
         @apply text-left font-semibold;
         @apply border-b;
-        border-color: var(--color-border-default);
-        color: var(--color-text-primary);
+        @apply border-border;
+        @apply text-foreground;
       }
 
       .pricing-page_table th:first-child {
         @apply sticky left-0;
-        background: var(--color-bg-tertiary);
+        @apply bg-accent;
         z-index: 1;
       }
 
       .pricing-page_table tbody tr {
         @apply border-b;
-        border-color: var(--color-border-default);
+        @apply border-border;
       }
 
       .pricing-page_table tbody tr:hover {
-        background: var(--color-bg-tertiary);
+        @apply bg-accent;
       }
 
       .pricing-page_table-feature {
         @apply px-4 py-3;
         @apply font-medium;
-        color: var(--color-text-primary);
+        @apply text-foreground;
       }
 
       .pricing-page_table-value {
@@ -481,7 +481,7 @@ interface ComparisonRow {
       .pricing-page_faq-title {
         @apply text-3xl sm:text-4xl md:text-5xl;
         @apply font-bold;
-        color: var(--color-text-primary);
+        @apply text-foreground;
         margin: 0;
       }
 
@@ -498,13 +498,13 @@ interface ComparisonRow {
 
       .pricing-page_faq-question {
         @apply text-lg font-semibold;
-        color: var(--color-text-primary);
+        @apply text-foreground;
         margin: 0;
       }
 
       .pricing-page_faq-answer {
         @apply text-base;
-        color: var(--color-text-secondary);
+        @apply text-muted-foreground;
         margin: 0;
         @apply leading-relaxed;
       }
@@ -513,8 +513,8 @@ interface ComparisonRow {
         @apply w-full;
         @apply py-16 md:py-24;
         @apply px-4 sm:px-6 lg:px-8;
-        background: var(--color-bg-secondary);
-        border-top: 1px solid var(--color-border-default);
+        @apply bg-muted;
+        @apply border-t border-border;
       }
 
       .pricing-page_cta-container {
@@ -527,13 +527,13 @@ interface ComparisonRow {
       .pricing-page_cta-title {
         @apply text-3xl sm:text-4xl md:text-5xl;
         @apply font-bold;
-        color: var(--color-text-primary);
+        @apply text-foreground;
         margin: 0;
       }
 
       .pricing-page_cta-description {
         @apply text-lg sm:text-xl;
-        color: var(--color-text-secondary);
+        @apply text-muted-foreground;
         margin: 0;
       }
 

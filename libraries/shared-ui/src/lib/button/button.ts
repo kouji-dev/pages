@@ -1,6 +1,7 @@
-import { Component, input, output, computed } from '@angular/core';
+import { Component, input, output, computed, booleanAttribute } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Icon, IconName } from '../icon/icon';
+import { Size, DEFAULT_SIZE } from '../types';
 
 @Component({
   selector: 'lib-button',
@@ -11,10 +12,13 @@ import { Icon, IconName } from '../icon/icon';
   template: `
     <button
       class="button"
-      [class.button--primary]="variant() === 'primary'"
-      [class.button--secondary]="variant() === 'secondary'"
-      [class.button--danger]="variant() === 'danger'"
-      [class.button--ghost]="variant() === 'ghost'"
+      [class.button--primary]="normalizedVariant() === 'primary'"
+      [class.button--secondary]="normalizedVariant() === 'secondary'"
+      [class.button--destructive]="normalizedVariant() === 'destructive'"
+      [class.button--outline]="normalizedVariant() === 'outline'"
+      [class.button--ghost]="normalizedVariant() === 'ghost'"
+      [class.button--link]="normalizedVariant() === 'link'"
+      [class.button--xs]="size() === 'xs'"
       [class.button--sm]="size() === 'sm'"
       [class.button--md]="size() === 'md'"
       [class.button--lg]="size() === 'lg'"
@@ -73,7 +77,7 @@ import { Icon, IconName } from '../icon/icon';
         @apply font-medium transition-colors;
         @apply border;
         @apply cursor-pointer;
-        @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+        @apply focus:outline-none;
         @apply rounded-md; /* Notion-style rounded corners */
         position: relative; /* For absolute positioned link */
         /* Default styles will be overridden by variant classes */
@@ -93,58 +97,76 @@ import { Icon, IconName } from '../icon/icon';
         width: 100%;
       }
 
+      .button:focus,
       .button:focus-visible {
-        @apply outline-2;
-        @apply outline-border-focus;
-        outline-offset: 2px;
+        outline: none;
+        box-shadow: none;
+        ring: none;
       }
 
       /* Variants */
       .button--primary {
-        @apply text-text-inverse; /* White text */
-        @apply bg-text-primary; /* Pure black background - Notion style */
-        @apply border-text-primary;
+        @apply bg-primary text-primary-foreground border-primary;
+        @apply font-semibold shadow-md;
       }
 
       .button--primary:not(.button--disabled):hover {
-        @apply bg-gray-800; /* Dark gray on hover */
-        @apply border-gray-800;
+        @apply bg-primary/90 border-primary/90 shadow-lg;
       }
 
       .button--secondary {
-        @apply text-text-primary; /* Black text */
-        @apply bg-bg-tertiary; /* Light gray/beige background - Notion style */
-        @apply border-border-default;
+        @apply bg-secondary text-secondary-foreground border-border;
+        @apply font-medium;
       }
 
       .button--secondary:not(.button--disabled):hover {
-        @apply bg-gray-300; /* Slightly darker on hover */
-        @apply border-border-hover;
+        @apply bg-secondary/80;
       }
 
-      .button--danger {
-        @apply text-text-inverse; /* White text */
-        @apply bg-error; /* Red background */
-        @apply border-error;
+      .button--destructive {
+        @apply bg-destructive text-destructive-foreground border-destructive;
+        @apply font-medium;
       }
 
-      .button--danger:not(.button--disabled):hover {
-        @apply bg-error-600; /* Darker red on hover */
-        @apply border-error-600;
+      .button--destructive:not(.button--disabled):hover {
+        @apply bg-destructive/90 border-destructive/90;
+      }
+
+      .button--outline {
+        @apply bg-transparent text-foreground border-border;
+        @apply font-medium;
+      }
+
+      .button--outline:not(.button--disabled):hover {
+        @apply bg-accent text-accent-foreground border-accent;
       }
 
       .button--ghost {
-        @apply text-text-primary; /* Black text */
-        background-color: transparent;
-        border-color: transparent;
+        @apply bg-transparent text-foreground border-transparent;
+        @apply font-medium;
       }
 
       .button--ghost:not(.button--disabled):hover {
-        @apply bg-bg-hover; /* Light hover background - Notion style */
-        border-color: transparent;
+        @apply bg-accent text-accent-foreground;
+      }
+
+      .button--link {
+        @apply bg-transparent text-primary border-transparent;
+        @apply font-medium;
+        @apply underline-offset-4;
+        @apply shadow-none;
+      }
+
+      .button--link:not(.button--disabled):hover {
+        @apply underline text-primary/80;
       }
 
       /* Sizes */
+      .button--xs {
+        @apply px-2 py-1 text-xs;
+        min-height: 1.75rem;
+      }
+
       .button--sm {
         @apply px-3 py-1.5 text-sm;
         min-height: 2rem;
@@ -170,6 +192,10 @@ import { Icon, IconName } from '../icon/icon';
       .button--icon-only {
         @apply p-0;
         aspect-ratio: 1;
+      }
+
+      .button--icon-only.button--xs {
+        @apply w-6 h-6;
       }
 
       .button--icon-only.button--sm {
@@ -232,24 +258,31 @@ import { Icon, IconName } from '../icon/icon';
 })
 export class Button {
   // Inputs
-  variant = input<'primary' | 'secondary' | 'danger' | 'ghost'>('primary');
-  size = input<'sm' | 'md' | 'lg'>('md');
-  disabled = input(false);
-  loading = input(false);
-  iconOnly = input(false);
-  fullWidth = input(false);
+  variant = input<
+    'primary' | 'link' | 'ghost' | 'secondary' | 'destructive' | 'outline' | undefined
+  >('primary');
+  size = input<Size>(DEFAULT_SIZE);
+  disabled = input(false, { transform: booleanAttribute });
+  loading = input(false, { transform: booleanAttribute });
+  iconOnly = input(false, { transform: booleanAttribute });
+  fullWidth = input(false, { transform: booleanAttribute });
   type = input<'button' | 'submit' | 'reset'>('button');
-  leftIcon = input<IconName | null>(null);
-  rightIcon = input<IconName | null>(null);
-  link = input<string | string[] | null>(null); // RouterLink - if provided, renders <a> instead of <button>
+  leftIcon = input<IconName | undefined | null>(undefined);
+  rightIcon = input<IconName | undefined | null>(undefined);
+  link = input<string | string[] | undefined | null>(undefined); // RouterLink - if provided, renders <a> instead of <button>
 
   // Output
   clicked = output<MouseEvent>();
 
   // Computed
+  readonly normalizedVariant = computed(() => {
+    return this.variant() ?? 'primary';
+  });
+
   readonly spinnerSize = computed(() => {
     const size = this.size();
     const sizeMap: Record<string, 'xs' | 'sm' | 'md'> = {
+      xs: 'xs',
       sm: 'xs',
       md: 'sm',
       lg: 'md',
@@ -260,6 +293,7 @@ export class Button {
   readonly iconSize = computed(() => {
     const size = this.size();
     const sizeMap: Record<string, 'xs' | 'sm' | 'md'> = {
+      xs: 'xs',
       sm: 'xs',
       md: 'sm',
       lg: 'md',

@@ -19,6 +19,7 @@ class UserDTO(BaseModel):
     - Issue assignee/reporter
     - Comment author
     - Activity actor
+    - Space owner
     - Any context where basic user info is needed
 
     This follows the DDD Value Object pattern - immutable, lightweight,
@@ -27,6 +28,7 @@ class UserDTO(BaseModel):
 
     id: UUID
     name: str
+    email: str | None = Field(None, description="User email (optional for backward compatibility)")
     avatar_url: str | None = None
 
     class Config:

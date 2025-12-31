@@ -10,6 +10,7 @@ import {
   inject,
 } from '@angular/core';
 import { Icon, IconName } from '../icon/icon';
+import { Size, DEFAULT_SIZE } from '../types';
 import { TranslateService } from '../i18n/translate.service';
 
 export type InputType =
@@ -50,6 +51,10 @@ export type InputType =
           <textarea
             [id]="inputId()"
             class="input input--textarea"
+            [class.input--xs]="size() === 'xs'"
+            [class.input--sm]="size() === 'sm'"
+            [class.input--md]="size() === 'md'"
+            [class.input--lg]="size() === 'lg'"
             [class.input--error]="errorMessage()"
             [class.input--disabled]="disabled()"
             [class.input--readonly]="readonly()"
@@ -70,6 +75,10 @@ export type InputType =
           <input
             [id]="inputId()"
             class="input"
+            [class.input--xs]="size() === 'xs'"
+            [class.input--sm]="size() === 'sm'"
+            [class.input--md]="size() === 'md'"
+            [class.input--lg]="size() === 'lg'"
             [class.input--error]="errorMessage()"
             [class.input--disabled]="disabled()"
             [class.input--readonly]="readonly()"
@@ -166,13 +175,13 @@ export type InputType =
 
       .input-label {
         @apply text-sm font-medium;
-        @apply text-text-primary;
+        @apply text-foreground;
         @apply leading-normal;
       }
 
       .input-label-required {
         @apply ml-0.5;
-        @apply text-error;
+        @apply text-destructive;
       }
 
       .input-container {
@@ -186,17 +195,34 @@ export type InputType =
 
       .input {
         @apply w-full;
-        @apply px-3 py-2;
-        @apply text-base;
         @apply border rounded-md;
-        @apply bg-bg-primary;
+        @apply bg-background;
         @apply transition-colors;
         @apply focus:outline-none;
-        @apply text-text-primary;
-        @apply border-border-default;
+        @apply text-foreground;
+        @apply border-input;
         @apply font-sans;
+      }
+
+      /* Sizes */
+      .input--xs {
+        @apply px-2 py-1 text-xs;
+        min-height: 1.75rem;
+      }
+
+      .input--sm {
+        @apply px-3 py-1.5 text-sm;
+        min-height: 2rem;
+      }
+
+      .input--md {
+        @apply px-3 py-2 text-base;
         min-height: 2.5rem;
-        color: var(--color-text-primary);
+      }
+
+      .input--lg {
+        @apply px-4 py-3 text-lg;
+        min-height: 3rem;
       }
 
       .input--textarea {
@@ -206,40 +232,40 @@ export type InputType =
       }
 
       .input::placeholder {
-        @apply text-text-tertiary;
+        @apply text-muted-foreground;
         opacity: 1;
       }
 
       .input:hover:not(:disabled):not(:read-only):not(.input--error) {
-        @apply border-border-hover;
+        @apply border-ring/50;
       }
 
       .input:focus:not(:disabled):not(:read-only) {
-        @apply border-border-focus;
+        @apply border-ring;
         @apply outline-2;
-        @apply outline-border-focus;
+        @apply outline-ring;
         outline-offset: -2px;
       }
 
       .input--error {
-        @apply border-border-error;
+        @apply border-destructive;
       }
 
       .input--error:focus {
-        @apply border-border-error;
-        @apply outline-border-error;
+        @apply border-destructive;
+        @apply outline-destructive;
       }
 
       .input--disabled {
         @apply cursor-not-allowed;
-        @apply bg-bg-tertiary;
-        @apply border-border-default;
+        @apply bg-muted;
+        @apply border-input;
       }
 
       .input--readonly {
         @apply cursor-default;
-        @apply bg-bg-tertiary;
-        @apply border-border-default;
+        @apply bg-muted;
+        @apply border-input;
       }
 
       /* Number input spinner styling - hide native spinners */
@@ -258,7 +284,7 @@ export type InputType =
       .input-number-spinner {
         @apply absolute right-0 flex flex-col;
         @apply border-l border-solid;
-        @apply border-l-border-default;
+        @apply border-l-border;
         height: 100%;
         justify-content: center;
         gap: 0;
@@ -277,23 +303,23 @@ export type InputType =
         width: 1.5rem;
         height: 50%;
         min-height: 0.875rem;
-        @apply text-text-tertiary;
+        @apply text-muted-foreground;
         border-radius: 0;
         margin: 0;
       }
 
       .input-number-spinner-button:hover {
-        @apply bg-bg-hover;
-        @apply text-text-primary;
+        @apply bg-muted;
+        @apply text-foreground;
       }
 
       .input-number-spinner-button:active {
-        @apply bg-bg-active;
+        @apply bg-muted/80;
       }
 
       .input-number-spinner-button--up {
         @apply border-b;
-        @apply border-border-default;
+        @apply border-border;
         border-top-right-radius: 0.375rem;
         border-bottom-right-radius: 0;
       }
@@ -314,7 +340,7 @@ export type InputType =
       .input-icon {
         @apply absolute flex items-center justify-center;
         @apply pointer-events-none;
-        @apply text-text-tertiary;
+        @apply text-muted-foreground;
         z-index: 1;
       }
 
@@ -331,26 +357,26 @@ export type InputType =
         @apply border-none bg-transparent p-0;
         @apply hover:opacity-70;
         @apply focus:outline-none focus:ring-2 focus:ring-offset-1;
-        @apply text-text-secondary;
+        @apply text-muted-foreground;
         border-radius: 0.25rem;
       }
 
       .input-password-toggle:focus-visible {
         @apply outline-2;
-        @apply outline-border-focus;
+        @apply outline-ring;
         outline-offset: 2px;
       }
 
       .input-helper-text {
         @apply text-xs;
-        @apply text-text-tertiary;
+        @apply text-muted-foreground;
         @apply leading-normal;
       }
 
       .input-error-message {
         @apply flex items-center gap-1.5;
         @apply text-xs font-medium;
-        @apply text-error;
+        @apply text-destructive;
         @apply leading-normal;
       }
 
@@ -359,7 +385,7 @@ export type InputType =
       }
 
       .input-wrapper--error .input-label {
-        @apply text-error;
+        @apply text-destructive;
       }
     `,
   ],
@@ -375,6 +401,7 @@ export class Input {
   type = input<InputType>('text');
   placeholder = input<string>('');
   label = input<string>('');
+  size = input<Size>(DEFAULT_SIZE);
   helperText = input<string>('');
   errorMessage = input<string>('');
   required = input(false, { transform: booleanAttribute });

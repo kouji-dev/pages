@@ -54,6 +54,8 @@ class SQLAlchemyProjectRepository(ProjectRepository):
             description=project.description,
             settings=json.dumps(project.settings) if project.settings else None,
             folder_id=project.folder_id,
+            color=project.color,
+            status=project.status,
             created_at=project.created_at,
             updated_at=project.updated_at,
             deleted_at=project.deleted_at,
@@ -146,6 +148,8 @@ class SQLAlchemyProjectRepository(ProjectRepository):
         model.description = project.description
         model.settings = json.dumps(project.settings) if project.settings else None
         model.folder_id = project.folder_id
+        model.color = project.color
+        model.status = project.status
         model.updated_at = project.updated_at
         model.deleted_at = project.deleted_at
 
@@ -313,6 +317,8 @@ class SQLAlchemyProjectRepository(ProjectRepository):
             description=model.description,
             settings=settings,
             folder_id=model.folder_id,
+            color=model.color,
+            status=model.status,
             created_at=model.created_at,
             updated_at=model.updated_at,
             deleted_at=model.deleted_at,

@@ -135,6 +135,17 @@ class ListProjectsUseCase:
                     )
                 )
 
+            # Map entity status to DTO status
+            # Entity: in-progress, complete, on-hold
+            # DTO: active (if in-progress and not deleted), completed, on-hold
+            dto_status: str
+            if project.status == "in-progress" and project.deleted_at is None:
+                dto_status = "active"
+            elif project.status == "complete":
+                dto_status = "completed"
+            else:
+                dto_status = project.status  # on-hold or fallback
+
             project_responses.append(
                 ProjectListItemResponse(
                     id=project.id,
@@ -143,6 +154,8 @@ class ListProjectsUseCase:
                     key=project.key,
                     description=project.description,
                     deleted_at=project.deleted_at,
+                    color=project.color,
+                    status=dto_status,
                     member_count=member_count,
                     issue_count=issue_count,
                     completed_issues_count=completed_issues_count,

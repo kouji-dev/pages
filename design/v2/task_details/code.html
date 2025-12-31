@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Task Details - TaskSpace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4b2bee",
+                        "primary-light": "#6d52f1",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#131022",
+                        "surface-dark": "#1d1933",
+                        "surface-hover": "#292348",
+                        "text-secondary": "#9b92c9",
+                        "border-color": "#292348"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.375rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #131022; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #292348; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4b2bee; 
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-size: 20px;
+        }
+        .icon-filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .editor-content h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: white;
+        }
+        .editor-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            color: #d1d5db;
+        }
+        .editor-content code {
+            background-color: #292348;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+            color: #e5e7eb;
+        }
+        .editor-content pre {
+            background-color: #1d1933;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            border: 1px solid #292348;
+        }
+    </style>
+</head>
+<body class="bg-background-dark font-display text-white h-screen flex overflow-hidden selection:bg-primary/30">
+<aside class="w-64 bg-surface-dark border-r border-border-color hidden md:flex flex-col shrink-0 transition-all duration-300">
+<div class="h-16 flex items-center px-6 border-b border-border-color/50 shrink-0">
+<div class="flex items-center gap-3 text-white cursor-pointer">
+<div class="size-7 text-primary">
+<span class="material-symbols-outlined !text-[28px] icon-filled">layers</span>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-tight">TaskSpace</h2>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-6">
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 text-text-secondary hover:text-white hover:bg-surface-hover rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined">inbox</span>
+<span class="text-sm font-medium">Inbox</span>
+<div class="ml-auto bg-surface-hover text-text-secondary group-hover:text-white text-[10px] font-bold px-2 py-0.5 rounded-full border border-border-color">4</div>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-text-secondary hover:text-white hover:bg-surface-hover rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined">check_circle</span>
+<span class="text-sm font-medium">My Tasks</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-text-secondary hover:text-white hover:bg-surface-hover rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined">folder_open</span>
+<span class="text-sm font-medium">Projects</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-text-secondary hover:text-white hover:bg-surface-hover rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-medium">Teams</span>
+</a>
+</div>
+<div class="flex flex-col gap-2">
+<div class="px-3 flex items-center justify-between group">
+<span class="text-xs font-bold text-text-secondary uppercase tracking-wider">Workspaces</span>
+<button class="text-text-secondary hover:text-white opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined !text-[16px]">add</span>
+</button>
+</div>
+<div class="flex flex-col">
+<div class="flex flex-col">
+<button class="flex items-center gap-2 px-2 py-1.5 text-text-secondary hover:text-white hover:bg-surface-hover rounded-lg transition-colors w-full text-left group">
+<span class="material-symbols-outlined !text-[20px] text-text-secondary/70 group-hover:text-white transition-colors">arrow_drop_down</span>
+<span class="material-symbols-outlined !text-[18px] text-blue-400">folder</span>
+<span class="text-sm font-medium truncate">Engineering</span>
+</button>
+<div class="flex flex-col pl-4 gap-0.5 border-l border-border-color ml-4 my-1">
+<a class="flex items-center gap-2 px-2 py-1.5 text-white bg-surface-hover/50 rounded-md transition-colors text-sm font-medium border border-border-color/50" href="#">
+<span class="size-1.5 rounded-full bg-primary shadow shadow-primary/50"></span>
+<span class="truncate">Project Alpha</span>
+</a>
+<a class="flex items-center gap-2 px-2 py-1.5 text-text-secondary hover:text-white hover:bg-surface-hover rounded-md transition-colors text-sm font-medium" href="#">
+<span class="material-symbols-outlined !text-[16px]">description</span>
+<span class="truncate">API Documentation</span>
+</a>
+<a class="flex items-center gap-2 px-2 py-1.5 text-text-secondary hover:text-white hover:bg-surface-hover rounded-md transition-colors text-sm font-medium" href="#">
+<span class="material-symbols-outlined !text-[16px]">dns</span>
+<span class="truncate">Server Config</span>
+</a>
+</div>
+</div>
+<button class="flex items-center gap-2 px-2 py-1.5 text-text-secondary hover:text-white hover:bg-surface-hover rounded-lg transition-colors w-full text-left group">
+<span class="material-symbols-outlined !text-[20px] text-text-secondary/70 group-hover:text-white transition-colors -rotate-90">arrow_drop_down</span>
+<span class="material-symbols-outlined !text-[18px] text-purple-400">folder</span>
+<span class="text-sm font-medium truncate">Product</span>
+</button>
+<button class="flex items-center gap-2 px-2 py-1.5 text-text-secondary hover:text-white hover:bg-surface-hover rounded-lg transition-colors w-full text-left group">
+<span class="material-symbols-outlined !text-[20px] text-text-secondary/70 group-hover:text-white transition-colors -rotate-90">arrow_drop_down</span>
+<span class="material-symbols-outlined !text-[18px] text-pink-400">folder</span>
+<span class="text-sm font-medium truncate">Marketing</span>
+</button>
+</div>
+</div>
+</nav>
+<div class="p-4 border-t border-border-color/50 bg-background-dark/30">
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<div class="size-9 rounded-full bg-cover bg-center border border-border-color shrink-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuChnSyh0NM-3EJmUsqYLOHio6R44JrA9P5PdPV8GEGAYaaEeJFb3Qwbd5IzdrybM11JmR2367TXH-4FngmsLMXa6HknhXth7vOWmhRlJN2yuNBTsFDbxUzZRbrhVM2TjOhVtFxavht1hiNwmn999Wr-zYnk65tWkTpKKp5cPyacH7S1Q-f66D-_BGN84ZKkjGi5gw8eGjC8XM8FpFaAThYgSlY1MLma0GlWtKhCHeYH6PIxRKRgfvCGrqc02_S-NNjk3omj5KMG_jg");'></div>
+<div class="flex flex-col min-w-0">
+<span class="text-sm font-medium text-white truncate">Alex Morgan</span>
+<span class="text-xs text-text-secondary truncate">alex@taskspace.com</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<button class="flex items-center justify-center gap-2 h-8 rounded-md bg-surface-hover hover:bg-[#292348] text-text-secondary hover:text-white transition-colors text-xs font-medium border border-border-color">
+<span class="material-symbols-outlined !text-[16px]">settings</span>
+<span>Settings</span>
+</button>
+<button class="flex items-center justify-center gap-2 h-8 rounded-md bg-surface-hover hover:bg-[#292348] text-text-secondary hover:text-white transition-colors text-xs font-medium border border-border-color">
+<span class="material-symbols-outlined !text-[16px]">dark_mode</span>
+<span>Dark</span>
+</button>
+</div>
+</div>
+</div>
+</aside>
+<div class="flex-1 flex flex-col min-w-0 bg-background-dark">
+<header class="h-16 border-b border-border-color flex items-center justify-between px-6 shrink-0 bg-background-dark/95 backdrop-blur z-20">
+<nav class="flex items-center text-sm font-medium text-text-secondary">
+<a class="hover:text-white transition-colors flex items-center gap-1.5" href="#">
+<span class="material-symbols-outlined !text-[18px]">folder</span>
+<span class="hidden sm:inline">Project Alpha</span>
+</a>
+<span class="material-symbols-outlined !text-[16px] mx-1 text-border-color">chevron_right</span>
+<a class="hover:text-white transition-colors" href="#">Sprint 4</a>
+<span class="material-symbols-outlined !text-[16px] mx-1 text-border-color">chevron_right</span>
+<span class="text-white flex items-center gap-2 bg-surface-hover px-2 py-1 rounded">
+<span class="material-symbols-outlined !text-[16px] text-primary">check_circle</span>
+<span class="font-mono text-xs tracking-wide">TSK-429</span>
+</span>
+</nav>
+<div class="flex-1 max-w-lg px-8 hidden lg:block">
+<div class="relative group">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none material-symbols-outlined !text-[20px] group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full bg-surface-dark border border-border-color text-sm text-white rounded-lg pl-10 pr-12 h-10 focus:bg-background-dark focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder-text-secondary outline-none shadow-sm" placeholder="Search tasks, docs, or people..." type="text"/>
+<div class="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none">
+<kbd class="h-5 min-w-[20px] flex items-center justify-center rounded bg-surface-hover border border-white/10 text-[10px] text-text-secondary font-sans font-medium">⌘</kbd>
+<kbd class="h-5 min-w-[20px] flex items-center justify-center rounded bg-surface-hover border border-white/10 text-[10px] text-text-secondary font-sans font-medium">K</kbd>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex -space-x-2 border-r border-border-color pr-4 mr-1">
+<div class="size-8 rounded-full ring-2 ring-background-dark bg-cover bg-center tooltip-trigger cursor-pointer border border-border-color" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCghLrjauJcPCIHQgSGEEHl1lB-H-__kuNtUJ_Tuu0P6AXGhT_O9Mzu7ama8vTmT8zVg1zZiZ4hUauSwtym75Xy8GMj0lDNO03MYOjWW9MeruJ08OdpOek25H4ifM4KGBNw7rNo2Q86c4oqMdfpwOheBFZU-lcvHGp5WC-GNpTiGtydPi7a4zrL0auOSzv-YjBgsorA3eB9fRz3ZVAAyxUb4Ji__MESd-P7yi_K1hXWJoN0Go94fudv5sVYT9mJW6Pw4zwfdvgG27Q");' title="Sarah Jenks"></div>
+<div class="size-8 rounded-full ring-2 ring-background-dark bg-cover bg-center tooltip-trigger cursor-pointer border border-border-color" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDLaMig3wrKFWhw9wjJqBcV257XGtlwK_QHZ8Uc9tBZ0rgN06pJU0xrtTusNTTGQGImdykB4e_y9RVhal2gQNqe0ROlLcXGk5qCBjL3TNnnIxl54wmmFp7Do8h2kgbCyBSKuVx35UB71f_VzKmFrf2XnQ5EmlCdW4GLrkwoMc6tztl6QfZg91YRjuwABieCOSDuOKnvxJLvrfr2dtPYWr61syebut4q0CjZV55ahYfT4aqwHTgE0d8vwKcfJDacuCrE1qTtgeEMz-0");' title="Michael Chen"></div>
+<div class="size-8 rounded-full ring-2 ring-background-dark bg-cover bg-center tooltip-trigger cursor-pointer border border-border-color" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCFUYkiNzKd5TSudhJmcBLVe_M9n-mC-fox4eYi127rEL40jh4JjEx6FUH9WduE2eFsJBmXDVi9SG5-DG9ZNQemjIkB6HtWobPVZC12TW9Steg7LU-RsGcZR5g5j99zd13JD_O-vOCNo5cfsmqnqtkFOX8ksYKnl4ULaKtnuyPTz2IBhABXJO46NWvrK-pCrBcPrHKGbB_l0Y63rCc8ztkk0krDKpOANEH4H8UeS90f624izSUv9osvQvvEpcM-3rjracnsEgXvYh4");' title="Assignee Sarah Jenks"></div>
+</div>
+<button class="bg-primary hover:bg-primary/90 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors flex items-center gap-2 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined !text-[20px]">add</span>
+<span>New</span>
+</button>
+</div>
+</header>
+<div class="flex-1 flex overflow-hidden">
+<main class="flex-1 overflow-y-auto p-8 lg:p-12 relative">
+<div class="max-w-5xl mx-auto flex flex-col gap-8 pb-20">
+<div class="flex items-center justify-end gap-2 mb-2">
+<button class="text-text-secondary hover:text-white p-2 rounded-lg hover:bg-surface-hover transition-colors" title="Copy Link">
+<span class="material-symbols-outlined !text-[20px]">link</span>
+</button>
+<button class="text-text-secondary hover:text-white p-2 rounded-lg hover:bg-surface-hover transition-colors" title="Share">
+<span class="material-symbols-outlined !text-[20px]">share</span>
+</button>
+<button class="text-text-secondary hover:text-white p-2 rounded-lg hover:bg-surface-hover transition-colors" title="More Options">
+<span class="material-symbols-outlined !text-[20px]">more_horiz</span>
+</button>
+</div>
+<div class="flex flex-col gap-4">
+<h1 class="text-3xl font-bold text-white leading-tight">Refactor authentication middleware for API v2</h1>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 bg-[#2ecc71]/10 text-[#2ecc71] px-3 py-1.5 rounded-md border border-[#2ecc71]/20 hover:bg-[#2ecc71]/20 transition-colors cursor-pointer group">
+<span class="w-2 h-2 rounded-full bg-[#2ecc71] group-hover:shadow-[0_0_8px_rgba(46,204,113,0.6)] transition-shadow"></span>
+<span class="text-sm font-semibold">In Progress</span>
+<span class="material-symbols-outlined !text-[16px]">expand_more</span>
+</button>
+<div class="flex -space-x-2">
+<div class="size-8 rounded-full ring-2 ring-background-dark bg-cover bg-center cursor-pointer" data-alt="Assignee Sarah Jenks" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCghLrjauJcPCIHQgSGEEHl1lB-H-__kuNtUJ_Tuu0P6AXGhT_O9Mzu7ama8vTmT8zVg1zZiZ4hUauSwtym75Xy8GMj0lDNO03MYOjWW9MeruJ08OdpOek25H4ifM4KGBNw7rNo2Q86c4oqMdfpwOheBFZU-lcvHGp5WC-GNpTiGtydPi7a4zrL0auOSzv-YjBgsorA3eB9fRz3ZVAAyxUb4Ji__MESd-P7yi_K1hXWJoN0Go94fudv5sVYT9mJW6Pw4zwfdvgG27Q");' title="Assignee: Sarah Jenks"></div>
+<div class="size-8 rounded-full ring-2 ring-background-dark bg-surface-hover flex items-center justify-center cursor-pointer hover:bg-primary transition-colors text-xs font-bold text-white" title="Add Assignee">+</div>
+</div>
+</div>
+</div>
+<div class="group/editor relative min-h-[200px] border-b border-border-color pb-8">
+<div class="editor-content">
+<p>We need to migrate the current JWT handling to the new OAuth2 provider. This involves updating the middleware to validate tokens against the new issuer and updating the user context injection.</p>
+<h2>Key Requirements</h2>
+<ul class="list-disc pl-5 space-y-1 text-[#d1d5db] mb-4">
+<li>Support RS256 signatures.</li>
+<li>Cache JWKS keys for at least 1 hour.</li>
+<li>Handle token refresh gracefully without logging out the user immediately.</li>
+</ul>
+<h2>Current Implementation</h2>
+<pre><code class="language-javascript">const verifyToken = (token) =&gt; {
+  return jwt.verify(token, process.env.JWT_SECRET);
+}</code></pre>
+<p>Please refer to the <a class="text-primary hover:underline" href="#">API Documentation v2</a> for the new schemas.</p>
+</div>
+<div class="absolute bottom-8 left-0 opacity-0 group-hover/editor:opacity-100 transition-opacity text-text-secondary text-sm flex items-center gap-2 pointer-events-none">
+<span class="bg-surface-hover px-1.5 py-0.5 rounded text-xs border border-white/10">/</span>
+<span>Type a slash for commands</span>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h3 class="text-lg font-semibold text-white">Subtasks</h3>
+<span class="text-xs font-medium text-text-secondary bg-surface-hover px-2 py-1 rounded-full">1/3 Done</span>
+</div>
+<div class="flex flex-col gap-1">
+<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-hover/50 cursor-pointer group transition-colors">
+<input checked="" class="form-checkbox rounded border-text-secondary bg-transparent text-primary focus:ring-offset-background-dark focus:ring-primary size-5" type="checkbox"/>
+<span class="text-text-secondary line-through group-hover:text-text-secondary/80 flex-1">Update environment variables for OAuth provider</span>
+<div class="opacity-0 group-hover:opacity-100 flex items-center">
+<div class="size-6 rounded-full bg-cover bg-center" data-alt="User avatar small" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCz092YzURAkLVx_WLyM6Zj_O2QE3kLW_y6Xxkwhrm2aux3XkITnMy2J-uPAQ7NPT1bFLHQBq1wmK56VDIvAY9zOWdofKxN_ZnRCLNYMaP0LZPRTZ90BJ63YLOdgOY6TtEvjXu3ss4rBuIqUbmd1NNh0_orUESlLVbbXnF7MtKmcpGFEZ6XvtcXajL-WeNjJPmGwxOJiizugScLnWfp5mr0CcbJ0LcYcE-Ox2PvDUoXhmBfOgfNdCx6gifkTfcWx5W-aW6QIsr1xqA");'></div>
+</div>
+</label>
+<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-hover/50 cursor-pointer group transition-colors">
+<input class="form-checkbox rounded border-text-secondary bg-transparent text-primary focus:ring-offset-background-dark focus:ring-primary size-5" type="checkbox"/>
+<span class="text-white group-hover:text-primary-light flex-1">Refactor <code class="text-xs bg-surface-hover px-1 py-0.5 rounded">authMiddleware.ts</code></span>
+</label>
+<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-hover/50 cursor-pointer group transition-colors">
+<input class="form-checkbox rounded border-text-secondary bg-transparent text-primary focus:ring-offset-background-dark focus:ring-primary size-5" type="checkbox"/>
+<span class="text-white group-hover:text-primary-light flex-1">Write unit tests for token refresh logic</span>
+<div class="opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined text-text-secondary text-sm">calendar_today</span>
+</div>
+</label>
+<button class="flex items-center gap-3 p-2 text-text-secondary hover:text-primary transition-colors mt-2 text-sm font-medium">
+<span class="material-symbols-outlined">add</span>
+                                Add subtask
+                            </button>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<h3 class="text-lg font-semibold text-white">Attachments</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+<div class="flex items-center gap-3 p-3 rounded-lg border border-border-color bg-surface-hover/30 hover:bg-surface-hover transition-colors cursor-pointer group">
+<div class="size-10 rounded bg-red-500/20 text-red-500 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+</div>
+<div class="flex flex-col overflow-hidden">
+<span class="text-sm font-medium text-white truncate">OAuth2_Spec_v2.pdf</span>
+<span class="text-xs text-text-secondary">2.4 MB • Added yesterday</span>
+</div>
+<button class="ml-auto opacity-0 group-hover:opacity-100 text-text-secondary hover:text-white transition-opacity">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+<div class="flex items-center gap-3 p-3 rounded-lg border border-border-color bg-surface-hover/30 hover:bg-surface-hover transition-colors cursor-pointer group">
+<div class="size-10 rounded bg-blue-500/20 text-blue-500 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined">image</span>
+</div>
+<div class="flex flex-col overflow-hidden">
+<span class="text-sm font-medium text-white truncate">Diagram_Flow.png</span>
+<span class="text-xs text-text-secondary">800 KB • Added today</span>
+</div>
+<button class="ml-auto opacity-0 group-hover:opacity-100 text-text-secondary hover:text-white transition-opacity">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+<div class="flex items-center justify-center gap-2 p-3 rounded-lg border border-dashed border-border-color text-text-secondary hover:text-primary hover:border-primary/50 hover:bg-surface-hover/30 transition-all cursor-pointer h-[66px]">
+<span class="material-symbols-outlined">cloud_upload</span>
+<span class="text-sm font-medium">Upload</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-6 pt-6 border-t border-border-color">
+<div class="flex items-center justify-between">
+<h3 class="text-lg font-semibold text-white">Activity</h3>
+<div class="flex bg-surface-hover rounded-lg p-1 gap-1">
+<button class="px-3 py-1 text-xs font-medium bg-background-dark text-white rounded shadow-sm">All</button>
+<button class="px-3 py-1 text-xs font-medium text-text-secondary hover:text-white transition-colors">Comments</button>
+<button class="px-3 py-1 text-xs font-medium text-text-secondary hover:text-white transition-colors">History</button>
+</div>
+</div>
+<div class="relative pl-4 space-y-8 before:absolute before:left-[19px] before:top-2 before:bottom-0 before:w-px before:bg-border-color">
+<div class="relative flex items-start gap-4">
+<div class="absolute left-[-20px] bg-background-dark p-1">
+<div class="size-2 rounded-full bg-text-secondary"></div>
+</div>
+<div class="text-sm text-text-secondary">
+<span class="font-medium text-white">Sarah Jenks</span> changed the status to <span class="text-[#2ecc71]">In Progress</span> • <span class="text-xs opacity-70">2 hours ago</span>
+</div>
+</div>
+<div class="relative flex gap-4 group">
+<div class="absolute left-[-35px] z-10">
+<div class="size-8 rounded-full bg-cover bg-center border-2 border-background-dark" data-alt="User avatar Michael" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDLaMig3wrKFWhw9wjJqBcV257XGtlwK_QHZ8Uc9tBZ0rgN06pJU0xrtTusNTTGQGImdykB4e_y9RVhal2gQNqe0ROlLcXGk5qCBjL3TNnnIxl54wmmFp7Do8h2kgbCyBSKuVx35UB71f_VzKmFrf2XnQ5EmlCdW4GLrkwoMc6tztl6QfZg91YRjuwABieCOSDuOKnvxJLvrfr2dtPYWr61syebut4q0CjZV55ahYfT4aqwHTgE0d8vwKcfJDacuCrE1qTtgeEMz-0");'></div>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-sm font-semibold text-white">Michael Chen</span>
+<span class="text-xs text-text-secondary">1 hour ago</span>
+</div>
+<div class="text-sm text-[#d1d5db] leading-relaxed">
+                                        Hey <span class="text-primary hover:underline cursor-pointer">@Sarah</span>, make sure to check the legacy endpoint handling. I think we have some hardcoded token validation there.
+                                    </div>
+<div class="flex gap-4 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-xs text-text-secondary hover:text-white font-medium">Reply</button>
+<button class="text-xs text-text-secondary hover:text-white font-medium">React</button>
+</div>
+</div>
+</div>
+<div class="relative flex gap-4 mt-6">
+<div class="absolute left-[-35px] z-10">
+<div class="size-8 rounded-full bg-cover bg-center border-2 border-background-dark" data-alt="Current user avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuChnSyh0NM-3EJmUsqYLOHio6R44JrA9P5PdPV8GEGAYaaEeJFb3Qwbd5IzdrybM11JmR2367TXH-4FngmsLMXa6HknhXth7vOWmhRlJN2yuNBTsFDbxUzZRbrhVM2TjOhVtFxavht1hiNwmn999Wr-zYnk65tWkTpKKp5cPyacH7S1Q-f66D-_BGN84ZKkjGi5gw8eGjC8XM8FpFaAThYgSlY1MLma0GlWtKhCHeYH6PIxRKRgfvCGrqc02_S-NNjk3omj5KMG_jg");'></div>
+</div>
+<div class="flex-1 bg-surface-hover/30 border border-border-color rounded-xl overflow-hidden focus-within:ring-1 focus-within:ring-primary focus-within:border-primary transition-all">
+<textarea class="w-full bg-transparent border-none text-white placeholder-text-secondary text-sm p-3 focus:ring-0 resize-none min-h-[80px]" placeholder="Add a comment... (Type @ to mention)"></textarea>
+<div class="flex items-center justify-between px-2 py-2 bg-surface-hover/50 border-t border-white/5">
+<div class="flex gap-1">
+<button class="p-1.5 text-text-secondary hover:text-white rounded hover:bg-white/10 transition-colors"><span class="material-symbols-outlined !text-[18px]">format_bold</span></button>
+<button class="p-1.5 text-text-secondary hover:text-white rounded hover:bg-white/10 transition-colors"><span class="material-symbols-outlined !text-[18px]">format_italic</span></button>
+<button class="p-1.5 text-text-secondary hover:text-white rounded hover:bg-white/10 transition-colors"><span class="material-symbols-outlined !text-[18px]">code</span></button>
+<button class="p-1.5 text-text-secondary hover:text-white rounded hover:bg-white/10 transition-colors"><span class="material-symbols-outlined !text-[18px]">attach_file</span></button>
+</div>
+<button class="bg-primary hover:bg-primary/90 text-white text-xs font-bold px-4 py-1.5 rounded transition-colors">Post</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<aside class="w-[320px] bg-background-dark border-l border-border-color shrink-0 p-6 hidden xl:flex flex-col gap-8 overflow-y-auto">
+<div class="flex flex-col gap-3">
+<button class="flex w-full items-center justify-center gap-2 rounded-lg h-10 bg-primary hover:bg-primary/90 text-white text-sm font-bold tracking-wide transition-colors shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined !text-[20px]">check_circle</span>
+<span>Mark Complete</span>
+</button>
+</div>
+<div class="flex flex-col gap-4">
+<h4 class="text-xs font-bold text-text-secondary uppercase tracking-wider">Details</h4>
+<div class="space-y-4">
+<div class="flex items-center justify-between group">
+<span class="text-sm text-text-secondary">Assignee</span>
+<div class="flex items-center gap-2 cursor-pointer hover:bg-surface-hover pl-2 pr-1 py-1 rounded transition-colors">
+<span class="text-sm font-medium text-white">Sarah Jenks</span>
+<div class="size-6 rounded-full bg-cover bg-center" data-alt="Assignee Sarah Jenks" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCFUYkiNzKd5TSudhJmcBLVe_M9n-mC-fox4eYi127rEL40jh4JjEx6FUH9WduE2eFsJBmXDVi9SG5-DG9ZNQemjIkB6HtWobPVZC12TW9Steg7LU-RsGcZR5g5j99zd13JD_O-vOCNo5cfsmqnqtkFOX8ksYKnl4ULaKtnuyPTz2IBhABXJO46NWvrK-pCrBcPrHKGbB_l0Y63rCc8ztkk0krDKpOANEH4H8UeS90f624izSUv9osvQvvEpcM-3rjracnsEgXvYh4");'></div>
+</div>
+</div>
+<div class="flex items-center justify-between group">
+<span class="text-sm text-text-secondary">Priority</span>
+<div class="flex items-center gap-2 cursor-pointer hover:bg-surface-hover px-2 py-1 rounded transition-colors">
+<span class="material-symbols-outlined text-red-500 !text-[18px] icon-filled">flag</span>
+<span class="text-sm font-medium text-white">High</span>
+</div>
+</div>
+<div class="flex items-center justify-between group">
+<span class="text-sm text-text-secondary">Sprint</span>
+<div class="flex items-center gap-2 cursor-pointer hover:bg-surface-hover px-2 py-1 rounded transition-colors">
+<span class="text-sm font-medium text-white">Q3 Sprint 4</span>
+</div>
+</div>
+<div class="flex items-center justify-between group">
+<span class="text-sm text-text-secondary">Due Date</span>
+<div class="flex items-center gap-2 cursor-pointer hover:bg-surface-hover px-2 py-1 rounded transition-colors">
+<span class="text-sm font-medium text-[#ff6b6b]">Oct 24, 2023</span>
+</div>
+</div>
+<div class="flex items-center justify-between group">
+<span class="text-sm text-text-secondary">Estimate</span>
+<div class="flex items-center gap-2 cursor-pointer hover:bg-surface-hover px-2 py-1 rounded transition-colors">
+<span class="text-sm font-medium text-white">5 pts</span>
+</div>
+</div>
+</div>
+</div>
+<div class="h-px bg-border-color w-full"></div>
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<h4 class="text-xs font-bold text-text-secondary uppercase tracking-wider">Tags</h4>
+<button class="text-text-secondary hover:text-white"><span class="material-symbols-outlined !text-[16px]">add</span></button>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="px-2.5 py-1 rounded-md bg-[#292348] text-text-secondary text-xs font-medium hover:text-white hover:bg-primary/20 cursor-pointer transition-colors">Backend</span>
+<span class="px-2.5 py-1 rounded-md bg-[#292348] text-text-secondary text-xs font-medium hover:text-white hover:bg-primary/20 cursor-pointer transition-colors">Auth</span>
+<span class="px-2.5 py-1 rounded-md bg-[#292348] text-text-secondary text-xs font-medium hover:text-white hover:bg-primary/20 cursor-pointer transition-colors">API v2</span>
+</div>
+</div>
+<div class="h-px bg-border-color w-full"></div>
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<h4 class="text-xs font-bold text-text-secondary uppercase tracking-wider">Linked Issues</h4>
+<button class="text-text-secondary hover:text-white"><span class="material-symbols-outlined !text-[16px]">add</span></button>
+</div>
+<div class="flex flex-col gap-2">
+<div class="group flex items-start gap-2 p-2 rounded hover:bg-surface-hover transition-colors cursor-pointer border border-transparent hover:border-white/5">
+<div class="mt-0.5" title="Blocked By">
+<span class="material-symbols-outlined text-red-400 !text-[18px]">block</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-xs text-text-secondary font-mono mb-0.5">TSK-390</span>
+<span class="text-xs text-white font-medium truncate leading-tight group-hover:text-primary-light">Setup Identity Server instance</span>
+<span class="text-[10px] text-text-secondary mt-1 bg-surface-dark w-fit px-1 rounded">Done</span>
+</div>
+</div>
+<div class="group flex items-start gap-2 p-2 rounded hover:bg-surface-hover transition-colors cursor-pointer border border-transparent hover:border-white/5">
+<div class="mt-0.5" title="Relates To">
+<span class="material-symbols-outlined text-blue-400 !text-[18px]">link</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-xs text-text-secondary font-mono mb-0.5">TSK-502</span>
+<span class="text-xs text-white font-medium truncate leading-tight group-hover:text-primary-light">Frontend Login Form</span>
+<span class="text-[10px] text-text-secondary mt-1 bg-surface-dark w-fit px-1 rounded">To Do</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-auto pt-4 text-[10px] text-text-secondary flex justify-between">
+<span>Created Oct 10, 2023</span>
+<span>Updated 5m ago</span>
+</div>
+</aside>
+</div>
+</div>
+</body></html>

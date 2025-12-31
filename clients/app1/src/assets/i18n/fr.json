@@ -24,6 +24,8 @@
     "reset": "Réinitialiser",
     "switchToLightMode": "Passer en mode clair",
     "switchToDarkMode": "Passer en mode sombre",
+    "switchToDefaultDensity": "Par défaut",
+    "switchToCompactDensity": "Compact",
     "notFound": {
       "title": "Page introuvable",
       "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
@@ -31,6 +33,7 @@
     }
   },
   "navigation": {
+    "dashboard": "Tableau de bord",
     "organizations": "Organisations",
     "projects": "Projets",
     "spaces": "Espaces",
@@ -39,6 +42,12 @@
     "profile": "Profil",
     "settings": "Paramètres",
     "notifications": "Notifications"
+  },
+  "breadcrumbs": {
+    "project": "Projet",
+    "space": "Espace",
+    "page": "Page",
+    "issue": "Problème"
   },
   "notifications": {
     "title": "Notifications",
@@ -65,7 +74,8 @@
   "language": {
     "english": "English",
     "french": "Français",
-    "switchLanguage": "Changer de langue"
+    "switchLanguage": "Changer de langue",
+    "language": "Langue"
   },
   "issues": {
     "title": "Tâches",
@@ -191,6 +201,19 @@
     "switchTo": "Basculer vers",
     "members": "membre(s)",
     "viewSpace": "Voir",
+    "settings": "Paramètres",
+    "organizationMenu": "Menu de l'organisation",
+    "editOrganization": "Modifier l'organisation",
+    "deleteOrganization": "Supprimer l'organisation",
+    "updateSuccess": "Organisation mise à jour avec succès !",
+    "updateError": "Échec de la mise à jour de l'organisation. Veuillez réessayer.",
+    "deleteSuccess": "Organisation supprimée avec succès !",
+    "deleteError": "Échec de la suppression de l'organisation. Veuillez réessayer.",
+    "loadError": "Échec du chargement de l'organisation",
+    "settingsPage": {
+      "title": "Paramètres des organisations",
+      "subtitle": "Gérez toutes vos organisations en un seul endroit. Modifiez, supprimez ou créez de nouvelles organisations."
+    },
     "modals": {
       "createOrganization": "Créer une organisation",
       "organizationName": "Nom de l'organisation",
@@ -218,6 +241,19 @@
       "deleteWarningLabel": "Avertissement :",
       "deleteWarningText": "Cette action est permanente et irréversible."
     }
+  },
+  "onboarding": {
+    "title": "Bienvenue sur Pages !",
+    "description": "Commençons par créer votre première organisation. Les organisations vous aident à organiser vos projets, espaces et membres de l'équipe.",
+    "step": {
+      "title": "Créer votre organisation",
+      "description": "Configurez votre espace de travail et commencez à organiser vos projets et documents."
+    },
+    "createButton": "Créer une organisation"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "subtitle": "Bon retour ! Voici un aperçu de votre espace de travail."
   },
   "projects": {
     "title": "Projets",
@@ -304,7 +340,19 @@
       "deleteConfirmPlaceholder": "Saisir le nom de l'espace",
       "deleteConfirmHelper": "Tapez le nom de l'espace pour confirmer la suppression",
       "deleteSuccess": "Espace supprimé avec succès !",
-      "deleteError": "Échec de la suppression de l'espace. Veuillez réessayer."
+      "deleteError": "Échec de la suppression de l'espace. Veuillez réessayer.",
+      "createFolder": "Créer un dossier",
+      "folderName": "Nom du dossier",
+      "folderNamePlaceholder": "Entrez le nom du dossier",
+      "folderNameHelper": "Choisissez un nom pour votre dossier",
+      "space": "Espace",
+      "spacePlaceholder": "Sélectionnez un espace",
+      "spaceRequired": "L'espace est requis",
+      "parentFolder": "Dossier parent (optionnel)",
+      "parentFolderPlaceholder": "Aucun (dossier racine)",
+      "parentFolderHelper": "Sélectionnez un dossier parent pour créer un dossier imbriqué",
+      "createFolderSuccess": "Dossier créé avec succès !",
+      "createFolderError": "Échec de la création du dossier. Veuillez réessayer."
     }
   },
   "issueDetail": {
@@ -358,6 +406,7 @@
     "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
     "nameRequired": "Le nom est requis",
     "nameMinLength": "Le nom doit contenir au moins 2 caractères",
+    "forgotPasswordLink": "Mot de passe oublié ?",
     "forgotPassword": {
       "title": "Mot de passe oublié ?",
       "subtitle": "Saisissez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
@@ -437,6 +486,8 @@
     "ariaLabel": "Menu utilisateur",
     "profile": "Profil",
     "settings": "Paramètres",
+    "theme": "Thème",
+    "density": "Densité",
     "logout": "Déconnexion"
   },
   "profile": {
@@ -1013,6 +1064,21 @@
           }
         }
       }
+    }
+  },
+  "workspace": {
+    "modals": {
+      "createFolder": "Créer un dossier",
+      "folderName": "Nom du dossier",
+      "folderNamePlaceholder": "Entrez le nom du dossier",
+      "folderNameHelper": "Choisissez un nom pour votre dossier",
+      "parentFolder": "Dossier parent (optionnel)",
+      "parentFolderPlaceholder": "Aucun (dossier racine)",
+      "parentFolderHelper": "Sélectionnez un dossier parent pour organiser vos dossiers hiérarchiquement",
+      "nameRequired": "Le nom du dossier est requis",
+      "nameMinLength": "Le nom du dossier doit contenir au moins 3 caractères",
+      "createFolderSuccess": "Dossier créé avec succès !",
+      "createFolderError": "Échec de la création du dossier. Veuillez réessayer."
     }
   }
 }

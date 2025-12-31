@@ -37,7 +37,7 @@ export type SpinnerColor = 'default' | 'primary' | 'secondary' | 'white';
 
       .spinner-content_backdrop {
         @apply absolute inset-0;
-        @apply bg-bg-overlay;
+        @apply bg-background/80;
         backdrop-filter: blur(2px);
       }
 
@@ -49,7 +49,7 @@ export type SpinnerColor = 'default' | 'primary' | 'secondary' | 'white';
 
       .spinner-content_message {
         @apply text-sm font-medium;
-        @apply text-text-primary;
+        @apply text-foreground;
         margin: 0;
       }
     `,
@@ -77,10 +77,10 @@ export class SpinnerContent {
   readonly iconColor = computed<IconColor | undefined>(() => {
     const color = this.color();
     const colorMap: Record<SpinnerColor, IconColor> = {
-      default: 'text-primary',
+      default: 'foreground',
       primary: 'primary-500',
       secondary: 'secondary-500',
-      white: 'text-inverse',
+      white: 'primary-foreground',
     };
     return colorMap[color] || colorMap.default;
   });

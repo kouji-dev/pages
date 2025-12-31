@@ -1,6 +1,7 @@
 """Database seed script for development data."""
 
 import asyncio
+import random
 import sys
 from pathlib import Path
 from uuid import uuid4
@@ -12,6 +13,8 @@ from src.domain.value_objects import Password
 from src.infrastructure.config import get_settings
 from src.infrastructure.database import get_session_context, init_db
 from src.infrastructure.database.models import (
+    FavoriteModel,
+    FolderModel,
     IssueModel,
     OrganizationMemberModel,
     OrganizationModel,
@@ -110,17 +113,111 @@ async def seed_database() -> None:
         session.add_all(org_members)
         await session.flush()
 
-        # Create Project
-        print("📁 Creating project...")
-        project = ProjectModel(
+        # Create Folder Structure
+        print("📂 Creating folder structure...")
+        # Root level folders
+        engineering_folder = FolderModel(
             id=uuid4(),
             organization_id=org.id,
-            name="Pages MVP",
-            key="PAGES",
-            description="Main Pages development project",
+            name="Engineering",
+            parent_id=None,
+            position=0,
         )
-        session.add(project)
+        product_folder = FolderModel(
+            id=uuid4(),
+            organization_id=org.id,
+            name="Product",
+            parent_id=None,
+            position=1,
+        )
+        marketing_folder = FolderModel(
+            id=uuid4(),
+            organization_id=org.id,
+            name="Marketing",
+            parent_id=None,
+            position=2,
+        )
+        session.add_all([engineering_folder, product_folder, marketing_folder])
         await session.flush()
+
+        # Subfolders
+        frontend_folder = FolderModel(
+            id=uuid4(),
+            organization_id=org.id,
+            name="Frontend",
+            parent_id=engineering_folder.id,
+            position=0,
+        )
+        backend_folder = FolderModel(
+            id=uuid4(),
+            organization_id=org.id,
+            name="Backend",
+            parent_id=engineering_folder.id,
+            position=1,
+        )
+        docs_folder = FolderModel(
+            id=uuid4(),
+            organization_id=org.id,
+            name="Documentation",
+            parent_id=product_folder.id,
+            position=0,
+        )
+        session.add_all([frontend_folder, backend_folder, docs_folder])
+        await session.flush()
+
+        folders = [engineering_folder, product_folder, marketing_folder, frontend_folder, backend_folder, docs_folder]
+        folder_ids = [None] + [f.id for f in folders]  # Include None for root
+
+        # Create Projects
+        print("📁 Creating projects...")
+        project_colors = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"]
+        project_statuses = ["in-progress", "in-progress", "in-progress", "complete", "on-hold"]
+        projects = [
+            ProjectModel(
+                id=uuid4(),
+                organization_id=org.id,
+                folder_id=random.choice(folder_ids),
+                name="Pages MVP",
+                key="PAGES",
+                description="Main Pages development project",
+                color=random.choice(project_colors),
+                status=random.choice(project_statuses),
+            ),
+            ProjectModel(
+                id=uuid4(),
+                organization_id=org.id,
+                folder_id=random.choice(folder_ids),
+                name="Mobile App",
+                key="MOBILE",
+                description="Mobile application development",
+                color=random.choice(project_colors),
+                status=random.choice(project_statuses),
+            ),
+            ProjectModel(
+                id=uuid4(),
+                organization_id=org.id,
+                folder_id=random.choice(folder_ids),
+                name="API Gateway",
+                key="API",
+                description="API gateway and microservices",
+                color=random.choice(project_colors),
+                status=random.choice(project_statuses),
+            ),
+            ProjectModel(
+                id=uuid4(),
+                organization_id=org.id,
+                folder_id=random.choice(folder_ids),
+                name="Design System",
+                key="DESIGN",
+                description="UI/UX design system and components",
+                color=random.choice(project_colors),
+                status=random.choice(project_statuses),
+            ),
+        ]
+        session.add_all(projects)
+        await session.flush()
+
+        project = projects[0]  # Keep reference to first project for issues
 
         # Add members to project
         print("👥 Adding project members...")
@@ -204,17 +301,64 @@ async def seed_database() -> None:
         session.add_all(issues)
         await session.flush()
 
-        # Create Space
-        print("📚 Creating documentation space...")
-        space = SpaceModel(
-            id=uuid4(),
-            organization_id=org.id,
-            name="Documentation",
-            key="DOC",
-            description="Project documentation and knowledge base",
-        )
-        session.add(space)
+        # Create Spaces
+        print("📚 Creating spaces...")
+        space_icons = ["book", "book-open", "file-text", "folder", "file", "folder-tree", "library"]
+        space_statuses = ["published", "published", "published", "in-review", "draft"]
+        spaces = [
+            SpaceModel(
+                id=uuid4(),
+                organization_id=org.id,
+                folder_id=random.choice(folder_ids),
+                name="Documentation",
+                key="DOC",
+                description="Project documentation and knowledge base",
+                icon=random.choice(space_icons),
+                status=random.choice(space_statuses),
+                view_count=random.randint(0, 500),
+                created_by=admin_user.id,
+            ),
+            SpaceModel(
+                id=uuid4(),
+                organization_id=org.id,
+                folder_id=random.choice(folder_ids),
+                name="Engineering Wiki",
+                key="ENG",
+                description="Engineering team knowledge base",
+                icon=random.choice(space_icons),
+                status=random.choice(space_statuses),
+                view_count=random.randint(0, 500),
+                created_by=dev_user.id,
+            ),
+            SpaceModel(
+                id=uuid4(),
+                organization_id=org.id,
+                folder_id=random.choice(folder_ids),
+                name="Product Specs",
+                key="PROD",
+                description="Product specifications and requirements",
+                icon=random.choice(space_icons),
+                status=random.choice(space_statuses),
+                view_count=random.randint(0, 500),
+                created_by=admin_user.id,
+            ),
+            SpaceModel(
+                id=uuid4(),
+                organization_id=org.id,
+                folder_id=random.choice(folder_ids),
+                name="Marketing Content",
+                key="MKT",
+                description="Marketing content and resources",
+                icon=random.choice(space_icons),
+                status=random.choice(space_statuses),
+                view_count=random.randint(0, 500),
+                created_by=test_user.id,
+            ),
+        ]
+        session.add_all(spaces)
         await session.flush()
+
+        space = spaces[0]  # Keep reference to first space for pages
 
         # Create Pages
         print("📄 Creating sample pages...")
@@ -262,19 +406,64 @@ async def seed_database() -> None:
             ),
         ]
         session.add_all(pages)
+        await session.flush()
+
+        # Create Favorites (randomly for some projects and spaces)
+        print("⭐ Creating favorites...")
+        users = [admin_user, dev_user, test_user]
+        favorites = []
+
+        # Randomly favorite some projects
+        for project in projects:
+            if random.random() < 0.5:  # 50% chance
+                user = random.choice(users)
+                favorites.append(
+                    FavoriteModel(
+                        id=uuid4(),
+                        user_id=user.id,
+                        entity_type="project",
+                        entity_id=project.id,
+                    )
+                )
+
+        # Randomly favorite some spaces
+        for space in spaces:
+            if random.random() < 0.5:  # 50% chance
+                user = random.choice(users)
+                favorites.append(
+                    FavoriteModel(
+                        id=uuid4(),
+                        user_id=user.id,
+                        entity_type="space",
+                        entity_id=space.id,
+                    )
+                )
+
+        if favorites:
+            session.add_all(favorites)
+            await session.flush()
 
         print("✅ Database seed completed successfully!")
         print("\n📋 Created:")
-        print("   - 3 users (password: TestPass123!)")
-        print("   - 1 organization (pages-dev)")
-        print("   - 1 project (PAGES)")
-        print("   - 5 issues")
-        print("   - 1 space (DOC)")
-        print("   - 4 pages")
+        print(f"   - 3 users (password: TestPass123!)")
+        print(f"   - 1 organization (pages-dev)")
+        print(f"   - {len(folders)} folders (with hierarchical structure)")
+        print(f"   - {len(projects)} projects")
+        print(f"   - 5 issues")
+        print(f"   - {len(spaces)} spaces")
+        print(f"   - 4 pages")
+        print(f"   - {len(favorites)} favorites")
         print("\n🔑 Test accounts:")
         print("   - admin@pages.dev (admin)")
         print("   - dev@pages.dev (developer)")
         print("   - test@pages.dev (viewer)")
+        print("\n📂 Folder structure:")
+        print("   - Engineering")
+        print("     - Frontend")
+        print("     - Backend")
+        print("   - Product")
+        print("     - Documentation")
+        print("   - Marketing")
 
 
 async def main() -> None:

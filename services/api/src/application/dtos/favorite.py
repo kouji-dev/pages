@@ -15,7 +15,7 @@ class FavoriteResponse(BaseModel):
 
     id: UUID
     user_id: UUID
-    entity_type: str = Field(..., description="Type of entity: project, space, or page")
+    entity_type: str = Field(..., description="Type of entity: project or space")
     entity_id: UUID = Field(..., description="ID of the favorited entity")
     created_at: datetime
     updated_at: datetime
@@ -27,16 +27,19 @@ class FavoriteResponse(BaseModel):
 
 
 class FavoriteListItemResponse(BaseModel):
-    """Response DTO for favorite in list view."""
+    """Response DTO for favorite in list view.
+
+    Favorites are only allowed for projects and spaces (not folders or pages).
+    """
 
     id: UUID = Field(..., description="Favorite ID")
     user_id: UUID
-    entity_type: str = Field(..., description="Type of entity: project, space, or page")
+    entity_type: str = Field(..., description="Type of entity: project or space")
     entity_id: UUID = Field(..., description="ID of the favorited entity")
     created_at: datetime
     updated_at: datetime
-    node: NodeListItemResponse | None = Field(
-        None, description="Node data (for project and space types only)"
+    node: NodeListItemResponse = Field(
+        ..., description="Node data (always present for project and space favorites)"
     )
 
     class Config:
@@ -53,10 +56,13 @@ class FavoriteListResponse(BaseModel):
 
 
 class CreateFavoriteRequest(BaseModel):
-    """Request DTO for creating a favorite."""
+    """Request DTO for creating a favorite.
 
-    entity_type: Literal["project", "space", "page"] = Field(
-        ..., description="Type of entity to favorite"
+    Favorites are only allowed for projects and spaces (not folders or pages).
+    """
+
+    entity_type: Literal["project", "space"] = Field(
+        ..., description="Type of entity to favorite (project or space only)"
     )
     entity_id: UUID = Field(..., description="ID of the entity to favorite")
 
@@ -66,4 +72,8 @@ class CreateFavoriteRequest(BaseModel):
         """Validate entity type using EntityType value object."""
         # This will raise ValidationException if invalid
         EntityType.from_string(v)
-        return v.lower().strip()
+        v_lower = v.lower().strip()
+        # Ensure only project or space are allowed
+        if v_lower not in ("project", "space"):
+            raise ValueError("Favorites can only be created for projects or spaces")
+        return v_lower

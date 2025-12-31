@@ -75,12 +75,12 @@ describe('Button', () => {
     expect(button?.classList.contains('button--secondary')).toBe(true);
   });
 
-  it('should apply danger variant class', () => {
-    fixture.componentRef.setInput('variant', 'danger');
+  it('should apply destructive variant class', () => {
+    fixture.componentRef.setInput('variant', 'destructive');
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     const button = compiled.querySelector('button');
-    expect(button?.classList.contains('button--danger')).toBe(true);
+    expect(button?.classList.contains('button--destructive')).toBe(true);
   });
 
   it('should apply ghost variant class', () => {

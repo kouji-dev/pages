@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Page Editor - Project Delta</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4b2bee",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#131022",
+                        "surface-dark": "#1c192e", 
+                        "border-dark": "#292348",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #292348; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3c3563; 
+        }
+        .editor-block:hover .block-handle {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display min-h-screen flex overflow-hidden">
+<aside class="w-64 flex-shrink-0 bg-gray-50 dark:bg-[#151226] border-r border-gray-200 dark:border-border-dark hidden md:flex flex-col z-30">
+<div class="h-14 flex items-center px-4 shrink-0">
+<div class="flex items-center gap-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-white/5 p-1 -ml-1 pr-2 rounded transition-colors w-full">
+<div class="size-6 bg-primary rounded-md flex items-center justify-center text-white text-xs font-bold shadow-sm">PD</div>
+<span class="font-semibold text-sm text-slate-700 dark:text-slate-200 flex-1 truncate">Project Delta</span>
+<span class="material-symbols-outlined text-[16px] text-slate-400">unfold_more</span>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto px-2 py-2 space-y-0.5 scrollbar-thin">
+<a class="flex items-center gap-2.5 px-3 py-1.5 text-sm font-medium text-slate-600 dark:text-slate-300 rounded-md hover:bg-gray-200 dark:hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px] text-slate-500 dark:text-slate-400 group-hover:text-primary transition-colors">inbox</span>
+                Inbox
+                <span class="ml-auto text-xs font-semibold bg-gray-200 dark:bg-white/10 text-slate-600 dark:text-slate-400 px-1.5 py-0.5 rounded-full">3</span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-1.5 text-sm font-medium text-slate-600 dark:text-slate-300 rounded-md hover:bg-gray-200 dark:hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px] text-slate-500 dark:text-slate-400 group-hover:text-primary transition-colors">check_circle</span>
+                My Tasks
+            </a>
+<div class="pt-4 pb-2 px-3 flex items-center justify-between group">
+<span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Workspaces</span>
+<button class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-opacity">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+</div>
+<div class="space-y-0.5">
+<div>
+<button class="w-full flex items-center gap-1 px-2 py-1 text-sm font-medium text-slate-700 dark:text-slate-200 rounded-md hover:bg-gray-200 dark:hover:bg-white/5 transition-colors group text-left">
+<span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300">expand_more</span>
+<span class="material-symbols-outlined text-[18px] text-blue-500/80 mr-1">folder</span>
+<span class="truncate">Engineering</span>
+</button>
+<div class="pl-4 space-y-0.5 mt-0.5">
+<div>
+<button class="w-full flex items-center gap-1 px-2 py-1 text-sm text-slate-600 dark:text-slate-300 rounded-md hover:bg-gray-200 dark:hover:bg-white/5 transition-colors group text-left">
+<span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300">expand_more</span>
+<span class="material-symbols-outlined text-[18px] text-slate-400 mr-1">folder_open</span>
+<span class="truncate">Backend</span>
+</button>
+<div class="pl-6 space-y-0.5 mt-0.5">
+<a class="flex items-center gap-2 px-2 py-1 text-sm font-medium text-primary bg-primary/10 rounded-md" href="#">
+<span class="material-symbols-outlined text-[18px]">article</span>
+<span class="truncate">API Documentation</span>
+</a>
+<a class="flex items-center gap-2 px-2 py-1 text-sm text-slate-600 dark:text-slate-400 rounded-md hover:bg-gray-200 dark:hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">article</span>
+<span class="truncate">Database Schema</span>
+</a>
+</div>
+</div>
+<button class="w-full flex items-center gap-1 px-2 py-1 text-sm text-slate-600 dark:text-slate-300 rounded-md hover:bg-gray-200 dark:hover:bg-white/5 transition-colors group text-left">
+<span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300">chevron_right</span>
+<span class="material-symbols-outlined text-[18px] text-slate-400 mr-1">folder</span>
+<span class="truncate">Frontend</span>
+</button>
+</div>
+</div>
+<button class="w-full flex items-center gap-1 px-2 py-1 text-sm font-medium text-slate-600 dark:text-slate-300 rounded-md hover:bg-gray-200 dark:hover:bg-white/5 transition-colors group text-left">
+<span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300">chevron_right</span>
+<span class="material-symbols-outlined text-[18px] text-purple-500/80 mr-1">folder</span>
+<span class="truncate">Design</span>
+</button>
+<button class="w-full flex items-center gap-1 px-2 py-1 text-sm font-medium text-slate-600 dark:text-slate-300 rounded-md hover:bg-gray-200 dark:hover:bg-white/5 transition-colors group text-left">
+<span class="material-symbols-outlined text-[18px] text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300">chevron_right</span>
+<span class="material-symbols-outlined text-[18px] text-pink-500/80 mr-1">folder</span>
+<span class="truncate">Marketing</span>
+</button>
+</div>
+</nav>
+<div class="p-3 border-t border-gray-200 dark:border-border-dark bg-gray-50 dark:bg-[#151226]">
+<div class="flex items-center gap-3 group">
+<button class="flex items-center gap-3 flex-1 min-w-0 text-left hover:bg-gray-200 dark:hover:bg-white/5 rounded-lg p-1.5 -ml-1.5 transition-colors">
+<div class="size-8 rounded-full bg-cover bg-center shrink-0 border border-gray-200 dark:border-white/10" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBN0jZekQiH4sBceVfq3gzKdmBW2QaD9r9H0uJ2D2n9BqoG8hInyLKrr5MbnAJw_8bO_FvjfVF_mtLsqqlz6uLYq5Tnp5TpotcAl-vPrRuJlT1dXl4xCSx37sUINPsu5F9o6oUo7HUNqorPb8knnr2IUbOQR_xYWd39UbQpN8mhVwctZhmPt8ZIakLKaSx4OY1fxknDwwxkAO50cLBkRFCVXplm5h21lx1cCXKgg3azcL-M-0HsBwbQkQv5oU6arrfiy7ZkXu8pk54");'></div>
+<div class="flex flex-col min-w-0">
+<span class="text-sm font-medium text-slate-700 dark:text-slate-200 truncate">Alex M.</span>
+<span class="text-[10px] text-slate-500 dark:text-slate-400 truncate">alex@projectdelta.com</span>
+</div>
+</button>
+<div class="flex items-center gap-0.5">
+<button class="p-1.5 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-gray-200 dark:hover:bg-white/5 transition-colors" title="Toggle Dark Mode">
+<span class="material-symbols-outlined text-[18px]">dark_mode</span>
+</button>
+<button class="p-1.5 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-gray-200 dark:hover:bg-white/5 transition-colors" title="Settings">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+</button>
+</div>
+</div>
+</div>
+</aside>
+<div class="flex-1 flex flex-col min-w-0 bg-white dark:bg-background-dark">
+<header class="h-14 border-b border-gray-200 dark:border-border-dark flex items-center justify-between px-4 bg-white dark:bg-background-dark shrink-0 z-20 gap-4">
+<div class="flex items-center gap-4 min-w-0 shrink-0">
+<button class="md:hidden text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
+<nav class="flex items-center gap-1.5 overflow-hidden whitespace-nowrap text-sm">
+<div class="flex items-center gap-1 text-slate-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-white/5 px-1.5 py-1 rounded cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-[18px]">folder</span>
+<span class="hidden sm:inline">Engineering</span>
+</div>
+<span class="text-slate-300 dark:text-slate-600 text-[10px]">/</span>
+<div class="flex items-center gap-1 text-slate-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-white/5 px-1.5 py-1 rounded cursor-pointer transition-colors">
+<span>Backend</span>
+</div>
+<span class="text-slate-300 dark:text-slate-600 text-[10px]">/</span>
+<div class="flex items-center gap-1 text-slate-900 dark:text-slate-200 font-medium px-1.5 py-1">
+<span class="material-symbols-outlined text-[18px]">description</span>
+<span>API Documentation</span>
+</div>
+</nav>
+<span class="hidden lg:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border border-yellow-500/20">
+                    Draft
+                </span>
+</div>
+<div class="hidden md:block flex-1 max-w-lg mx-auto">
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 group-focus-within:text-primary transition-colors text-[20px]">search</span>
+</div>
+<input class="block w-full pl-10 pr-12 py-1.5 border border-transparent focus:border-primary/30 rounded-lg bg-gray-100 dark:bg-white/5 text-sm text-slate-900 dark:text-slate-200 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-surface-dark transition-all shadow-sm" placeholder="Search" type="text"/>
+<div class="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
+<kbd class="hidden lg:inline-flex h-5 items-center gap-1 rounded border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 px-1.5 font-sans text-[10px] font-medium text-slate-500 dark:text-slate-400">
+<span class="text-xs">⌘</span>K
+                        </kbd>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<div class="flex items-center -space-x-2 mr-2">
+<div class="bg-center bg-no-repeat bg-cover border-2 border-white dark:border-background-dark rounded-full size-7 ring-2 ring-transparent hover:ring-primary/20 transition-all cursor-pointer relative z-10" data-alt="User Avatar 1" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDxylbo6Jp52Xzp0cmH3pxpj6LPwrYbfq_aPXh7gatAmOdwYz7VZleDTY4syz_ZvIMU2KG_LIed7AuG3aY4mzp0L19CO8Lf0b_ucS7v7TqR9oc2AgWIdacKtx-gab65fTkP5zzR9qT_iXGgfG5Q7DlGfus0TVvG__mEbEa45axY-m7M7uw-Mi761l8S8isK7V4Oi1iEbclkJcIrGW0aC3R9YQCvpmKxwZ67N6qCebLIXvBzWw3IW-o3Se9QU3oGzdQPM5ENCBzTwdU");'></div>
+<div class="bg-center bg-no-repeat bg-cover border-2 border-white dark:border-background-dark rounded-full size-7 ring-2 ring-transparent hover:ring-primary/20 transition-all cursor-pointer relative z-0" data-alt="User Avatar 2" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBYkQhBW6kXrb_ISBTKCTEGdPnXApbLz6ZPatGBQegqjTerpwbXOb7LzzAhYZkQ0NXdzOBDozwZVcaW8Z5sdLzABZSwQAQxUmKBPsvD_n3XEVWeJMDJCz-jdZyKCeWhjXPpFigNhEoxw5GXhjf7fauOtpCPXGRbLUBgJjowndu5dtOyrnYbgOQDZ82YOy2Kps-bgVWE812S6ZZlfwMMFNIJYby7ozo7znGC6nLOBC-rQWxuUu7BWrUrMqhcnpiz0DTifoKfqB59L1A");'></div>
+<div class="flex items-center justify-center bg-gray-100 dark:bg-surface-dark border-2 border-white dark:border-background-dark rounded-full size-7 text-[10px] font-bold text-slate-500 dark:text-slate-400 relative z-0">
+                        +3
+                     </div>
+</div>
+<div class="h-4 w-[1px] bg-gray-300 dark:bg-border-dark mx-1"></div>
+<button class="flex items-center justify-center size-8 rounded hover:bg-gray-100 dark:hover:bg-white/5 text-slate-500 dark:text-slate-400 transition-colors" title="Settings">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+</button>
+<button class="bg-primary hover:bg-primary/90 text-white text-sm font-medium h-8 pl-3 pr-4 rounded-lg shadow-sm transition-all hover:shadow-md flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>New</span>
+</button>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden relative">
+<main class="flex-1 overflow-y-auto relative scroll-smooth bg-white dark:bg-background-dark">
+<div class="max-w-[900px] mx-auto px-12 py-16 min-h-full">
+<div class="group relative mb-8 hidden">
+<button class="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 mb-2 transition-colors">
+<span class="material-symbols-outlined text-[16px]">add_photo_alternate</span>
+                            Add cover
+                        </button>
+</div>
+<div class="mb-8 group/title relative">
+<div class="absolute -left-12 top-2 opacity-0 group-hover/title:opacity-100 transition-opacity p-1 text-slate-400 cursor-grab">
+<span class="material-symbols-outlined text-[20px]">drag_indicator</span>
+</div>
+<h1 class="text-4xl font-bold text-slate-900 dark:text-white leading-tight outline-none placeholder:text-slate-300 dark:placeholder:text-slate-700" contenteditable="true">Project Delta Roadmap</h1>
+</div>
+<div class="space-y-1">
+<div class="editor-block group relative flex items-start -ml-12 pl-12 py-1">
+<div class="block-handle absolute left-0 top-1.5 opacity-0 transition-opacity duration-200 flex items-center gap-1 pr-2 cursor-grab">
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded hover:bg-gray-100 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded hover:bg-gray-100 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-[18px]">drag_indicator</span>
+</button>
+</div>
+<div class="w-full text-lg text-slate-600 dark:text-slate-300 leading-relaxed outline-none" contenteditable="true">
+                                The primary goal of Project Delta is to modernize our legacy backend infrastructure. By migrating to microservices, we aim to reduce deployment times by 40% and improve system resilience.
+                            </div>
+</div>
+<div class="editor-block group relative flex items-start -ml-12 pl-12 py-2">
+<div class="block-handle absolute left-0 top-1/2 -translate-y-1/2 opacity-0 transition-opacity duration-200 flex items-center gap-1 pr-2 cursor-grab">
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded hover:bg-gray-100 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-[18px]">drag_indicator</span>
+</button>
+</div>
+<div class="w-full select-none cursor-pointer border border-gray-200 dark:border-border-dark bg-gray-50 dark:bg-surface-dark hover:bg-gray-100 dark:hover:bg-[#232036] rounded-lg p-3 flex items-center gap-3 transition-colors group/card">
+<div class="bg-blue-500/10 text-blue-600 dark:text-blue-400 p-1.5 rounded">
+<span class="material-symbols-outlined text-[20px]">check_box</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-0.5">
+<span class="text-xs font-mono text-slate-500 uppercase">PROJ-124</span>
+<span class="text-sm font-medium text-slate-900 dark:text-white truncate">Migrate User Auth Service to OAuth 2.0</span>
+</div>
+<div class="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+<span class="flex items-center gap-1 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 px-1.5 py-0.5 rounded">
+<span class="size-1.5 rounded-full bg-yellow-500 animate-pulse"></span> In Progress
+                                        </span>
+<span>Assigned to <span class="text-slate-700 dark:text-slate-300 font-medium">Sarah K.</span></span>
+</div>
+</div>
+<div class="opacity-0 group-hover/card:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-slate-400 text-[20px]">open_in_new</span>
+</div>
+</div>
+</div>
+<div class="editor-block group relative flex items-start -ml-12 pl-12 py-4 pt-6">
+<div class="block-handle absolute left-0 top-7 opacity-0 transition-opacity duration-200 flex items-center gap-1 pr-2 cursor-grab">
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded hover:bg-gray-100 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-[18px]">drag_indicator</span>
+</button>
+</div>
+<h2 class="text-2xl font-bold text-slate-800 dark:text-slate-100 w-full outline-none" contenteditable="true">Key Milestones</h2>
+</div>
+<div class="editor-block group relative flex items-start -ml-12 pl-12 py-1">
+<div class="block-handle absolute left-0 top-1.5 opacity-0 transition-opacity duration-200 flex items-center gap-1 pr-2 cursor-grab">
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded hover:bg-gray-100 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-[18px]">drag_indicator</span>
+</button>
+</div>
+<div class="flex gap-3 w-full">
+<span class="text-slate-400 dark:text-slate-500 mt-1.5">•</span>
+<div class="flex-1 text-base text-slate-600 dark:text-slate-300 leading-relaxed outline-none" contenteditable="true">
+<strong class="text-slate-900 dark:text-white font-semibold">Q3 2024:</strong> Complete database schema migration for the core inventory service. This is a dependency for the frontend team.
+                                </div>
+</div>
+</div>
+<div class="editor-block group relative flex items-start -ml-12 pl-12 py-1">
+<div class="block-handle absolute left-0 top-1.5 opacity-0 transition-opacity duration-200 flex items-center gap-1 pr-2 cursor-grab">
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded hover:bg-gray-100 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-[18px]">drag_indicator</span>
+</button>
+</div>
+<div class="flex gap-3 w-full">
+<span class="text-slate-400 dark:text-slate-500 mt-1.5">•</span>
+<div class="flex-1 text-base text-slate-600 dark:text-slate-300 leading-relaxed outline-none" contenteditable="true">
+<strong class="text-slate-900 dark:text-white font-semibold">Q4 2024:</strong> Begin parallel runs of old vs new API endpoints to ensure data consistency.
+                                </div>
+</div>
+</div>
+<div class="editor-block group relative flex items-start -ml-12 pl-12 py-4">
+<div class="block-handle absolute left-0 top-6 opacity-0 transition-opacity duration-200 flex items-center gap-1 pr-2 cursor-grab">
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded hover:bg-gray-100 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-[18px]">drag_indicator</span>
+</button>
+</div>
+<div class="w-full bg-slate-900 dark:bg-[#0c0a16] border border-gray-800 dark:border-border-dark rounded-lg p-4 font-mono text-sm relative group/code">
+<div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover/code:opacity-100 transition-opacity">
+<button class="text-slate-400 hover:text-white text-xs px-2 py-1 rounded bg-white/10">Copy</button>
+<span class="text-slate-500 text-xs py-1 px-2">TypeScript</span>
+</div>
+<div class="text-slate-300 overflow-x-auto">
+<span class="text-purple-400">interface</span> <span class="text-yellow-200">UserConfig</span> {
+                                    <span class="text-blue-300">id</span>: <span class="text-red-300">string</span>;
+                                    <span class="text-blue-300">role</span>: <span class="text-green-300">'admin'</span> | <span class="text-green-300">'editor'</span> | <span class="text-green-300">'viewer'</span>;
+                                    <span class="text-blue-300">preferences</span>: Record&lt;<span class="text-red-300">string</span>, <span class="text-red-300">boolean</span>&gt;;
+                                    }
+                                </div>
+</div>
+</div>
+<div class="editor-block group relative flex items-start -ml-12 pl-12 py-2">
+<div class="block-handle absolute left-0 top-1.5 opacity-0 transition-opacity duration-200 flex items-center gap-1 pr-2 cursor-grab">
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded hover:bg-gray-100 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-[18px]">drag_indicator</span>
+</button>
+</div>
+<div class="w-full flex gap-3 p-4 rounded-lg bg-primary/5 border border-primary/10 dark:bg-primary/10 dark:border-primary/20">
+<span class="material-symbols-outlined text-primary text-[24px]">info</span>
+<div class="text-slate-700 dark:text-slate-200 leading-relaxed">
+                                    Please ensure all new endpoints follow the <span class="bg-yellow-200/40 dark:bg-yellow-500/20 text-slate-900 dark:text-white border-b-2 border-yellow-400 cursor-pointer">OpenAPI 3.1 specification</span> strictly. Deviations will cause build failures in the CI pipeline.
+                                </div>
+</div>
+<div class="absolute -right-[280px] top-2 w-[260px] hidden xl:block">
+<div class="bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark rounded-lg shadow-lg p-3 relative before:content-[''] before:absolute before:top-6 before:-left-1.5 before:w-3 before:h-3 before:bg-white dark:before:bg-surface-dark before:border-l before:border-b before:border-gray-200 dark:before:border-border-dark before:rotate-45">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-cover bg-center" data-alt="Commenter Avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuArTqBMxE4TsOaMbqMTK1Gn-_WwTC5f12nm2EVhMP42fRRBn4HINgzNRstZZ_jDCithsucGOUcEqPfW3w_NNixs7opVUbzvnLk58Nt-g1SJseXlKOTbXc6eDKpaUtsC5DIE4wI0xx4wdkxO7n__Jl5CMMYNDoiSECAMSOq9YKLMb9D9WL9LGwXJI7p_1nLN7mipl0AWj_vj1julGldDOjgIfbKMCeVtm8ywBkckBCdNfYeYaTP2VLaFGo00nlTJVo5Ijr8n6y-TO9o");'></div>
+<span class="text-xs font-bold text-slate-900 dark:text-white">Mike R.</span>
+</div>
+<span class="text-[10px] text-slate-400">10m ago</span>
+</div>
+<p class="text-sm text-slate-600 dark:text-slate-300 mb-2">Are we still supporting 3.0 for legacy clients?</p>
+<div class="flex gap-2">
+<button class="text-xs text-slate-500 hover:text-primary font-medium">Reply</button>
+<button class="text-xs text-slate-500 hover:text-primary font-medium">Resolve</button>
+</div>
+</div>
+</div>
+</div>
+<div class="editor-block group relative flex items-start -ml-12 pl-12 py-1">
+<div class="block-handle absolute left-0 top-1.5 opacity-0 transition-opacity duration-200 flex items-center gap-1 pr-2 cursor-grab">
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded hover:bg-gray-100 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded hover:bg-gray-100 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-[18px]">drag_indicator</span>
+</button>
+</div>
+<div class="w-full text-lg text-slate-600 dark:text-slate-300 leading-relaxed outline-none" contenteditable="true">
+                                Once the migration is complete, we'll begin the deprecation phase for the monolith.
+                            </div>
+</div>
+<div class="hidden absolute left-12 bottom-0 z-50 w-64 bg-white dark:bg-surface-dark rounded-lg shadow-xl border border-gray-200 dark:border-border-dark overflow-hidden flex-col">
+<div class="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider bg-gray-50 dark:bg-black/20">Basic Blocks</div>
+<button class="flex items-center gap-3 px-3 py-2 hover:bg-primary hover:text-white text-slate-700 dark:text-slate-200 text-sm text-left w-full transition-colors">
+<span class="material-symbols-outlined text-[20px]">format_size</span>
+<div class="flex flex-col">
+<span class="font-medium">Heading 1</span>
+<span class="text-xs opacity-70">Big section heading</span>
+</div>
+</button>
+<button class="flex items-center gap-3 px-3 py-2 bg-primary text-white text-sm text-left w-full transition-colors">
+<span class="material-symbols-outlined text-[20px]">check_box</span>
+<div class="flex flex-col">
+<span class="font-medium">Task List</span>
+<span class="text-xs opacity-70">Track tasks with a to-do list</span>
+</div>
+</button>
+<button class="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 dark:hover:bg-white/5 text-slate-700 dark:text-slate-200 text-sm text-left w-full transition-colors">
+<span class="material-symbols-outlined text-[20px]">dns</span>
+<div class="flex flex-col">
+<span class="font-medium">Jira Issue</span>
+<span class="text-xs opacity-70">Embed a ticket from Jira</span>
+</div>
+</button>
+</div>
+</div>
+</div>
+</main>
+<aside class="w-72 bg-gray-50 dark:bg-[#151226] border-l border-gray-200 dark:border-border-dark hidden lg:flex flex-col shrink-0">
+<div class="h-14 flex items-center justify-between px-4 border-b border-gray-200 dark:border-border-dark shrink-0">
+<span class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Page Details</span>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+<span class="material-symbols-outlined text-[20px]">close_fullscreen</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-6">
+<div class="space-y-4">
+<div class="flex flex-col gap-1">
+<label class="text-xs font-medium text-slate-500 dark:text-slate-400">Owner</label>
+<div class="flex items-center gap-2 p-1.5 hover:bg-gray-200 dark:hover:bg-white/5 rounded cursor-pointer transition-colors -ml-1.5">
+<div class="size-5 rounded-full bg-cover bg-center" data-alt="Owner Avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBN0jZekQiH4sBceVfq3gzKdmBW2QaD9r9H0uJ2D2n9BqoG8hInyLKrr5MbnAJw_8bO_FvjfVF_mtLsqqlz6uLYq5Tnp5TpotcAl-vPrRuJlT1dXl4xCSx37sUINPsu5F9o6oUo7HUNqorPb8knnr2IUbOQR_xYWd39UbQpN8mhVwctZhmPt8ZIakLKaSx4OY1fxknDwwxkAO50cLBkRFCVXplm5h21lx1cCXKgg3azcL-M-0HsBwbQkQv5oU6arrfiy7ZkXu8pk54");'></div>
+<span class="text-sm text-slate-700 dark:text-slate-200">Alex M.</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-xs font-medium text-slate-500 dark:text-slate-400">Created</label>
+<div class="text-sm text-slate-700 dark:text-slate-200 py-1">Oct 24, 2023</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-xs font-medium text-slate-500 dark:text-slate-400">Status</label>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1.5 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 px-2 py-1 rounded text-xs font-medium border border-yellow-500/20">
+<span class="size-1.5 rounded-full bg-yellow-500"></span>
+                                    In Review
+                                </span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-xs font-medium text-slate-500 dark:text-slate-400">Tags</label>
+<div class="flex flex-wrap gap-2 mt-1">
+<span class="bg-gray-200 dark:bg-surface-dark text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded text-xs">#backend</span>
+<span class="bg-gray-200 dark:bg-surface-dark text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded text-xs">#Q3-goals</span>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs flex items-center">
+<span class="material-symbols-outlined text-[16px]">add</span> Add
+                                </button>
+</div>
+</div>
+</div>
+<div class="h-[1px] bg-gray-200 dark:bg-border-dark w-full"></div>
+<div>
+<h3 class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                            Linked Issues <span class="bg-slate-200 dark:bg-surface-dark text-slate-600 dark:text-slate-400 px-1.5 rounded-full text-[10px]">2</span>
+</h3>
+<div class="space-y-2">
+<a class="block p-3 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-surface-dark hover:border-primary/50 transition-colors group" href="#">
+<div class="flex items-center justify-between mb-1">
+<span class="text-[10px] font-mono text-slate-500">PROJ-124</span>
+<span class="material-symbols-outlined text-[14px] text-slate-400 group-hover:text-primary">arrow_outward</span>
+</div>
+<div class="text-xs font-medium text-slate-800 dark:text-slate-200 line-clamp-2">Migrate User Auth Service to OAuth 2.0</div>
+</a>
+<a class="block p-3 rounded-lg border border-gray-200 dark:border-border-dark bg-white dark:bg-surface-dark hover:border-primary/50 transition-colors group" href="#">
+<div class="flex items-center justify-between mb-1">
+<span class="text-[10px] font-mono text-slate-500">PROJ-129</span>
+<span class="material-symbols-outlined text-[14px] text-slate-400 group-hover:text-primary">arrow_outward</span>
+</div>
+<div class="text-xs font-medium text-slate-800 dark:text-slate-200 line-clamp-2">Update API Rate Limiting Logic</div>
+</a>
+</div>
+</div>
+<div class="h-[1px] bg-gray-200 dark:bg-border-dark w-full"></div>
+<div>
+<h3 class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">
+                            On this page
+                        </h3>
+<nav class="flex flex-col gap-1 border-l-2 border-gray-200 dark:border-gray-800 ml-1 pl-3">
+<a class="text-xs text-primary font-medium -ml-[14px] pl-[11px] border-l-2 border-primary py-0.5" href="#">Introduction</a>
+<a class="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 py-0.5" href="#">Key Milestones</a>
+<a class="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 py-0.5 pl-2" href="#">Q3 2024 Targets</a>
+<a class="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 py-0.5 pl-2" href="#">Q4 2024 Rollout</a>
+<a class="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 py-0.5" href="#">Technical Specs</a>
+</nav>
+</div>
+</div>
+</aside>
+</div>
+</div>
+<div class="fixed top-[340px] left-[320px] bg-surface-dark border border-gray-700 shadow-2xl rounded-lg flex items-center p-1 gap-0.5 z-50 animate-bounce-in opacity-0 pointer-events-none" style="opacity: 0;">
+<button class="p-1.5 hover:bg-white/10 rounded text-white"><span class="material-symbols-outlined text-[18px]">format_bold</span></button>
+<button class="p-1.5 hover:bg-white/10 rounded text-white"><span class="material-symbols-outlined text-[18px]">format_italic</span></button>
+<button class="p-1.5 hover:bg-white/10 rounded text-white"><span class="material-symbols-outlined text-[18px]">link</span></button>
+<div class="w-[1px] h-4 bg-gray-600 mx-1"></div>
+<button class="p-1.5 hover:bg-white/10 rounded text-white flex items-center gap-1 text-xs font-medium">
+<span class="material-symbols-outlined text-[18px]">add_comment</span>
+             Comment
+        </button>
+</div>
+</body></html>

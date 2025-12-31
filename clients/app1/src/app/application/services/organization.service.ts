@@ -1,6 +1,8 @@
 import { Injectable, inject, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { httpResource } from '@angular/common/http';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { firstValueFrom, filter } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { NavigationService } from './navigation.service';
 
@@ -124,9 +126,13 @@ export class OrganizationService {
 
   /**
    * Reload organizations from API
+   * Returns a promise that resolves when the organizations are loaded
    */
-  loadOrganizations(): void {
+  async loadOrganizations(): Promise<void> {
     this.organizations.reload();
+
+    // Wait for loading to complete
+    await firstValueFrom(toObservable(this.isLoading).pipe(filter((loading) => !loading)));
   }
 
   /**
@@ -172,7 +178,7 @@ export class OrganizationService {
     }
 
     // Reload organizations to get updated list
-    this.loadOrganizations();
+    await this.loadOrganizations();
 
     // Map response to Organization (snake_case to camelCase)
     return this.mapOrganizationResponseToOrganization(response);
@@ -190,7 +196,7 @@ export class OrganizationService {
     }
 
     // Reload organizations list and current organization to get updated data
-    this.loadOrganizations();
+    await this.loadOrganizations();
     const currentOrgId = this.navigationService.currentOrganizationId();
     if (currentOrgId === id) {
       this.organizationResource.reload();
@@ -207,7 +213,7 @@ export class OrganizationService {
     await this.http.delete(`${this.apiUrl}/${id}`).toPromise();
 
     // Reload organizations to get updated list
-    this.loadOrganizations();
+    await this.loadOrganizations();
 
     // If deleted organization was current, switch to another one
     const currentOrgId = this.navigationService.currentOrganizationId();

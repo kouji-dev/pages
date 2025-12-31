@@ -70,7 +70,7 @@ async def list_favorites(
     current_user: Annotated[User, Depends(get_current_active_user)],
     use_case: Annotated[ListFavoritesUseCase, Depends(get_list_favorites_use_case)],
     entity_type: str | None = Query(
-        None, description="Filter by entity type (project, space, page)"
+        None, description="Filter by entity type (project or space only)"
     ),
     skip: int = Query(0, ge=0, description="Number of records to skip"),
     limit: int = Query(100, ge=1, le=1000, description="Maximum number of records to return"),

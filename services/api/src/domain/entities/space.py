@@ -46,6 +46,10 @@ class Space:
     description: str | None = None
     settings: dict[str, Any] | None = None
     folder_id: UUID | None = None
+    icon: str | None = None  # Lucide icon name
+    status: str = "published"  # draft, in-review, published
+    view_count: int = 0
+    created_by: UUID | None = None  # User ID who created the space
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)
     deleted_at: datetime | None = None
@@ -113,6 +117,10 @@ class Space:
             description=description,
             settings=settings,
             folder_id=folder_id,
+            icon=None,
+            status="published",
+            view_count=0,
+            created_by=None,
             created_at=now,
             updated_at=now,
             deleted_at=None,
