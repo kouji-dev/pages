@@ -4,6 +4,7 @@ import { httpResource } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { NavigationService } from './navigation.service';
+import { SprintService } from './sprint.service';
 
 export interface IssueUser {
   id: string;
@@ -99,22 +100,30 @@ export class IssueService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/issues`;
   private readonly navigationService = inject(NavigationService);
+  private readonly sprintService = inject(SprintService);
 
   // Note: projectId and issueId are now URL-driven via NavigationService
   // No need for internal signals
 
-  // Issues list resource using httpResource - driven by URL organizationId and projectId
+  // Issues list resource using httpResource - driven by URL organizationId and projectId, and selected sprint
   private readonly issuesResource = httpResource<IssueListResponse>(() => {
     const organizationId = this.navigationService.currentOrganizationId();
     const projectId = this.navigationService.currentProjectId();
     if (!organizationId || !projectId) return undefined;
 
     const filters = this.currentFilters();
+    const currentSprint = this.sprintService.currentSprint();
+
     let params = new HttpParams()
       .set('organization_id', organizationId)
       .set('project_id', projectId)
       .set('page', filters.page?.toString() || '1')
       .set('limit', filters.limit?.toString() || '20');
+
+    // Add sprint_id filter if a sprint is selected
+    if (currentSprint) {
+      params = params.set('sprint_id', currentSprint.id);
+    }
 
     if (filters.search) {
       params = params.set('search', filters.search);

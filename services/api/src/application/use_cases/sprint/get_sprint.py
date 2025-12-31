@@ -45,6 +45,11 @@ class GetSprintUseCase:
         sprint_issues = await self._sprint_repository.get_sprint_issues(sprint_id)
         issue_ids = [issue_id for issue_id, _ in sprint_issues]
 
+        # Get issue counts
+        total_issues, completed_issues = await self._sprint_repository.get_sprint_issue_counts(
+            sprint_id
+        )
+
         sprint_dict = {
             "id": sprint.id,
             "project_id": sprint.project_id,
@@ -54,6 +59,8 @@ class GetSprintUseCase:
             "end_date": sprint.end_date,
             "status": sprint.status,
             "issues": issue_ids,
+            "total_issues": total_issues,
+            "completed_issues": completed_issues,
             "created_at": sprint.created_at,
             "updated_at": sprint.updated_at,
         }

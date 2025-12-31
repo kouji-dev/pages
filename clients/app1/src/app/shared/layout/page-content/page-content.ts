@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, booleanAttribute } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -14,12 +14,25 @@ import { CommonModule } from '@angular/common';
         @apply w-full;
         @apply h-full;
         @apply overflow-y-auto;
+        @apply min-h-0;
+        @apply flex flex-col;
+      }
+
+      :host:not(.page-content--no-padding) {
         @apply py-8;
         @apply px-4 sm:px-6 lg:px-8;
-        @apply min-h-0;
+      }
+
+      :host.page-content--no-padding {
+        @apply p-0;
       }
     `,
   ],
+  host: {
+    '[class.page-content--no-padding]': 'noPadding()',
+  },
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PageContent {}
+export class PageContent {
+  noPadding = input(false, { transform: booleanAttribute });
+}

@@ -105,4 +105,23 @@ class CreateSprintUseCase:
             project_id=str(project_id),
         )
 
-        return SprintResponse.model_validate(created_sprint)
+        # Get issue counts (will be 0 for new sprint)
+        total_issues, completed_issues = await self._sprint_repository.get_sprint_issue_counts(
+            created_sprint.id
+        )
+
+        sprint_dict = {
+            "id": created_sprint.id,
+            "project_id": created_sprint.project_id,
+            "name": created_sprint.name,
+            "goal": created_sprint.goal,
+            "start_date": created_sprint.start_date,
+            "end_date": created_sprint.end_date,
+            "status": created_sprint.status,
+            "total_issues": total_issues,
+            "completed_issues": completed_issues,
+            "created_at": created_sprint.created_at,
+            "updated_at": created_sprint.updated_at,
+        }
+
+        return SprintResponse.model_validate(sprint_dict)

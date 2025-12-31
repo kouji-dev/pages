@@ -104,6 +104,8 @@ class SprintResponse(BaseModel):
     start_date: date | None = None
     end_date: date | None = None
     status: SprintStatus
+    total_issues: int = Field(default=0, description="Total number of issues in sprint")
+    completed_issues: int = Field(default=0, description="Number of completed issues in sprint")
     created_at: datetime
     updated_at: datetime
 
@@ -124,6 +126,8 @@ class SprintListItemResponse(BaseModel):
     start_date: date | None = None
     end_date: date | None = None
     status: SprintStatus
+    total_issues: int = Field(default=0, description="Total number of issues in sprint")
+    completed_issues: int = Field(default=0, description="Number of completed issues in sprint")
     created_at: datetime
     updated_at: datetime
 
@@ -155,6 +159,8 @@ class SprintWithIssuesResponse(BaseModel):
     end_date: date | None = None
     status: SprintStatus
     issues: list[UUID] = Field(..., description="List of issue IDs in the sprint")
+    total_issues: int = Field(default=0, description="Total number of issues in sprint")
+    completed_issues: int = Field(default=0, description="Number of completed issues in sprint")
     created_at: datetime
     updated_at: datetime
 

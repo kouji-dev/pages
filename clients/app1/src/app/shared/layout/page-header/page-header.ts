@@ -42,7 +42,22 @@ export interface PageHeaderSearchInput {
     <div class="page-header">
       <div class="page-header_content">
         <div class="page-header_left">
-          <h1 class="page-header_title">{{ title() | translate }}</h1>
+          <div class="page-header_title-wrapper">
+            <h1 class="page-header_title">{{ title() | translate }}</h1>
+            @if (leftAction()) {
+              <lib-button
+                [variant]="leftAction()!.variant || 'ghost'"
+                [size]="leftAction()!.size || 'sm'"
+                [iconOnly]="true"
+                [leftIcon]="leftAction()!.icon"
+                [disabled]="leftAction()!.disabled"
+                (clicked)="leftAction()!.onClick()"
+                [title]="leftAction()!.label"
+                class="page-header_left-action"
+              >
+              </lib-button>
+            }
+          </div>
           @if (subtitle()) {
             <p class="page-header_subtitle">{{ subtitle() | translate }}</p>
           }
@@ -124,10 +139,19 @@ export interface PageHeaderSearchInput {
         @apply flex flex-col;
       }
 
+      .page-header_title-wrapper {
+        @apply flex items-center;
+        @apply gap-3;
+      }
+
       .page-header_title {
         @apply text-3xl font-bold;
         @apply text-foreground;
         margin: 0;
+      }
+
+      .page-header_left-action {
+        @apply h-8 w-8;
       }
 
       .page-header_subtitle {
@@ -162,6 +186,7 @@ export interface PageHeaderSearchInput {
 export class PageHeader {
   title = input.required<string>();
   subtitle = input<string>();
+  leftAction = input<PageHeaderAction>();
   action = input<PageHeaderAction>();
   actionTemplate = input<TemplateRef<any>>();
   searchInput = input<PageHeaderSearchInput | null>(null);

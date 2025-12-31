@@ -616,8 +616,8 @@
     "uploadFileError": "Échec du téléchargement de \"{{fileName}}\"",
     "uploadFilesError": "Échec du téléchargement des fichiers. Veuillez réessayer."
   },
-  "kanban": {
-    "title": "Tableau Kanban",
+  "board": {
+    "title": "Tableau",
     "createIssue": "Créer une tâche",
     "assignee": "Assigné à",
     "type": "Type",
@@ -634,6 +634,33 @@
     "assigned": "Assigné",
     "overdue": "En retard",
     "due": "Échéance : {{date}}"
+  },
+  "sprints": {
+    "title": "Sprints",
+    "selectSprint": "Sélectionner un sprint",
+    "createNew": "Créer un nouveau sprint",
+    "complete": "Terminer",
+    "points": "pts",
+    "issues": "tâches",
+    "status": {
+      "active": "Actif",
+      "planned": "Planifié",
+      "completed": "Terminé",
+      "done": "Terminé"
+    },
+    "planning": "Planification"
+  },
+  "review": {
+    "title": "Révision"
+  },
+  "backlog": {
+    "title": "Backlog",
+    "issues": "tâches",
+    "points": "points",
+    "noItems": "Aucun élément dans le backlog"
+  },
+  "reports": {
+    "title": "Rapports"
   },
   "members": {
     "title": "Membres",

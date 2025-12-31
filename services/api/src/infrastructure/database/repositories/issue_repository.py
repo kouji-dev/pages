@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.domain.entities import Issue
 from src.domain.exceptions import EntityNotFoundException
 from src.domain.repositories import IssueRepository
-from src.infrastructure.database.models import IssueModel, ProjectModel
+from src.infrastructure.database.models import IssueModel, ProjectModel, SprintIssueModel
 
 
 class SQLAlchemyIssueRepository(IssueRepository):
@@ -199,6 +199,7 @@ class SQLAlchemyIssueRepository(IssueRepository):
         status: str | None = None,
         type: str | None = None,
         priority: str | None = None,
+        sprint_id: UUID | None = None,
     ) -> list[Issue]:
         """Get all issues in a project with filters and pagination.
 
@@ -236,6 +237,11 @@ class SQLAlchemyIssueRepository(IssueRepository):
         if priority:
             query = query.where(IssueModel.priority == priority)
 
+        if sprint_id:
+            query = query.join(
+                SprintIssueModel, IssueModel.id == SprintIssueModel.issue_id
+            ).where(SprintIssueModel.sprint_id == sprint_id)
+
         query = query.offset(skip).limit(limit).order_by(IssueModel.created_at.desc())
 
         result = await self._session.execute(query)
@@ -252,6 +258,7 @@ class SQLAlchemyIssueRepository(IssueRepository):
         status: str | None = None,
         type: str | None = None,
         priority: str | None = None,
+        sprint_id: UUID | None = None,
     ) -> int:
         """Count total issues in a project with filters.
 
@@ -288,6 +295,11 @@ class SQLAlchemyIssueRepository(IssueRepository):
 
         if priority:
             query = query.where(IssueModel.priority == priority)
+
+        if sprint_id:
+            query = query.join(
+                SprintIssueModel, IssueModel.id == SprintIssueModel.issue_id
+            ).where(SprintIssueModel.sprint_id == sprint_id)
 
         result = await self._session.execute(query)
         count: int = result.scalar_one()

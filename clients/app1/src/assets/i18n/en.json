@@ -616,8 +616,8 @@
     "uploadFileError": "Failed to upload \"{{fileName}}\"",
     "uploadFilesError": "Failed to upload files. Please try again."
   },
-  "kanban": {
-    "title": "Kanban Board",
+  "board": {
+    "title": "Board",
     "createIssue": "Create Issue",
     "assignee": "Assignee",
     "type": "Type",
@@ -634,6 +634,33 @@
     "assigned": "Assigned",
     "overdue": "Overdue",
     "due": "Due: {{date}}"
+  },
+  "sprints": {
+    "title": "Sprints",
+    "selectSprint": "Select Sprint",
+    "createNew": "Create New Sprint",
+    "complete": "Complete",
+    "points": "pts",
+    "issues": "issues",
+    "status": {
+      "active": "Active",
+      "planned": "Planned",
+      "completed": "Completed",
+      "done": "Done"
+    },
+    "planning": "Planning"
+  },
+  "review": {
+    "title": "Review"
+  },
+  "backlog": {
+    "title": "Backlog",
+    "issues": "issues",
+    "points": "points",
+    "noItems": "No items in backlog"
+  },
+  "reports": {
+    "title": "Reports"
   },
   "members": {
     "title": "Members",

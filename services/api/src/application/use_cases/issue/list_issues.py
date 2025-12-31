@@ -46,6 +46,7 @@ class ListIssuesUseCase:
         status: str | None = None,
         type: str | None = None,
         priority: str | None = None,
+        sprint_id: str | None = None,
     ) -> IssueListResponse:
         """Execute list issues.
 
@@ -90,6 +91,7 @@ class ListIssuesUseCase:
             status=status,
             type=type,
             priority=priority,
+            sprint_id=sprint_id,
         )
 
         project_uuid = UUID(project_id)
@@ -102,6 +104,7 @@ class ListIssuesUseCase:
         # Convert filter IDs to UUIDs
         assignee_uuid = UUID(assignee_id) if assignee_id else None
         reporter_uuid = UUID(reporter_id) if reporter_id else None
+        sprint_uuid = UUID(sprint_id) if sprint_id else None
 
         # Get issues based on filters
         if search:
@@ -122,6 +125,7 @@ class ListIssuesUseCase:
                 status=status,
                 type=type,
                 priority=priority,
+                sprint_id=sprint_uuid,
             )
             total = await self._issue_repository.count(
                 project_id=project_uuid,
@@ -131,6 +135,7 @@ class ListIssuesUseCase:
                 status=status,
                 type=type,
                 priority=priority,
+                sprint_id=sprint_uuid,
             )
 
         # Calculate total pages

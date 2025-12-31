@@ -450,6 +450,45 @@ class SQLAlchemySprintRepository(SprintRepository):
 
         return self._to_entity(model)
 
+    async def get_sprint_issue_counts(
+        self,
+        sprint_id: UUID,
+    ) -> tuple[int, int]:
+        """Get total and completed issue counts for a sprint.
+
+        Args:
+            sprint_id: Sprint UUID
+
+        Returns:
+            Tuple of (total_issues, completed_issues)
+        """
+        # Get total issues count
+        total_result = await self._session.execute(
+            select(func.count(IssueModel.id))
+            .select_from(SprintIssueModel)
+            .join(IssueModel, SprintIssueModel.issue_id == IssueModel.id)
+            .where(
+                SprintIssueModel.sprint_id == sprint_id,
+                IssueModel.deleted_at.is_(None),
+            )
+        )
+        total_issues = total_result.scalar_one() or 0
+
+        # Get completed issues count (status == "done")
+        completed_result = await self._session.execute(
+            select(func.count(IssueModel.id))
+            .select_from(SprintIssueModel)
+            .join(IssueModel, SprintIssueModel.issue_id == IssueModel.id)
+            .where(
+                SprintIssueModel.sprint_id == sprint_id,
+                IssueModel.deleted_at.is_(None),
+                IssueModel.status == "done",
+            )
+        )
+        completed_issues = completed_result.scalar_one() or 0
+
+        return (total_issues, completed_issues)
+
     def _to_entity(self, model: SprintModel) -> Sprint:
         """Convert SprintModel to Sprint domain entity.
 

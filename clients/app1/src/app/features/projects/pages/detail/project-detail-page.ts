@@ -6,10 +6,11 @@ import {
   signal,
   effect,
   ViewContainerRef,
+  ViewChild,
+  TemplateRef,
 } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { filter, map } from 'rxjs';
 import { Button, Input, LoadingState, ErrorState, Modal, ToastService } from 'shared-ui';
 import { ProjectService } from '../../../../application/services/project.service';
 import { OrganizationService } from '../../../../application/services/organization.service';
@@ -17,13 +18,30 @@ import { NavigationService } from '../../../../application/services/navigation.s
 import { ProjectMemberList } from '../../components/project-member-list/project-member-list';
 import { IssueList } from '../../components/issue-list/issue-list';
 import { KanbanBoard } from '../../components/kanban-board/kanban-board';
-import { BackToPage } from '../../../../shared/components/back-to-page/back-to-page.component';
-import { SidebarNav, SidebarNavItem } from '../../components/sidebar-nav/sidebar-nav';
+import { PageHeader, PageHeaderAction } from '../../../../shared/layout/page-header/page-header';
+import { SprintSelector } from '../../components/sprint-selector/sprint-selector';
+import { Progress, Icon } from 'shared-ui';
+import { ProjectNav } from '../../components/project-nav/project-nav';
+import { BacklogRibbon } from '../../components/backlog-ribbon/backlog-ribbon';
 import { DeleteProjectModal } from '../../components/delete-project-modal/delete-project-modal';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PageContent } from '../../../../shared/layout/page-content/page-content';
+import {
+  SprintService,
+  Sprint,
+  SprintIssue,
+} from '../../../../application/services/sprint.service';
+import { IssueService } from '../../../../application/services/issue.service';
 
-type TabType = 'issues' | 'board' | 'settings' | 'members';
+type TabType =
+  | 'issues'
+  | 'board'
+  | 'settings'
+  | 'members'
+  | 'review'
+  | 'planning'
+  | 'backlog'
+  | 'reports';
 
 @Component({
   selector: 'app-project-detail-page',
@@ -35,8 +53,12 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
     ProjectMemberList,
     IssueList,
     KanbanBoard,
-    BackToPage,
-    SidebarNav,
+    PageHeader,
+    SprintSelector,
+    Progress,
+    Icon,
+    ProjectNav,
+    BacklogRibbon,
     TranslatePipe,
     PageContent,
   ],
@@ -57,32 +79,81 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
         [showRetry]="false"
       />
     } @else {
-      <div class="project-detail-page_header">
-        <div class="project-detail-page_header-content">
-          <app-back-to-page
-            [label]="'projects.backToProjects' | translate"
-            (onClick)="handleBackToProjects()"
-          />
-          <div class="project-detail-page_header-main">
-            <div class="project-detail-page_key">{{ project()?.key }}</div>
-            <h1 class="project-detail-page_title">{{ project()?.name }}</h1>
-            @if (project()?.description) {
-              <p class="project-detail-page_description">{{ project()?.description }}</p>
-            }
-          </div>
-        </div>
-      </div>
+      <app-page-header
+        [title]="project()?.name || ''"
+        [subtitle]="project()?.description"
+        [leftAction]="settingsAction()"
+        [actionTemplate]="sprintActionsTemplate"
+      >
+        <ng-template #sprintActionsTemplate>
+          <div class="project-detail-page_sprint-actions">
+            @if (sprintService.currentSprint(); as sprint) {
+              <!-- Progress indicator -->
+              <div class="project-detail-page_progress">
+                <div class="project-detail-page_progress-bar">
+                  <lib-progress [value]="sprintProgressPercent()" />
+                </div>
+                <span class="project-detail-page_progress-text">
+                  {{ sprintProgressPercent() }}%
+                </span>
+                <span class="project-detail-page_progress-points">
+                  ({{ sprint.completedIssues }}/{{ sprint.totalIssues }}
+                  {{ 'sprints.issues' | translate }})
+                </span>
+              </div>
 
-      <app-page-content>
-        <div class="project-detail-page_container">
-          <div class="project-detail-page_sidebar">
-            <app-sidebar-nav [items]="navItems()" />
+              <!-- Dates -->
+              <div class="project-detail-page_dates">
+                <lib-icon name="calendar" [size]="'xs'" />
+                <span>{{ formatSprintDate(sprint.startDate) }}</span>
+                <span>→</span>
+                <span>{{ formatSprintDate(sprint.endDate) }}</span>
+              </div>
+
+              @if (sprint.status === 'active') {
+                <lib-button variant="outline" size="sm" (clicked)="handleCompleteSprint()">
+                  {{ 'sprints.complete' | translate }}
+                </lib-button>
+              }
+            }
+
+            <app-sprint-selector
+              [sprints]="sprintService.sprintsList()"
+              [selectedSprint]="sprintService.currentSprint()"
+              (onSprintSelect)="handleSprintSelect($event)"
+              (onCreateSprint)="handleCreateSprint()"
+            />
           </div>
+        </ng-template>
+      </app-page-header>
+
+      <app-project-nav [projectId]="projectId()" />
+
+      <app-page-content noPadding>
+        <div class="project-detail-page_container">
           <div class="project-detail-page_main">
-            @if (activeTab() === 'issues') {
+            @if (activeTab() === 'board') {
+              <div class="project-detail-page_board-wrapper">
+                <app-kanban-board [projectId]="projectId()" />
+              </div>
+            } @else if (activeTab() === 'review') {
+              <div class="project-detail-page_placeholder">
+                {{ 'review.title' | translate }} - Coming soon
+              </div>
+            } @else if (activeTab() === 'planning') {
+              <div class="project-detail-page_placeholder">
+                {{ 'sprints.planning' | translate }} - Coming soon
+              </div>
+            } @else if (activeTab() === 'backlog') {
+              <div class="project-detail-page_placeholder">
+                {{ 'backlog.title' | translate }} - Coming soon
+              </div>
+            } @else if (activeTab() === 'reports') {
+              <div class="project-detail-page_placeholder">
+                {{ 'reports.title' | translate }} - Coming soon
+              </div>
+            } @else if (activeTab() === 'issues') {
               <app-issue-list [projectId]="projectId()" />
-            } @else if (activeTab() === 'board') {
-              <app-kanban-board [projectId]="projectId()" />
             } @else if (activeTab() === 'members') {
               <app-project-member-list [projectId]="projectId()" />
             } @else if (activeTab() === 'settings') {
@@ -171,6 +242,15 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
             }
           </div>
         </div>
+
+        @if (activeTab() === 'board') {
+          <div class="project-detail-page_backlog-wrapper">
+            <app-backlog-ribbon
+              [issues]="backlogIssues()"
+              (onIssueClick)="handleIssueClick($event)"
+            />
+          </div>
+        }
       </app-page-content>
     }
   `,
@@ -178,74 +258,73 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
     `
       @reference "#mainstyles";
 
-      .project-detail-page_header {
+      :host {
         @apply w-full;
-        @apply py-6;
-        @apply px-4 sm:px-6 lg:px-8;
-        @apply border-b;
-        @apply border-border;
-      }
-
-      .project-detail-page_header-content {
-        @apply w-full;
-      }
-
-      .project-detail-page_header-main {
-        @apply flex items-center;
-        @apply gap-4;
-        @apply flex-wrap;
-      }
-
-      .project-detail-page_key {
-        @apply text-xs font-mono font-semibold;
-        @apply px-2 py-1;
-        @apply rounded;
-        @apply bg-muted;
-        @apply text-muted-foreground;
-        @apply inline-block;
-        @apply w-fit;
-        @apply flex-shrink-0;
-      }
-
-      .project-detail-page_title {
-        @apply text-2xl font-bold;
-        @apply text-foreground;
-        margin: 0;
-        @apply flex-shrink-0;
-      }
-
-      .project-detail-page_description {
-        @apply text-sm;
-        @apply text-muted-foreground;
-        margin: 0;
-        @apply flex-shrink-0;
+        @apply h-full;
+        @apply flex flex-col;
+        @apply min-h-0;
       }
 
       .project-detail-page_container {
         @apply w-full;
-        @apply flex-1;
-        @apply flex;
-        @apply gap-8;
+        @apply flex flex-col;
         @apply min-h-0;
-        @apply items-stretch;
-      }
-
-      .project-detail-page_sidebar {
-        width: 256px !important; /* Fixed width: w-64 = 16rem = 256px */
-        min-width: 256px;
-        max-width: 256px;
-        height: 100vh; /* Fixed height: full viewport height */
-        @apply flex-shrink-0;
-        @apply flex;
-        @apply flex-col;
-        @apply min-h-0;
+        flex: 1 1 auto;
       }
 
       .project-detail-page_main {
-        @apply flex-1;
-        @apply min-w-0;
-        @apply overflow-hidden;
-        @apply self-stretch;
+        @apply flex;
+        @apply flex-col;
+        @apply min-h-0;
+        @apply w-full;
+        @apply py-8;
+        @apply px-4 sm:px-6 lg:px-8;
+      }
+
+      .project-detail-page_board-wrapper {
+        @apply flex flex-col;
+        @apply min-h-0;
+        @apply flex-shrink;
+      }
+
+      .project-detail-page_backlog-wrapper {
+        @apply w-full;
+        @apply m-0;
+      }
+
+      .project-detail-page_sprint-actions {
+        @apply flex items-center;
+        @apply gap-4;
+        @apply flex-shrink-0;
+      }
+
+      .project-detail-page_progress {
+        @apply flex items-center;
+        @apply gap-2;
+        @apply px-3 py-1.5;
+        @apply rounded-md;
+        background-color: hsl(var(--color-muted) / 0.5);
+      }
+
+      .project-detail-page_progress-bar {
+        @apply w-20;
+      }
+
+      .project-detail-page_progress-text {
+        @apply text-xs font-medium;
+        @apply text-foreground;
+      }
+
+      .project-detail-page_progress-points {
+        @apply text-xs;
+        @apply text-muted-foreground;
+      }
+
+      .project-detail-page_dates {
+        @apply flex items-center;
+        @apply gap-1.5;
+        @apply text-xs;
+        @apply text-muted-foreground;
       }
 
       .project-detail-page_placeholder {
@@ -324,13 +403,19 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
 })
 export class ProjectDetailPage {
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   readonly projectService = inject(ProjectService);
   readonly organizationService = inject(OrganizationService);
   readonly navigationService = inject(NavigationService);
+  readonly sprintService = inject(SprintService);
+  readonly issueService = inject(IssueService);
   readonly modal = inject(Modal);
   readonly toast = inject(ToastService);
   readonly viewContainerRef = inject(ViewContainerRef);
   private readonly translateService = inject(TranslateService);
+
+  @ViewChild('sprintActionsTemplate', { static: true })
+  sprintActionsTemplate!: TemplateRef<any>;
 
   readonly organizationId = computed(() => {
     return this.navigationService.currentOrganizationId() || '';
@@ -342,6 +427,15 @@ export class ProjectDetailPage {
 
   readonly project = computed(() => this.projectService.currentProject());
 
+  // Backlog issues (issues not in any sprint)
+  readonly backlogIssues = computed<SprintIssue[]>(() => {
+    const issues = this.issueService.issuesList();
+    // Filter issues that are not in any sprint
+    // TODO: This should be filtered by sprintId being null/undefined
+    // For now, return empty array - will be implemented when sprint integration is complete
+    return [];
+  });
+
   // Settings form state
   readonly name = signal('');
   readonly key = signal('');
@@ -351,13 +445,27 @@ export class ProjectDetailPage {
   readonly originalName = signal('');
   readonly originalDescription = signal('');
 
-  // Get tab from URL query params, default to 'issues'
+  // Get tab from query params, default to 'board'
+  readonly queryParams = toSignal(this.route.queryParams, {
+    initialValue: {} as Record<string, string>,
+  });
+
   readonly activeTab = computed<TabType>(() => {
-    const tab = this.navigationService.currentTab();
-    if (tab && ['issues', 'board', 'members', 'settings'].includes(tab)) {
-      return tab as TabType;
-    }
-    return 'issues';
+    const params = this.queryParams();
+    const tab = params?.['tab'];
+    if (!tab || typeof tab !== 'string') return 'board';
+
+    const validTabs: TabType[] = [
+      'board',
+      'review',
+      'planning',
+      'backlog',
+      'reports',
+      'issues',
+      'members',
+      'settings',
+    ];
+    return validTabs.includes(tab as TabType) ? (tab as TabType) : 'board';
   });
 
   readonly nameError = computed(() => {
@@ -403,44 +511,6 @@ export class ProjectDetailPage {
     }
     return this.translateService.instant('common.unknownError');
   });
-
-  readonly navItems = computed<SidebarNavItem[]>(() => {
-    const currentTab = this.activeTab();
-    return [
-      {
-        label: this.translateService.instant('issues.title'),
-        icon: 'file-text',
-        active: currentTab === 'issues',
-        onClick: () => this.setActiveTab('issues'),
-      },
-      {
-        label: this.translateService.instant('kanban.title'),
-        icon: 'columns-2',
-        active: currentTab === 'board',
-        onClick: () => this.setActiveTab('board'),
-      },
-      {
-        label: this.translateService.instant('members.title'),
-        icon: 'users',
-        active: currentTab === 'members',
-        onClick: () => this.setActiveTab('members'),
-      },
-      {
-        label: this.translateService.instant('projects.settings.title'),
-        icon: 'settings',
-        active: currentTab === 'settings',
-        onClick: () => this.setActiveTab('settings'),
-      },
-    ];
-  });
-
-  // Project is now automatically loaded when URL projectId changes
-  // No need for manual initialization effect
-
-  setActiveTab(tab: TabType): void {
-    // Update URL query params for all tabs including settings
-    this.navigationService.updateQueryParams({ tab });
-  }
 
   async handleSaveProject(): Promise<void> {
     if (!this.isFormValid() || !this.hasChanges()) {
@@ -503,10 +573,56 @@ export class ProjectDetailPage {
     }
   }
 
-  handleBackToProjects(): void {
+  handleSprintSelect(sprint: Sprint): void {
+    // Set the selected sprint - issues will automatically reload because they depend on currentSprint
+    this.sprintService.selectSprint(sprint);
+  }
+
+  handleCreateSprint(): void {
+    // TODO: Open sprint creation modal
+    console.log('Create sprint');
+  }
+
+  handleCompleteSprint(): void {
+    // TODO: Open sprint completion modal
+    console.log('Complete sprint');
+  }
+
+  handleIssueClick(issue: SprintIssue): void {
     const orgId = this.organizationId();
-    if (orgId) {
-      this.navigationService.navigateToOrganizationProjects(orgId);
+    const projectId = this.projectId();
+    if (orgId && projectId) {
+      this.navigationService.navigateToIssue(orgId, projectId, issue.id);
     }
+  }
+
+  handleSettingsClick(): void {
+    const orgId = this.organizationId();
+    const projectId = this.projectId();
+    if (orgId && projectId) {
+      this.router.navigate(['/app', 'organizations', orgId, 'projects', projectId, 'settings']);
+    }
+  }
+
+  readonly settingsAction = computed<PageHeaderAction>(() => ({
+    label: this.translateService.instant('projects.settings.title'),
+    icon: 'settings',
+    variant: 'ghost',
+    size: 'sm',
+    onClick: () => this.handleSettingsClick(),
+  }));
+
+  readonly sprintProgressPercent = computed(() => {
+    const sprint = this.sprintService.currentSprint();
+    if (!sprint || sprint.totalIssues === 0) return 0;
+    return Math.round(((sprint.completedIssues || 0) / (sprint.totalIssues || 1)) * 100);
+  });
+
+  formatSprintDate(date: Date | string): string {
+    const d = typeof date === 'string' ? new Date(date) : date;
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+    }).format(d);
   }
 }
