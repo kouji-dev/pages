@@ -260,6 +260,7 @@
     "subtitle": "Gérez vos projets et suivez les tâches en un seul endroit.",
     "createProject": "Créer un projet",
     "loadingProjects": "Chargement des projets...",
+    "loadingProject": "Chargement du projet...",
     "failedToLoad": "Échec du chargement des projets",
     "noOrganizationSelected": "Aucune organisation sélectionnée",
     "noOrganizationSelectedDescription": "Veuillez sélectionner ou créer une organisation pour voir les projets.",

@@ -260,6 +260,7 @@
     "subtitle": "Manage your projects and track issues in one place.",
     "createProject": "Create Project",
     "loadingProjects": "Loading projects...",
+    "loadingProject": "Loading project...",
     "failedToLoad": "Failed to Load Projects",
     "noOrganizationSelected": "No organization selected",
     "noOrganizationSelectedDescription": "Please select or create an organization to view projects.",
