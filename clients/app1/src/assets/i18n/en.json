@@ -687,7 +687,18 @@
     "title": "Backlog",
     "issues": "issues",
     "points": "points",
-    "noItems": "No items in backlog"
+    "noItems": "No items in backlog",
+    "loading": "Loading backlog...",
+    "failedToLoad": "Failed to load backlog",
+    "addIssue": "Add Issue",
+    "searchPlaceholder": "Search issues...",
+    "statusFilter": "Status",
+    "priorityFilter": "Priority",
+    "allStatus": "All Status",
+    "allPriority": "All Priority",
+    "noIssues": "No issues in backlog",
+    "noMatchingIssues": "No issues match your filters",
+    "createIssueComingSoon": "Create issue feature coming soon"
   },
   "reports": {
     "title": "Reports"

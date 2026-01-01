@@ -687,7 +687,18 @@
     "title": "Backlog",
     "issues": "tâches",
     "points": "points",
-    "noItems": "Aucun élément dans le backlog"
+    "noItems": "Aucun élément dans le backlog",
+    "loading": "Chargement du backlog...",
+    "failedToLoad": "Échec du chargement du backlog",
+    "addIssue": "Ajouter une issue",
+    "searchPlaceholder": "Rechercher des issues...",
+    "statusFilter": "Statut",
+    "priorityFilter": "Priorité",
+    "allStatus": "Tous les statuts",
+    "allPriority": "Toutes les priorités",
+    "noIssues": "Aucune issue dans le backlog",
+    "noMatchingIssues": "Aucune issue ne correspond à vos filtres",
+    "createIssueComingSoon": "La fonctionnalité de création d'issue arrive bientôt"
   },
   "reports": {
     "title": "Rapports"

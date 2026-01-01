@@ -9,7 +9,6 @@ import {
 } from '@angular/core';
 import {
   Button,
-  LoadingState,
   ErrorState,
   Modal,
   TextEditor,
@@ -22,9 +21,6 @@ import {
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { IssueService } from '../../../../application/services/issue.service';
 import { NavigationService } from '../../../../application/services/navigation.service';
-import { IssueTypeBadge } from '../../components/issue-type-badge/issue-type-badge';
-import { IssueStatusBadge } from '../../components/issue-status-badge/issue-status-badge';
-import { IssuePriorityIndicator } from '../../components/issue-priority-indicator/issue-priority-indicator';
 import { CommentList } from '../../components/comment-list/comment-list';
 import { AttachmentList } from '../../components/attachment-list/attachment-list';
 import { IssueActivityList } from '../../components/issue-activity-list/issue-activity-list';
@@ -51,11 +47,7 @@ interface LinkedIssue {
   selector: 'app-issue-detail-page',
   imports: [
     Button,
-    LoadingState,
     ErrorState,
-    IssueTypeBadge,
-    IssueStatusBadge,
-    IssuePriorityIndicator,
     CommentList,
     AttachmentList,
     IssueActivityList,
@@ -89,287 +81,292 @@ interface LinkedIssue {
           />
         </app-page-content>
       } @else {
-        <ng-template #headerActionsTemplate>
-          <div class="issue-detail-page_header-actions">
-            <lib-button variant="ghost" leftIcon="link-2" (clicked)="handleLink()" />
-            <lib-button variant="ghost" leftIcon="share-2" (clicked)="handleShare()" />
-            <lib-button variant="ghost" leftIcon="ellipsis-vertical" (clicked)="handleMore()" />
-          </div>
-        </ng-template>
-        <app-page-header [title]="issue()?.title || ''" [actionTemplate]="headerActionsTemplate" />
-        <app-page-content>
-          <div class="issue-detail-page_container">
-            <!-- Main Content -->
-            <div class="issue-detail-page_main">
-              <div class="issue-detail-page_content">
-                <!-- Status & Assignees -->
-                <div class="issue-detail-page_status-section">
-                  <lib-select
-                    [options]="statusOptions()"
-                    [(model)]="statusModel"
-                    [class]="
-                      'issue-detail-page_status-select issue-detail-page_status-select--' +
-                      issue()!.status
-                    "
-                  />
-
-                  <div class="issue-detail-page_assignees">
-                    <div class="issue-detail-page_assignees-list">
-                      @if (issue()?.assignee) {
-                        <lib-avatar
-                          [avatarUrl]="issue()!.assignee!.avatar_url || undefined"
-                          [name]="issue()!.assignee!.name"
-                          [initials]="getInitials(issue()!.assignee!.name)"
-                          size="sm"
-                        />
-                      }
-                    </div>
-                    <lib-button
-                      variant="ghost"
-                      leftIcon="plus"
-                      class="issue-detail-page_assignee-add"
+        <ng-container>
+          <ng-template #headerActionsTemplate>
+            <div class="issue-detail-page_header-actions">
+              <lib-button variant="ghost" leftIcon="link-2" (clicked)="handleLink()" />
+              <lib-button variant="ghost" leftIcon="share-2" (clicked)="handleShare()" />
+              <lib-button variant="ghost" leftIcon="ellipsis-vertical" (clicked)="handleMore()" />
+            </div>
+          </ng-template>
+          <app-page-header
+            [title]="issue()?.title || ''"
+            [actionTemplate]="headerActionsTemplate"
+          />
+          <app-page-content>
+            <div class="issue-detail-page_container">
+              <!-- Main Content -->
+              <div class="issue-detail-page_main">
+                <div class="issue-detail-page_content">
+                  <!-- Status & Assignees -->
+                  <div class="issue-detail-page_status-section">
+                    <lib-select
+                      [options]="statusOptions()"
+                      [(model)]="statusModel"
+                      [class]="
+                        'issue-detail-page_status-select issue-detail-page_status-select--' +
+                        issue()!.status
+                      "
                     />
-                  </div>
-                </div>
 
-                <!-- Description -->
-                <div class="issue-detail-page_section">
-                  @if (issue()?.description) {
-                    <div class="issue-detail-page_description">
-                      <lib-text-editor
-                        [initialValue]="issue()!.description"
-                        [readOnly]="true"
-                        [showToolbar]="false"
-                        class="issue-detail-page_description-editor"
+                    <div class="issue-detail-page_assignees">
+                      <div class="issue-detail-page_assignees-list">
+                        @if (issue()?.assignee) {
+                          <lib-avatar
+                            [avatarUrl]="issue()!.assignee!.avatar_url || undefined"
+                            [name]="issue()!.assignee!.name"
+                            [initials]="getInitials(issue()!.assignee!.name)"
+                            size="sm"
+                          />
+                        }
+                      </div>
+                      <lib-button
+                        variant="ghost"
+                        leftIcon="plus"
+                        class="issue-detail-page_assignee-add"
                       />
                     </div>
-                  } @else {
-                    <p class="issue-detail-page_no-description">
-                      {{ 'issueDetail.noDescription' | translate }}
-                    </p>
-                  }
-                </div>
-
-                <!-- Subtasks -->
-                @if (subtasks().length > 0) {
-                  <div class="issue-detail-page_section">
-                    <div class="issue-detail-page_section-header">
-                      <h2 class="issue-detail-page_section-title">Subtasks</h2>
-                      <lib-badge variant="default" size="sm">
-                        {{ completedSubtasksCount() }}/{{ subtasks().length }} Done
-                      </lib-badge>
-                    </div>
-                    <div class="issue-detail-page_subtasks">
-                      @for (subtask of subtasks(); track subtask.id) {
-                        <div class="issue-detail-page_subtask">
-                          <input
-                            type="checkbox"
-                            [checked]="subtask.completed"
-                            (change)="handleSubtaskToggle(subtask.id)"
-                            class="issue-detail-page_subtask-checkbox"
-                          />
-                          <span
-                            class="issue-detail-page_subtask-title"
-                            [class.issue-detail-page_subtask-title--completed]="subtask.completed"
-                          >
-                            {{ subtask.title }}
-                          </span>
-                        </div>
-                      }
-                    </div>
                   </div>
-                }
 
-                <!-- Separator -->
-                <div class="issue-detail-page_separator"></div>
+                  <!-- Description -->
+                  <div class="issue-detail-page_section">
+                    @if (issue()?.description) {
+                      <div class="issue-detail-page_description">
+                        <lib-text-editor
+                          [initialValue]="issue()!.description"
+                          [readOnly]="true"
+                          [showToolbar]="false"
+                          class="issue-detail-page_description-editor"
+                        />
+                      </div>
+                    } @else {
+                      <p class="issue-detail-page_no-description">
+                        {{ 'issueDetail.noDescription' | translate }}
+                      </p>
+                    }
+                  </div>
 
-                <!-- Comments -->
-                <div class="issue-detail-page_section">
-                  <app-comment-list [issueId]="issueId()" />
-                </div>
+                  <!-- Subtasks -->
+                  @if (subtasks().length > 0) {
+                    <div class="issue-detail-page_section">
+                      <div class="issue-detail-page_section-header">
+                        <h2 class="issue-detail-page_section-title">Subtasks</h2>
+                        <lib-badge variant="default" size="sm">
+                          {{ completedSubtasksCount() }}/{{ subtasks().length }} Done
+                        </lib-badge>
+                      </div>
+                      <div class="issue-detail-page_subtasks">
+                        @for (subtask of subtasks(); track subtask.id) {
+                          <div class="issue-detail-page_subtask">
+                            <input
+                              type="checkbox"
+                              [checked]="subtask.completed"
+                              (change)="handleSubtaskToggle(subtask.id)"
+                              class="issue-detail-page_subtask-checkbox"
+                            />
+                            <span
+                              class="issue-detail-page_subtask-title"
+                              [class.issue-detail-page_subtask-title--completed]="subtask.completed"
+                            >
+                              {{ subtask.title }}
+                            </span>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
 
-                <!-- Attachments -->
-                <div class="issue-detail-page_section">
-                  <app-attachment-list [issueId]="issueId()" />
-                </div>
+                  <!-- Separator -->
+                  <div class="issue-detail-page_separator"></div>
 
-                <!-- Activity -->
-                <div class="issue-detail-page_section">
-                  <h2 class="issue-detail-page_section-title">
-                    {{ 'issueDetail.activity' | translate }}
-                  </h2>
-                  <app-issue-activity-list [issueId]="issueId()" />
+                  <!-- Comments -->
+                  <div class="issue-detail-page_section">
+                    <app-comment-list [issueId]="issueId()" />
+                  </div>
+
+                  <!-- Attachments -->
+                  <div class="issue-detail-page_section">
+                    <app-attachment-list [issueId]="issueId()" />
+                  </div>
+
+                  <!-- Activity -->
+                  <div class="issue-detail-page_section">
+                    <h2 class="issue-detail-page_section-title">
+                      {{ 'issueDetail.activity' | translate }}
+                    </h2>
+                    <app-issue-activity-list [issueId]="issueId()" />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Right Sidebar -->
-            <div class="issue-detail-page_sidebar">
-              <div class="issue-detail-page_sidebar-scroll">
-                <div class="issue-detail-page_sidebar-content">
-                  <!-- Mark Complete Button -->
-                  @if (issue()!.status !== 'done') {
-                    <lib-button
-                      variant="primary"
-                      size="md"
-                      [fullWidth]="true"
-                      leftIcon="check"
-                      class="issue-detail-page_complete-button"
-                      (clicked)="handleMarkComplete()"
-                    >
-                      Mark Complete
-                    </lib-button>
-                  }
-
-                  <!-- Details -->
-                  <div class="issue-detail-page_sidebar-section">
-                    <h3 class="issue-detail-page_sidebar-title">Details</h3>
-
-                    <div class="issue-detail-page_sidebar-details">
-                      <div class="issue-detail-page_sidebar-detail-item">
-                        <span class="issue-detail-page_sidebar-detail-label">Assignee</span>
-                        <div class="issue-detail-page_sidebar-detail-value">
-                          @if (issue()?.assignee) {
-                            <span>{{ issue()!.assignee!.name }}</span>
-                            <lib-avatar
-                              [avatarUrl]="issue()!.assignee!.avatar_url || undefined"
-                              [name]="issue()!.assignee!.name"
-                              [initials]="getInitials(issue()!.assignee!.name)"
-                              size="sm"
-                            />
-                          } @else {
-                            <span class="issue-detail-page_unassigned">{{
-                              'issues.unassigned' | translate
-                            }}</span>
-                          }
-                        </div>
-                      </div>
-
-                      <div class="issue-detail-page_sidebar-detail-item">
-                        <span class="issue-detail-page_sidebar-detail-label">Priority</span>
-                        <div class="issue-detail-page_sidebar-detail-value">
-                          <lib-icon
-                            [name]="getPriorityIcon(issue()!.priority)"
-                            size="xs"
-                            [class]="
-                              'issue-detail-page_priority-icon issue-detail-page_priority-icon--' +
-                              issue()!.priority
-                            "
-                          />
-                          <span>{{ getPriorityLabel(issue()!.priority) }}</span>
-                        </div>
-                      </div>
-
-                      @if (issue()?.due_date) {
-                        <div class="issue-detail-page_sidebar-detail-item">
-                          <span class="issue-detail-page_sidebar-detail-label">Due Date</span>
-                          <span
-                            class="issue-detail-page_sidebar-detail-value issue-detail-page_due-date"
-                          >
-                            {{ formatDate(issue()!.due_date!) }}
-                          </span>
-                        </div>
-                      }
-
-                      @if (issue()?.story_points) {
-                        <div class="issue-detail-page_sidebar-detail-item">
-                          <span class="issue-detail-page_sidebar-detail-label">Estimate</span>
-                          <span class="issue-detail-page_sidebar-detail-value"
-                            >{{ issue()!.story_points }} pts</span
-                          >
-                        </div>
-                      }
-                    </div>
-                  </div>
-
-                  <div class="issue-detail-page_separator"></div>
-
-                  <!-- Tags -->
-                  <div class="issue-detail-page_sidebar-section">
-                    <div class="issue-detail-page_sidebar-section-header">
-                      <h3 class="issue-detail-page_sidebar-title">Tags</h3>
+              <!-- Right Sidebar -->
+              <div class="issue-detail-page_sidebar">
+                <div class="issue-detail-page_sidebar-scroll">
+                  <div class="issue-detail-page_sidebar-content">
+                    <!-- Mark Complete Button -->
+                    @if (issue()!.status !== 'done') {
                       <lib-button
-                        variant="ghost"
-                        leftIcon="plus"
-                        class="issue-detail-page_sidebar-action"
-                      />
-                    </div>
-                    <div class="issue-detail-page_tags">
-                      @for (tag of tags(); track tag) {
-                        <lib-badge variant="default" size="sm">{{ tag }}</lib-badge>
-                      }
-                    </div>
-                  </div>
+                        variant="primary"
+                        size="md"
+                        [fullWidth]="true"
+                        leftIcon="check"
+                        class="issue-detail-page_complete-button"
+                        (clicked)="handleMarkComplete()"
+                      >
+                        Mark Complete
+                      </lib-button>
+                    }
 
-                  <div class="issue-detail-page_separator"></div>
+                    <!-- Details -->
+                    <div class="issue-detail-page_sidebar-section">
+                      <h3 class="issue-detail-page_sidebar-title">Details</h3>
 
-                  <!-- Linked Issues -->
-                  <div class="issue-detail-page_sidebar-section">
-                    <div class="issue-detail-page_sidebar-section-header">
-                      <h3 class="issue-detail-page_sidebar-title">Linked Issues</h3>
-                      <lib-button
-                        variant="ghost"
-                        leftIcon="plus"
-                        class="issue-detail-page_sidebar-action"
-                      />
-                    </div>
-                    <div class="issue-detail-page_linked-issues">
-                      @for (linkedIssue of linkedIssues(); track linkedIssue.id) {
-                        <div class="issue-detail-page_linked-issue-card">
-                          <div class="issue-detail-page_linked-issue">
-                            <div class="issue-detail-page_linked-issue-content">
-                              <div class="issue-detail-page_linked-issue-header">
-                                @if (linkedIssue.type === 'blocks') {
-                                  <span class="issue-detail-page_linked-issue-block">🔴</span>
-                                } @else {
-                                  <lib-icon
-                                    name="link-2"
-                                    size="xs"
-                                    class="issue-detail-page_linked-issue-link-icon"
-                                  />
-                                }
-                                <span class="issue-detail-page_linked-issue-key">{{
-                                  linkedIssue.key
-                                }}</span>
-                              </div>
-                              <p class="issue-detail-page_linked-issue-title">
-                                {{ linkedIssue.title }}
-                              </p>
-                              <lib-badge
-                                variant="default"
+                      <div class="issue-detail-page_sidebar-details">
+                        <div class="issue-detail-page_sidebar-detail-item">
+                          <span class="issue-detail-page_sidebar-detail-label">Assignee</span>
+                          <div class="issue-detail-page_sidebar-detail-value">
+                            @if (issue()?.assignee) {
+                              <span>{{ issue()!.assignee!.name }}</span>
+                              <lib-avatar
+                                [avatarUrl]="issue()!.assignee!.avatar_url || undefined"
+                                [name]="issue()!.assignee!.name"
+                                [initials]="getInitials(issue()!.assignee!.name)"
                                 size="sm"
-                                [class.issue-detail-page_linked-issue-status--done]="
-                                  linkedIssue.status === 'Done'
-                                "
-                              >
-                                {{ linkedIssue.status }}
-                              </lib-badge>
-                            </div>
-                            <lib-icon
-                              name="external-link"
-                              size="xs"
-                              class="issue-detail-page_linked-issue-external"
-                            />
+                              />
+                            } @else {
+                              <span class="issue-detail-page_unassigned">{{
+                                'issues.unassigned' | translate
+                              }}</span>
+                            }
                           </div>
                         </div>
-                      }
-                    </div>
-                  </div>
 
-                  <!-- Footer metadata -->
-                  <div class="issue-detail-page_sidebar-footer">
-                    <p class="issue-detail-page_sidebar-footer-text">
-                      Created {{ formatDate(issue()!.created_at) }}
-                    </p>
-                    <p class="issue-detail-page_sidebar-footer-text">
-                      Updated {{ formatRelativeTime(issue()!.updated_at) }}
-                    </p>
+                        <div class="issue-detail-page_sidebar-detail-item">
+                          <span class="issue-detail-page_sidebar-detail-label">Priority</span>
+                          <div class="issue-detail-page_sidebar-detail-value">
+                            <lib-icon
+                              [name]="getPriorityIcon(issue()!.priority)"
+                              size="xs"
+                              [class]="
+                                'issue-detail-page_priority-icon issue-detail-page_priority-icon--' +
+                                issue()!.priority
+                              "
+                            />
+                            <span>{{ getPriorityLabel(issue()!.priority) }}</span>
+                          </div>
+                        </div>
+
+                        @if (issue()?.due_date) {
+                          <div class="issue-detail-page_sidebar-detail-item">
+                            <span class="issue-detail-page_sidebar-detail-label">Due Date</span>
+                            <span
+                              class="issue-detail-page_sidebar-detail-value issue-detail-page_due-date"
+                            >
+                              {{ formatDate(issue()!.due_date!) }}
+                            </span>
+                          </div>
+                        }
+
+                        @if (issue()?.story_points) {
+                          <div class="issue-detail-page_sidebar-detail-item">
+                            <span class="issue-detail-page_sidebar-detail-label">Estimate</span>
+                            <span class="issue-detail-page_sidebar-detail-value"
+                              >{{ issue()!.story_points }} pts</span
+                            >
+                          </div>
+                        }
+                      </div>
+                    </div>
+
+                    <div class="issue-detail-page_separator"></div>
+
+                    <!-- Tags -->
+                    <div class="issue-detail-page_sidebar-section">
+                      <div class="issue-detail-page_sidebar-section-header">
+                        <h3 class="issue-detail-page_sidebar-title">Tags</h3>
+                        <lib-button
+                          variant="ghost"
+                          leftIcon="plus"
+                          class="issue-detail-page_sidebar-action"
+                        />
+                      </div>
+                      <div class="issue-detail-page_tags">
+                        @for (tag of tags(); track tag) {
+                          <lib-badge variant="default" size="sm">{{ tag }}</lib-badge>
+                        }
+                      </div>
+                    </div>
+
+                    <div class="issue-detail-page_separator"></div>
+
+                    <!-- Linked Issues -->
+                    <div class="issue-detail-page_sidebar-section">
+                      <div class="issue-detail-page_sidebar-section-header">
+                        <h3 class="issue-detail-page_sidebar-title">Linked Issues</h3>
+                        <lib-button
+                          variant="ghost"
+                          leftIcon="plus"
+                          class="issue-detail-page_sidebar-action"
+                        />
+                      </div>
+                      <div class="issue-detail-page_linked-issues">
+                        @for (linkedIssue of linkedIssues(); track linkedIssue.id) {
+                          <div class="issue-detail-page_linked-issue-card">
+                            <div class="issue-detail-page_linked-issue">
+                              <div class="issue-detail-page_linked-issue-content">
+                                <div class="issue-detail-page_linked-issue-header">
+                                  @if (linkedIssue.type === 'blocks') {
+                                    <span class="issue-detail-page_linked-issue-block">🔴</span>
+                                  } @else {
+                                    <lib-icon
+                                      name="link-2"
+                                      size="xs"
+                                      class="issue-detail-page_linked-issue-link-icon"
+                                    />
+                                  }
+                                  <span class="issue-detail-page_linked-issue-key">{{
+                                    linkedIssue.key
+                                  }}</span>
+                                </div>
+                                <p class="issue-detail-page_linked-issue-title">
+                                  {{ linkedIssue.title }}
+                                </p>
+                                <lib-badge
+                                  variant="default"
+                                  size="sm"
+                                  [class.issue-detail-page_linked-issue-status--done]="
+                                    linkedIssue.status === 'Done'
+                                  "
+                                >
+                                  {{ linkedIssue.status }}
+                                </lib-badge>
+                              </div>
+                              <lib-icon
+                                name="external-link"
+                                size="xs"
+                                class="issue-detail-page_linked-issue-external"
+                              />
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    </div>
+
+                    <!-- Footer metadata -->
+                    <div class="issue-detail-page_sidebar-footer">
+                      <p class="issue-detail-page_sidebar-footer-text">
+                        Created {{ formatDate(issue()!.created_at) }}
+                      </p>
+                      <p class="issue-detail-page_sidebar-footer-text">
+                        Updated {{ formatRelativeTime(issue()!.updated_at) }}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </app-page-content>
+          </app-page-content>
+        </ng-container>
       }
     </app-page-body>
   `,

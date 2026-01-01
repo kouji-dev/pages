@@ -34,6 +34,7 @@ import {
 import { IssueService } from '../../../../application/services/issue.service';
 import { ReviewPage } from '../review/review-page';
 import { PlanningPage } from '../planning/planning-page';
+import { BacklogPage } from '../backlog/backlog-page';
 
 type TabType =
   | 'issues'
@@ -65,6 +66,7 @@ type TabType =
     PageContent,
     ReviewPage,
     PlanningPage,
+    BacklogPage,
   ],
   template: `
     @if (projectService.isFetchingProject()) {
@@ -145,9 +147,7 @@ type TabType =
             } @else if (activeTab() === 'planning') {
               <app-planning-page />
             } @else if (activeTab() === 'backlog') {
-              <div class="project-detail-page_placeholder">
-                {{ 'backlog.title' | translate }} - Coming soon
-              </div>
+              <app-backlog-page />
             } @else if (activeTab() === 'reports') {
               <div class="project-detail-page_placeholder">
                 {{ 'reports.title' | translate }} - Coming soon
@@ -279,6 +279,10 @@ type TabType =
         @apply w-full;
         @apply py-8;
         @apply px-4 sm:px-6 lg:px-8;
+      }
+
+      .project-detail-page_main:has(app-backlog-page) {
+        @apply p-0;
       }
 
       .project-detail-page_board-wrapper {
