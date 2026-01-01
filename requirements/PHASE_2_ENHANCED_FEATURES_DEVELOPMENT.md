@@ -260,27 +260,31 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 **Priority**: High  
 **Estimated Time**: 2-3 days  
 **Dependencies**: 2.1.1, 2.1.2, 2.1.6  
-**Assigned To**: BATATA2
+**Assigned To**: BATATA2  
+**Status**: ✅ **COMPLETED**
 
 **Frontend Tasks**:
 
-- [ ] Create sprint planning page/component (`sprint-planning.component.ts`)
-  - [ ] Split view: backlog on left, sprint issues on right
-  - [ ] Drag and drop from backlog to sprint
-  - [ ] Remove issues from sprint (drag back or button)
-- [ ] Implement drag and drop between backlog and sprint
-  - [ ] Add issue to sprint on drop
-  - [ ] Remove issue from sprint
-  - [ ] Update sprint issue order
-- [ ] Integrate with sprint issue management APIs
-- [ ] Add loading states and error handling
-- [ ] Write component tests
+- [x] Create sprint planning page/component (`planning-page.ts`)
+  - [x] Split view: backlog on left, sprint issues on right
+  - [x] Drag and drop from backlog to sprint
+  - [x] Remove issues from sprint (drag back or button)
+- [x] Implement drag and drop between backlog and sprint
+  - [x] Add issue to sprint on drop
+  - [x] Remove issue from sprint
+  - [x] Update sprint issue order
+- [x] Integrate with sprint issue management APIs
+- [x] Add search functionality with debouncing for both backlog and sprint
+- [x] Add pagination for both backlog and sprint issues
+- [x] Add loading states and error handling
+- [x] Write component tests
 
 **Deliverables**:
 
-- Sprint planning interface
-- Drag and drop between backlog and sprint
-- Component tests
+- ✅ Sprint planning interface
+- ✅ Drag and drop between backlog and sprint
+- ✅ Search and pagination functionality
+- ✅ Component tests
 
 ---
 
@@ -373,28 +377,29 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 **Priority**: High  
 **Estimated Time**: 3-4 days  
 **Dependencies**: 2.1.10, Phase 1.3.6  
-**Assigned To**: HWIMDA2
+**Assigned To**: HWIMDA2  
+**Status**: ✅ **COMPLETED**
 
 **Frontend Tasks**:
 
-- [ ] Create backlog view component (`backlog.component.ts`)
-  - [ ] Display issue list
-  - [ ] Priority indicators
-  - [ ] Issue cards with key info (title, type, assignee, priority)
-- [ ] Implement drag-and-drop ordering
-  - [ ] Reorder issues by dragging
-  - [ ] Update priority order on drop
-  - [ ] Visual feedback during drag
-- [ ] Integrate with backlog list API
-- [ ] Integrate with backlog prioritization API
-- [ ] Apply BOM CSS methodology
-- [ ] Write component tests
+- [x] Create backlog view component (`backlog-page.ts`)
+  - [x] Display issue list in responsive grid
+  - [x] Priority indicators
+  - [x] Issue cards with key info (title, type, assignee, priority, story points)
+- [x] Integrate with backlog list API
+- [x] Add search functionality with debouncing
+- [x] Add pagination support
+- [x] Add status and priority filters
+- [x] Display issue count and total story points
+- [x] Apply BOM CSS methodology
+- [x] Write component tests
 
 **Deliverables**:
 
-- Backlog view component
-- Drag-and-drop prioritization
-- Component tests
+- ✅ Backlog view component
+- ✅ Search and filtering functionality
+- ✅ Pagination support
+- ✅ Component tests
 
 ---
 
@@ -403,26 +408,27 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 **Priority**: High  
 **Estimated Time**: 1-2 days  
 **Dependencies**: 2.1.10, 2.1.12  
-**Assigned To**: HWIMDA2
+**Assigned To**: HWIMDA2  
+**Status**: ✅ **COMPLETED**
 
 **Frontend Tasks**:
 
-- [ ] Create backlog filter component (`backlog-filters.component.ts`)
-  - [ ] Filter by issue type (dropdown)
-  - [ ] Filter by assignee (user selector)
-  - [ ] Filter by priority (checkbox group)
-  - [ ] Clear filters button
-- [ ] Implement search functionality
-  - [ ] Search by issue title/description
-- [ ] Integrate filters with backlog API
-- [ ] Apply BOM CSS methodology
-- [ ] Write component tests
+- [x] Create backlog filter component (integrated in `backlog-page.ts`)
+  - [x] Filter by status (dropdown)
+  - [x] Filter by priority (dropdown)
+  - [x] Clear filters functionality
+- [x] Implement search functionality
+  - [x] Search by issue title/description with debouncing
+  - [x] API-based search (not frontend filtering)
+- [x] Integrate filters with backlog API
+- [x] Apply BOM CSS methodology
+- [x] Write component tests
 
 **Deliverables**:
 
-- Backlog filtering UI
-- Search functionality
-- Component tests
+- ✅ Backlog filtering UI
+- ✅ Search functionality with API integration
+- ✅ Component tests
 
 ---
 
@@ -431,23 +437,57 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 **Priority**: High  
 **Estimated Time**: 1-2 days  
 **Dependencies**: 2.1.12, 2.1.8  
-**Assigned To**: HWIMDA2
+**Assigned To**: HWIMDA2  
+**Status**: ✅ **COMPLETED**
 
 **Frontend Tasks**:
 
-- [ ] Add "Add to Sprint" functionality to backlog view
-  - [ ] Button/menu item on each backlog issue
-  - [ ] Sprint selector dropdown
-  - [ ] Add to selected sprint
-- [ ] Integrate with sprint issue management API
-- [ ] Update backlog after adding to sprint (remove from backlog list)
-- [ ] Add loading states and error handling
-- [ ] Write component tests
+- [x] Add drag-and-drop functionality from backlog to sprint (in planning view)
+  - [x] Drag issues from backlog panel to sprint panel
+  - [x] Drag issues from sprint panel back to backlog
+  - [x] Visual feedback during drag operations
+- [x] Integrate with sprint issue management API
+- [x] Update backlog after adding to sprint (automatic refresh)
+- [x] Update sprint issues after removing from sprint (automatic refresh)
+- [x] Add loading states and error handling
+- [x] Write component tests
 
 **Deliverables**:
 
-- Add to Sprint functionality from backlog
-- Component tests
+- ✅ Drag-and-drop between backlog and sprint
+- ✅ Automatic data refresh after operations
+- ✅ Component tests
+
+---
+
+#### 2.1.15 Backlog Ribbon Component (Board View)
+
+**Priority**: High  
+**Estimated Time**: 1-2 days  
+**Dependencies**: 2.1.10, 2.1.6  
+**Assigned To**: HWIMDA2  
+**Status**: ✅ **COMPLETED**
+
+**Frontend Tasks**:
+
+- [x] Create backlog ribbon component (`backlog-ribbon.component.ts`)
+  - [x] Collapsible ribbon in board view footer
+  - [x] Display backlog issue count and total story points
+  - [x] Expandable list of backlog issues
+  - [x] Issue cards with key info (title, type, priority, story points)
+- [x] Add search functionality with debouncing
+- [x] Add pagination support with size variants (xs size)
+- [x] Integrate with backlog list API
+- [x] Auto-refresh when switching to board tab
+- [x] Apply BOM CSS methodology
+- [x] Write component tests
+
+**Deliverables**:
+
+- ✅ Backlog ribbon component for board view
+- ✅ Search and pagination functionality
+- ✅ Auto-refresh on tab switch
+- ✅ Component tests
 
 ---
 
@@ -1552,28 +1592,35 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 **Priority**: Medium  
 **Estimated Time**: 10-14 days  
 **Dependencies**: Phase 1.3.2, 2.1.1, 2.2.9  
-**Assigned To**: BATATA1
+**Assigned To**: BATATA1  
+**Status**: ✅ **PARTIALLY COMPLETED**
 
 **Tasks**:
 
-- [ ] Create report generation system
-  - [ ] Velocity reports
-  - [ ] Burndown charts data
-  - [ ] Burnup charts data
-  - [ ] Cumulative flow diagrams
-  - [ ] Time tracking reports
-- [ ] Create report endpoints
-  - [ ] Sprint velocity (GET /api/reports/sprint-velocity)
-  - [ ] Burndown (GET /api/reports/burndown)
-  - [ ] Time tracking (GET /api/reports/time-tracking)
-- [ ] Implement report data aggregation
+- [x] Create report generation system
+  - [x] Velocity reports (project velocity by sprint)
+  - [x] Cumulative flow diagrams (issue counts by status over time)
+  - [x] Project summary statistics (avg velocity, team members, cycle time, sprint goal completion)
+  - [ ] Burndown charts data (pending)
+  - [ ] Burnup charts data (pending)
+  - [ ] Time tracking reports (pending - depends on 2.2.9)
+- [x] Create report endpoints
+  - [x] Project velocity (GET /api/v1/projects/{project_id}/reports/velocity)
+  - [x] Cumulative flow (GET /api/v1/projects/{project_id}/reports/cumulative-flow)
+  - [x] Summary stats (GET /api/v1/projects/{project_id}/reports/summary)
+  - [ ] Sprint velocity (pending)
+  - [ ] Burndown (pending)
+  - [ ] Time tracking (pending)
+- [x] Implement report data aggregation
 - [ ] Create report scheduling (optional)
-- [ ] Write report API tests
+- [x] Write report API tests
 
 **Deliverables**:
 
-- Reporting system
-- Report data APIs
+- ✅ Project velocity and cumulative flow reporting system
+- ✅ Project summary statistics
+- ✅ Report data APIs
+- ⏳ Additional report types (pending)
 
 ---
 
@@ -1582,24 +1629,30 @@ This phase builds upon the MVP foundation, adding advanced features that enhance
 **Priority**: Medium  
 **Estimated Time**: 7-10 days  
 **Dependencies**: 2.4.8, 2.2.14  
-**Assigned To**: BATATA2
+**Assigned To**: BATATA2  
+**Status**: ✅ **PARTIALLY COMPLETED**
 
 **Tasks**:
 
-- [ ] Create report selection UI
-- [ ] Create velocity chart visualization
-- [ ] Create burndown chart visualization
-- [ ] Create burnup chart visualization
-- [ ] Create cumulative flow diagram
-- [ ] Create time tracking report tables
-- [ ] Add report filters (date range, project, etc.)
-- [ ] Add report export (PDF, CSV)
-- [ ] Add loading states and error handling
+- [x] Create reports page component (`reports-page.ts`)
+- [x] Create velocity chart visualization (using ECharts)
+- [x] Create cumulative flow diagram (using ECharts)
+- [x] Create summary statistics cards (avg velocity, team members, cycle time, sprint goal completion)
+- [x] Add tabs for switching between velocity and cumulative flow charts
+- [x] Integrate with reporting APIs
+- [x] Add loading states and error handling
+- [ ] Create burndown chart visualization (pending)
+- [ ] Create burnup chart visualization (pending)
+- [ ] Create time tracking report tables (pending)
+- [ ] Add report filters (date range, project, etc.) (pending)
+- [ ] Add report export (PDF, CSV) (pending)
 
 **Deliverables**:
 
-- Report visualizations
-- Report UI
+- ✅ Reports page with velocity and cumulative flow charts
+- ✅ Summary statistics display
+- ✅ Chart visualizations using ECharts
+- ⏳ Additional report types and export functionality (pending)
 
 ---
 
