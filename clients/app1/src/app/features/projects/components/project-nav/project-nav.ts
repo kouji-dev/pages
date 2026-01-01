@@ -1,71 +1,25 @@
 import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Icon } from 'shared-ui';
-import type { IconName } from 'shared-ui';
+import { Tabs, type TabItem } from 'shared-ui';
 import { TranslateService } from '@ngx-translate/core';
 import { NavigationService } from '../../../../application/services/navigation.service';
-
-interface NavItem {
-  label: string;
-  tab: string;
-  icon: IconName;
-}
 
 @Component({
   selector: 'app-project-nav',
   standalone: true,
-  imports: [Icon, RouterLink],
+  imports: [Tabs],
   template: `
-    <nav class="project-nav">
-      @for (item of navItems(); track item.tab) {
-        <a
-          [routerLink]="basePath()"
-          [queryParams]="{ tab: item.tab }"
-          [class.project-nav_item]="true"
-          [class.project-nav_item--active]="isActive(item.tab)"
-        >
-          <lib-icon [name]="item.icon" [size]="'sm'" />
-          <span>{{ item.label }}</span>
-        </a>
-      }
-    </nav>
+    <lib-tabs
+      [tabs]="navTabs()"
+      [activeTab]="currentTab()"
+      variant="default"
+      [showContent]="false"
+    />
   `,
   styles: [
     `
       @reference "#mainstyles";
-
-      .project-nav {
-        @apply flex items-center;
-        @apply gap-1;
-        @apply border-b;
-        @apply border-border;
-        @apply mb-0;
-      }
-
-      .project-nav_item {
-        @apply flex items-center;
-        @apply gap-2;
-        @apply px-4 py-2.5;
-        @apply text-sm font-medium;
-        @apply border-b-2;
-        @apply -mb-px;
-        @apply transition-colors;
-        @apply text-muted-foreground;
-        @apply border-transparent;
-        @apply no-underline;
-        @apply cursor-pointer;
-      }
-
-      .project-nav_item:hover {
-        @apply text-foreground;
-        @apply border-muted;
-      }
-
-      .project-nav_item--active {
-        @apply border-primary;
-        @apply text-foreground;
-      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -89,38 +43,48 @@ export class ProjectNav {
     initialValue: {} as Record<string, string>,
   });
 
-  readonly navItems = computed<NavItem[]>(() => {
+  readonly currentTab = computed(() => {
+    return this.queryParams()?.['tab'] || 'board';
+  });
+
+  readonly navTabs = computed<TabItem[]>(() => {
+    const basePath = this.basePath();
     return [
       {
         label: this.translateService.instant('board.title'),
-        tab: 'board',
+        value: 'board',
         icon: 'columns-2',
+        routerLink: basePath,
+        queryParams: { tab: 'board' },
       },
       {
         label: this.translateService.instant('review.title'),
-        tab: 'review',
+        value: 'review',
         icon: 'zap',
+        routerLink: basePath,
+        queryParams: { tab: 'review' },
       },
       {
         label: this.translateService.instant('sprints.planning'),
-        tab: 'planning',
+        value: 'planning',
         icon: 'list-todo',
+        routerLink: basePath,
+        queryParams: { tab: 'planning' },
       },
       {
         label: this.translateService.instant('backlog.title'),
-        tab: 'backlog',
+        value: 'backlog',
         icon: 'list-todo',
+        routerLink: basePath,
+        queryParams: { tab: 'backlog' },
       },
       {
         label: this.translateService.instant('reports.title'),
-        tab: 'reports',
+        value: 'reports',
         icon: 'activity',
+        routerLink: basePath,
+        queryParams: { tab: 'reports' },
       },
     ];
   });
-
-  isActive(tab: string): boolean {
-    const currentTab = this.queryParams()?.['tab'] || 'board';
-    return currentTab === tab;
-  }
 }

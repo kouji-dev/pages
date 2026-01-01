@@ -16,6 +16,8 @@ import {
   Badge,
   Progress,
   type ProgressStatus,
+  Tabs,
+  type TabItem,
 } from 'shared-ui';
 import { Chart } from 'shared-ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -29,7 +31,7 @@ import type { EChartsOption } from 'echarts';
 @Component({
   selector: 'app-review-page',
   standalone: true,
-  imports: [CommonModule, LoadingState, ErrorState, Icon, Progress, Chart, TranslatePipe],
+  imports: [CommonModule, LoadingState, ErrorState, Icon, Progress, Chart, TranslatePipe, Tabs],
   template: `
     @if (isLoading()) {
       <lib-loading-state [message]="'review.loading' | translate" />
@@ -59,69 +61,46 @@ import type { EChartsOption } from 'echarts';
 
         <!-- Charts with Tabs -->
         <div class="review-page_charts">
-          <div class="review-page_tabs">
-            <div class="review-page_tabs-list">
-              <button
-                type="button"
-                class="review-page_tabs-trigger"
-                [class.review-page_tabs-trigger--active]="activeTab() === 'burndown'"
-                (click)="activeTab.set('burndown')"
-              >
-                <lib-icon name="trending-down" [size]="'xs'" />
-                {{ 'review.burndown' | translate }}
-              </button>
-              <button
-                type="button"
-                class="review-page_tabs-trigger"
-                [class.review-page_tabs-trigger--active]="activeTab() === 'breakdown'"
-                (click)="activeTab.set('breakdown')"
-              >
-                <lib-icon name="activity" [size]="'xs'" />
-                {{ 'review.breakdown' | translate }}
-              </button>
-            </div>
-
+          <lib-tabs
+            [tabs]="chartTabs()"
+            [activeTab]="activeTab()"
+            variant="pills"
+            (tabChange)="handleTabChange($event)"
+          >
             @if (activeTab() === 'burndown') {
-              <div class="review-page_tabs-content">
-                <div class="review-page_chart">
-                  <div class="review-page_chart-content">
-                    <lib-chart [options]="burndownChartOptions() || {}" [height]="'400px'" />
-                  </div>
+              <div class="review-page_chart">
+                <div class="review-page_chart-content">
+                  <lib-chart [options]="burndownChartOptions() || {}" [height]="'400px'" />
                 </div>
               </div>
             }
 
             @if (activeTab() === 'breakdown') {
-              <div class="review-page_tabs-content">
-                <div class="review-page_chart">
-                  <div class="review-page_chart-content">
-                    <div class="review-page_breakdown">
-                      @for (breakdown of storyPointsBreakdown(); track breakdown.status) {
-                        <div class="review-page_breakdown-item">
-                          <div class="review-page_breakdown-header">
-                            <span class="review-page_breakdown-label">
-                              <span
-                                class="review-page_breakdown-indicator"
-                                [class]="breakdown.indicatorClass"
-                              ></span>
-                              {{ breakdown.label }}
-                            </span>
-                            <span class="review-page_breakdown-value"
-                              >{{ breakdown.points }} pts</span
-                            >
-                          </div>
-                          <lib-progress
-                            [value]="breakdown.percentage"
-                            [status]="breakdown.status"
-                          />
+              <div class="review-page_chart">
+                <div class="review-page_chart-content">
+                  <div class="review-page_breakdown">
+                    @for (breakdown of storyPointsBreakdown(); track breakdown.status) {
+                      <div class="review-page_breakdown-item">
+                        <div class="review-page_breakdown-header">
+                          <span class="review-page_breakdown-label">
+                            <span
+                              class="review-page_breakdown-indicator"
+                              [class]="breakdown.indicatorClass"
+                            ></span>
+                            {{ breakdown.label }}
+                          </span>
+                          <span class="review-page_breakdown-value"
+                            >{{ breakdown.points }} pts</span
+                          >
                         </div>
-                      }
-                    </div>
+                        <lib-progress [value]="breakdown.percentage" [status]="breakdown.status" />
+                      </div>
+                    }
                   </div>
                 </div>
               </div>
             }
-          </div>
+          </lib-tabs>
         </div>
       </div>
     }
@@ -174,58 +153,6 @@ import type { EChartsOption } from 'echarts';
 
       .review-page_charts {
         @apply w-full;
-      }
-
-      .review-page_tabs {
-        @apply flex flex-col;
-        @apply w-full;
-        gap: var(--spacing-4);
-      }
-
-      .review-page_tabs-list {
-        @apply inline-flex items-center justify-start;
-        @apply rounded-lg;
-        @apply bg-muted;
-        @apply p-1;
-        @apply text-muted-foreground;
-        @apply w-full;
-      }
-
-      .review-page_tabs-trigger {
-        @apply inline-flex items-center justify-center;
-        @apply whitespace-nowrap;
-        @apply rounded-md;
-        @apply px-3 py-1.5;
-        font-size: var(--text-sm);
-        @apply font-medium;
-        @apply ring-offset-background;
-        @apply transition-all;
-        @apply focus-visible:outline-none;
-        @apply focus-visible:ring-2;
-        @apply focus-visible:ring-ring;
-        @apply focus-visible:ring-offset-2;
-        @apply disabled:pointer-events-none;
-        @apply disabled:opacity-50;
-        @apply cursor-pointer;
-        @apply border-none;
-        @apply bg-transparent;
-        gap: var(--spacing-2);
-        color: var(--color-muted-foreground);
-      }
-
-      .review-page_tabs-trigger:hover {
-        color: var(--color-foreground);
-      }
-
-      .review-page_tabs-trigger--active {
-        @apply bg-background;
-        @apply shadow-sm;
-        color: var(--color-foreground);
-      }
-
-      .review-page_tabs-content {
-        @apply w-full;
-        @apply mt-0;
       }
 
       .review-page_chart {
@@ -307,6 +234,27 @@ export class ReviewPage {
   readonly burndownStats = signal<BurndownStatsResponse | null>(null);
   readonly issueStats = signal<IssueStatsResponse | null>(null);
   readonly activeTab = signal<'burndown' | 'breakdown'>('burndown');
+
+  readonly chartTabs = computed<TabItem[]>(() => {
+    return [
+      {
+        label: this.translateService.instant('review.burndown'),
+        value: 'burndown',
+        icon: 'trending-down',
+      },
+      {
+        label: this.translateService.instant('review.breakdown'),
+        value: 'breakdown',
+        icon: 'activity',
+      },
+    ];
+  });
+
+  handleTabChange(value: string): void {
+    if (value === 'burndown' || value === 'breakdown') {
+      this.activeTab.set(value);
+    }
+  }
 
   readonly stats = computed(() => {
     const issueStatsData = this.issueStats();
