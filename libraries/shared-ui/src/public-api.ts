@@ -46,4 +46,5 @@ export * from './lib/list/list-item-actions';
 export type { ListItemAction } from './lib/list/list-item-actions';
 export * from './lib/pagination/pagination';
 export * from './lib/progress/progress';
+export * from './lib/chart/chart';
 export * from './lib/i18n/translate.service';

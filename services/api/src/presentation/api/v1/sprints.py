@@ -21,11 +21,14 @@ from src.application.dtos.sprint_metrics import (
     CompleteSprintResponse,
     SprintMetricsResponse,
 )
+from src.application.dtos.sprint_stats import BurndownStatsResponse, IssueStatsResponse
 from src.application.use_cases.sprint import (
     AddIssueToSprintUseCase,
     CompleteSprintUseCase,
     CreateSprintUseCase,
     DeleteSprintUseCase,
+    GetSprintBurndownStatsUseCase,
+    GetSprintIssueStatsUseCase,
     GetSprintMetricsUseCase,
     GetSprintUseCase,
     ListSprintsUseCase,
@@ -119,6 +122,42 @@ def get_get_sprint_metrics_use_case(
 ) -> GetSprintMetricsUseCase:
     """Get sprint metrics use case with dependencies."""
     return GetSprintMetricsUseCase(sprint_repository, issue_repository, session)
+
+
+def get_get_sprint_burndown_stats_use_case(
+    sprint_repository: Annotated[SprintRepository, Depends(get_sprint_repository)],
+    issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> GetSprintBurndownStatsUseCase:
+    """Get sprint burndown stats use case with dependencies."""
+    return GetSprintBurndownStatsUseCase(sprint_repository, issue_repository, session)
+
+
+def get_get_sprint_issue_stats_use_case(
+    sprint_repository: Annotated[SprintRepository, Depends(get_sprint_repository)],
+    issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> GetSprintIssueStatsUseCase:
+    """Get sprint issue stats use case with dependencies."""
+    return GetSprintIssueStatsUseCase(sprint_repository, issue_repository, session)
+
+
+def get_get_sprint_burndown_stats_use_case(
+    sprint_repository: Annotated[SprintRepository, Depends(get_sprint_repository)],
+    issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> GetSprintBurndownStatsUseCase:
+    """Get sprint burndown stats use case with dependencies."""
+    return GetSprintBurndownStatsUseCase(sprint_repository, issue_repository, session)
+
+
+def get_get_sprint_issue_stats_use_case(
+    sprint_repository: Annotated[SprintRepository, Depends(get_sprint_repository)],
+    issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> GetSprintIssueStatsUseCase:
+    """Get sprint issue stats use case with dependencies."""
+    return GetSprintIssueStatsUseCase(sprint_repository, issue_repository, session)
 
 
 def get_complete_sprint_use_case(
@@ -475,6 +514,78 @@ async def get_sprint_metrics(
 
     Returns:
         Sprint metrics response
+
+    Raises:
+        HTTPException: If sprint not found
+    """
+    try:
+        return await use_case.execute(sprint_id)
+    except EntityNotFoundException as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(e),
+        ) from e
+
+
+@router.get(
+    "/sprints/{sprint_id}/stats/burndown",
+    response_model=BurndownStatsResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get sprint burndown stats",
+    description="Get burndown chart data for a sprint",
+)
+async def get_sprint_burndown_stats(
+    sprint_id: UUID,
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[
+        GetSprintBurndownStatsUseCase, Depends(get_get_sprint_burndown_stats_use_case)
+    ],
+) -> BurndownStatsResponse:
+    """Get sprint burndown stats.
+
+    Args:
+        sprint_id: Sprint UUID
+        current_user: Current authenticated user
+        use_case: Get sprint burndown stats use case
+
+    Returns:
+        Burndown stats response
+
+    Raises:
+        HTTPException: If sprint not found
+    """
+    try:
+        return await use_case.execute(sprint_id)
+    except EntityNotFoundException as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(e),
+        ) from e
+
+
+@router.get(
+    "/sprints/{sprint_id}/stats/issues",
+    response_model=IssueStatsResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get sprint issue stats",
+    description="Get issue statistics for a sprint",
+)
+async def get_sprint_issue_stats(
+    sprint_id: UUID,
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[
+        GetSprintIssueStatsUseCase, Depends(get_get_sprint_issue_stats_use_case)
+    ],
+) -> IssueStatsResponse:
+    """Get sprint issue stats.
+
+    Args:
+        sprint_id: Sprint UUID
+        current_user: Current authenticated user
+        use_case: Get sprint issue stats use case
+
+    Returns:
+        Issue stats response
 
     Raises:
         HTTPException: If sprint not found

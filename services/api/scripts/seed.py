@@ -335,6 +335,18 @@ async def seed_database() -> None:
             assignee = random.choice([admin_user.id, dev_user.id, None])
             reporter = random.choice([admin_user.id, dev_user.id, test_user.id])
             
+            # Assign story points based on priority and type
+            story_points = None
+            if template["type"] in ["story", "task"]:
+                if template["priority"] == "critical":
+                    story_points = random.choice([8, 13, 21])
+                elif template["priority"] == "high":
+                    story_points = random.choice([5, 8, 13])
+                elif template["priority"] == "medium":
+                    story_points = random.choice([3, 5, 8])
+                else:
+                    story_points = random.choice([1, 2, 3])
+            
             issue = IssueModel(
                 id=uuid4(),
                 project_id=project.id,
@@ -346,6 +358,7 @@ async def seed_database() -> None:
                 priority=template["priority"],
                 reporter_id=reporter,
                 assignee_id=assignee,
+                story_points=story_points,
             )
             issues.append(issue)
             issue_number += 1

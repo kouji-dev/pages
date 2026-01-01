@@ -652,7 +652,20 @@
     "planning": "Planning"
   },
   "review": {
-    "title": "Review"
+    "title": "Review",
+    "loading": "Loading review data...",
+    "failedToLoad": "Failed to load review data",
+    "noSprintSelected": "No sprint selected",
+    "noData": "No data available",
+    "burndown": "Burndown",
+    "storyPointsBreakdown": "Story Points Breakdown",
+    "totalIssues": "Total Issues",
+    "completed": "Completed",
+    "inProgress": "In Progress",
+    "toDo": "To Do",
+    "ideal": "Ideal",
+    "actual": "Actual",
+    "breakdown": "Breakdown"
   },
   "backlog": {
     "title": "Backlog",

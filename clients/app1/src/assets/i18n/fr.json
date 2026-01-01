@@ -652,7 +652,20 @@
     "planning": "Planification"
   },
   "review": {
-    "title": "Révision"
+    "title": "Révision",
+    "loading": "Chargement des données de révision...",
+    "failedToLoad": "Échec du chargement des données de révision",
+    "noSprintSelected": "Aucun sprint sélectionné",
+    "noData": "Aucune donnée disponible",
+    "burndown": "Burndown",
+    "storyPointsBreakdown": "Répartition des points de story",
+    "totalIssues": "Total des tâches",
+    "completed": "Terminées",
+    "inProgress": "En cours",
+    "toDo": "À faire",
+    "ideal": "Idéal",
+    "actual": "Réel",
+    "breakdown": "Répartition"
   },
   "backlog": {
     "title": "Backlog",

@@ -32,6 +32,7 @@ import {
   SprintIssue,
 } from '../../../../application/services/sprint.service';
 import { IssueService } from '../../../../application/services/issue.service';
+import { ReviewPage } from '../review/review-page';
 
 type TabType =
   | 'issues'
@@ -61,6 +62,7 @@ type TabType =
     BacklogRibbon,
     TranslatePipe,
     PageContent,
+    ReviewPage,
   ],
   template: `
     @if (projectService.isFetchingProject()) {
@@ -137,9 +139,7 @@ type TabType =
                 <app-kanban-board [projectId]="projectId()" />
               </div>
             } @else if (activeTab() === 'review') {
-              <div class="project-detail-page_placeholder">
-                {{ 'review.title' | translate }} - Coming soon
-              </div>
+              <app-review-page />
             } @else if (activeTab() === 'planning') {
               <div class="project-detail-page_placeholder">
                 {{ 'sprints.planning' | translate }} - Coming soon

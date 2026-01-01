@@ -213,4 +213,44 @@ export class SprintService {
     );
     this.sprints.reload();
   }
+
+  /**
+   * Get sprint burndown stats
+   */
+  async getSprintBurndownStats(sprintId: string): Promise<BurndownStatsResponse> {
+    return await firstValueFrom(
+      this.http.get<BurndownStatsResponse>(`${this.apiUrl}/sprints/${sprintId}/stats/burndown`),
+    );
+  }
+
+  /**
+   * Get sprint issue stats
+   */
+  async getSprintIssueStats(sprintId: string): Promise<IssueStatsResponse> {
+    return await firstValueFrom(
+      this.http.get<IssueStatsResponse>(`${this.apiUrl}/sprints/${sprintId}/stats/issues`),
+    );
+  }
+}
+
+export interface BurndownStatsResponse {
+  sprint_id: string;
+  burndown_data: Array<{
+    date: string;
+    ideal: number;
+    actual: number;
+  }>;
+}
+
+export interface IssueStatsResponse {
+  sprint_id: string;
+  total_issues: number;
+  completed_issues: number;
+  in_progress_issues: number;
+  todo_issues: number;
+  cancelled_issues: number;
+  total_story_points: number;
+  completed_story_points: number;
+  in_progress_story_points: number;
+  todo_story_points: number;
 }
