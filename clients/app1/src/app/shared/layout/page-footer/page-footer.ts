@@ -1,27 +1,24 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+/**
+ * Page footer component that ensures its content is always positioned at the bottom
+ * of the page content area, even when there's not enough content to fill the viewport.
+ */
 @Component({
-  selector: 'app-page-body',
+  selector: 'app-page-footer',
   imports: [CommonModule],
-  template: `
-    <ng-content select="app-page-header" />
-    <ng-content />
-    <ng-content select="app-page-content" />
-    <ng-content select="app-page-footer" />
-  `,
+  template: ` <ng-content /> `,
   styles: [
     `
       @reference "#mainstyles";
 
       :host {
-        @apply flex flex-col flex-auto;
+        @apply flex-shrink-0;
         @apply w-full;
-        @apply h-full;
-        @apply min-h-0;
       }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PageBody {}
+export class PageFooter {}

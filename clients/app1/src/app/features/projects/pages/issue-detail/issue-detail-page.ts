@@ -374,6 +374,12 @@ interface LinkedIssue {
     `
       @reference "#mainstyles";
 
+      :host {
+        @apply flex flex-col flex-auto;
+        @apply w-full;
+        @apply min-h-0;
+      }
+
       .issue-detail-page_container {
         @apply flex w-full;
         @apply min-h-0;

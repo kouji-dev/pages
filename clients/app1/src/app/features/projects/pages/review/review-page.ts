@@ -43,65 +43,61 @@ import type { EChartsOption } from 'echarts';
         (onRetry)="loadStats()"
       />
     } @else {
-      <div class="review-page">
-        <!-- Stats Cards -->
-        <div class="review-page_stats">
-          @for (stat of stats(); track stat.title) {
-            <div class="review-page_stat-card">
-              <div class="review-page_stat-header">
-                <span class="review-page_stat-title">{{ stat.title }}</span>
-                <lib-icon [name]="stat.icon" [size]="'xs'" [class]="stat.iconClass" />
-              </div>
-              <div class="review-page_stat-content">
-                <div class="review-page_stat-value">{{ stat.value }}</div>
+      <!-- Stats Cards -->
+      <div class="review-page_stats">
+        @for (stat of stats(); track stat.title) {
+          <div class="review-page_stat-card">
+            <div class="review-page_stat-header">
+              <span class="review-page_stat-title">{{ stat.title }}</span>
+              <lib-icon [name]="stat.icon" [size]="'xs'" [class]="stat.iconClass" />
+            </div>
+            <div class="review-page_stat-content">
+              <div class="review-page_stat-value">{{ stat.value }}</div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Charts with Tabs -->
+      <div class="review-page_charts">
+        <lib-tabs
+          [tabs]="chartTabs()"
+          [activeTab]="activeTab()"
+          variant="pills"
+          (tabChange)="handleTabChange($event)"
+        >
+          @if (activeTab() === 'burndown') {
+            <div class="review-page_chart">
+              <div class="review-page_chart-content">
+                <lib-chart [options]="burndownChartOptions() || {}" [height]="'400px'" />
               </div>
             </div>
           }
-        </div>
 
-        <!-- Charts with Tabs -->
-        <div class="review-page_charts">
-          <lib-tabs
-            [tabs]="chartTabs()"
-            [activeTab]="activeTab()"
-            variant="pills"
-            (tabChange)="handleTabChange($event)"
-          >
-            @if (activeTab() === 'burndown') {
-              <div class="review-page_chart">
-                <div class="review-page_chart-content">
-                  <lib-chart [options]="burndownChartOptions() || {}" [height]="'400px'" />
-                </div>
-              </div>
-            }
-
-            @if (activeTab() === 'breakdown') {
-              <div class="review-page_chart">
-                <div class="review-page_chart-content">
-                  <div class="review-page_breakdown">
-                    @for (breakdown of storyPointsBreakdown(); track breakdown.status) {
-                      <div class="review-page_breakdown-item">
-                        <div class="review-page_breakdown-header">
-                          <span class="review-page_breakdown-label">
-                            <span
-                              class="review-page_breakdown-indicator"
-                              [class]="breakdown.indicatorClass"
-                            ></span>
-                            {{ breakdown.label }}
-                          </span>
-                          <span class="review-page_breakdown-value"
-                            >{{ breakdown.points }} pts</span
-                          >
-                        </div>
-                        <lib-progress [value]="breakdown.percentage" [status]="breakdown.status" />
+          @if (activeTab() === 'breakdown') {
+            <div class="review-page_chart">
+              <div class="review-page_chart-content">
+                <div class="review-page_breakdown">
+                  @for (breakdown of storyPointsBreakdown(); track breakdown.status) {
+                    <div class="review-page_breakdown-item">
+                      <div class="review-page_breakdown-header">
+                        <span class="review-page_breakdown-label">
+                          <span
+                            class="review-page_breakdown-indicator"
+                            [class]="breakdown.indicatorClass"
+                          ></span>
+                          {{ breakdown.label }}
+                        </span>
+                        <span class="review-page_breakdown-value">{{ breakdown.points }} pts</span>
                       </div>
-                    }
-                  </div>
+                      <lib-progress [value]="breakdown.percentage" [status]="breakdown.status" />
+                    </div>
+                  }
                 </div>
               </div>
-            }
-          </lib-tabs>
-        </div>
+            </div>
+          }
+        </lib-tabs>
       </div>
     }
   `,
@@ -109,10 +105,11 @@ import type { EChartsOption } from 'echarts';
     `
       @reference "#mainstyles";
 
-      .review-page {
-        @apply flex flex-col;
-        @apply gap-6;
+      :host {
+        @apply flex flex-col flex-auto;
         @apply w-full;
+        @apply min-h-0;
+        @apply gap-6;
       }
 
       .review-page_stats {

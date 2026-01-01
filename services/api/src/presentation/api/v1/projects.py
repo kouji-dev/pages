@@ -12,6 +12,11 @@ from src.application.dtos.project import (
     ProjectResponse,
     UpdateProjectRequest,
 )
+from src.application.dtos.project_reports import (
+    CumulativeFlowReportResponse,
+    ProjectSummaryStatsResponse,
+    VelocityReportResponse,
+)
 from src.application.dtos.project_member import (
     AddProjectMemberRequest,
     ProjectMemberListResponse,
@@ -22,7 +27,10 @@ from src.application.use_cases.project import (
     AddProjectMemberUseCase,
     CreateProjectUseCase,
     DeleteProjectUseCase,
+    GetProjectCumulativeFlowUseCase,
+    GetProjectSummaryStatsUseCase,
     GetProjectUseCase,
+    GetProjectVelocityUseCase,
     ListProjectMembersUseCase,
     ListProjectsUseCase,
     RemoveProjectMemberUseCase,
@@ -33,6 +41,7 @@ from src.domain.entities import User
 from src.domain.repositories import (
     OrganizationRepository,
     ProjectRepository,
+    SprintRepository,
     UserRepository,
 )
 from src.domain.services import PermissionService
@@ -47,6 +56,7 @@ from src.presentation.dependencies.services import (
     get_organization_repository,
     get_permission_service,
     get_project_repository,
+    get_sprint_repository,
     get_user_repository,
 )
 
@@ -254,6 +264,32 @@ def get_remove_project_member_use_case(
     return RemoveProjectMemberUseCase(project_repository, session)
 
 
+def get_get_project_velocity_use_case(
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+    sprint_repository: Annotated[SprintRepository, Depends(get_sprint_repository)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> GetProjectVelocityUseCase:
+    """Get project velocity use case with dependencies."""
+    return GetProjectVelocityUseCase(project_repository, sprint_repository, session)
+
+
+def get_get_project_cumulative_flow_use_case(
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> GetProjectCumulativeFlowUseCase:
+    """Get project cumulative flow use case with dependencies."""
+    return GetProjectCumulativeFlowUseCase(project_repository, session)
+
+
+def get_get_project_summary_stats_use_case(
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+    sprint_repository: Annotated[SprintRepository, Depends(get_sprint_repository)],
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> GetProjectSummaryStatsUseCase:
+    """Get project summary stats use case with dependencies."""
+    return GetProjectSummaryStatsUseCase(project_repository, sprint_repository, session)
+
+
 @router.post(
     "/{project_id}/members",
     response_model=ProjectMemberResponse,
@@ -379,3 +415,103 @@ async def remove_project_member(
     await require_organization_admin(project.organization_id, current_user, permission_service)
 
     await use_case.execute(str(project_id), str(user_id))
+
+
+@router.get(
+    "/{project_id}/reports/velocity",
+    response_model=VelocityReportResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get project velocity report",
+    description="Get velocity data across all sprints for a project",
+)
+async def get_project_velocity(
+    project_id: UUID,
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[
+        GetProjectVelocityUseCase, Depends(get_get_project_velocity_use_case)
+    ],
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+) -> VelocityReportResponse:
+    """Get project velocity report.
+
+    Requires user to be a member of the project's organization.
+    """
+    from fastapi import HTTPException
+
+    project = await project_repository.get_by_id(project_id)
+
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    # Verify user is a member of the organization
+    await require_organization_member(project.organization_id, current_user, permission_service)
+
+    return await use_case.execute(project_id)
+
+
+@router.get(
+    "/{project_id}/reports/cumulative-flow",
+    response_model=CumulativeFlowReportResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get project cumulative flow report",
+    description="Get cumulative flow data for a project over time",
+)
+async def get_project_cumulative_flow(
+    project_id: UUID,
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[
+        GetProjectCumulativeFlowUseCase, Depends(get_get_project_cumulative_flow_use_case)
+    ],
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+    days: Annotated[int, Query(ge=1, le=30, description="Number of days to include")] = 7,
+) -> CumulativeFlowReportResponse:
+    """Get project cumulative flow report.
+
+    Requires user to be a member of the project's organization.
+    """
+    from fastapi import HTTPException
+
+    project = await project_repository.get_by_id(project_id)
+
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    # Verify user is a member of the organization
+    await require_organization_member(project.organization_id, current_user, permission_service)
+
+    return await use_case.execute(project_id, days=days)
+
+
+@router.get(
+    "/{project_id}/reports/summary",
+    response_model=ProjectSummaryStatsResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get project summary statistics",
+    description="Get summary statistics for a project (velocity, team members, cycle time, sprint goal)",
+)
+async def get_project_summary_stats(
+    project_id: UUID,
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[
+        GetProjectSummaryStatsUseCase, Depends(get_get_project_summary_stats_use_case)
+    ],
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+) -> ProjectSummaryStatsResponse:
+    """Get project summary statistics.
+
+    Requires user to be a member of the project's organization.
+    """
+    from fastapi import HTTPException
+
+    project = await project_repository.get_by_id(project_id)
+
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    # Verify user is a member of the organization
+    await require_organization_member(project.organization_id, current_user, permission_service)
+
+    return await use_case.execute(project_id)

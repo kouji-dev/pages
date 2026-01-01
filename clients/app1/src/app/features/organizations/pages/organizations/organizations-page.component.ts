@@ -21,67 +21,65 @@ import { CreateOrganizationModal } from '../../components/create-organization-mo
   selector: 'app-organizations-page',
   imports: [Button, LoadingState, ErrorState, EmptyState, OrganizationCard, TranslatePipe],
   template: `
-    <div class="organizations-page">
-      <div class="organizations-page_header">
-        <div class="organizations-page_header-content">
-          <div>
-            <h1 class="organizations-page_title">{{ 'organizations.title' | translate }}</h1>
-            <p class="organizations-page_subtitle">
-              {{ 'organizations.subtitle' | translate }}
-            </p>
-          </div>
-          <lib-button
-            variant="primary"
-            size="md"
-            leftIcon="plus"
-            (clicked)="handleCreateOrganization()"
-          >
-            {{ 'organizations.createOrganization' | translate }}
-          </lib-button>
+    <div class="organizations-page_header">
+      <div class="organizations-page_header-content">
+        <div>
+          <h1 class="organizations-page_title">{{ 'organizations.title' | translate }}</h1>
+          <p class="organizations-page_subtitle">
+            {{ 'organizations.subtitle' | translate }}
+          </p>
         </div>
+        <lib-button
+          variant="primary"
+          size="md"
+          leftIcon="plus"
+          (clicked)="handleCreateOrganization()"
+        >
+          {{ 'organizations.createOrganization' | translate }}
+        </lib-button>
       </div>
+    </div>
 
-      <div class="organizations-page_content">
-        @if (organizationService.isLoading()) {
-          <lib-loading-state [message]="'organizations.loadingOrganizations' | translate" />
-        } @else if (organizationService.hasError()) {
-          <lib-error-state
-            [title]="'organizations.failedToLoad' | translate"
-            [message]="errorMessage()"
-            [retryLabel]="'common.retry' | translate"
-            (onRetry)="handleRetry()"
-          />
-        } @else if (organizations().length === 0) {
-          <lib-empty-state
-            [title]="'organizations.noOrganizations' | translate"
-            [message]="'organizations.noOrganizationsDescription' | translate"
-            icon="building"
-            [actionLabel]="'organizations.createOrganization' | translate"
-            actionIcon="plus"
-            (onAction)="handleCreateOrganization()"
-          />
-        } @else {
-          <div class="organizations-page_grid">
-            @for (org of organizations(); track org.id) {
-              <app-organization-card
-                [organization]="org"
-                (onSettings)="handleOrganizationSettings($event)"
-                (onLeave)="handleOrganizationLeave($event)"
-              />
-            }
-          </div>
-        }
-      </div>
+    <div class="organizations-page_content">
+      @if (organizationService.isLoading()) {
+        <lib-loading-state [message]="'organizations.loadingOrganizations' | translate" />
+      } @else if (organizationService.hasError()) {
+        <lib-error-state
+          [title]="'organizations.failedToLoad' | translate"
+          [message]="errorMessage()"
+          [retryLabel]="'common.retry' | translate"
+          (onRetry)="handleRetry()"
+        />
+      } @else if (organizations().length === 0) {
+        <lib-empty-state
+          [title]="'organizations.noOrganizations' | translate"
+          [message]="'organizations.noOrganizationsDescription' | translate"
+          icon="building"
+          [actionLabel]="'organizations.createOrganization' | translate"
+          actionIcon="plus"
+          (onAction)="handleCreateOrganization()"
+        />
+      } @else {
+        <div class="organizations-page_grid">
+          @for (org of organizations(); track org.id) {
+            <app-organization-card
+              [organization]="org"
+              (onSettings)="handleOrganizationSettings($event)"
+              (onLeave)="handleOrganizationLeave($event)"
+            />
+          }
+        </div>
+      }
     </div>
   `,
   styles: [
     `
       @reference "#mainstyles";
 
-      .organizations-page {
-        @apply min-h-screen;
-        @apply flex flex-col;
-        @apply bg-background;
+      :host {
+        @apply flex flex-col flex-auto;
+        @apply w-full;
+        @apply min-h-0;
       }
 
       .organizations-page_header {

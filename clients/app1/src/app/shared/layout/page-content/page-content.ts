@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
       @reference "#mainstyles";
 
       :host {
-        @apply flex-1;
+        @apply flex-auto;
         @apply w-full;
         @apply h-full;
         @apply overflow-y-auto;

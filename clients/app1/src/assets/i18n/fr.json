@@ -701,7 +701,28 @@
     "createIssueComingSoon": "La fonctionnalité de création d'issue arrive bientôt"
   },
   "reports": {
-    "title": "Rapports"
+    "title": "Rapports",
+    "loading": "Chargement des rapports...",
+    "failedToLoad": "Échec du chargement des rapports",
+    "avgVelocity": "Vélocité moyenne",
+    "teamMembers": "Membres de l'équipe",
+    "cycleTime": "Temps de cycle",
+    "sprintGoal": "Objectif du sprint",
+    "perSprint": "par sprint",
+    "activeContributors": "contributeurs actifs",
+    "avgPerIssue": "moyenne par issue",
+    "completionRate": "taux de complétion",
+    "velocity": {
+      "label": "Vélocité",
+      "title": "Vélocité des sprints",
+      "committed": "Engagé",
+      "completed": "Terminé"
+    },
+    "cumulative": {
+      "label": "Flux cumulatif",
+      "title": "Diagramme de flux cumulatif"
+    },
+    "noData": "Aucune donnée disponible"
   },
   "members": {
     "title": "Membres",

@@ -26,6 +26,7 @@ import {
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { IssueService, IssueListItem } from '../../../../application/services/issue.service';
 import { IssueCard } from '../../../../shared/components/issue-card';
+import { PageFooter } from '../../../../shared/layout/page-footer/page-footer';
 import { NavigationService } from '../../../../application/services/navigation.service';
 
 const ITEMS_PER_PAGE = 20;
@@ -45,90 +46,92 @@ const ITEMS_PER_PAGE = 20;
     Icon,
     IssueCard,
     TranslatePipe,
+    PageFooter,
   ],
   template: `
-    <div class="backlog-page">
-      @if (isLoading()) {
-        <lib-loading-state [message]="'backlog.loading' | translate" />
-      } @else if (hasError()) {
-        <lib-error-state
-          [title]="'backlog.failedToLoad' | translate"
-          [message]="errorMessage()"
-          [retryLabel]="'common.retry' | translate"
-          (onRetry)="loadBacklogIssues()"
-        />
-      } @else {
-        <div class="backlog-page_content">
-          <!-- Header with stats and Add Issue button -->
-          <div class="backlog-page_header">
-            <lib-badge variant="default" class="backlog-page_stats">
-              {{ backlogDisplayCount() }} {{ 'backlog.issues' | translate }} • {{ backlogPoints() }}
-              {{ 'backlog.points' | translate }}
-            </lib-badge>
-            <lib-button
-              variant="primary"
-              size="md"
-              (clicked)="handleCreateIssue()"
-              class="backlog-page_add-button"
-            >
-              <lib-icon name="plus" [size]="'xs'" />
-              {{ 'backlog.addIssue' | translate }}
-            </lib-button>
-          </div>
+    @if (isLoading()) {
+      <lib-loading-state [message]="'backlog.loading' | translate" />
+    } @else if (hasError()) {
+      <lib-error-state
+        [title]="'backlog.failedToLoad' | translate"
+        [message]="errorMessage()"
+        [retryLabel]="'common.retry' | translate"
+        (onRetry)="loadBacklogIssues()"
+      />
+    } @else {
+      <div class="backlog-page_content">
+        <!-- Header with stats and Add Issue button -->
+        <div class="backlog-page_header">
+          <lib-badge variant="default" class="backlog-page_stats">
+            {{ backlogDisplayCount() }} {{ 'backlog.issues' | translate }} • {{ backlogPoints() }}
+            {{ 'backlog.points' | translate }}
+          </lib-badge>
+          <lib-button
+            variant="primary"
+            size="md"
+            (clicked)="handleCreateIssue()"
+            class="backlog-page_add-button"
+          >
+            <lib-icon name="plus" [size]="'xs'" />
+            {{ 'backlog.addIssue' | translate }}
+          </lib-button>
+        </div>
 
-          <!-- Filters -->
-          <div class="backlog-page_filters">
-            <div class="backlog-page_search">
-              <lib-input
-                [placeholder]="'backlog.searchPlaceholder' | translate"
-                [(model)]="search"
-                (modelChange)="handleSearchChange($event)"
-                [size]="'sm'"
-                [leftAction]="{ icon: 'search' }"
-              />
-            </div>
-            <lib-select
-              [(model)]="statusFilter"
-              [options]="statusOptions()"
-              [placeholder]="'backlog.statusFilter' | translate"
+        <!-- Filters -->
+        <div class="backlog-page_filters">
+          <div class="backlog-page_search">
+            <lib-input
+              [placeholder]="'backlog.searchPlaceholder' | translate"
+              [(model)]="search"
+              (modelChange)="handleSearchChange($event)"
               [size]="'sm'"
-              class="backlog-page_filter-select"
-            />
-            <lib-select
-              [(model)]="priorityFilter"
-              [options]="priorityOptions()"
-              [placeholder]="'backlog.priorityFilter' | translate"
-              [size]="'sm'"
-              class="backlog-page_filter-select"
+              [leftAction]="{ icon: 'search' }"
             />
           </div>
+          <lib-select
+            [(model)]="statusFilter"
+            [options]="statusOptions()"
+            [placeholder]="'backlog.statusFilter' | translate"
+            [size]="'sm'"
+            class="backlog-page_filter-select"
+          />
+          <lib-select
+            [(model)]="priorityFilter"
+            [options]="priorityOptions()"
+            [placeholder]="'backlog.priorityFilter' | translate"
+            [size]="'sm'"
+            class="backlog-page_filter-select"
+          />
+        </div>
 
-          <!-- Issues Grid -->
-          @if (paginatedBacklogIssues().length > 0) {
-            <div class="backlog-page_issues-grid">
-              @for (issue of paginatedBacklogIssues(); track issue.id) {
-                <div class="backlog-page_issue-wrapper">
-                  <app-issue-card
-                    [issue]="issue"
-                    [showStoryPoints]="true"
-                    (onClick)="handleIssueClick($event)"
-                  />
-                </div>
+        <!-- Issues Grid -->
+        @if (paginatedBacklogIssues().length > 0) {
+          <div class="backlog-page_issues-grid">
+            @for (issue of paginatedBacklogIssues(); track issue.id) {
+              <div class="backlog-page_issue-wrapper">
+                <app-issue-card
+                  [issue]="issue"
+                  [showStoryPoints]="true"
+                  (onClick)="handleIssueClick($event)"
+                />
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="backlog-page_empty">
+            <p class="backlog-page_empty-text">
+              @if (search() || statusFilter() !== 'all' || priorityFilter() !== 'all') {
+                {{ 'backlog.noMatchingIssues' | translate }}
+              } @else {
+                {{ 'backlog.noIssues' | translate }}
               }
-            </div>
-          } @else {
-            <div class="backlog-page_empty">
-              <p class="backlog-page_empty-text">
-                @if (search() || statusFilter() !== 'all' || priorityFilter() !== 'all') {
-                  {{ 'backlog.noMatchingIssues' | translate }}
-                } @else {
-                  {{ 'backlog.noIssues' | translate }}
-                }
-              </p>
-            </div>
-          }
+            </p>
+          </div>
+        }
+      </div>
 
-          <!-- Pagination -->
+      @if (!isLoading() && !hasError()) {
+        <app-page-footer>
           <lib-pagination
             [currentPage]="currentPage()"
             [totalItems]="backlogTotal()"
@@ -136,9 +139,9 @@ const ITEMS_PER_PAGE = 20;
             [itemLabel]="'backlog.issues' | translate"
             (pageChange)="handlePageChange($event)"
           />
-        </div>
+        </app-page-footer>
       }
-    </div>
+    }
   `,
   styles: [
     `
@@ -146,10 +149,7 @@ const ITEMS_PER_PAGE = 20;
 
       :host {
         @apply block w-full h-full flex-1 min-h-0;
-      }
-
-      .backlog-page {
-        @apply w-full h-full flex flex-col min-h-0;
+        @apply flex flex-col;
       }
 
       .backlog-page_content {

@@ -94,6 +94,12 @@ const recentDocuments = ['Product Requirements', 'Meeting Notes', 'Technical Spe
     `
       @reference "#mainstyles";
 
+      :host {
+        @apply flex flex-col flex-auto;
+        @apply w-full;
+        @apply min-h-0;
+      }
+
       .dashboard-page_stats {
         @apply max-w-7xl mx-auto;
         @apply grid gap-4;

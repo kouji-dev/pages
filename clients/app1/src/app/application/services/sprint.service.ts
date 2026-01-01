@@ -265,6 +265,42 @@ export class SprintService {
       }),
     );
   }
+
+  /**
+   * Get project velocity report
+   */
+  async getProjectVelocity(projectId: string): Promise<VelocityReportResponse> {
+    return await firstValueFrom(
+      this.http.get<VelocityReportResponse>(
+        `${this.apiUrl}/projects/${projectId}/reports/velocity`,
+      ),
+    );
+  }
+
+  /**
+   * Get project cumulative flow report
+   */
+  async getProjectCumulativeFlow(
+    projectId: string,
+    days: number = 7,
+  ): Promise<CumulativeFlowReportResponse> {
+    return await firstValueFrom(
+      this.http.get<CumulativeFlowReportResponse>(
+        `${this.apiUrl}/projects/${projectId}/reports/cumulative-flow?days=${days}`,
+      ),
+    );
+  }
+
+  /**
+   * Get project summary statistics
+   */
+  async getProjectSummaryStats(projectId: string): Promise<ProjectSummaryStatsResponse> {
+    return await firstValueFrom(
+      this.http.get<ProjectSummaryStatsResponse>(
+        `${this.apiUrl}/projects/${projectId}/reports/summary`,
+      ),
+    );
+  }
 }
 
 export interface BurndownStatsResponse {
@@ -287,4 +323,36 @@ export interface IssueStatsResponse {
   completed_story_points: number;
   in_progress_story_points: number;
   todo_story_points: number;
+}
+
+export interface VelocityDataPoint {
+  sprint_id: string;
+  sprint_name: string;
+  committed: number;
+  completed: number;
+}
+
+export interface VelocityReportResponse {
+  project_id: string;
+  velocity_data: VelocityDataPoint[];
+}
+
+export interface CumulativeFlowDataPoint {
+  date: string;
+  todo: number;
+  in_progress: number;
+  done: number;
+}
+
+export interface CumulativeFlowReportResponse {
+  project_id: string;
+  flow_data: CumulativeFlowDataPoint[];
+}
+
+export interface ProjectSummaryStatsResponse {
+  project_id: string;
+  avg_velocity: number;
+  team_members: number;
+  cycle_time_days: number;
+  sprint_goal_completion: number;
 }

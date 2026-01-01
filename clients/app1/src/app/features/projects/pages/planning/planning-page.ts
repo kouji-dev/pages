@@ -30,6 +30,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { SprintService, Sprint } from '../../../../application/services/sprint.service';
 import { IssueService, IssueListItem } from '../../../../application/services/issue.service';
 import { IssueCard } from '../../../../shared/components/issue-card';
+import { PageFooter } from '../../../../shared/layout/page-footer/page-footer';
 import { NavigationService } from '../../../../application/services/navigation.service';
 
 @Component({
@@ -46,186 +47,187 @@ import { NavigationService } from '../../../../application/services/navigation.s
     DragDropModule,
     IssueCard,
     TranslatePipe,
+    PageFooter,
   ],
   template: `
-    <div class="planning-page">
-      @if (isLoading()) {
-        <lib-loading-state [message]="'sprints.planning.loading' | translate" />
-      } @else if (hasError()) {
-        <lib-error-state
-          [title]="'sprints.planning.failedToLoad' | translate"
-          [message]="errorMessage()"
-          [retryLabel]="'common.retry' | translate"
-          (onRetry)="loadData()"
-        />
-      } @else {
-        <div class="planning-page_content">
-          <!-- Two Column Layout: Backlog | Sprint -->
-          <div class="planning-page_grid">
-            <!-- Backlog Panel -->
-            <div
-              class="planning-page_panel"
-              cdkDropList
-              id="backlogList"
-              #backlogList="cdkDropList"
-              [cdkDropListData]="backlogIssues()"
-              [cdkDropListConnectedTo]="[sprintList]"
-              (cdkDropListDropped)="handleDrop($event, 'backlog')"
-              (cdkDropListEntered)="dragOverBacklog.set(true)"
-              (cdkDropListExited)="dragOverBacklog.set(false)"
-              [class.planning-page_panel--drag-over]="dragOverBacklog()"
-            >
-              <div class="planning-page_panel-header">
-                <div class="planning-page_panel-title">
-                  <h3>{{ 'backlog.title' | translate }}</h3>
-                  <lib-badge variant="default">
-                    {{ backlogIssues().length }} {{ 'backlog.issues' | translate }} •
-                    {{ backlogPoints() }} {{ 'backlog.points' | translate }}
-                  </lib-badge>
-                </div>
-                <p class="planning-page_panel-placeholder">{{ ' ' }}</p>
-                <div class="planning-page_panel-search">
-                  <lib-input
-                    [placeholder]="'sprints.planning.searchBacklog' | translate"
-                    [(model)]="backlogSearch"
-                    (modelChange)="handleBacklogSearchChange($event)"
-                    [size]="'sm'"
-                    [leftAction]="{ icon: 'search' }"
-                  />
-                </div>
+    @if (isLoading()) {
+      <lib-loading-state [message]="'sprints.planning.loading' | translate" />
+    } @else if (hasError()) {
+      <lib-error-state
+        [title]="'sprints.planning.failedToLoad' | translate"
+        [message]="errorMessage()"
+        [retryLabel]="'common.retry' | translate"
+        (onRetry)="loadData()"
+      />
+    } @else {
+      <div class="planning-page_content">
+        <!-- Two Column Layout: Backlog | Sprint -->
+        <div class="planning-page_grid">
+          <!-- Backlog Panel -->
+          <div
+            class="planning-page_panel"
+            cdkDropList
+            id="backlogList"
+            #backlogList="cdkDropList"
+            [cdkDropListData]="backlogIssues()"
+            [cdkDropListConnectedTo]="[sprintList]"
+            (cdkDropListDropped)="handleDrop($event, 'backlog')"
+            (cdkDropListEntered)="dragOverBacklog.set(true)"
+            (cdkDropListExited)="dragOverBacklog.set(false)"
+            [class.planning-page_panel--drag-over]="dragOverBacklog()"
+          >
+            <div class="planning-page_panel-header">
+              <div class="planning-page_panel-title">
+                <h3>{{ 'backlog.title' | translate }}</h3>
+                <lib-badge variant="default">
+                  {{ backlogIssues().length }} {{ 'backlog.issues' | translate }} •
+                  {{ backlogPoints() }} {{ 'backlog.points' | translate }}
+                </lib-badge>
               </div>
-              <div class="planning-page_panel-content">
-                <div class="planning-page_content-wrapper">
-                  @if (paginatedBacklogIssues().length > 0) {
-                    <div class="planning-page_issues-grid">
-                      @for (issue of paginatedBacklogIssues(); track issue.id) {
-                        <div cdkDrag [cdkDragData]="issue" class="planning-page_issue-wrapper">
-                          <div class="planning-page_issue-content">
-                            <app-issue-card
-                              [issue]="issue"
-                              [assignee]="getAssignee(issue)"
-                              [showStoryPoints]="true"
-                              (onClick)="handleIssueClick($event)"
-                            />
-                            <lib-button
-                              variant="ghost"
-                              size="sm"
-                              [iconOnly]="true"
-                              leftIcon="arrow-right"
-                              class="planning-page_issue-action"
-                              (clicked)="handleMoveToSprint(issue.id)"
-                              [disabled]="!selectedSprint()"
-                            />
-                          </div>
-                        </div>
-                      }
-                    </div>
-                  } @else {
-                    <div class="planning-page_empty">
-                      {{
-                        backlogSearch()
-                          ? ('sprints.planning.noMatchingIssues' | translate)
-                          : ('backlog.noItems' | translate)
-                      }}
-                    </div>
-                  }
-                </div>
-                <lib-pagination
-                  [currentPage]="backlogPage()"
-                  [totalItems]="backlogTotal()"
-                  [itemsPerPage]="ITEMS_PER_PAGE"
-                  [itemLabel]="'backlog.issues' | translate"
-                  (pageChange)="backlogPage.set($event)"
-                  class="planning-page_pagination"
+              <p class="planning-page_panel-placeholder">{{ ' ' }}</p>
+              <div class="planning-page_panel-search">
+                <lib-input
+                  [placeholder]="'sprints.planning.searchBacklog' | translate"
+                  [(model)]="backlogSearch"
+                  (modelChange)="handleBacklogSearchChange($event)"
+                  [size]="'sm'"
+                  [leftAction]="{ icon: 'search' }"
                 />
               </div>
             </div>
-
-            <!-- Sprint Panel -->
-            <div
-              class="planning-page_panel"
-              cdkDropList
-              id="sprintList"
-              #sprintList="cdkDropList"
-              [cdkDropListData]="sprintIssues()"
-              [cdkDropListConnectedTo]="[backlogList]"
-              (cdkDropListDropped)="handleDrop($event, 'sprint')"
-              (cdkDropListEntered)="dragOverSprint.set(true)"
-              (cdkDropListExited)="dragOverSprint.set(false)"
-              [class.planning-page_panel--drag-over]="dragOverSprint()"
-            >
-              <div class="planning-page_panel-header">
-                <div class="planning-page_panel-title">
-                  <h3>
-                    {{ selectedSprint()?.name || ('sprints.planning.selectSprint' | translate) }}
-                  </h3>
-                  <lib-badge variant="default">
-                    {{ sprintTotal() }} {{ 'backlog.issues' | translate }} • {{ sprintPoints() }}
-                    {{ 'backlog.points' | translate }}
-                  </lib-badge>
-                </div>
-                <p class="planning-page_panel-goal">
-                  {{
-                    selectedSprint()?.goal
-                      ? ('sprints.goal' | translate) + ': ' + selectedSprint()?.goal
-                      : ' '
-                  }}
-                </p>
-                <div class="planning-page_panel-search">
-                  <lib-input
-                    [placeholder]="'sprints.planning.searchSprint' | translate"
-                    [(model)]="sprintSearch"
-                    (modelChange)="handleSprintSearchChange($event)"
-                    [size]="'sm'"
-                    [leftAction]="{ icon: 'search' }"
-                  />
-                </div>
-              </div>
-              <div class="planning-page_panel-content">
-                <div class="planning-page_content-wrapper">
-                  @if (isLoadingSprintIssues()) {
-                    <div class="planning-page_loading">
-                      <lib-loading-state [message]="'sprints.planning.loadingIssues' | translate" />
-                    </div>
-                  } @else if (paginatedSprintIssues().length > 0) {
-                    <div class="planning-page_issues-grid">
-                      @for (issue of paginatedSprintIssues(); track issue.id) {
-                        <div cdkDrag [cdkDragData]="issue" class="planning-page_issue-wrapper">
+            <div class="planning-page_panel-content">
+              <div class="planning-page_content-wrapper">
+                @if (paginatedBacklogIssues().length > 0) {
+                  <div class="planning-page_issues-grid">
+                    @for (issue of paginatedBacklogIssues(); track issue.id) {
+                      <div cdkDrag [cdkDragData]="issue" class="planning-page_issue-wrapper">
+                        <div class="planning-page_issue-content">
                           <app-issue-card
                             [issue]="issue"
                             [assignee]="getAssignee(issue)"
                             [showStoryPoints]="true"
                             (onClick)="handleIssueClick($event)"
                           />
+                          <lib-button
+                            variant="ghost"
+                            size="sm"
+                            [iconOnly]="true"
+                            leftIcon="arrow-right"
+                            class="planning-page_issue-action"
+                            (clicked)="handleMoveToSprint(issue.id)"
+                            [disabled]="!selectedSprint()"
+                          />
                         </div>
-                      }
-                    </div>
-                  } @else {
-                    <div class="planning-page_empty">
-                      {{
-                        sprintSearch()
-                          ? ('sprints.planning.noMatchingIssues' | translate)
-                          : selectedSprint()
-                            ? ('sprints.planning.dragIssuesHere' | translate)
-                            : ('sprints.planning.selectSprintToStart' | translate)
-                      }}
-                    </div>
-                  }
-                </div>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <div class="planning-page_empty">
+                    {{
+                      backlogSearch()
+                        ? ('sprints.planning.noMatchingIssues' | translate)
+                        : ('backlog.noItems' | translate)
+                    }}
+                  </div>
+                }
+              </div>
+              <app-page-footer>
+                <lib-pagination
+                  [currentPage]="backlogPage()"
+                  [totalItems]="backlogTotal()"
+                  [itemsPerPage]="ITEMS_PER_PAGE"
+                  [itemLabel]="'backlog.issues' | translate"
+                  (pageChange)="backlogPage.set($event)"
+                />
+              </app-page-footer>
+            </div>
+          </div>
+
+          <!-- Sprint Panel -->
+          <div
+            class="planning-page_panel"
+            cdkDropList
+            id="sprintList"
+            #sprintList="cdkDropList"
+            [cdkDropListData]="sprintIssues()"
+            [cdkDropListConnectedTo]="[backlogList]"
+            (cdkDropListDropped)="handleDrop($event, 'sprint')"
+            (cdkDropListEntered)="dragOverSprint.set(true)"
+            (cdkDropListExited)="dragOverSprint.set(false)"
+            [class.planning-page_panel--drag-over]="dragOverSprint()"
+          >
+            <div class="planning-page_panel-header">
+              <div class="planning-page_panel-title">
+                <h3>
+                  {{ selectedSprint()?.name || ('sprints.planning.selectSprint' | translate) }}
+                </h3>
+                <lib-badge variant="default">
+                  {{ sprintTotal() }} {{ 'backlog.issues' | translate }} • {{ sprintPoints() }}
+                  {{ 'backlog.points' | translate }}
+                </lib-badge>
+              </div>
+              <p class="planning-page_panel-goal">
+                {{
+                  selectedSprint()?.goal
+                    ? ('sprints.goal' | translate) + ': ' + selectedSprint()?.goal
+                    : ' '
+                }}
+              </p>
+              <div class="planning-page_panel-search">
+                <lib-input
+                  [placeholder]="'sprints.planning.searchSprint' | translate"
+                  [(model)]="sprintSearch"
+                  (modelChange)="handleSprintSearchChange($event)"
+                  [size]="'sm'"
+                  [leftAction]="{ icon: 'search' }"
+                />
+              </div>
+            </div>
+            <div class="planning-page_panel-content">
+              <div class="planning-page_content-wrapper">
+                @if (isLoadingSprintIssues()) {
+                  <div class="planning-page_loading">
+                    <lib-loading-state [message]="'sprints.planning.loadingIssues' | translate" />
+                  </div>
+                } @else if (paginatedSprintIssues().length > 0) {
+                  <div class="planning-page_issues-grid">
+                    @for (issue of paginatedSprintIssues(); track issue.id) {
+                      <div cdkDrag [cdkDragData]="issue" class="planning-page_issue-wrapper">
+                        <app-issue-card
+                          [issue]="issue"
+                          [assignee]="getAssignee(issue)"
+                          [showStoryPoints]="true"
+                          (onClick)="handleIssueClick($event)"
+                        />
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <div class="planning-page_empty">
+                    {{
+                      sprintSearch()
+                        ? ('sprints.planning.noMatchingIssues' | translate)
+                        : selectedSprint()
+                          ? ('sprints.planning.dragIssuesHere' | translate)
+                          : ('sprints.planning.selectSprintToStart' | translate)
+                    }}
+                  </div>
+                }
+              </div>
+              <app-page-footer>
                 <lib-pagination
                   [currentPage]="sprintPage()"
                   [totalItems]="sprintTotal()"
                   [itemsPerPage]="ITEMS_PER_PAGE"
                   [itemLabel]="'backlog.issues' | translate"
                   (pageChange)="sprintPage.set($event)"
-                  class="planning-page_pagination"
                 />
-              </div>
+              </app-page-footer>
             </div>
           </div>
         </div>
-      }
-    </div>
+      </div>
+    }
   `,
   styles: [
     `
@@ -237,13 +239,7 @@ import { NavigationService } from '../../../../application/services/navigation.s
         @apply h-full;
         @apply flex-1;
         @apply min-h-0;
-      }
-
-      .planning-page {
         @apply flex flex-col;
-        @apply w-full;
-        @apply h-full;
-        @apply min-h-0;
       }
 
       .planning-page_content {
@@ -362,10 +358,6 @@ import { NavigationService } from '../../../../application/services/navigation.s
       .planning-page_issue-action {
         @apply opacity-0;
         @apply transition-opacity;
-      }
-
-      .planning-page_pagination {
-        @apply mt-4;
       }
 
       .planning-page_empty {

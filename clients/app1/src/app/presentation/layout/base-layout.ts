@@ -244,6 +244,7 @@ const teamMembers: AvatarStackItem[] = [
 
       /* Content Area - scrolling handled by page-content */
       .layout_content {
+        @apply flex flex-col;
         @apply flex-1;
         @apply min-h-0;
         @apply bg-muted/30;

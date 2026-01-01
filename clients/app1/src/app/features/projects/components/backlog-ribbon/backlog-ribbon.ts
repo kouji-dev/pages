@@ -7,7 +7,7 @@ import {
   signal,
   inject,
 } from '@angular/core';
-import { Button, Badge, Icon } from 'shared-ui';
+import { Button, Badge, Icon, Input, Pagination } from 'shared-ui';
 import type { IconName } from 'shared-ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { SprintIssue } from '../../../../application/services/sprint.service';
@@ -15,7 +15,7 @@ import { SprintIssue } from '../../../../application/services/sprint.service';
 @Component({
   selector: 'app-backlog-ribbon',
   standalone: true,
-  imports: [Badge, Icon, TranslatePipe],
+  imports: [Badge, Icon, Input, Pagination, TranslatePipe],
   template: `
     <div class="backlog-ribbon">
       <!-- Header - always visible -->
@@ -30,7 +30,7 @@ import { SprintIssue } from '../../../../application/services/sprint.service';
             {{ 'backlog.title' | translate }}
           </span>
           <lib-badge variant="default" class="backlog-ribbon_badge">
-            {{ issues().length }} {{ 'backlog.issues' | translate }}
+            {{ totalItems() || issues().length }} {{ 'backlog.issues' | translate }}
           </lib-badge>
           <span class="backlog-ribbon_points">
             {{ totalPoints() }} {{ 'backlog.points' | translate }}
@@ -41,9 +41,28 @@ import { SprintIssue } from '../../../../application/services/sprint.service';
       <!-- Expanded content -->
       @if (isExpanded()) {
         <div class="backlog-ribbon_content">
-          @if (issues().length === 0) {
+          <!-- Search input -->
+          <div class="backlog-ribbon_search">
+            <lib-input
+              [placeholder]="'backlog.searchPlaceholder' | translate"
+              [model]="search()"
+              (modelChange)="handleSearchChange($event)"
+              [size]="'sm'"
+              [leftAction]="{ icon: 'search' }"
+            />
+          </div>
+
+          @if (isLoading()) {
+            <div class="backlog-ribbon_loading">
+              {{ 'backlog.loading' | translate }}
+            </div>
+          } @else if (issues().length === 0 && !isLoading()) {
             <div class="backlog-ribbon_empty">
-              {{ 'backlog.noItems' | translate }}
+              {{
+                search()
+                  ? ('backlog.noMatchingIssues' | translate)
+                  : ('backlog.noItems' | translate)
+              }}
             </div>
           } @else {
             <div class="backlog-ribbon_list">
@@ -80,6 +99,17 @@ import { SprintIssue } from '../../../../application/services/sprint.service';
               }
             </div>
           }
+
+          <!-- Pagination -->
+          <div class="backlog-ribbon_pagination">
+            <lib-pagination
+              [currentPage]="page()"
+              [totalItems]="totalItems()"
+              [itemsPerPage]="itemsPerPage()"
+              [size]="'xs'"
+              (pageChange)="handlePageChange($event)"
+            />
+          </div>
         </div>
       }
     </div>
@@ -135,10 +165,22 @@ import { SprintIssue } from '../../../../application/services/sprint.service';
       }
 
       .backlog-ribbon_content {
-        @apply max-h-48;
-        @apply overflow-y-auto;
+        @apply flex flex-col;
         @apply border-t;
         @apply border-border/50;
+      }
+
+      .backlog-ribbon_search {
+        @apply px-4 py-2;
+        @apply border-b;
+        @apply border-border/50;
+      }
+
+      .backlog-ribbon_loading {
+        @apply px-4 py-6;
+        @apply text-center;
+        @apply text-sm;
+        @apply text-muted-foreground;
       }
 
       .backlog-ribbon_empty {
@@ -151,6 +193,13 @@ import { SprintIssue } from '../../../../application/services/sprint.service';
       .backlog-ribbon_list {
         @apply divide-y;
         @apply divide-border/50;
+        @apply max-h-48;
+        @apply overflow-y-auto;
+      }
+
+      .backlog-ribbon_pagination {
+        @apply border-t;
+        @apply border-border/50;
       }
 
       .backlog-ribbon_item {
@@ -217,7 +266,15 @@ export class BacklogRibbon {
   private readonly translateService = inject(TranslateService);
 
   readonly issues = input.required<SprintIssue[]>();
+  readonly search = input<string>('');
+  readonly page = input<number>(1);
+  readonly totalItems = input<number>(0);
+  readonly totalPages = input<number>(0);
+  readonly itemsPerPage = input<number>(20);
+  readonly isLoading = input<boolean>(false);
   readonly onIssueClick = output<SprintIssue>();
+  readonly onSearchChange = output<string>();
+  readonly onPageChange = output<number>();
 
   readonly isExpanded = signal(false);
 
@@ -231,6 +288,14 @@ export class BacklogRibbon {
 
   handleIssueClick(issue: SprintIssue): void {
     this.onIssueClick.emit(issue);
+  }
+
+  handleSearchChange(value: string): void {
+    this.onSearchChange.emit(value);
+  }
+
+  handlePageChange(page: number): void {
+    this.onPageChange.emit(page);
   }
 
   getIssueTypeIcon(type?: SprintIssue['type']): IconName {

@@ -701,7 +701,28 @@
     "createIssueComingSoon": "Create issue feature coming soon"
   },
   "reports": {
-    "title": "Reports"
+    "title": "Reports",
+    "loading": "Loading reports...",
+    "failedToLoad": "Failed to load reports",
+    "avgVelocity": "Avg Velocity",
+    "teamMembers": "Team Members",
+    "cycleTime": "Cycle Time",
+    "sprintGoal": "Sprint Goal",
+    "perSprint": "per sprint",
+    "activeContributors": "active contributors",
+    "avgPerIssue": "avg per issue",
+    "completionRate": "completion rate",
+    "velocity": {
+      "label": "Velocity",
+      "title": "Sprint Velocity",
+      "committed": "Committed",
+      "completed": "Completed"
+    },
+    "cumulative": {
+      "label": "Cumulative Flow",
+      "title": "Cumulative Flow Diagram"
+    },
+    "noData": "No data available"
   },
   "members": {
     "title": "Members",
