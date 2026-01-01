@@ -231,6 +231,40 @@ export class SprintService {
       this.http.get<IssueStatsResponse>(`${this.apiUrl}/sprints/${sprintId}/stats/issues`),
     );
   }
+
+  /**
+   * Add an issue to a sprint
+   */
+  async addIssueToSprint(sprintId: string, issueId: string, order?: number): Promise<void> {
+    await firstValueFrom(
+      this.http.put(`${this.apiUrl}/sprints/${sprintId}/issues`, {
+        issue_id: issueId,
+        order: order,
+      }),
+    );
+    // Reload sprints to get updated issue counts
+    this.sprints.reload();
+  }
+
+  /**
+   * Remove an issue from a sprint
+   */
+  async removeIssueFromSprint(sprintId: string, issueId: string): Promise<void> {
+    await firstValueFrom(this.http.delete(`${this.apiUrl}/sprints/${sprintId}/issues/${issueId}`));
+    // Reload sprints to get updated issue counts
+    this.sprints.reload();
+  }
+
+  /**
+   * Reorder issues within a sprint
+   */
+  async reorderSprintIssues(sprintId: string, issueOrders: Record<string, number>): Promise<void> {
+    await firstValueFrom(
+      this.http.put(`${this.apiUrl}/sprints/${sprintId}/issues/reorder`, {
+        issue_orders: issueOrders,
+      }),
+    );
+  }
 }
 
 export interface BurndownStatsResponse {

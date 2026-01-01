@@ -33,6 +33,7 @@ import {
 } from '../../../../application/services/sprint.service';
 import { IssueService } from '../../../../application/services/issue.service';
 import { ReviewPage } from '../review/review-page';
+import { PlanningPage } from '../planning/planning-page';
 
 type TabType =
   | 'issues'
@@ -63,6 +64,7 @@ type TabType =
     TranslatePipe,
     PageContent,
     ReviewPage,
+    PlanningPage,
   ],
   template: `
     @if (projectService.isFetchingProject()) {
@@ -141,9 +143,7 @@ type TabType =
             } @else if (activeTab() === 'review') {
               <app-review-page />
             } @else if (activeTab() === 'planning') {
-              <div class="project-detail-page_placeholder">
-                {{ 'sprints.planning' | translate }} - Coming soon
-              </div>
+              <app-planning-page />
             } @else if (activeTab() === 'backlog') {
               <div class="project-detail-page_placeholder">
                 {{ 'backlog.title' | translate }} - Coming soon
@@ -273,7 +273,7 @@ type TabType =
       }
 
       .project-detail-page_main {
-        @apply flex;
+        @apply flex flex-auto;
         @apply flex-col;
         @apply min-h-0;
         @apply w-full;

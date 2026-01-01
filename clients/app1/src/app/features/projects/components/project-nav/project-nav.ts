@@ -65,7 +65,7 @@ export class ProjectNav {
         queryParams: { tab: 'review' },
       },
       {
-        label: this.translateService.instant('sprints.planning'),
+        label: this.translateService.instant('sprints.planning.title'),
         value: 'planning',
         icon: 'list-todo',
         routerLink: basePath,

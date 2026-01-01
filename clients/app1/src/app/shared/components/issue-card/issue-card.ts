@@ -1,13 +1,13 @@
 import { Component, computed, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Icon, Avatar, IconName } from 'shared-ui';
+import { Icon, Avatar, IconName, Badge } from 'shared-ui';
 import { IssueListItem } from '../../../application/services/issue.service';
 import { SeverityBadge } from '../severity-badge';
 
 @Component({
   selector: 'app-issue-card',
   standalone: true,
-  imports: [CommonModule, Icon, Avatar, SeverityBadge],
+  imports: [CommonModule, Icon, Avatar, SeverityBadge, Badge],
   template: `
     <div class="issue-card" (click)="handleClick()">
       <p class="issue-card_title">{{ issue().title }}</p>
@@ -21,6 +21,11 @@ import { SeverityBadge } from '../severity-badge';
         <div class="issue-card_footer-right">
           @if (issue().priority === 'high' || issue().priority === 'critical') {
             <lib-icon name="arrow-up" [size]="'xs'" class="issue-card_priority-icon" />
+          }
+          @if (showStoryPoints() && issue().story_points) {
+            <lib-badge variant="default" class="issue-card_story-points">
+              {{ issue().story_points }}
+            </lib-badge>
           }
           @if (issue().assignee_id && assignee(); as assigneeData) {
             <lib-avatar
@@ -100,12 +105,21 @@ import { SeverityBadge } from '../severity-badge';
       .issue-card_type-icon--epic {
         @apply text-purple-500;
       }
+
+      .issue-card_story-points {
+        @apply text-xs;
+        @apply h-5;
+        @apply min-w-5;
+        @apply flex items-center justify-center;
+        @apply rounded-full;
+      }
     `,
   ],
 })
 export class IssueCard {
   issue = input.required<IssueListItem>();
   assignee = input<{ user_name: string; avatar_url?: string } | null>(null);
+  showStoryPoints = input<boolean>(false);
 
   readonly onClick = output<IssueListItem>();
 

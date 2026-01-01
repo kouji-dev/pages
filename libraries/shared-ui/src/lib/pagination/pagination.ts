@@ -5,40 +5,37 @@ import { Button } from '../button/button';
   selector: 'lib-pagination',
   imports: [Button],
   template: `
-    @if (totalPages() > 1) {
-      <div class="pagination">
-        <p class="pagination_info">
-          Showing {{ getStartIndex() }} to {{ getEndIndex() }} of {{ totalItems() }}
-          {{ itemLabel() }}
-        </p>
-        <div class="pagination_controls">
+    <div class="pagination">
+      <p class="pagination_info">
+        {{ getStartIndex() }}-{{ getEndIndex() }} of {{ totalItems() }} {{ itemLabel() }}
+      </p>
+      <div class="pagination_controls">
+        <lib-button
+          variant="outline"
+          size="sm"
+          leftIcon="chevron-left"
+          [disabled]="currentPage() === 1"
+          (clicked)="onPrevious()"
+        />
+        @for (page of getPageNumbers(); track page) {
           <lib-button
-            variant="outline"
+            [variant]="currentPage() === page ? 'primary' : 'outline'"
             size="sm"
-            leftIcon="chevron-left"
-            [disabled]="currentPage() === 1"
-            (clicked)="onPrevious()"
-          />
-          @for (page of getPageNumbers(); track page) {
-            <lib-button
-              [variant]="currentPage() === page ? 'primary' : 'outline'"
-              size="sm"
-              (clicked)="onPageChange(page)"
-              class="pagination_button"
-            >
-              {{ page }}
-            </lib-button>
-          }
-          <lib-button
-            variant="outline"
-            size="sm"
-            leftIcon="chevron-right"
-            [disabled]="currentPage() === totalPages()"
-            (clicked)="onNext()"
-          />
-        </div>
+            (clicked)="onPageChange(page)"
+            class="pagination_button"
+          >
+            {{ page }}
+          </lib-button>
+        }
+        <lib-button
+          variant="outline"
+          size="sm"
+          leftIcon="chevron-right"
+          [disabled]="currentPage() === totalPages()"
+          (clicked)="onNext()"
+        />
       </div>
-    }
+    </div>
   `,
   styles: [
     `

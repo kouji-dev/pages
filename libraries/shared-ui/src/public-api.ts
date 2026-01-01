@@ -10,6 +10,7 @@ export * from './lib/test-button/test-button';
 export * from './lib/button/button';
 export * from './lib/icon/icon';
 export * from './lib/input/input';
+export type { InputAction } from './lib/input/input';
 export * from './lib/spinner/spinner';
 export * from './lib/spinner/spinner-content';
 export type { SpinnerSize, SpinnerColor } from './lib/spinner/spinner-content';

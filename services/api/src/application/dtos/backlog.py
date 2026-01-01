@@ -4,11 +4,13 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
+from .issue import IssueListItemResponse
+
 
 class BacklogListResponse(BaseModel):
     """Response DTO for paginated backlog list."""
 
-    issues: list[UUID] = Field(..., description="List of issue IDs in backlog order")
+    issues: list[IssueListItemResponse] = Field(..., description="List of issues in backlog order")
     total: int = Field(..., description="Total number of issues in backlog")
     page: int = Field(..., description="Current page number")
     limit: int = Field(..., description="Number of items per page")

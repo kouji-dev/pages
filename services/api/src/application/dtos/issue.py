@@ -78,6 +78,9 @@ class IssueListItemResponse(BaseModel):
     assignee: UserDTO | None = None
     reporter: UserDTO | None = None
 
+    due_date: date | None = None
+    story_points: int | None = None
+
     created_at: datetime
     updated_at: datetime
 

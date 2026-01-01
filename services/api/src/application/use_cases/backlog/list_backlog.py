@@ -7,6 +7,7 @@ from sqlalchemy import case, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dtos.backlog import BacklogListResponse
+from src.application.dtos.issue import IssueListItemResponse
 from src.domain.exceptions import EntityNotFoundException
 from src.domain.repositories import IssueRepository, ProjectRepository, SprintRepository
 from src.infrastructure.database.models import IssueModel, SprintIssueModel
@@ -45,6 +46,7 @@ class ListBacklogUseCase:
         type_filter: str | None = None,
         assignee_id: UUID | None = None,
         priority_filter: str | None = None,
+        search: str | None = None,
         sort_by: str = "backlog_order",  # backlog_order, created_at, updated_at, priority
     ) -> BacklogListResponse:
         """Execute backlog listing.
@@ -102,6 +104,13 @@ class ListBacklogUseCase:
             query = query.where(IssueModel.assignee_id == assignee_id)
         if priority_filter:
             query = query.where(IssueModel.priority == priority_filter)
+        if search:
+            # Search in title and description
+            search_pattern = f"%{search}%"
+            query = query.where(
+                (IssueModel.title.ilike(search_pattern))
+                | (IssueModel.description.ilike(search_pattern))
+            )
 
         # Apply sorting
         if sort_by == "backlog_order":
@@ -149,6 +158,13 @@ class ListBacklogUseCase:
             count_query = count_query.where(IssueModel.assignee_id == assignee_id)
         if priority_filter:
             count_query = count_query.where(IssueModel.priority == priority_filter)
+        if search:
+            # Search in title and description
+            search_pattern = f"%{search}%"
+            count_query = count_query.where(
+                (IssueModel.title.ilike(search_pattern))
+                | (IssueModel.description.ilike(search_pattern))
+            )
 
         count_result = await self._session.execute(count_query)
         total = count_result.scalar_one() or 0
@@ -159,13 +175,40 @@ class ListBacklogUseCase:
         result = await self._session.execute(query)
         issues = result.scalars().all()
 
-        issue_ids = [issue.id for issue in issues]
+        # Get project to generate issue keys
+        project = await self._project_repository.get_by_id(project_id)
+        if project is None:
+            logger.warning("Project not found", project_id=str(project_id))
+            raise EntityNotFoundException("Project", str(project_id))
+
+        # Convert to response DTOs with keys
+        issue_responses = []
+        for issue in issues:
+            # Generate issue key: PROJECT_KEY-ISSUE_NUMBER
+            issue_key = f"{project.key}-{issue.issue_number}"
+            issue_dict = {
+                "id": issue.id,
+                "project_id": issue.project_id,
+                "issue_number": issue.issue_number,
+                "key": issue_key,
+                "title": issue.title,
+                "type": issue.type,
+                "status": issue.status,
+                "priority": issue.priority,
+                "assignee_id": issue.assignee_id,
+                "reporter_id": issue.reporter_id,
+                "due_date": issue.due_date,
+                "story_points": issue.story_points,
+                "created_at": issue.created_at,
+                "updated_at": issue.updated_at,
+            }
+            issue_responses.append(IssueListItemResponse.model_validate(issue_dict))
 
         # Calculate pages
         pages = (total + limit - 1) // limit if total > 0 else 0
 
         return BacklogListResponse(
-            issues=issue_ids,
+            issues=issue_responses,
             total=total,
             page=page,
             limit=limit,

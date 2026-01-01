@@ -79,6 +79,7 @@ async def list_backlog(
     type_filter: Annotated[str | None, Query(description="Filter by issue type")] = None,
     assignee_id: Annotated[UUID | None, Query(description="Filter by assignee ID")] = None,
     priority_filter: Annotated[str | None, Query(description="Filter by priority")] = None,
+    search: Annotated[str | None, Query(description="Search in title and description")] = None,
     sort_by: Annotated[
         str,
         Query(description="Sort field: backlog_order, created_at, updated_at, priority"),
@@ -111,6 +112,7 @@ async def list_backlog(
             type_filter,
             assignee_id,
             priority_filter,
+            search,
             sort_by,
         )
     except EntityNotFoundException as e:

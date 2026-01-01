@@ -649,7 +649,23 @@
       "completed": "Terminé",
       "done": "Terminé"
     },
-    "planning": "Planification"
+    "planning": {
+      "title": "Planification",
+      "loading": "Chargement des données de planification...",
+      "loadingIssues": "Chargement des tâches...",
+      "failedToLoad": "Échec du chargement des données de planification",
+      "noSprintSelected": "Aucun sprint sélectionné",
+      "selectSprintToStart": "Sélectionnez un sprint pour commencer la planification",
+      "dragIssuesHere": "Glissez les tâches ici pour les ajouter au sprint",
+      "searchBacklog": "Rechercher dans le backlog...",
+      "searchSprint": "Rechercher dans le sprint...",
+      "noMatchingIssues": "Aucune tâche correspondante trouvée",
+      "issueAddedToSprint": "Tâche ajoutée au sprint",
+      "issueRemovedFromSprint": "Tâche retirée du sprint",
+      "failedToAddIssue": "Échec de l'ajout de la tâche au sprint",
+      "failedToRemoveIssue": "Échec du retrait de la tâche du sprint"
+    },
+    "goal": "Objectif"
   },
   "review": {
     "title": "Révision",

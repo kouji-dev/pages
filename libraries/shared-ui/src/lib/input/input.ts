@@ -26,6 +26,11 @@ export type InputType =
   | 'datetime-local'
   | 'textarea';
 
+export interface InputAction {
+  icon: IconName;
+  onClick?: () => void;
+}
+
 @Component({
   selector: 'lib-input',
   imports: [Icon],
@@ -41,7 +46,15 @@ export type InputType =
       }
 
       <div class="input-container" [class.input-container--disabled]="disabled()">
-        @if (leftIcon() && leftIcon()!.trim() && type() !== 'textarea') {
+        @if (leftAction() && type() !== 'textarea') {
+          <span
+            class="input-action input-action--left"
+            [class.input-action--clickable]="leftAction()?.onClick"
+            (click)="leftAction()?.onClick?.()"
+          >
+            <lib-icon [name]="leftAction()!.icon" size="sm" [ariaHidden]="true"></lib-icon>
+          </span>
+        } @else if (leftIcon() && leftIcon()!.trim() && type() !== 'textarea') {
           <span class="input-icon input-icon--left">
             <lib-icon [name]="leftIcon()!" size="sm" [ariaHidden]="true"></lib-icon>
           </span>
@@ -82,9 +95,12 @@ export type InputType =
             [class.input--error]="errorMessage()"
             [class.input--disabled]="disabled()"
             [class.input--readonly]="readonly()"
-            [class.input--with-left-icon]="leftIcon() && leftIcon()!.trim()"
+            [class.input--with-left-icon]="(leftIcon() && leftIcon()!.trim()) || leftAction()"
             [class.input--with-right-icon]="
-              (rightIcon() && rightIcon()!.trim()) || showPasswordToggle() || type() === 'number'
+              (rightIcon() && rightIcon()!.trim()) ||
+              rightAction() ||
+              showPasswordToggle() ||
+              type() === 'number'
             "
             [type]="computedInputType()"
             [placeholder]="placeholder()"
@@ -138,6 +154,14 @@ export type InputType =
               [ariaHidden]="true"
             ></lib-icon>
           </button>
+        } @else if (rightAction() && type() !== 'textarea') {
+          <span
+            class="input-action input-action--right"
+            [class.input-action--clickable]="rightAction()?.onClick"
+            (click)="rightAction()?.onClick?.()"
+          >
+            <lib-icon [name]="rightAction()!.icon" size="sm" [ariaHidden]="true"></lib-icon>
+          </span>
         } @else if (rightIcon() && rightIcon()!.trim()) {
           <span class="input-icon input-icon--right">
             <lib-icon [name]="rightIcon()!" size="sm" [ariaHidden]="true"></lib-icon>
@@ -352,6 +376,33 @@ export type InputType =
         @apply right-3;
       }
 
+      .input-action {
+        @apply absolute flex items-center justify-center;
+        @apply text-muted-foreground;
+        z-index: 1;
+      }
+
+      .input-action--left {
+        @apply left-3;
+      }
+
+      .input-action--right {
+        @apply right-3;
+      }
+
+      .input-action--clickable {
+        @apply cursor-pointer;
+        @apply pointer-events-auto;
+      }
+
+      .input-action--clickable:hover {
+        @apply opacity-70;
+      }
+
+      .input-action:not(.input-action--clickable) {
+        @apply pointer-events-none;
+      }
+
       .input-password-toggle {
         @apply pointer-events-auto cursor-pointer;
         @apply border-none bg-transparent p-0;
@@ -409,6 +460,8 @@ export class Input {
   readonly = input(false, { transform: booleanAttribute });
   leftIcon = input<IconName | null>(null);
   rightIcon = input<IconName | null>(null);
+  leftAction = input<InputAction | null>(null);
+  rightAction = input<InputAction | null>(null);
   showPasswordToggle = input(false, { transform: booleanAttribute });
   rows = input<number>(4); // For textarea
 

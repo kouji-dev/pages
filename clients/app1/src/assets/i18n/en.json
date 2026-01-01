@@ -649,7 +649,23 @@
       "completed": "Completed",
       "done": "Done"
     },
-    "planning": "Planning"
+    "planning": {
+      "title": "Planning",
+      "loading": "Loading planning data...",
+      "loadingIssues": "Loading issues...",
+      "failedToLoad": "Failed to load planning data",
+      "noSprintSelected": "No sprint selected",
+      "selectSprintToStart": "Select a sprint to start planning",
+      "dragIssuesHere": "Drag issues here to add them to the sprint",
+      "searchBacklog": "Search backlog...",
+      "searchSprint": "Search sprint...",
+      "noMatchingIssues": "No matching issues found",
+      "issueAddedToSprint": "Issue added to sprint",
+      "issueRemovedFromSprint": "Issue removed from sprint",
+      "failedToAddIssue": "Failed to add issue to sprint",
+      "failedToRemoveIssue": "Failed to remove issue from sprint"
+    },
+    "goal": "Goal"
   },
   "review": {
     "title": "Review",
