@@ -4,18 +4,15 @@ import { RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-organization-layout',
   imports: [RouterOutlet],
-  template: `
-    <div class="organization-layout">
-      <router-outlet />
-    </div>
-  `,
+  template: ` <router-outlet /> `,
   styles: [
     `
       @reference "#mainstyles";
 
-      .organization-layout {
-        @apply w-full h-full;
-        @apply flex flex-col;
+      :host {
+        @apply flex flex-col flex-auto;
+        @apply w-full;
+        @apply min-h-0;
       }
     `,
   ],

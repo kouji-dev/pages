@@ -1,56 +1,90 @@
 import { Component, input, output, computed, ChangeDetectionStrategy } from '@angular/core';
 import { Button } from '../button/button';
+import { Size, DEFAULT_SIZE } from '../types';
 
 @Component({
   selector: 'lib-pagination',
   imports: [Button],
+  host: {
+    '[class.pagination--xs]': "size() === 'xs'",
+    '[class.pagination--sm]': "size() === 'sm'",
+    '[class.pagination--md]': "size() === 'md'",
+    '[class.pagination--lg]': "size() === 'lg'",
+  },
   template: `
-    @if (totalPages() > 1) {
-      <div class="pagination">
-        <p class="pagination_info">
-          Showing {{ getStartIndex() }} to {{ getEndIndex() }} of {{ totalItems() }}
-          {{ itemLabel() }}
-        </p>
-        <div class="pagination_controls">
-          <lib-button
-            variant="outline"
-            size="sm"
-            leftIcon="chevron-left"
-            [disabled]="currentPage() === 1"
-            (clicked)="onPrevious()"
-          />
-          @for (page of getPageNumbers(); track page) {
-            <lib-button
-              [variant]="currentPage() === page ? 'primary' : 'outline'"
-              size="sm"
-              (clicked)="onPageChange(page)"
-              class="pagination_button"
-            >
-              {{ page }}
-            </lib-button>
-          }
-          <lib-button
-            variant="outline"
-            size="sm"
-            leftIcon="chevron-right"
-            [disabled]="currentPage() === totalPages()"
-            (clicked)="onNext()"
-          />
-        </div>
-      </div>
-    }
+    <p class="pagination_info">
+      {{ getStartIndex() }}-{{ getEndIndex() }} of {{ totalItems() }} {{ itemLabel() }}
+    </p>
+    <div class="pagination_controls">
+      <lib-button
+        variant="outline"
+        [size]="size()"
+        leftIcon="chevron-left"
+        [disabled]="currentPage() === 1"
+        (clicked)="onPrevious()"
+      />
+      @for (page of getPageNumbers(); track page) {
+        <lib-button
+          [variant]="currentPage() === page ? 'primary' : 'outline'"
+          [size]="size()"
+          (clicked)="onPageChange(page)"
+          class="pagination_button"
+        >
+          {{ page }}
+        </lib-button>
+      }
+      <lib-button
+        variant="outline"
+        [size]="size()"
+        leftIcon="chevron-right"
+        [disabled]="currentPage() === totalPages()"
+        (clicked)="onNext()"
+      />
+    </div>
   `,
   styles: [
     `
       @reference "#theme";
 
-      .pagination {
-        @apply flex items-center justify-between pt-6 border-t border-border mt-6;
+      :host {
+        @apply flex items-center justify-between border-t border-border;
+      }
+
+      :host.pagination--xs {
+        @apply p-2;
+      }
+
+      :host.pagination--sm {
+        @apply p-3;
+      }
+
+      :host.pagination--md {
+        @apply p-4;
+      }
+
+      :host.pagination--lg {
+        @apply p-5;
       }
 
       .pagination_info {
-        @apply text-sm text-muted-foreground;
+        @apply text-muted-foreground;
         margin: 0;
+      }
+
+      .pagination--xs .pagination_info {
+        @apply text-xs;
+      }
+
+      .pagination--sm .pagination_info {
+        @apply text-sm;
+      }
+
+      .pagination--md .pagination_info {
+        @apply text-sm;
+      }
+
+      .pagination--lg .pagination_info {
+        @apply text-base;
       }
 
       .pagination_controls {
@@ -70,6 +104,7 @@ export class Pagination {
   totalItems = input.required<number>();
   itemsPerPage = input.required<number>();
   itemLabel = input<string>('items');
+  size = input<Size>(DEFAULT_SIZE);
   pageChange = output<number>();
 
   readonly totalPages = computed(() => {

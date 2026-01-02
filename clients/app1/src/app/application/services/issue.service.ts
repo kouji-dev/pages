@@ -4,6 +4,7 @@ import { httpResource } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { NavigationService } from './navigation.service';
+import { SprintService } from './sprint.service';
 
 export interface IssueUser {
   id: string;
@@ -43,6 +44,7 @@ export interface IssueListItem {
   assignee_id?: string;
   reporter_id?: string;
   due_date?: string;
+  story_points?: number;
   created_at: string;
   updated_at: string;
 }
@@ -88,6 +90,7 @@ export interface ListIssuesFilters {
   status?: 'todo' | 'in_progress' | 'done' | 'cancelled';
   type?: 'task' | 'bug' | 'story' | 'epic';
   priority?: 'low' | 'medium' | 'high' | 'critical';
+  sprint_id?: string;
   sort_by?: 'created_at' | 'title' | 'type' | 'status' | 'priority' | 'updated_at';
   sort_order?: 'asc' | 'desc';
 }
@@ -99,22 +102,30 @@ export class IssueService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/issues`;
   private readonly navigationService = inject(NavigationService);
+  private readonly sprintService = inject(SprintService);
 
   // Note: projectId and issueId are now URL-driven via NavigationService
   // No need for internal signals
 
-  // Issues list resource using httpResource - driven by URL organizationId and projectId
+  // Issues list resource using httpResource - driven by URL organizationId and projectId, and selected sprint
   private readonly issuesResource = httpResource<IssueListResponse>(() => {
     const organizationId = this.navigationService.currentOrganizationId();
     const projectId = this.navigationService.currentProjectId();
     if (!organizationId || !projectId) return undefined;
 
     const filters = this.currentFilters();
+    const currentSprint = this.sprintService.currentSprint();
+
     let params = new HttpParams()
       .set('organization_id', organizationId)
       .set('project_id', projectId)
       .set('page', filters.page?.toString() || '1')
       .set('limit', filters.limit?.toString() || '20');
+
+    // Add sprint_id filter if a sprint is selected
+    if (currentSprint) {
+      params = params.set('sprint_id', currentSprint.id);
+    }
 
     if (filters.search) {
       params = params.set('search', filters.search);
@@ -133,6 +144,9 @@ export class IssueService {
     }
     if (filters.priority) {
       params = params.set('priority', filters.priority);
+    }
+    if (filters.sprint_id) {
+      params = params.set('sprint_id', filters.sprint_id);
     }
     if (filters.sort_by) {
       params = params.set('sort_by', filters.sort_by);
@@ -392,6 +406,58 @@ export class IssueService {
         return newMap;
       });
       throw error;
+    }
+  }
+
+  /**
+   * Get backlog issues (issues not in any sprint)
+   */
+  async getBacklogIssues(
+    projectId: string,
+    page: number = 1,
+    limit: number = 100,
+    search?: string,
+  ): Promise<{
+    issues: IssueListItem[];
+    total: number;
+    page: number;
+    limit: number;
+    pages: number;
+  }> {
+    const organizationId = this.navigationService.currentOrganizationId();
+    if (!organizationId) {
+      return { issues: [], total: 0, page, limit, pages: 0 };
+    }
+
+    try {
+      // Get backlog issue IDs from the backlog API to know which issues are in the backlog
+      let backlogParams = new HttpParams()
+        .set('organization_id', organizationId)
+        .set('project_id', projectId)
+        .set('page', page.toString())
+        .set('limit', limit.toString());
+
+      if (search && search.trim()) {
+        backlogParams = backlogParams.set('search', search.trim());
+      }
+
+      const backlogResponse = await firstValueFrom(
+        this.http.get<IssueListResponse>(
+          `${environment.apiUrl}/projects/${projectId}/backlog?${backlogParams.toString()}`,
+        ),
+      );
+
+      // Backlog API now returns full issue details
+      return {
+        issues: backlogResponse.issues,
+        total: backlogResponse.total,
+        page: backlogResponse.page,
+        limit: backlogResponse.limit,
+        pages: backlogResponse.pages,
+      };
+    } catch (error) {
+      console.error('Failed to fetch backlog issues:', error);
+      return { issues: [], total: 0, page, limit, pages: 0 };
     }
   }
 

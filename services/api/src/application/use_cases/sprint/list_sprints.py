@@ -81,7 +81,26 @@ class ListSprintsUseCase:
         # Calculate pages
         pages = (total + limit - 1) // limit if total > 0 else 0
 
-        sprint_items = [SprintListItemResponse.model_validate(sprint) for sprint in sprints]
+        # Build sprint items with issue counts
+        sprint_items = []
+        for sprint in sprints:
+            total_issues, completed_issues = await self._sprint_repository.get_sprint_issue_counts(
+                sprint.id
+            )
+            sprint_dict = {
+                "id": sprint.id,
+                "project_id": sprint.project_id,
+                "name": sprint.name,
+                "goal": sprint.goal,
+                "start_date": sprint.start_date,
+                "end_date": sprint.end_date,
+                "status": sprint.status,
+                "total_issues": total_issues,
+                "completed_issues": completed_issues,
+                "created_at": sprint.created_at,
+                "updated_at": sprint.updated_at,
+            }
+            sprint_items.append(SprintListItemResponse.model_validate(sprint_dict))
 
         return SprintListResponse(
             sprints=sprint_items,

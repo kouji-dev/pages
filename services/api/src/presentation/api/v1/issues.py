@@ -188,6 +188,7 @@ async def list_issues(
     status: Annotated[str | None, Query(description="Filter by status")] = None,
     type: Annotated[str | None, Query(description="Filter by type")] = None,
     priority: Annotated[str | None, Query(description="Filter by priority")] = None,
+    sprint_id: Annotated[UUID | None, Query(description="Filter by sprint ID")] = None,
 ) -> IssueListResponse:
     """List issues in a project.
 
@@ -212,6 +213,7 @@ async def list_issues(
         status=status,
         type=type,
         priority=priority,
+        sprint_id=str(sprint_id) if sprint_id else None,
     )
 
 

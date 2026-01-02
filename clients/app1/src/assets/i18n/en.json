@@ -260,6 +260,7 @@
     "subtitle": "Manage your projects and track issues in one place.",
     "createProject": "Create Project",
     "loadingProjects": "Loading projects...",
+    "loadingProject": "Loading project...",
     "failedToLoad": "Failed to Load Projects",
     "noOrganizationSelected": "No organization selected",
     "noOrganizationSelectedDescription": "Please select or create an organization to view projects.",
@@ -616,8 +617,8 @@
     "uploadFileError": "Failed to upload \"{{fileName}}\"",
     "uploadFilesError": "Failed to upload files. Please try again."
   },
-  "kanban": {
-    "title": "Kanban Board",
+  "board": {
+    "title": "Board",
     "createIssue": "Create Issue",
     "assignee": "Assignee",
     "type": "Type",
@@ -634,6 +635,94 @@
     "assigned": "Assigned",
     "overdue": "Overdue",
     "due": "Due: {{date}}"
+  },
+  "sprints": {
+    "title": "Sprints",
+    "selectSprint": "Select Sprint",
+    "createNew": "Create New Sprint",
+    "complete": "Complete",
+    "points": "pts",
+    "issues": "issues",
+    "status": {
+      "active": "Active",
+      "planned": "Planned",
+      "completed": "Completed",
+      "done": "Done"
+    },
+    "planning": {
+      "title": "Planning",
+      "loading": "Loading planning data...",
+      "loadingIssues": "Loading issues...",
+      "failedToLoad": "Failed to load planning data",
+      "noSprintSelected": "No sprint selected",
+      "selectSprintToStart": "Select a sprint to start planning",
+      "dragIssuesHere": "Drag issues here to add them to the sprint",
+      "searchBacklog": "Search backlog...",
+      "searchSprint": "Search sprint...",
+      "noMatchingIssues": "No matching issues found",
+      "issueAddedToSprint": "Issue added to sprint",
+      "issueRemovedFromSprint": "Issue removed from sprint",
+      "failedToAddIssue": "Failed to add issue to sprint",
+      "failedToRemoveIssue": "Failed to remove issue from sprint"
+    },
+    "goal": "Goal"
+  },
+  "review": {
+    "title": "Review",
+    "loading": "Loading review data...",
+    "failedToLoad": "Failed to load review data",
+    "noSprintSelected": "No sprint selected",
+    "noData": "No data available",
+    "burndown": "Burndown",
+    "storyPointsBreakdown": "Story Points Breakdown",
+    "totalIssues": "Total Issues",
+    "completed": "Completed",
+    "inProgress": "In Progress",
+    "toDo": "To Do",
+    "ideal": "Ideal",
+    "actual": "Actual",
+    "breakdown": "Breakdown"
+  },
+  "backlog": {
+    "title": "Backlog",
+    "issues": "issues",
+    "points": "points",
+    "noItems": "No items in backlog",
+    "loading": "Loading backlog...",
+    "failedToLoad": "Failed to load backlog",
+    "addIssue": "Add Issue",
+    "searchPlaceholder": "Search issues...",
+    "statusFilter": "Status",
+    "priorityFilter": "Priority",
+    "allStatus": "All Status",
+    "allPriority": "All Priority",
+    "noIssues": "No issues in backlog",
+    "noMatchingIssues": "No issues match your filters",
+    "createIssueComingSoon": "Create issue feature coming soon"
+  },
+  "reports": {
+    "title": "Reports",
+    "loading": "Loading reports...",
+    "failedToLoad": "Failed to load reports",
+    "avgVelocity": "Avg Velocity",
+    "teamMembers": "Team Members",
+    "cycleTime": "Cycle Time",
+    "sprintGoal": "Sprint Goal",
+    "perSprint": "per sprint",
+    "activeContributors": "active contributors",
+    "avgPerIssue": "avg per issue",
+    "completionRate": "completion rate",
+    "velocity": {
+      "label": "Velocity",
+      "title": "Sprint Velocity",
+      "committed": "Committed",
+      "completed": "Completed"
+    },
+    "cumulative": {
+      "label": "Cumulative Flow",
+      "title": "Cumulative Flow Diagram"
+    },
+    "noData": "No data available"
   },
   "members": {
     "title": "Members",

@@ -221,3 +221,18 @@ class SprintRepository(ABC):
             Sprint if found, None otherwise
         """
         ...
+
+    @abstractmethod
+    async def get_sprint_issue_counts(
+        self,
+        sprint_id: UUID,
+    ) -> tuple[int, int]:
+        """Get total and completed issue counts for a sprint.
+
+        Args:
+            sprint_id: Sprint UUID
+
+        Returns:
+            Tuple of (total_issues, completed_issues)
+        """
+        ...

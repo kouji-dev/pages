@@ -6,10 +6,15 @@ import {
   signal,
   effect,
   ViewContainerRef,
+  ViewChild,
+  TemplateRef,
+  DestroyRef,
 } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { filter, map } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Button, Input, LoadingState, ErrorState, Modal, ToastService } from 'shared-ui';
 import { ProjectService } from '../../../../application/services/project.service';
 import { OrganizationService } from '../../../../application/services/organization.service';
@@ -17,13 +22,36 @@ import { NavigationService } from '../../../../application/services/navigation.s
 import { ProjectMemberList } from '../../components/project-member-list/project-member-list';
 import { IssueList } from '../../components/issue-list/issue-list';
 import { KanbanBoard } from '../../components/kanban-board/kanban-board';
-import { BackToPage } from '../../../../shared/components/back-to-page/back-to-page.component';
-import { SidebarNav, SidebarNavItem } from '../../components/sidebar-nav/sidebar-nav';
+import { PageHeader, PageHeaderAction } from '../../../../shared/layout/page-header/page-header';
+import { SprintSelector } from '../../components/sprint-selector/sprint-selector';
+import { Progress, Icon } from 'shared-ui';
+import { ProjectNav } from '../../components/project-nav/project-nav';
+import { BacklogRibbon } from '../../components/backlog-ribbon/backlog-ribbon';
 import { DeleteProjectModal } from '../../components/delete-project-modal/delete-project-modal';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PageContent } from '../../../../shared/layout/page-content/page-content';
+import { PageBody } from '../../../../shared/layout/page-body/page-body';
+import { PageFooter } from '../../../../shared/layout/page-footer/page-footer';
+import {
+  SprintService,
+  Sprint,
+  SprintIssue,
+} from '../../../../application/services/sprint.service';
+import { IssueService, IssueListItem } from '../../../../application/services/issue.service';
+import { ReviewPage } from '../review/review-page';
+import { PlanningPage } from '../planning/planning-page';
+import { BacklogPage } from '../backlog/backlog-page';
+import { ReportsPage } from '../reports/reports-page';
 
-type TabType = 'issues' | 'board' | 'settings' | 'members';
+type TabType =
+  | 'issues'
+  | 'board'
+  | 'settings'
+  | 'members'
+  | 'review'
+  | 'planning'
+  | 'backlog'
+  | 'reports';
 
 @Component({
   selector: 'app-project-detail-page',
@@ -35,10 +63,20 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
     ProjectMemberList,
     IssueList,
     KanbanBoard,
-    BackToPage,
-    SidebarNav,
+    PageHeader,
+    SprintSelector,
+    Progress,
+    Icon,
+    ProjectNav,
+    BacklogRibbon,
     TranslatePipe,
     PageContent,
+    PageBody,
+    PageFooter,
+    ReviewPage,
+    PlanningPage,
+    BacklogPage,
+    ReportsPage,
   ],
   template: `
     @if (projectService.isFetchingProject()) {
@@ -57,195 +95,251 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
         [showRetry]="false"
       />
     } @else {
-      <div class="project-detail-page_header">
-        <div class="project-detail-page_header-content">
-          <app-back-to-page
-            [label]="'projects.backToProjects' | translate"
-            (onClick)="handleBackToProjects()"
-          />
-          <div class="project-detail-page_header-main">
-            <div class="project-detail-page_key">{{ project()?.key }}</div>
-            <h1 class="project-detail-page_title">{{ project()?.name }}</h1>
-            @if (project()?.description) {
-              <p class="project-detail-page_description">{{ project()?.description }}</p>
-            }
-          </div>
-        </div>
-      </div>
-
-      <app-page-content>
-        <div class="project-detail-page_container">
-          <div class="project-detail-page_sidebar">
-            <app-sidebar-nav [items]="navItems()" />
-          </div>
-          <div class="project-detail-page_main">
-            @if (activeTab() === 'issues') {
-              <app-issue-list [projectId]="projectId()" />
-            } @else if (activeTab() === 'board') {
-              <app-kanban-board [projectId]="projectId()" />
-            } @else if (activeTab() === 'members') {
-              <app-project-member-list [projectId]="projectId()" />
-            } @else if (activeTab() === 'settings') {
-              <div class="project-detail-page_settings">
-                <div class="project-detail-page_settings-container">
-                  <!-- Project Details Section -->
-                  <div class="project-detail-page_settings-section">
-                    <h2 class="project-detail-page_settings-section-title">
-                      {{ 'projects.settings.details' | translate }}
-                    </h2>
-                    <form
-                      class="project-detail-page_settings-form"
-                      (ngSubmit)="handleSaveProject()"
-                    >
-                      <lib-input
-                        [label]="'projects.settings.name' | translate"
-                        [placeholder]="'projects.settings.namePlaceholder' | translate"
-                        [(model)]="name"
-                        [required]="true"
-                        [errorMessage]="nameError()"
-                        [helperText]="'projects.settings.nameHelper' | translate"
-                      />
-                      <lib-input
-                        [label]="'projects.settings.key' | translate"
-                        placeholder="PROJ"
-                        [(model)]="key"
-                        [readonly]="true"
-                        [helperText]="'projects.settings.keyHelper' | translate"
-                      />
-                      <lib-input
-                        [label]="'projects.settings.description' | translate"
-                        type="textarea"
-                        [placeholder]="'projects.settings.descriptionPlaceholder' | translate"
-                        [(model)]="description"
-                        [rows]="4"
-                        [helperText]="'projects.settings.descriptionHelper' | translate"
-                      />
-                      <div class="project-detail-page_settings-form-actions">
-                        <lib-button
-                          variant="primary"
-                          type="submit"
-                          [loading]="isSaving()"
-                          [disabled]="!isFormValid() || !hasChanges()"
-                        >
-                          {{ 'common.saveChanges' | translate }}
-                        </lib-button>
-                        <lib-button
-                          variant="secondary"
-                          (clicked)="handleReset()"
-                          [disabled]="!hasChanges() || isSaving()"
-                        >
-                          {{ 'common.cancel' | translate }}
-                        </lib-button>
-                      </div>
-                    </form>
+      <app-page-body>
+        <app-page-header
+          [title]="project()?.name || ''"
+          [subtitle]="project()?.description"
+          [leftAction]="settingsAction()"
+          [actionTemplate]="sprintActionsTemplate"
+        >
+          <ng-template #sprintActionsTemplate>
+            <div class="project-detail-page_sprint-actions">
+              @if (sprintService.currentSprint(); as sprint) {
+                <!-- Progress indicator -->
+                <div class="project-detail-page_progress">
+                  <div class="project-detail-page_progress-bar">
+                    <lib-progress [value]="sprintProgressPercent()" />
                   </div>
+                  <span class="project-detail-page_progress-text">
+                    {{ sprintProgressPercent() }}%
+                  </span>
+                  <span class="project-detail-page_progress-points">
+                    ({{ sprint.completedIssues }}/{{ sprint.totalIssues }}
+                    {{ 'sprints.issues' | translate }})
+                  </span>
+                </div>
 
-                  <!-- Danger Zone Section -->
-                  <div
-                    class="project-detail-page_settings-section project-detail-page_settings-section--danger"
-                  >
-                    <h2 class="project-detail-page_settings-section-title">
-                      {{ 'projects.settings.dangerZone' | translate }}
-                    </h2>
-                    <div class="project-detail-page_settings-danger-content">
-                      <div>
-                        <h3 class="project-detail-page_settings-danger-title">
-                          {{ 'projects.settings.deleteTitle' | translate }}
-                        </h3>
-                        <p class="project-detail-page_settings-danger-description">
-                          {{ 'projects.settings.deleteDescription' | translate }}
-                        </p>
-                      </div>
-                      <lib-button
-                        variant="destructive"
-                        size="md"
-                        (clicked)="handleDeleteProject()"
-                        [disabled]="isDeleting()"
+                <!-- Dates -->
+                <div class="project-detail-page_dates">
+                  <lib-icon name="calendar" [size]="'xs'" />
+                  <span>{{ formatSprintDate(sprint.startDate) }}</span>
+                  <span>→</span>
+                  <span>{{ formatSprintDate(sprint.endDate) }}</span>
+                </div>
+
+                @if (sprint.status === 'active') {
+                  <lib-button variant="outline" size="sm" (clicked)="handleCompleteSprint()">
+                    {{ 'sprints.complete' | translate }}
+                  </lib-button>
+                }
+              }
+
+              <app-sprint-selector
+                [sprints]="sprintService.sprintsList()"
+                [selectedSprint]="sprintService.currentSprint()"
+                (onSprintSelect)="handleSprintSelect($event)"
+                (onCreateSprint)="handleCreateSprint()"
+              />
+            </div>
+          </ng-template>
+        </app-page-header>
+        <app-project-nav [projectId]="projectId()" />
+        <app-page-content noPadding>
+          <div class="project-detail-page_container">
+            <div class="project-detail-page_main">
+              @if (activeTab() === 'board') {
+                <div class="project-detail-page_board-wrapper">
+                  <app-kanban-board [projectId]="projectId()" />
+                </div>
+              } @else if (activeTab() === 'review') {
+                <app-review-page />
+              } @else if (activeTab() === 'planning') {
+                <app-planning-page />
+              } @else if (activeTab() === 'backlog') {
+                <app-backlog-page />
+              } @else if (activeTab() === 'reports') {
+                <app-reports-page />
+              } @else if (activeTab() === 'issues') {
+                <app-issue-list [projectId]="projectId()" />
+              } @else if (activeTab() === 'members') {
+                <app-project-member-list [projectId]="projectId()" />
+              } @else if (activeTab() === 'settings') {
+                <div class="project-detail-page_settings">
+                  <div class="project-detail-page_settings-container">
+                    <!-- Project Details Section -->
+                    <div class="project-detail-page_settings-section">
+                      <h2 class="project-detail-page_settings-section-title">
+                        {{ 'projects.settings.details' | translate }}
+                      </h2>
+                      <form
+                        class="project-detail-page_settings-form"
+                        (ngSubmit)="handleSaveProject()"
                       >
-                        {{ 'projects.deleteProject' | translate }}
-                      </lib-button>
+                        <lib-input
+                          [label]="'projects.settings.name' | translate"
+                          [placeholder]="'projects.settings.namePlaceholder' | translate"
+                          [(model)]="name"
+                          [required]="true"
+                          [errorMessage]="nameError()"
+                          [helperText]="'projects.settings.nameHelper' | translate"
+                        />
+                        <lib-input
+                          [label]="'projects.settings.key' | translate"
+                          placeholder="PROJ"
+                          [(model)]="key"
+                          [readonly]="true"
+                          [helperText]="'projects.settings.keyHelper' | translate"
+                        />
+                        <lib-input
+                          [label]="'projects.settings.description' | translate"
+                          type="textarea"
+                          [placeholder]="'projects.settings.descriptionPlaceholder' | translate"
+                          [(model)]="description"
+                          [rows]="4"
+                          [helperText]="'projects.settings.descriptionHelper' | translate"
+                        />
+                        <div class="project-detail-page_settings-form-actions">
+                          <lib-button
+                            variant="primary"
+                            type="submit"
+                            [loading]="isSaving()"
+                            [disabled]="!isFormValid() || !hasChanges()"
+                          >
+                            {{ 'common.saveChanges' | translate }}
+                          </lib-button>
+                          <lib-button
+                            variant="secondary"
+                            (clicked)="handleReset()"
+                            [disabled]="!hasChanges() || isSaving()"
+                          >
+                            {{ 'common.cancel' | translate }}
+                          </lib-button>
+                        </div>
+                      </form>
+                    </div>
+
+                    <!-- Danger Zone Section -->
+                    <div
+                      class="project-detail-page_settings-section project-detail-page_settings-section--danger"
+                    >
+                      <h2 class="project-detail-page_settings-section-title">
+                        {{ 'projects.settings.dangerZone' | translate }}
+                      </h2>
+                      <div class="project-detail-page_settings-danger-content">
+                        <div>
+                          <h3 class="project-detail-page_settings-danger-title">
+                            {{ 'projects.settings.deleteTitle' | translate }}
+                          </h3>
+                          <p class="project-detail-page_settings-danger-description">
+                            {{ 'projects.settings.deleteDescription' | translate }}
+                          </p>
+                        </div>
+                        <lib-button
+                          variant="destructive"
+                          size="md"
+                          (clicked)="handleDeleteProject()"
+                          [disabled]="isDeleting()"
+                        >
+                          {{ 'projects.deleteProject' | translate }}
+                        </lib-button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            }
+              }
+            </div>
           </div>
-        </div>
-      </app-page-content>
+        </app-page-content>
+
+        @if (activeTab() === 'board') {
+          <app-page-footer>
+            <app-backlog-ribbon
+              [issues]="backlogIssues()"
+              [search]="backlogSearch()"
+              [page]="backlogPage()"
+              [totalItems]="backlogTotal()"
+              [totalPages]="backlogTotalPages()"
+              [itemsPerPage]="ITEMS_PER_PAGE"
+              [isLoading]="isLoadingBacklog()"
+              (onIssueClick)="handleIssueClick($event)"
+              (onSearchChange)="handleBacklogSearchChange($event)"
+              (onPageChange)="handleBacklogPageChange($event)"
+            />
+          </app-page-footer>
+        }
+      </app-page-body>
     }
   `,
   styles: [
     `
       @reference "#mainstyles";
 
-      .project-detail-page_header {
+      :host {
+        @apply flex flex-col flex-auto;
         @apply w-full;
-        @apply py-6;
-        @apply px-4 sm:px-6 lg:px-8;
-        @apply border-b;
-        @apply border-border;
-      }
-
-      .project-detail-page_header-content {
-        @apply w-full;
-      }
-
-      .project-detail-page_header-main {
-        @apply flex items-center;
-        @apply gap-4;
-        @apply flex-wrap;
-      }
-
-      .project-detail-page_key {
-        @apply text-xs font-mono font-semibold;
-        @apply px-2 py-1;
-        @apply rounded;
-        @apply bg-muted;
-        @apply text-muted-foreground;
-        @apply inline-block;
-        @apply w-fit;
-        @apply flex-shrink-0;
-      }
-
-      .project-detail-page_title {
-        @apply text-2xl font-bold;
-        @apply text-foreground;
-        margin: 0;
-        @apply flex-shrink-0;
-      }
-
-      .project-detail-page_description {
-        @apply text-sm;
-        @apply text-muted-foreground;
-        margin: 0;
-        @apply flex-shrink-0;
+        @apply min-h-0;
       }
 
       .project-detail-page_container {
         @apply w-full;
-        @apply flex-1;
-        @apply flex;
-        @apply gap-8;
+        @apply flex flex-col;
         @apply min-h-0;
-        @apply items-stretch;
-      }
-
-      .project-detail-page_sidebar {
-        width: 256px !important; /* Fixed width: w-64 = 16rem = 256px */
-        min-width: 256px;
-        max-width: 256px;
-        height: 100vh; /* Fixed height: full viewport height */
-        @apply flex-shrink-0;
-        @apply flex;
-        @apply flex-col;
-        @apply min-h-0;
+        @apply flex-auto;
       }
 
       .project-detail-page_main {
-        @apply flex-1;
-        @apply min-w-0;
-        @apply overflow-hidden;
-        @apply self-stretch;
+        @apply flex flex-auto;
+        @apply flex-col;
+        @apply min-h-0;
+        @apply w-full;
+        @apply py-8;
+        @apply px-4 sm:px-6 lg:px-8;
+      }
+
+      .project-detail-page_main:has(app-backlog-page),
+      .project-detail-page_main:has(app-reports-page) {
+        @apply p-0;
+      }
+
+      .project-detail-page_board-wrapper {
+        @apply flex flex-col;
+        @apply min-h-0;
+        @apply flex-shrink;
+      }
+
+      .project-detail-page_sprint-actions {
+        @apply flex items-center;
+        @apply gap-4;
+        @apply flex-shrink-0;
+      }
+
+      .project-detail-page_progress {
+        @apply flex items-center;
+        @apply gap-2;
+        @apply px-3 py-1.5;
+        @apply rounded-md;
+        background-color: hsl(var(--color-muted) / 0.5);
+      }
+
+      .project-detail-page_progress-bar {
+        @apply w-20;
+      }
+
+      .project-detail-page_progress-text {
+        @apply text-xs font-medium;
+        @apply text-foreground;
+      }
+
+      .project-detail-page_progress-points {
+        @apply text-xs;
+        @apply text-muted-foreground;
+      }
+
+      .project-detail-page_dates {
+        @apply flex items-center;
+        @apply gap-1.5;
+        @apply text-xs;
+        @apply text-muted-foreground;
       }
 
       .project-detail-page_placeholder {
@@ -324,13 +418,19 @@ type TabType = 'issues' | 'board' | 'settings' | 'members';
 })
 export class ProjectDetailPage {
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   readonly projectService = inject(ProjectService);
   readonly organizationService = inject(OrganizationService);
   readonly navigationService = inject(NavigationService);
+  readonly sprintService = inject(SprintService);
+  readonly issueService = inject(IssueService);
   readonly modal = inject(Modal);
   readonly toast = inject(ToastService);
   readonly viewContainerRef = inject(ViewContainerRef);
   private readonly translateService = inject(TranslateService);
+
+  @ViewChild('sprintActionsTemplate', { static: true })
+  sprintActionsTemplate!: TemplateRef<any>;
 
   readonly organizationId = computed(() => {
     return this.navigationService.currentOrganizationId() || '';
@@ -342,6 +442,32 @@ export class ProjectDetailPage {
 
   readonly project = computed(() => this.projectService.currentProject());
 
+  // Backlog issues (issues not in any sprint)
+  readonly backlogIssuesList = signal<IssueListItem[]>([]);
+  readonly isLoadingBacklog = signal(false);
+  readonly backlogSearch = signal('');
+  readonly backlogPage = signal(1);
+  readonly backlogTotal = signal(0);
+  readonly backlogTotalPages = signal(0);
+  readonly backlogSearchSubject = new Subject<string>();
+  private readonly destroyRef = inject(DestroyRef);
+  readonly ITEMS_PER_PAGE = 20;
+
+  constructor() {
+    // Debounce search input
+    this.backlogSearchSubject
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe((search) => {
+        this.backlogSearch.set(search);
+        this.backlogPage.set(1); // Reset to first page on search
+        this.loadBacklogIssues();
+      });
+  }
+
+  readonly backlogIssues = computed<SprintIssue[]>(() => {
+    return this.backlogIssuesList().map((issue) => this.convertToSprintIssue(issue));
+  });
+
   // Settings form state
   readonly name = signal('');
   readonly key = signal('');
@@ -351,13 +477,27 @@ export class ProjectDetailPage {
   readonly originalName = signal('');
   readonly originalDescription = signal('');
 
-  // Get tab from URL query params, default to 'issues'
+  // Get tab from query params, default to 'board'
+  readonly queryParams = toSignal(this.route.queryParams, {
+    initialValue: {} as Record<string, string>,
+  });
+
   readonly activeTab = computed<TabType>(() => {
-    const tab = this.navigationService.currentTab();
-    if (tab && ['issues', 'board', 'members', 'settings'].includes(tab)) {
-      return tab as TabType;
-    }
-    return 'issues';
+    const params = this.queryParams();
+    const tab = params?.['tab'];
+    if (!tab || typeof tab !== 'string') return 'board';
+
+    const validTabs: TabType[] = [
+      'board',
+      'review',
+      'planning',
+      'backlog',
+      'reports',
+      'issues',
+      'members',
+      'settings',
+    ];
+    return validTabs.includes(tab as TabType) ? (tab as TabType) : 'board';
   });
 
   readonly nameError = computed(() => {
@@ -394,6 +534,17 @@ export class ProjectDetailPage {
     }
   });
 
+  // Load backlog issues when board tab is active or page changes
+  private readonly loadBacklogEffect = effect(() => {
+    const projectId = this.projectId();
+    const tab = this.activeTab();
+    const page = this.backlogPage();
+    const search = this.backlogSearch();
+    if (projectId && tab === 'board') {
+      this.loadBacklogIssues();
+    }
+  });
+
   readonly errorMessage = computed(() => {
     const error = this.projectService.projectError();
     if (error) {
@@ -403,44 +554,6 @@ export class ProjectDetailPage {
     }
     return this.translateService.instant('common.unknownError');
   });
-
-  readonly navItems = computed<SidebarNavItem[]>(() => {
-    const currentTab = this.activeTab();
-    return [
-      {
-        label: this.translateService.instant('issues.title'),
-        icon: 'file-text',
-        active: currentTab === 'issues',
-        onClick: () => this.setActiveTab('issues'),
-      },
-      {
-        label: this.translateService.instant('kanban.title'),
-        icon: 'columns-2',
-        active: currentTab === 'board',
-        onClick: () => this.setActiveTab('board'),
-      },
-      {
-        label: this.translateService.instant('members.title'),
-        icon: 'users',
-        active: currentTab === 'members',
-        onClick: () => this.setActiveTab('members'),
-      },
-      {
-        label: this.translateService.instant('projects.settings.title'),
-        icon: 'settings',
-        active: currentTab === 'settings',
-        onClick: () => this.setActiveTab('settings'),
-      },
-    ];
-  });
-
-  // Project is now automatically loaded when URL projectId changes
-  // No need for manual initialization effect
-
-  setActiveTab(tab: TabType): void {
-    // Update URL query params for all tabs including settings
-    this.navigationService.updateQueryParams({ tab });
-  }
 
   async handleSaveProject(): Promise<void> {
     if (!this.isFormValid() || !this.hasChanges()) {
@@ -503,10 +616,121 @@ export class ProjectDetailPage {
     }
   }
 
-  handleBackToProjects(): void {
+  handleSprintSelect(sprint: Sprint): void {
+    // Set the selected sprint - issues will automatically reload because they depend on currentSprint
+    this.sprintService.selectSprint(sprint);
+  }
+
+  handleCreateSprint(): void {
+    // TODO: Open sprint creation modal
+    console.log('Create sprint');
+  }
+
+  handleCompleteSprint(): void {
+    // TODO: Open sprint completion modal
+    console.log('Complete sprint');
+  }
+
+  handleIssueClick(issue: SprintIssue): void {
     const orgId = this.organizationId();
-    if (orgId) {
-      this.navigationService.navigateToOrganizationProjects(orgId);
+    const projectId = this.projectId();
+    if (orgId && projectId) {
+      this.navigationService.navigateToIssue(orgId, projectId, issue.id);
     }
+  }
+
+  handleSettingsClick(): void {
+    const orgId = this.organizationId();
+    const projectId = this.projectId();
+    if (orgId && projectId) {
+      this.router.navigate(['/app', 'organizations', orgId, 'projects', projectId, 'settings']);
+    }
+  }
+
+  readonly settingsAction = computed<PageHeaderAction>(() => ({
+    label: this.translateService.instant('projects.settings.title'),
+    icon: 'settings',
+    variant: 'ghost',
+    size: 'sm',
+    onClick: () => this.handleSettingsClick(),
+  }));
+
+  readonly sprintProgressPercent = computed(() => {
+    const sprint = this.sprintService.currentSprint();
+    if (!sprint || sprint.totalIssues === 0) return 0;
+    return Math.round(((sprint.completedIssues || 0) / (sprint.totalIssues || 1)) * 100);
+  });
+
+  formatSprintDate(date: Date | string): string {
+    const d = typeof date === 'string' ? new Date(date) : date;
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+    }).format(d);
+  }
+
+  async loadBacklogIssues(): Promise<void> {
+    const projectId = this.projectId();
+    if (!projectId) {
+      return;
+    }
+
+    this.isLoadingBacklog.set(true);
+    try {
+      const search = this.backlogSearch().trim() || undefined;
+      const page = this.backlogPage();
+      const result = await this.issueService.getBacklogIssues(
+        projectId,
+        page,
+        this.ITEMS_PER_PAGE,
+        search,
+      );
+      this.backlogIssuesList.set(result.issues);
+      this.backlogTotal.set(result.total);
+      this.backlogTotalPages.set(result.pages);
+    } catch (error) {
+      console.error('Failed to load backlog issues:', error);
+      this.backlogIssuesList.set([]);
+      this.backlogTotal.set(0);
+      this.backlogTotalPages.set(0);
+    } finally {
+      this.isLoadingBacklog.set(false);
+    }
+  }
+
+  handleBacklogSearchChange(value: string): void {
+    this.backlogSearchSubject.next(value);
+  }
+
+  handleBacklogPageChange(page: number): void {
+    this.backlogPage.set(page);
+    this.loadBacklogIssues();
+  }
+
+  private convertToSprintIssue(issue: IssueListItem): SprintIssue {
+    // Map priority: 'critical' -> 'high', others stay the same
+    const priority: 'low' | 'medium' | 'high' | undefined =
+      issue.priority === 'critical' ? 'high' : issue.priority;
+
+    // Map type: 'epic' -> 'story', others stay the same
+    const type: 'task' | 'bug' | 'link' | 'story' | undefined =
+      issue.type === 'epic' ? 'story' : issue.type;
+
+    // Map status: 'cancelled' -> 'todo'
+    const status: 'todo' | 'in_progress' | 'code_review' | 'done' =
+      issue.status === 'cancelled' ? 'todo' : issue.status;
+
+    return {
+      id: issue.id,
+      title: issue.title,
+      projectId: issue.project_id,
+      sprintId: undefined, // Backlog issues don't have a sprint
+      priority,
+      status,
+      storyPoints: issue.story_points,
+      type,
+      // Note: assignee, labels, hasImage, imageUrl would need to be fetched separately
+      // if needed for the backlog ribbon display
+    };
   }
 }

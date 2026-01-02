@@ -65,6 +65,11 @@ from src.application.dtos.project import (
     ProjectResponse,
     UpdateProjectRequest,
 )
+from src.application.dtos.project_reports import (
+    CumulativeFlowReportResponse,
+    ProjectSummaryStatsResponse,
+    VelocityReportResponse,
+)
 from src.application.dtos.project_member import (
     AddProjectMemberRequest,
     ProjectMemberListResponse,

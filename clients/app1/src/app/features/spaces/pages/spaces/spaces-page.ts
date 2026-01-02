@@ -30,6 +30,7 @@ import {
 } from '../../../../shared/layout/page-header/page-header';
 import { PageBody } from '../../../../shared/layout/page-body/page-body';
 import { PageContent } from '../../../../shared/layout/page-content/page-content';
+import { PageFooter } from '../../../../shared/layout/page-footer/page-footer';
 
 @Component({
   selector: 'app-spaces-page',
@@ -43,6 +44,7 @@ import { PageContent } from '../../../../shared/layout/page-content/page-content
     PageHeader,
     PageBody,
     PageContent,
+    PageFooter,
   ],
   template: `
     <app-page-body>
@@ -96,26 +98,42 @@ import { PageContent } from '../../../../shared/layout/page-content/page-content
                 <app-space-card [space]="space" (onSettings)="handleSpaceSettings($event)" />
               }
             </div>
-
-            <!-- Pagination -->
-            <lib-pagination
-              [currentPage]="currentPage()"
-              [totalItems]="filteredSpaces().length"
-              [itemsPerPage]="ITEMS_PER_PAGE"
-              itemLabel="documents"
-              (pageChange)="goToPage($event)"
-            />
           }
         }
       </app-page-content>
+
+      @if (
+        organizationId() &&
+        !spaceService.isLoading() &&
+        !spaceService.hasError() &&
+        filteredSpaces().length > 0
+      ) {
+        <app-page-footer>
+          <lib-pagination
+            [currentPage]="currentPage()"
+            [totalItems]="filteredSpaces().length"
+            [itemsPerPage]="ITEMS_PER_PAGE"
+            itemLabel="documents"
+            (pageChange)="goToPage($event)"
+          />
+        </app-page-footer>
+      }
     </app-page-body>
   `,
   styles: [
     `
       @reference "#mainstyles";
 
+      :host {
+        @apply flex flex-col flex-auto;
+        @apply w-full;
+        @apply min-h-0;
+      }
+
       .spaces-page_grid {
         @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+        @apply flex-1;
+        @apply content-start;
       }
     `,
   ],

@@ -31,6 +31,7 @@ import {
 } from '../../../../shared/layout/page-header/page-header';
 import { PageBody } from '../../../../shared/layout/page-body/page-body';
 import { PageContent } from '../../../../shared/layout/page-content/page-content';
+import { PageFooter } from '../../../../shared/layout/page-footer/page-footer';
 
 @Component({
   selector: 'app-projects-page',
@@ -44,6 +45,7 @@ import { PageContent } from '../../../../shared/layout/page-content/page-content
     PageHeader,
     PageBody,
     PageContent,
+    PageFooter,
   ],
   template: `
     <app-page-body>
@@ -100,26 +102,42 @@ import { PageContent } from '../../../../shared/layout/page-content/page-content
                 />
               }
             </div>
-
-            <!-- Pagination -->
-            <lib-pagination
-              [currentPage]="currentPage()"
-              [totalItems]="filteredProjects().length"
-              [itemsPerPage]="ITEMS_PER_PAGE"
-              itemLabel="projects"
-              (pageChange)="goToPage($event)"
-            />
           }
         }
       </app-page-content>
+
+      @if (
+        organizationId() &&
+        !projectService.isLoading() &&
+        !projectService.hasError() &&
+        filteredProjects().length > 0
+      ) {
+        <app-page-footer>
+          <lib-pagination
+            [currentPage]="currentPage()"
+            [totalItems]="filteredProjects().length"
+            [itemsPerPage]="ITEMS_PER_PAGE"
+            itemLabel="projects"
+            (pageChange)="goToPage($event)"
+          />
+        </app-page-footer>
+      }
     </app-page-body>
   `,
   styles: [
     `
       @reference "#mainstyles";
 
+      :host {
+        @apply flex flex-col flex-auto;
+        @apply w-full;
+        @apply min-h-0;
+      }
+
       .projects-page_grid {
         @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+        @apply flex-1;
+        @apply content-start;
       }
     `,
   ],

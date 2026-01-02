@@ -103,6 +103,7 @@ class IssueRepository(ABC):
         status: str | None = None,
         type: str | None = None,
         priority: str | None = None,
+        sprint_id: UUID | None = None,
     ) -> list[Issue]:
         """Get all issues in a project with filters and pagination.
 
@@ -116,6 +117,7 @@ class IssueRepository(ABC):
             status: Optional status filter
             type: Optional type filter
             priority: Optional priority filter
+            sprint_id: Optional sprint filter
 
         Returns:
             List of issues
@@ -132,6 +134,7 @@ class IssueRepository(ABC):
         status: str | None = None,
         type: str | None = None,
         priority: str | None = None,
+        sprint_id: UUID | None = None,
     ) -> int:
         """Count total issues in a project with filters.
 
@@ -143,6 +146,7 @@ class IssueRepository(ABC):
             status: Optional status filter
             type: Optional type filter
             priority: Optional priority filter
+            sprint_id: Optional sprint filter
 
         Returns:
             Total count of issues

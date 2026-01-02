@@ -141,7 +141,7 @@ export const routes: Routes = [
                       import('./features/projects/pages/detail/project-detail-page').then(
                         (m) => m.ProjectDetailPage,
                       ),
-                    title: 'Project Details - Pages',
+                    title: 'Project Board - Pages',
                   },
                   {
                     path: 'settings',

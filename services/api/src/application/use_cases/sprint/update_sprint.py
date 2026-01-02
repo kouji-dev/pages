@@ -95,4 +95,23 @@ class UpdateSprintUseCase:
 
         logger.info("Sprint updated successfully", sprint_id=str(sprint_id))
 
-        return SprintResponse.model_validate(updated_sprint)
+        # Get issue counts
+        total_issues, completed_issues = await self._sprint_repository.get_sprint_issue_counts(
+            updated_sprint.id
+        )
+
+        sprint_dict = {
+            "id": updated_sprint.id,
+            "project_id": updated_sprint.project_id,
+            "name": updated_sprint.name,
+            "goal": updated_sprint.goal,
+            "start_date": updated_sprint.start_date,
+            "end_date": updated_sprint.end_date,
+            "status": updated_sprint.status,
+            "total_issues": total_issues,
+            "completed_issues": completed_issues,
+            "created_at": updated_sprint.created_at,
+            "updated_at": updated_sprint.updated_at,
+        }
+
+        return SprintResponse.model_validate(sprint_dict)
