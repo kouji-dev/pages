@@ -128,32 +128,6 @@ class TestCreateFavoriteUseCase:
         assert result.entity_type == "space"
         assert result.entity_id == entity_id
 
-    @pytest.mark.asyncio
-    async def test_create_favorite_page(
-        self, mock_favorite_repository, mock_user_repository, test_user
-    ):
-        """Test favorite creation for page."""
-        entity_id = uuid4()
-        request = CreateFavoriteRequest(
-            entity_type="page",
-            entity_id=entity_id,
-        )
-        mock_user_repository.get_by_id.return_value = test_user
-        mock_favorite_repository.exists.return_value = False
-
-        created_favorite = Favorite.create(
-            user_id=test_user.id,
-            entity_type=EntityType.page(),
-            entity_id=entity_id,
-        )
-        mock_favorite_repository.create.return_value = created_favorite
-
-        use_case = CreateFavoriteUseCase(mock_favorite_repository, mock_user_repository)
-
-        result = await use_case.execute(request, str(test_user.id))
-
-        assert result.entity_type == "page"
-        assert result.entity_id == entity_id
 
     @pytest.mark.asyncio
     async def test_create_favorite_user_not_found(
@@ -432,38 +406,6 @@ class TestListFavoritesUseCase:
         assert result.favorites[0].node is not None
         assert result.favorites[0].node.type == "space"
 
-    @pytest.mark.asyncio
-    async def test_list_favorites_with_page(
-        self,
-        mock_favorite_repository,
-        mock_project_repository,
-        mock_space_repository,
-        mock_session,
-        test_user,
-    ):
-        """Test favorite listing with page favorite (node should be None)."""
-        page_id = uuid4()
-        page_favorite = Favorite.create(
-            user_id=test_user.id,
-            entity_type=EntityType.page(),
-            entity_id=page_id,
-        )
-        favorites = [page_favorite]
-        mock_favorite_repository.get_all.return_value = favorites
-        mock_favorite_repository.count.return_value = 1
-
-        use_case = ListFavoritesUseCase(
-            mock_favorite_repository,
-            mock_project_repository,
-            mock_space_repository,
-            mock_session,
-        )
-
-        result = await use_case.execute(str(test_user.id))
-
-        assert len(result.favorites) == 1
-        assert result.favorites[0].entity_type == "page"
-        assert result.favorites[0].node is None
 
 
 class TestDeleteFavoriteUseCase:

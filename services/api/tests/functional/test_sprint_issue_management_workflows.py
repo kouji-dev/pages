@@ -111,9 +111,10 @@ async def test_sprint_issue_management_workflow(
     assert get_sprint_response.status_code == 200
     sprint_data = get_sprint_response.json()
     assert len(sprint_data["issues"]) == 3
-    assert issue1["id"] in sprint_data["issues"]
-    assert issue2["id"] in sprint_data["issues"]
-    assert issue3["id"] in sprint_data["issues"]
+    issue_ids = [issue["id"] for issue in sprint_data["issues"]]
+    assert issue1["id"] in issue_ids
+    assert issue2["id"] in issue_ids
+    assert issue3["id"] in issue_ids
 
     # Step 6: Reorder issues
     reorder_response = await client_instance.put(
@@ -144,7 +145,8 @@ async def test_sprint_issue_management_workflow(
     assert get_sprint_after_remove.status_code == 200
     sprint_data_after = get_sprint_after_remove.json()
     assert len(sprint_data_after["issues"]) == 2
-    assert issue2["id"] not in sprint_data_after["issues"]
+    issue_ids_after = [issue["id"] for issue in sprint_data_after["issues"]]
+    assert issue2["id"] not in issue_ids_after
 
 
 @pytest.mark.asyncio

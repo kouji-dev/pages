@@ -222,5 +222,6 @@ async def test_sprint_completion_with_incomplete_issues(
     )
     assert backlog_response.status_code == 200
     backlog_data = backlog_response.json()
-    assert issue2["id"] in backlog_data["issues"]
-    assert issue1["id"] not in backlog_data["issues"]  # Done issue should not be in backlog
+    issue_ids = [issue["id"] for issue in backlog_data["issues"]]
+    assert issue2["id"] in issue_ids
+    assert issue1["id"] not in issue_ids  # Done issue should not be in backlog

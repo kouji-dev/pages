@@ -73,8 +73,9 @@ async def test_list_backlog_success(client: AsyncClient, test_user, db_session):
     data = list_response.json()
     assert data["total"] == 2
     assert len(data["issues"]) == 2
-    assert str(issue1.id) in data["issues"]
-    assert str(issue2.id) in data["issues"]
+    issue_ids = [issue["id"] for issue in data["issues"]]
+    assert str(issue1.id) in issue_ids
+    assert str(issue2.id) in issue_ids
     assert data["page"] == 1
     assert data["limit"] == 20
 
@@ -139,7 +140,8 @@ async def test_list_backlog_with_filters(client: AsyncClient, test_user, db_sess
     assert filtered_response.status_code == 200
     filtered_data = filtered_response.json()
     assert filtered_data["total"] == 1
-    assert str(issue1.id) in filtered_data["issues"]
+    issue_ids = [issue["id"] for issue in filtered_data["issues"]]
+    assert str(issue1.id) in issue_ids
 
     # Filter by priority
     priority_response = await client.get(
@@ -261,8 +263,8 @@ async def test_prioritize_backlog_success(client: AsyncClient, test_user, db_ses
     )
     assert backlog_response.status_code == 200
     backlog_data = backlog_response.json()
-    assert backlog_data["issues"][0] == str(issue2.id)  # First in list
-    assert backlog_data["issues"][1] == str(issue1.id)  # Second
+    assert backlog_data["issues"][0]["id"] == str(issue2.id)  # First in list
+    assert backlog_data["issues"][1]["id"] == str(issue1.id)  # Second
 
 
 @pytest.mark.asyncio
@@ -332,4 +334,4 @@ async def test_reorder_backlog_issue_success(client: AsyncClient, test_user, db_
     )
     assert backlog_response.status_code == 200
     backlog_data = backlog_response.json()
-    assert backlog_data["issues"][0] == str(issue2.id)  # Now first
+    assert backlog_data["issues"][0]["id"] == str(issue2.id)  # Now first

@@ -264,7 +264,8 @@ async def test_list_favorites_success(client: AsyncClient, test_user, db_session
             assert fav["node"] is not None
             assert fav["node"]["type"] == fav["entity_type"]
             assert fav["node"]["id"] == str(fav["entity_id"])
-            assert "name" in fav["node"]
+            assert "details" in fav["node"]
+            assert "name" in fav["node"]["details"]
             assert "organization_id" in fav["node"]
 
 
@@ -344,7 +345,7 @@ async def test_list_favorites_with_entity_type_filter(client: AsyncClient, test_
     assert favorite["node"] is not None
     assert favorite["node"]["type"] == "project"
     assert favorite["node"]["id"] == str(project.id)
-    assert favorite["node"]["name"] == project.name
+    assert favorite["node"]["details"]["name"] == project.name
     assert favorite["node"]["organization_id"] == str(org.id)
 
 

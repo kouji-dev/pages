@@ -93,9 +93,10 @@ async def test_backlog_listing_and_filtering_workflow(
     assert filtered_response.status_code == 200
     filtered_data = filtered_response.json()
     assert filtered_data["total"] == 2  # Only tasks
-    assert issue1["id"] in filtered_data["issues"]
-    assert issue3["id"] in filtered_data["issues"]
-    assert issue2["id"] not in filtered_data["issues"]
+    issue_ids = [issue["id"] for issue in filtered_data["issues"]]
+    assert issue1["id"] in issue_ids
+    assert issue3["id"] in issue_ids
+    assert issue2["id"] not in issue_ids
 
     # Step 5: Filter by priority
     priority_response = await client_instance.get(
@@ -106,7 +107,8 @@ async def test_backlog_listing_and_filtering_workflow(
     assert priority_response.status_code == 200
     priority_data = priority_response.json()
     assert priority_data["total"] == 1  # Only high priority
-    assert issue1["id"] in priority_data["issues"]
+    priority_issue_ids = [issue["id"] for issue in priority_data["issues"]]
+    assert issue1["id"] in priority_issue_ids
 
 
 @pytest.mark.asyncio
@@ -187,9 +189,9 @@ async def test_backlog_prioritization_workflow(
     )
     assert backlog_response.status_code == 200
     backlog_data = backlog_response.json()
-    assert backlog_data["issues"][0] == issue3["id"]  # First in list
-    assert backlog_data["issues"][1] == issue1["id"]  # Second
-    assert backlog_data["issues"][2] == issue2["id"]  # Third
+    assert backlog_data["issues"][0]["id"] == issue3["id"]  # First in list
+    assert backlog_data["issues"][1]["id"] == issue1["id"]  # Second
+    assert backlog_data["issues"][2]["id"] == issue2["id"]  # Third
 
     # Step 5: Reorder single issue
     reorder_response = await client_instance.put(
@@ -207,4 +209,4 @@ async def test_backlog_prioritization_workflow(
     )
     assert backlog_after_reorder.status_code == 200
     backlog_after_data = backlog_after_reorder.json()
-    assert backlog_after_data["issues"][0] == issue2["id"]  # Now first
+    assert backlog_after_data["issues"][0]["id"] == issue2["id"]  # Now first

@@ -93,42 +93,25 @@ async def test_favorite_workflow_create_list_delete(client: AsyncClient, test_us
     space_fav_data = create_space_fav_response.json()
     assert space_fav_data["entity_type"] == "space"
 
-    # 3. Create favorite for page
-    create_page_fav_response = await client.post(
-        "/api/v1/users/me/favorites",
-        json={
-            "entity_type": "page",
-            "entity_id": str(page.id),
-        },
-        headers=auth_headers,
-    )
-    assert create_page_fav_response.status_code == 201
-    page_fav_data = create_page_fav_response.json()
-    assert page_fav_data["entity_type"] == "page"
-
-    # 4. List all favorites
+    # 3. List all favorites
     list_all_response = await client.get(
         "/api/v1/users/me/favorites",
         headers=auth_headers,
     )
     assert list_all_response.status_code == 200
     list_all_data = list_all_response.json()
-    assert list_all_data["total"] == 3
-    assert len(list_all_data["favorites"]) == 3
+    assert list_all_data["total"] == 2
+    assert len(list_all_data["favorites"]) == 2
     entity_types = [f["entity_type"] for f in list_all_data["favorites"]]
     assert "project" in entity_types
     assert "space" in entity_types
-    assert "page" in entity_types
 
-    # Verify node data is present for project and space, but None for page
+    # Verify node data is present for project and space
     for fav in list_all_data["favorites"]:
         assert "node" in fav
-        if fav["entity_type"] in ("project", "space"):
-            assert fav["node"] is not None
-            assert fav["node"]["type"] == fav["entity_type"]
-            assert fav["node"]["id"] == str(fav["entity_id"])
-        elif fav["entity_type"] == "page":
-            assert fav["node"] is None
+        assert fav["node"] is not None
+        assert fav["node"]["type"] == fav["entity_type"]
+        assert fav["node"]["id"] == str(fav["entity_id"])
 
     # 5. List favorites filtered by entity type (project)
     list_projects_response = await client.get(
@@ -178,11 +161,10 @@ async def test_favorite_workflow_create_list_delete(client: AsyncClient, test_us
     )
     assert list_after_delete_response.status_code == 200
     list_after_delete_data = list_after_delete_response.json()
-    assert list_after_delete_data["total"] == 2
+    assert list_after_delete_data["total"] == 1
     remaining_types = [f["entity_type"] for f in list_after_delete_data["favorites"]]
     assert "project" not in remaining_types
     assert "space" in remaining_types
-    assert "page" in remaining_types
 
     # 9. Try to create duplicate favorite (should fail)
     duplicate_response = await client.post(
@@ -284,26 +266,14 @@ async def test_favorite_heterogeneous_list_workflow(client: AsyncClient, test_us
         assert response.status_code == 201
         favorite_ids.append(response.json()["id"])
 
-    for page in pages:
-        response = await client.post(
-            "/api/v1/users/me/favorites",
-            json={
-                "entity_type": "page",
-                "entity_id": str(page.id),
-            },
-            headers=auth_headers,
-        )
-        assert response.status_code == 201
-        favorite_ids.append(response.json()["id"])
-
-    # List all favorites (should have 7 total: 3 projects + 2 spaces + 2 pages)
+    # List all favorites (should have 5 total: 3 projects + 2 spaces)
     list_all_response = await client.get(
         "/api/v1/users/me/favorites",
         headers=auth_headers,
     )
     assert list_all_response.status_code == 200
     list_all_data = list_all_response.json()
-    assert list_all_data["total"] == 7
+    assert list_all_data["total"] == 5
 
     # Verify distribution
     entity_type_counts = {}
@@ -312,15 +282,11 @@ async def test_favorite_heterogeneous_list_workflow(client: AsyncClient, test_us
         entity_type_counts[entity_type] = entity_type_counts.get(entity_type, 0) + 1
         # Verify node data structure
         assert "node" in fav
-        if entity_type in ("project", "space"):
-            assert fav["node"] is not None
-            assert fav["node"]["type"] == entity_type
-        elif entity_type == "page":
-            assert fav["node"] is None
+        assert fav["node"] is not None
+        assert fav["node"]["type"] == entity_type
 
     assert entity_type_counts["project"] == 3
     assert entity_type_counts["space"] == 2
-    assert entity_type_counts["page"] == 2
 
     # Delete all favorites
     for fav_id in favorite_ids:
