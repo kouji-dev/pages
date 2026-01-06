@@ -38,6 +38,7 @@ class ListProjectsUseCase:
         page: int = 1,
         limit: int = 20,
         search: str | None = None,
+        status: str | None = None,
     ) -> ProjectListResponse:
         """Execute list projects.
 
@@ -46,6 +47,7 @@ class ListProjectsUseCase:
             page: Page number (1-based)
             limit: Number of projects per page
             search: Optional search query for name or key
+            status: Optional status filter (active, completed, on-hold)
 
         Returns:
             Project list response DTO with pagination metadata
@@ -59,18 +61,52 @@ class ListProjectsUseCase:
             page=page,
             limit=limit,
             search=search,
+            status=status,
         )
 
+        # Map DTO status to entity status for filtering
+        entity_status_filter: str | None = None
+        if status == "active":
+            entity_status_filter = "in-progress"
+        elif status == "completed":
+            entity_status_filter = "complete"
+        elif status == "on-hold":
+            entity_status_filter = "on-hold"
+
         if search:
-            projects = await self._project_repository.search(
-                organization_id=org_uuid, query=search, skip=offset, limit=limit
+            # For search with status, we need to filter in the query
+            # For now, fetch all search results and filter, then paginate
+            # TODO: Optimize by adding status filter to repository search method
+            all_search_results = await self._project_repository.search(
+                organization_id=org_uuid, query=search, skip=0, limit=10000
             )
-            total = await self._count_search_results(org_uuid, search)
+            if entity_status_filter:
+                all_search_results = [
+                    p
+                    for p in all_search_results
+                    if p.status == entity_status_filter and p.deleted_at is None
+                ]
+            total = len(all_search_results)
+            projects = all_search_results[offset : offset + limit]
         else:
-            projects = await self._project_repository.get_all(
-                organization_id=org_uuid, skip=offset, limit=limit
-            )
-            total = await self._project_repository.count(organization_id=org_uuid)
+            # For non-search, fetch all and filter by status if needed
+            if entity_status_filter:
+                # Fetch all projects and filter by status, then paginate
+                all_projects = await self._project_repository.get_all(
+                    organization_id=org_uuid, skip=0, limit=10000
+                )
+                filtered_projects = [
+                    p
+                    for p in all_projects
+                    if p.status == entity_status_filter and p.deleted_at is None
+                ]
+                total = len(filtered_projects)
+                projects = filtered_projects[offset : offset + limit]
+            else:
+                projects = await self._project_repository.get_all(
+                    organization_id=org_uuid, skip=offset, limit=limit
+                )
+                total = await self._project_repository.count(organization_id=org_uuid)
 
         # Calculate total pages
         pages = ceil(total / limit) if total > 0 else 0
@@ -175,12 +211,15 @@ class ListProjectsUseCase:
             pages=pages,
         )
 
-    async def _count_search_results(self, organization_id: UUID, query: str) -> int:
+    async def _count_search_results(
+        self, organization_id: UUID, query: str, status: str | None = None
+    ) -> int:
         """Count search results.
 
         Args:
             organization_id: Organization UUID
             query: Search query
+            status: Optional status filter
 
         Returns:
             Total count of matching projects
@@ -189,18 +228,28 @@ class ListProjectsUseCase:
 
         search_pattern = f"%{query}%"
 
-        stmt = (
-            select(func.count())
-            .select_from(ProjectModel)
-            .where(
-                ProjectModel.organization_id == organization_id,
-                ProjectModel.deleted_at.is_(None),
-                or_(
-                    ProjectModel.name.ilike(search_pattern),
-                    ProjectModel.key.ilike(search_pattern),
-                ),
-            )
-        )
+        # Map DTO status to entity status for filtering
+        entity_status_filter: str | None = None
+        if status == "active":
+            entity_status_filter = "in-progress"
+        elif status == "completed":
+            entity_status_filter = "complete"
+        elif status == "on-hold":
+            entity_status_filter = "on-hold"
+
+        conditions = [
+            ProjectModel.organization_id == organization_id,
+            ProjectModel.deleted_at.is_(None),
+            or_(
+                ProjectModel.name.ilike(search_pattern),
+                ProjectModel.key.ilike(search_pattern),
+            ),
+        ]
+
+        if entity_status_filter:
+            conditions.append(ProjectModel.status == entity_status_filter)
+
+        stmt = select(func.count()).select_from(ProjectModel).where(*conditions)
 
         result = await self._session.execute(stmt)
         count: int = result.scalar_one()

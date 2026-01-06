@@ -665,7 +665,26 @@
       "failedToAddIssue": "Failed to add issue to sprint",
       "failedToRemoveIssue": "Failed to remove issue from sprint"
     },
-    "goal": "Goal"
+    "goal": "Goal",
+    "modals": {
+      "createSprint": "Create Sprint",
+      "sprintName": "Sprint Name",
+      "sprintNamePlaceholder": "e.g., Sprint 1",
+      "sprintNameHelper": "A descriptive name for this sprint",
+      "nameRequired": "Sprint name is required",
+      "startDate": "Start Date",
+      "startDateRequired": "Start date is required",
+      "endDate": "End Date",
+      "endDateRequired": "End date is required",
+      "endDateBeforeStart": "End date must be after start date",
+      "sprintGoal": "Sprint Goal",
+      "sprintGoalPlaceholder": "What do you want to achieve in this sprint? (optional)",
+      "sprintGoalHelper": "A clear goal helps the team stay focused",
+      "overlappingSprint": "This sprint overlaps with an existing sprint",
+      "noProjectSelected": "No project selected",
+      "createSuccess": "Sprint created successfully",
+      "createError": "Failed to create sprint"
+    }
   },
   "review": {
     "title": "Review",

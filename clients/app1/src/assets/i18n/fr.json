@@ -665,7 +665,26 @@
       "failedToAddIssue": "Échec de l'ajout de la tâche au sprint",
       "failedToRemoveIssue": "Échec du retrait de la tâche du sprint"
     },
-    "goal": "Objectif"
+    "goal": "Objectif",
+    "modals": {
+      "createSprint": "Créer un sprint",
+      "sprintName": "Nom du sprint",
+      "sprintNamePlaceholder": "ex. Sprint 1",
+      "sprintNameHelper": "Un nom descriptif pour ce sprint",
+      "nameRequired": "Le nom du sprint est requis",
+      "startDate": "Date de début",
+      "startDateRequired": "La date de début est requise",
+      "endDate": "Date de fin",
+      "endDateRequired": "La date de fin est requise",
+      "endDateBeforeStart": "La date de fin doit être après la date de début",
+      "sprintGoal": "Objectif du sprint",
+      "sprintGoalPlaceholder": "Que voulez-vous accomplir dans ce sprint ? (optionnel)",
+      "sprintGoalHelper": "Un objectif clair aide l'équipe à rester concentrée",
+      "overlappingSprint": "Ce sprint chevauche un sprint existant",
+      "noProjectSelected": "Aucun projet sélectionné",
+      "createSuccess": "Sprint créé avec succès",
+      "createError": "Échec de la création du sprint"
+    }
   },
   "review": {
     "title": "Révision",
