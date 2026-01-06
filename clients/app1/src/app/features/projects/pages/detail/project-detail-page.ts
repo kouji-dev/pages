@@ -28,6 +28,7 @@ import { Progress, Icon } from 'shared-ui';
 import { ProjectNav } from '../../components/project-nav/project-nav';
 import { BacklogRibbon } from '../../components/backlog-ribbon/backlog-ribbon';
 import { DeleteProjectModal } from '../../components/delete-project-modal/delete-project-modal';
+import { CreateSprintModal } from '../../components/create-sprint-modal/create-sprint-modal';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PageContent } from '../../../../shared/layout/page-content/page-content';
 import { PageBody } from '../../../../shared/layout/page-body/page-body';
@@ -622,8 +623,10 @@ export class ProjectDetailPage {
   }
 
   handleCreateSprint(): void {
-    // TODO: Open sprint creation modal
-    console.log('Create sprint');
+    this.modal.open(CreateSprintModal, this.viewContainerRef, {
+      size: 'md',
+      data: { projectId: this.projectId() },
+    });
   }
 
   handleCompleteSprint(): void {

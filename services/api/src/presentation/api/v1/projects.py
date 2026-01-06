@@ -160,6 +160,9 @@ async def list_projects(
     page: Annotated[int, Query(ge=1, description="Page number (1-based)")] = 1,
     limit: Annotated[int, Query(ge=1, le=100, description="Number of projects per page")] = 20,
     search: Annotated[str | None, Query(description="Search query (name or key)")] = None,
+    status: Annotated[
+        str | None, Query(description="Status filter (active, completed, on-hold)")
+    ] = None,
 ) -> ProjectListResponse:
     """List projects in an organization.
 
@@ -173,6 +176,7 @@ async def list_projects(
         page=page,
         limit=limit,
         search=search,
+        status=status,
     )
 
 

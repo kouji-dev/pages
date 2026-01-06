@@ -66,7 +66,7 @@ class CreateSprintUseCase:
         # Validate dates
         if request.start_date and request.end_date:
             if request.start_date >= request.end_date:
-                raise ValueError("Sprint start date must be before end date")
+                raise ValueError("End date must be after start date")
 
         # Check for overlapping sprints if dates are provided
         if request.start_date and request.end_date:

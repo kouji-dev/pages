@@ -15,13 +15,13 @@ export interface Project {
   memberCount?: number;
   createdAt?: string;
   updatedAt?: string;
-  // Design alignment fields (TODO: Add to backend)
+  // Fields from ProjectListItemResponse (available in list views)
   color?: string; // Project color for icon background
-  taskCount?: number; // Total tasks
-  completedTasks?: number; // Completed tasks
+  taskCount?: number; // Total tasks (from issue_count)
+  completedTasks?: number; // Completed tasks (from completed_issues_count)
   status?: 'active' | 'completed' | 'on-hold'; // Project status
-  members?: IssueUser[]; // Project members
-  lastUpdated?: string; // Formatted "X ago" timestamp
+  members?: IssueUser[]; // Project members (top 5 from backend)
+  lastUpdated?: string; // Formatted "X ago" timestamp (computed on frontend)
 }
 
 export interface CreateProjectRequest {
@@ -36,16 +36,31 @@ export interface UpdateProjectRequest {
   description?: string;
 }
 
+export interface ProjectMemberResponse {
+  user_id: string;
+  project_id: string;
+  role: string;
+  user_name: string;
+  user_email: string;
+  avatar_url?: string;
+  joined_at: string;
+}
+
 export interface ProjectListItemResponse {
   id: string;
   organization_id: string;
   name: string;
   key: string;
   description?: string;
+  deleted_at?: string;
+  color?: string;
+  status: string;
   member_count: number;
   issue_count: number;
+  completed_issues_count: number;
+  members: ProjectMemberResponse[];
   created_at: string;
-  updated_at?: string;
+  updated_at: string;
 }
 
 export interface ProjectResponse {
@@ -54,10 +69,11 @@ export interface ProjectResponse {
   name: string;
   key: string;
   description?: string;
+  settings?: Record<string, any>;
   member_count: number;
   issue_count: number;
   created_at: string;
-  updated_at?: string;
+  updated_at: string;
 }
 
 export interface ProjectListResponse {
@@ -77,11 +93,34 @@ export class ProjectService {
   private readonly apiUrl = `${environment.apiUrl}/projects`;
 
   // Projects list resource using httpResource - driven by URL organizationId
+  // Note: This is a signal that can be updated with filters
+  private readonly _projectsFilters = signal<{
+    search?: string;
+    status?: string;
+    page?: number;
+    limit?: number;
+  }>({});
+
   readonly projects = httpResource<ProjectListResponse>(() => {
     const orgId = this.navigationService.currentOrganizationId();
     if (!orgId) return undefined; // Don't load if no organization
 
-    const params = new HttpParams().set('organization_id', orgId);
+    const filters = this._projectsFilters();
+    let params = new HttpParams().set('organization_id', orgId);
+
+    if (filters.search) {
+      params = params.set('search', filters.search);
+    }
+    if (filters.status && filters.status !== 'all') {
+      params = params.set('status', filters.status);
+    }
+    if (filters.page) {
+      params = params.set('page', filters.page.toString());
+    }
+    if (filters.limit) {
+      params = params.set('limit', filters.limit.toString());
+    }
+
     return `${this.apiUrl}?${params.toString()}`;
   });
 
@@ -110,6 +149,16 @@ export class ProjectService {
       memberCount: response.member_count,
       createdAt: response.created_at,
       updatedAt: response.updated_at,
+      // Map new fields from backend
+      color: response.color,
+      taskCount: response.issue_count,
+      completedTasks: response.completed_issues_count,
+      status: response.status as 'active' | 'completed' | 'on-hold',
+      members: response.members.map((m) => ({
+        id: m.user_id,
+        name: m.user_name,
+        avatar_url: m.avatar_url || null,
+      })),
     };
   }
   readonly isLoading = computed(() => this.projects.isLoading());
@@ -143,6 +192,8 @@ export class ProjectService {
       memberCount: response.member_count,
       createdAt: response.created_at,
       updatedAt: response.updated_at,
+      // Note: ProjectResponse doesn't include color, status, taskCount, completedTasks, or members
+      // These are only available in ProjectListItemResponse
     };
   }
 
@@ -156,6 +207,18 @@ export class ProjectService {
    */
   loadProjects(): void {
     this.projects.reload();
+  }
+
+  /**
+   * Update projects filters (search, status, page, limit)
+   */
+  updateProjectsFilters(filters: {
+    search?: string;
+    status?: string;
+    page?: number;
+    limit?: number;
+  }): void {
+    this._projectsFilters.set(filters);
   }
 
   /**

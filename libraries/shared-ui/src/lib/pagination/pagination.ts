@@ -1,6 +1,8 @@
 import { Component, input, output, computed, ChangeDetectionStrategy } from '@angular/core';
 import { Button } from '../button/button';
-import { Size, DEFAULT_SIZE } from '../types';
+import { Size } from '../types';
+
+const DEFAULT_PAGINATION_SIZE: Size = 'sm';
 
 @Component({
   selector: 'lib-pagination',
@@ -104,7 +106,7 @@ export class Pagination {
   totalItems = input.required<number>();
   itemsPerPage = input.required<number>();
   itemLabel = input<string>('items');
-  size = input<Size>(DEFAULT_SIZE);
+  size = input<Size>(DEFAULT_PAGINATION_SIZE);
   pageChange = output<number>();
 
   readonly totalPages = computed(() => {

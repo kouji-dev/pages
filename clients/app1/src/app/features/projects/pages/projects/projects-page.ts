@@ -6,6 +6,8 @@ import {
   ViewContainerRef,
   signal,
   effect,
+  OnInit,
+  OnDestroy,
 } from '@angular/core';
 import {
   LoadingState,
@@ -78,13 +80,13 @@ import { PageFooter } from '../../../../shared/layout/page-footer/page-footer';
           />
         } @else {
           <!-- Grid -->
-          @if (filteredProjects().length === 0 && allProjects().length > 0) {
+          @if (projects().length === 0 && (searchQuery() || statusFilter() !== 'all')) {
             <lib-empty-state
               [title]="'projects.noProjectsFound' | translate"
               [message]="'projects.noProjectsFoundDescription' | translate"
               icon="search"
             />
-          } @else if (filteredProjects().length === 0) {
+          } @else if (projects().length === 0) {
             <lib-empty-state
               [title]="'projects.noProjects' | translate"
               [message]="'projects.noProjectsDescription' | translate"
@@ -95,7 +97,7 @@ import { PageFooter } from '../../../../shared/layout/page-footer/page-footer';
             />
           } @else {
             <div class="projects-page_grid">
-              @for (project of paginatedProjects(); track project.id) {
+              @for (project of projects(); track project.id) {
                 <app-project-card
                   [project]="project"
                   (onSettings)="handleProjectSettings($event)"
@@ -110,13 +112,13 @@ import { PageFooter } from '../../../../shared/layout/page-footer/page-footer';
         organizationId() &&
         !projectService.isLoading() &&
         !projectService.hasError() &&
-        filteredProjects().length > 0
+        projects().length > 0
       ) {
         <app-page-footer>
           <lib-pagination
             [currentPage]="currentPage()"
-            [totalItems]="filteredProjects().length"
-            [itemsPerPage]="ITEMS_PER_PAGE"
+            [totalItems]="totalItems()"
+            [itemsPerPage]="ITEMS_PER_PAGE()"
             itemLabel="projects"
             (pageChange)="goToPage($event)"
           />
@@ -135,15 +137,16 @@ import { PageFooter } from '../../../../shared/layout/page-footer/page-footer';
       }
 
       .projects-page_grid {
-        @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+        @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4;
         @apply flex-1;
         @apply content-start;
+        @apply items-stretch;
       }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectsPage {
+export class ProjectsPage implements OnInit, OnDestroy {
   readonly projectService = inject(ProjectService);
   readonly organizationService = inject(OrganizationService);
   readonly navigationService = inject(NavigationService);
@@ -154,17 +157,27 @@ export class ProjectsPage {
   readonly searchQuery = signal('');
   readonly statusFilter = signal<string>('all');
   readonly currentPage = signal<number>(1);
-  readonly ITEMS_PER_PAGE = 6;
+
+  private readonly windowWidth = signal<number>(
+    typeof window !== 'undefined' ? window.innerWidth : 1024,
+  );
+
+  // Responsive items per page based on screen size
+  readonly ITEMS_PER_PAGE = computed(() => {
+    const width = this.windowWidth();
+    if (width >= 1536) return 24; // 2xl: 6 columns * 4 rows
+    if (width >= 1280) return 20; // xl: 5 columns * 4 rows
+    if (width >= 1024) return 16; // lg: 4 columns * 4 rows
+    if (width >= 768) return 12; // md: 3 columns * 4 rows
+    if (width >= 640) return 8; // sm: 2 columns * 4 rows
+    return 6; // default: 1 column * 6 rows
+  });
+
+  private resizeListener?: () => void;
 
   readonly organizationId = computed(() => {
     // URL is the source of truth - organization service will sync automatically
     return this.navigationService.currentOrganizationId();
-  });
-
-  readonly allProjects = computed(() => {
-    const orgId = this.organizationId();
-    if (!orgId) return [];
-    return this.projectService.getProjectsByOrganization(orgId);
   });
 
   readonly statusFilterOptions = computed<SelectOption<string>[]>(() => [
@@ -174,40 +187,24 @@ export class ProjectsPage {
     { value: 'on-hold', label: 'On Hold' },
   ]);
 
-  readonly filteredProjects = computed(() => {
-    const projects = this.allProjects();
-    const query = this.searchQuery().toLowerCase().trim();
-    const status = this.statusFilter();
+  // Backend-filtered and paginated projects
+  readonly projectsResponse = computed(() => {
+    return this.projectService.projects.value();
+  });
 
-    let filtered = projects;
+  readonly projects = computed(() => {
+    // Use projectsList which handles the mapping
+    return this.projectService.projectsList();
+  });
 
-    // Filter by search query
-    if (query) {
-      filtered = filtered.filter((project) => {
-        const nameMatch = project.name.toLowerCase().includes(query);
-        const keyMatch = project.key.toLowerCase().includes(query);
-        const descriptionMatch = project.description?.toLowerCase().includes(query) || false;
-        return nameMatch || keyMatch || descriptionMatch;
-      });
-    }
-
-    // Filter by status
-    if (status !== 'all') {
-      filtered = filtered.filter((project) => project.status === status);
-    }
-
-    return filtered;
+  readonly totalItems = computed(() => {
+    const response = this.projectsResponse();
+    return response?.total || 0;
   });
 
   readonly totalPages = computed(() => {
-    return Math.ceil(this.filteredProjects().length / this.ITEMS_PER_PAGE);
-  });
-
-  readonly paginatedProjects = computed(() => {
-    const projects = this.filteredProjects();
-    const start = (this.currentPage() - 1) * this.ITEMS_PER_PAGE;
-    const end = start + this.ITEMS_PER_PAGE;
-    return projects.slice(start, end);
+    const response = this.projectsResponse();
+    return response?.pages || 0;
   });
 
   readonly errorMessage = computed(() => {
@@ -228,7 +225,7 @@ export class ProjectsPage {
   }));
 
   readonly searchInputConfig = computed<PageHeaderSearchInput | null>(() => {
-    if (!this.organizationId() || this.allProjects().length === 0) {
+    if (!this.organizationId()) {
       return null;
     }
     return {
@@ -240,7 +237,7 @@ export class ProjectsPage {
   });
 
   readonly filtersConfig = computed<PageHeaderFilter[] | null>(() => {
-    if (!this.organizationId() || this.allProjects().length === 0) {
+    if (!this.organizationId()) {
       return null;
     }
     return [
@@ -253,8 +250,53 @@ export class ProjectsPage {
     ];
   });
 
-  // Projects are now automatically loaded when URL organizationId changes
-  // No need for manual initialization effect
+  constructor() {
+    // Update backend filters when search, status, page, or items per page changes
+    effect(() => {
+      const orgId = this.organizationId();
+      if (!orgId) return;
+
+      const search = this.searchQuery().trim() || undefined;
+      const status = this.statusFilter() !== 'all' ? this.statusFilter() : undefined;
+      const page = this.currentPage();
+      const limit = this.ITEMS_PER_PAGE();
+
+      this.projectService.updateProjectsFilters({
+        search,
+        status,
+        page,
+        limit,
+      });
+    });
+
+    // Reset to page 1 when search or status changes
+    effect(() => {
+      this.searchQuery();
+      this.statusFilter();
+      // Reset page when filters change
+      if (this.currentPage() !== 1) {
+        this.currentPage.set(1);
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    // Listen to window resize to update items per page
+    if (typeof window !== 'undefined') {
+      this.resizeListener = () => {
+        this.windowWidth.set(window.innerWidth);
+      };
+      window.addEventListener('resize', this.resizeListener);
+      // Initialize width
+      this.windowWidth.set(window.innerWidth);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.resizeListener && typeof window !== 'undefined') {
+      window.removeEventListener('resize', this.resizeListener);
+    }
+  }
 
   handleCreateProject(): void {
     const orgId = this.organizationId();
