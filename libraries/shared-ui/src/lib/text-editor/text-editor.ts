@@ -17,7 +17,13 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { $getRoot, LexicalEditor, SerializedEditorState, SerializedLexicalNode } from 'lexical';
+import {
+  $getRoot,
+  $createParagraphNode,
+  LexicalEditor,
+  SerializedEditorState,
+  SerializedLexicalNode,
+} from 'lexical';
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
 import { TEXT_EDITOR_PLUGINS } from './text-editor.tokens';
 import { HistoryPlugin } from './plugins/history-plugin';
@@ -415,7 +421,9 @@ export class TextEditor implements ControlValueAccessor, AfterViewInit {
       const parser = new DOMParser();
       const dom = parser.parseFromString(html, 'text/html');
       const nodes = $generateNodesFromDOM(editor, dom);
-      root.append(...nodes);
+      const paragraph = $createParagraphNode();
+      paragraph.append(...nodes);
+      root.append(paragraph);
     });
   }
 

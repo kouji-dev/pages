@@ -1,97 +1,120 @@
-import { Component, ChangeDetectionStrategy, input, output, inject, computed } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { Icon, Button, Badge, Avatar, IconName } from 'shared-ui';
+import { Component, ChangeDetectionStrategy, input, output, inject } from '@angular/core';
+import { Icon, Button, Badge, Avatar, IconName, Dropdown } from 'shared-ui';
 import { OrganizationService } from '../../../../application/services/organization.service';
 import { NavigationService } from '../../../../application/services/navigation.service';
 import { Space } from '../../../../application/services/space.service';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-space-card',
-  imports: [Icon, RouterLink, Button, Badge, Avatar, TranslatePipe],
+  imports: [Icon, Button, Badge, Avatar, Dropdown, TranslatePipe],
   template: `
-    <div class="space-card">
-      <a
-        [routerLink]="getSpaceRoute()"
-        class="space-card_link"
-        [attr.aria-label]="('spaces.viewSpace' | translate) + ': ' + space().name"
-      >
-        <div class="space-card_content">
-          <div class="space-card_header">
-            <div class="space-card_icon-wrapper">
-              <div class="space-card_icon">
-                @if (space().icon && isEmoji(space().icon!)) {
-                  <span class="space-card_icon-emoji">{{ space().icon }}</span>
-                } @else if (space().icon) {
-                  <lib-icon [name]="getIconName()" size="md" />
-                } @else {
-                  <lib-icon name="book" size="md" />
-                }
-              </div>
-              <div class="space-card_title-group">
-                <h3 class="space-card_name">{{ space().name }}</h3>
-                @if (space().status) {
-                  <lib-badge
-                    [variant]="getStatusVariant()"
-                    size="sm"
-                    class="space-card_status-badge"
-                  >
-                    {{ getStatusLabel() }}
-                  </lib-badge>
-                }
-              </div>
+    <div class="space-card" (click)="handleCardClick()">
+      <div class="space-card_content">
+        <div class="space-card_header">
+          <div class="space-card_icon-wrapper">
+            <div class="space-card_icon">
+              @if (space().icon && isEmoji(space().icon!)) {
+                <span class="space-card_icon-emoji">{{ space().icon }}</span>
+              } @else if (space().icon) {
+                <lib-icon [name]="getIconName()" size="md" />
+              } @else {
+                <lib-icon name="book" size="md" />
+              }
             </div>
-            <lib-button
-              variant="ghost"
-              size="sm"
-              [iconOnly]="true"
-              leftIcon="ellipsis"
-              class="space-card_more-button"
-              (clicked)="handleSettings()"
-            >
-            </lib-button>
+            <div class="space-card_title-group">
+              <h3 class="space-card_name">{{ space().name }}</h3>
+              @if (space().status) {
+                <lib-badge [variant]="getStatusVariant()" size="sm" class="space-card_status-badge">
+                  {{ getStatusLabel() }}
+                </lib-badge>
+              }
+            </div>
           </div>
-
-          @if (space().description) {
-            <p class="space-card_description">{{ space().description }}</p>
-          }
-
-          <!-- Footer -->
-          <div class="space-card_footer">
-            <div class="space-card_owner">
-              @if (space().owner) {
-                <lib-avatar
-                  [avatarUrl]="space().owner!.avatar_url || undefined"
-                  [name]="space().owner!.name"
-                  [initials]="getInitials(space().owner!.name)"
-                  size="sm"
-                  class="space-card_owner-avatar"
-                />
-                <span class="space-card_owner-name">{{ space().owner!.name }}</span>
-              }
+          <lib-button
+            variant="ghost"
+            size="sm"
+            [iconOnly]="true"
+            leftIcon="ellipsis"
+            class="space-card_more-button"
+            [libDropdown]="cardActionsTemplate"
+            [position]="'below'"
+            #cardDropdown="libDropdown"
+          >
+          </lib-button>
+          <ng-template #cardActionsTemplate>
+            <div class="space-card_dropdown">
+              <lib-button
+                variant="ghost"
+                size="sm"
+                leftIcon="settings"
+                [fullWidth]="true"
+                class="space-card_dropdown-item"
+                (clicked)="handleSettings(cardDropdown)"
+              >
+                {{ 'spaces.spaceSettings' | translate }}
+              </lib-button>
+              <lib-button
+                variant="ghost"
+                size="sm"
+                leftIcon="trash"
+                [fullWidth]="true"
+                class="space-card_dropdown-item space-card_dropdown-item--danger"
+                (clicked)="handleDelete(cardDropdown)"
+              >
+                {{ 'spaces.deleteSpace' | translate }}
+              </lib-button>
             </div>
-            <div class="space-card_meta">
-              @if (space().viewCount !== undefined) {
-                <span class="space-card_meta-item">
-                  <lib-icon name="eye" size="xs" />
-                  {{ space().viewCount }}
-                </span>
-              }
-              @if (space().lastUpdated) {
-                <span class="space-card_meta-item">
-                  <lib-icon name="clock-4" size="xs" />
-                  {{ space().lastUpdated }}
-                </span>
-              }
-            </div>
+          </ng-template>
+        </div>
+
+        @if (space().description) {
+          <p class="space-card_description">{{ space().description }}</p>
+        }
+
+        <div class="space-card_footer">
+          <div class="space-card_owner">
+            @if (space().owner) {
+              <lib-avatar
+                [avatarUrl]="space().owner!.avatar_url || undefined"
+                [name]="space().owner!.name"
+                [initials]="getInitials(space().owner!.name)"
+                size="xs"
+              />
+              <span class="space-card_owner-name">{{ space().owner!.name }}</span>
+            }
+          </div>
+          <div class="space-card_meta">
+            @if (space().pageCount !== undefined) {
+              <span class="space-card_meta-item">
+                <lib-icon name="file-text" size="xs" />
+                {{ space().pageCount }}
+              </span>
+            }
+            @if (space().viewCount !== undefined) {
+              <span class="space-card_meta-item">
+                <lib-icon name="eye" size="xs" />
+                {{ space().viewCount }}
+              </span>
+            }
+            @if (space().lastUpdated) {
+              <span class="space-card_meta-item">
+                <lib-icon name="clock-4" size="xs" />
+                {{ space().lastUpdated }}
+              </span>
+            }
           </div>
         </div>
-      </a>
+      </div>
     </div>
   `,
   styles: [
     `
       @reference "#mainstyles";
+
+      :host {
+        display: contents;
+      }
 
       .space-card {
         @apply relative;
@@ -104,41 +127,31 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
         @apply hover:shadow-lg;
         @apply hover:scale-[1.02];
         @apply cursor-pointer;
-        min-height: 200px;
-      }
-
-      .space-card_link {
-        @apply flex-1;
-        @apply p-6;
-        text-decoration: none;
-        color: inherit;
-        @apply cursor-pointer;
+        @apply h-full;
+        @apply min-h-[160px];
       }
 
       .space-card_content {
         @apply flex flex-col;
-        @apply gap-4;
+        @apply gap-3;
         @apply h-full;
+        @apply p-3;
       }
 
       .space-card_header {
         @apply flex items-start justify-between;
-        @apply mb-4;
+        @apply mb-2;
       }
 
       .space-card_icon-wrapper {
-        @apply flex items-center gap-3;
+        @apply flex items-center gap-2;
         @apply flex-1;
         @apply min-w-0;
       }
 
       .space-card_icon {
-        @apply h-10 w-10 rounded-lg bg-muted flex items-center justify-center;
+        @apply h-8 w-8 rounded-lg bg-muted flex items-center justify-center;
         @apply flex-shrink-0;
-      }
-
-      .space-card_icon-emoji {
-        @apply text-xl;
       }
 
       .space-card_icon-emoji {
@@ -150,7 +163,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
       }
 
       .space-card_name {
-        @apply text-lg font-semibold text-foreground;
+        @apply text-base font-semibold text-foreground;
         @apply hover:text-primary transition-colors;
         @apply truncate;
         margin: 0;
@@ -169,14 +182,31 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
         @apply opacity-100;
       }
 
+      .space-card_dropdown {
+        @apply flex flex-col;
+        @apply py-1;
+        @apply min-w-[160px];
+      }
+
+      .space-card_dropdown-item ::ng-deep .button {
+        @apply justify-start;
+      }
+
+      .space-card_dropdown-item--danger ::ng-deep .button {
+        @apply text-destructive;
+      }
+
       .space-card_description {
         @apply text-sm text-muted-foreground;
-        @apply line-clamp-2;
+        @apply overflow-hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
         margin: 0;
       }
 
       .space-card_footer {
-        @apply flex items-center justify-between pt-4 border-t border-border;
+        @apply flex items-center justify-between;
         @apply mt-auto;
       }
 
@@ -184,16 +214,14 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
         @apply flex items-center gap-2;
       }
 
-      .space-card_owner-avatar {
-        @apply h-6 w-6;
-      }
-
       .space-card_owner-name {
         @apply text-sm text-muted-foreground;
+        @apply truncate;
+        max-width: 90px;
       }
 
       .space-card_meta {
-        @apply flex items-center gap-3 text-xs text-muted-foreground;
+        @apply flex items-center gap-2 text-xs text-muted-foreground;
       }
 
       .space-card_meta-item {
@@ -206,18 +234,30 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 export class SpaceCard {
   private readonly organizationService = inject(OrganizationService);
   private readonly navigationService = inject(NavigationService);
-
   readonly space = input.required<Space>();
   readonly onSettings = output<Space>();
+  readonly onDelete = output<Space>();
 
-  getSpaceRoute(): string[] {
+  handleCardClick(): void {
     const orgId = this.organizationService.currentOrganization()?.id;
     const spaceId = this.space().id;
     if (orgId) {
-      return this.navigationService.getSpaceRoute(orgId, spaceId);
+      this.navigationService.navigateToSpace(orgId, spaceId);
     }
-    // Fallback if no org (shouldn't happen)
-    return ['/app/organizations'];
+  }
+
+  handleSettings(dropdown: Dropdown): void {
+    dropdown.open.set(false);
+    const orgId = this.organizationService.currentOrganization()?.id;
+    const spaceId = this.space().id;
+    if (orgId) {
+      this.navigationService.navigateToSpaceSettings(orgId, spaceId);
+    }
+  }
+
+  handleDelete(dropdown: Dropdown): void {
+    dropdown.open.set(false);
+    this.onDelete.emit(this.space());
   }
 
   getStatusVariant(): 'default' | 'success' | 'warning' | 'danger' {
@@ -239,16 +279,12 @@ export class SpaceCard {
   }
 
   isEmoji(str: string): boolean {
-    // Simple check: if string is a single character or short unicode emoji
-    // Emojis are typically 1-2 characters
     return (
       str.length <= 2 && /[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/u.test(str)
     );
   }
 
   getIconName(): IconName {
-    // If icon exists and is not an emoji, use it as IconName
-    // For mock data, we'll cast it - in production, validate against valid icon names
     return (this.space().icon as IconName) || 'book';
   }
 
@@ -259,13 +295,5 @@ export class SpaceCard {
       .join('')
       .toUpperCase()
       .slice(0, 2);
-  }
-
-  handleSettings(): void {
-    const orgId = this.organizationService.currentOrganization()?.id;
-    const spaceId = this.space().id;
-    if (orgId) {
-      this.navigationService.navigateToSpaceSettings(orgId, spaceId);
-    }
   }
 }

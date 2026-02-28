@@ -114,65 +114,45 @@ import { CommentList } from '../../../projects/components/comment-list/comment-l
                 }
               </div>
             </div>
-            @if (!isEditMode()) {
-              <div class="page-detail-page_metadata">
-                @if (page()?.authorName) {
-                  <span class="page-detail-page_metadata-item">
-                    {{ 'pages.createdBy' | translate }} {{ page()!.authorName }}
-                    @if (page()!.createdAt) {
-                      {{ 'pages.on' | translate }} {{ formatDate(page()!.createdAt) }}
-                    }
-                  </span>
-                }
-                @if (page()?.editorName && page()?.editorName !== page()?.authorName) {
-                  <span class="page-detail-page_metadata-item">
-                    {{ 'pages.lastEditedBy' | translate }} {{ page()!.editorName }}
-                    @if (page()!.updatedAt) {
-                      {{ 'pages.on' | translate }} {{ formatDate(page()!.updatedAt) }}
-                    }
-                  </span>
-                } @else if (page()?.updatedAt) {
-                  <span class="page-detail-page_metadata-item">
-                    {{ 'pages.lastUpdated' | translate }} {{ formatDate(page()!.updatedAt) }}
-                  </span>
-                }
-              </div>
-            }
-          </div>
-
-          <div class="page-detail-page_body">
-            @if (isEditMode()) {
-              <lib-text-editor
-                #contentEditor
-                [placeholder]="'pages.startWriting' | translate"
-                [showToolbar]="true"
-                [(ngModel)]="content"
-                name="page-content"
-                [initialValue]="initialContent()"
-                (htmlChange)="contentHtml.set($event)"
-                class="page-detail-page_editor"
-              />
-            } @else {
-              <div class="page-detail-page_view-content">
-                @if (page()?.content) {
-                  <lib-text-editor
-                    [readOnly]="true"
-                    [showToolbar]="false"
-                    [initialValue]="page()!.content!"
-                    class="page-detail-page_view-editor"
-                  />
-                } @else {
-                  <p class="page-detail-page_empty">{{ 'pages.noContent' | translate }}</p>
-                }
-              </div>
-            }
-          </div>
-
-          @if (!isEditMode()) {
-            <div class="page-detail-page_comments">
-              <app-comment-list [pageId]="pageId()" />
+            <div class="page-detail-page_metadata">
+              @if (page()?.authorName) {
+                <span class="page-detail-page_metadata-item">
+                  {{ 'pages.createdBy' | translate }} {{ page()!.authorName }}
+                  @if (page()!.createdAt) {
+                    {{ 'pages.on' | translate }} {{ formatDate(page()!.createdAt) }}
+                  }
+                </span>
+              }
+              @if (page()?.editorName && page()?.editorName !== page()?.authorName) {
+                <span class="page-detail-page_metadata-item">
+                  {{ 'pages.lastEditedBy' | translate }} {{ page()!.editorName }}
+                  @if (page()!.updatedAt) {
+                    {{ 'pages.on' | translate }} {{ formatDate(page()!.updatedAt) }}
+                  }
+                </span>
+              } @else if (page()?.updatedAt) {
+                <span class="page-detail-page_metadata-item">
+                  {{ 'pages.lastUpdated' | translate }} {{ formatDate(page()!.updatedAt) }}
+                </span>
+              }
             </div>
-          }
+          </div>
+
+          <lib-text-editor
+            #contentEditor
+            [placeholder]="isEditMode() ? ('pages.startWriting' | translate) : ''"
+            [showToolbar]="isEditMode()"
+            [readOnly]="!isEditMode()"
+            [(ngModel)]="content"
+            name="page-content"
+            [initialValue]="isEditMode() ? initialContent() : page()?.content || ''"
+            (htmlChange)="contentHtml.set($event)"
+            class="page-detail-page_editor"
+          />
+
+          <div class="page-detail-page_comments">
+            <app-comment-list [pageId]="pageId()" />
+          </div>
         </div>
       }
     </div>
@@ -181,16 +161,24 @@ import { CommentList } from '../../../projects/components/comment-list/comment-l
     `
       @reference "#mainstyles";
 
+      :host {
+        @apply contents;
+      }
+
       .page-detail-page {
         @apply w-full;
         @apply h-full;
-        @apply overflow-auto;
+        @apply min-h-0;
+        @apply flex flex-col;
+        @apply overflow-hidden;
         @apply py-8;
         @apply px-4 sm:px-6 lg:px-8;
       }
 
       .page-detail-page_content {
-        @apply max-w-4xl mx-auto;
+        @apply w-full;
+        @apply flex-1;
+        @apply min-h-0;
         @apply flex flex-col;
         @apply gap-6;
       }
@@ -213,7 +201,7 @@ import { CommentList } from '../../../projects/components/comment-list/comment-l
       }
 
       .page-detail-page_metadata-item {
-        @apply text-sm;
+        @apply text-xs;
         @apply text-muted-foreground;
       }
 
@@ -229,6 +217,10 @@ import { CommentList } from '../../../projects/components/comment-list/comment-l
         @apply flex-1;
       }
 
+      .page-detail-page_title-input ::ng-deep .input {
+        @apply text-3xl font-bold;
+      }
+
       .page-detail-page_title-input ::ng-deep .input--readonly {
         @apply border-none;
         @apply bg-transparent;
@@ -237,7 +229,7 @@ import { CommentList } from '../../../projects/components/comment-list/comment-l
       }
 
       .page-detail-page_title-input ::ng-deep .input--readonly .input-field {
-        @apply text-3xl font-bold;
+        @apply text-5xl font-bold;
         @apply p-0;
         @apply cursor-text;
       }
@@ -248,56 +240,25 @@ import { CommentList } from '../../../projects/components/comment-list/comment-l
         @apply flex-shrink-0;
       }
 
-      .page-detail-page_title-input ::ng-deep .input--readonly {
-        @apply border-none;
-        @apply bg-transparent;
-        @apply shadow-none;
-        @apply p-0;
-      }
-
-      .page-detail-page_title-input ::ng-deep .input--readonly .input-field {
-        @apply text-3xl font-bold;
-        @apply p-0;
-        @apply cursor-text;
-      }
-
-      .page-detail-page_body {
-        @apply flex flex-col;
-        @apply min-h-[400px];
-      }
-
       .page-detail-page_editor {
+        @apply block;
         @apply w-full;
-      }
-
-      .page-detail-page_view-content {
-        @apply w-full;
-      }
-
-      .page-detail-page_view-editor {
-        @apply border-none;
-      }
-
-      .page-detail-page_view-editor ::ng-deep .text-editor {
-        @apply border-none;
-        @apply shadow-none;
-      }
-
-      .page-detail-page_view-editor ::ng-deep .text-editor_wrapper {
-        @apply border-none;
-      }
-
-      .page-detail-page_view-editor ::ng-deep .text-editor_container {
+        @apply flex-1;
         @apply min-h-0;
-        @apply p-0;
-        @apply border-none;
+        @apply transition-all duration-200 ease-in-out;
       }
 
-      .page-detail-page_empty {
-        @apply text-muted-foreground;
-        @apply italic;
-        @apply py-8;
-        margin: 0;
+      .page-detail-page_editor ::ng-deep .text-editor {
+        @apply h-full;
+      }
+
+      .page-detail-page_editor ::ng-deep .text-editor_wrapper {
+        @apply flex-1;
+        @apply min-h-0;
+      }
+
+      .page-detail-page_editor ::ng-deep .text-editor_container {
+        @apply h-full;
       }
 
       .page-detail-page_comments {
