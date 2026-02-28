@@ -30,8 +30,12 @@ import { ListItem, ListItemData } from './list-item';
     `
       @reference "#theme";
 
+      :host {
+        @apply block w-full;
+      }
+
       .list-container {
-        @apply flex flex-col;
+        @apply flex flex-col w-full;
       }
 
       .list {

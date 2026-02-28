@@ -157,7 +157,7 @@ const teamMembers: AvatarStackItem[] = [
 
       .layout_header-content {
         display: grid;
-        grid-template-columns: 25rem 1fr 18rem;
+        grid-template-columns: minmax(0, auto) minmax(0, 1fr) 18rem;
         @apply items-center;
         width: 100%;
         gap: 1rem;
@@ -167,8 +167,6 @@ const teamMembers: AvatarStackItem[] = [
         @apply flex items-center;
         gap: 0.5rem;
         min-width: 0;
-        max-width: 20rem;
-        overflow: hidden;
       }
 
       .layout_sidebar-toggle {
@@ -420,9 +418,6 @@ export class BaseLayout {
     const url = this.currentUrl();
     if (url.includes('/projects')) {
       return { label: 'New Task', icon: 'plus' };
-    }
-    if (url.includes('/spaces')) {
-      return { label: 'Add Page', icon: 'plus' };
     }
     return null;
   });

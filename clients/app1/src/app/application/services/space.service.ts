@@ -16,12 +16,11 @@ export interface Space {
   recentPages?: RecentPage[];
   createdAt?: string;
   updatedAt?: string;
-  // Design alignment fields (TODO: Add to backend)
-  status?: 'draft' | 'in-review' | 'published'; // Space/page status
-  owner?: IssueUser; // Space owner
-  viewCount?: number; // View count
-  lastUpdated?: string; // Formatted "X ago" timestamp
-  icon?: string; // Emoji icon for space
+  status?: 'draft' | 'in-review' | 'published';
+  owner?: IssueUser;
+  viewCount?: number;
+  lastUpdated?: string;
+  icon?: string;
 }
 
 export interface RecentPage {
@@ -49,7 +48,11 @@ export interface SpaceListItemResponse {
   name: string;
   key: string;
   description?: string;
+  icon?: string;
+  status?: string;
+  view_count?: number;
   page_count: number;
+  owner?: { id: string; name: string; email?: string; avatar_url?: string | null };
   created_at: string;
   updated_at?: string;
 }
@@ -129,6 +132,18 @@ export class SpaceService {
           }))
         : undefined;
 
+    const owner: IssueUser | undefined =
+      'owner' in response && response.owner
+        ? {
+            id: response.owner.id,
+            name: response.owner.name,
+            avatar_url: response.owner.avatar_url,
+          }
+        : undefined;
+
+    const status =
+      'status' in response && response.status ? (response.status as Space['status']) : undefined;
+
     return {
       id: response.id,
       name: response.name,
@@ -139,7 +154,29 @@ export class SpaceService {
       recentPages,
       createdAt: response.created_at,
       updatedAt: response.updated_at,
+      status,
+      owner,
+      viewCount: 'view_count' in response ? response.view_count : undefined,
+      lastUpdated: response.updated_at ? this.formatRelativeTime(response.updated_at) : undefined,
+      icon: 'icon' in response ? (response.icon ?? undefined) : undefined,
     };
+  }
+
+  private formatRelativeTime(dateString: string): string {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMinutes = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMinutes / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    const diffWeeks = Math.floor(diffDays / 7);
+
+    if (diffMinutes < 1) return 'Just now';
+    if (diffMinutes < 60) return `${diffMinutes}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    if (diffWeeks < 4) return `${diffWeeks}w ago`;
+    return date.toLocaleDateString();
   }
 
   readonly isLoading = computed(() => this.spaces.isLoading());
