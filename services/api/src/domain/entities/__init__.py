@@ -9,6 +9,7 @@ from src.domain.entities.folder import Folder
 from src.domain.entities.invitation import Invitation
 from src.domain.entities.issue import Issue
 from src.domain.entities.issue_link import IssueLink
+from src.domain.entities.label import Label
 from src.domain.entities.macro import Macro
 from src.domain.entities.notification import Notification
 from src.domain.entities.organization import Organization
@@ -51,6 +52,7 @@ __all__ = [
     "CustomField",
     "CustomFieldValue",
     "IssueLink",
+    "Label",
     "TimeEntry",
     "Dashboard",
     "DashboardWidget",

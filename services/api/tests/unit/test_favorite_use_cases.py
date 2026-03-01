@@ -128,7 +128,6 @@ class TestCreateFavoriteUseCase:
         assert result.entity_type == "space"
         assert result.entity_id == entity_id
 
-
     @pytest.mark.asyncio
     async def test_create_favorite_user_not_found(
         self, mock_favorite_repository, mock_user_repository
@@ -405,7 +404,6 @@ class TestListFavoritesUseCase:
         assert result.favorites[0].entity_type == "space"
         assert result.favorites[0].node is not None
         assert result.favorites[0].node.type == "space"
-
 
 
 class TestDeleteFavoriteUseCase:

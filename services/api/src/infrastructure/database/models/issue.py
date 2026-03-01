@@ -166,6 +166,12 @@ class IssueModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         lazy="selectin",
         cascade="all, delete-orphan",
     )
+    issue_labels = relationship(
+        "IssueLabelModel",
+        back_populates="issue",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+    )
 
     def __repr__(self) -> str:
         return f"<Issue(id={self.id}, number={self.issue_number}, title={self.title[:30]})>"

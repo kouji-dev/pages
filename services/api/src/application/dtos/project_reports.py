@@ -19,9 +19,7 @@ class VelocityReportResponse(BaseModel):
     """Response DTO for project velocity report."""
 
     project_id: UUID
-    velocity_data: list[VelocityDataPoint] = Field(
-        ..., description="Velocity data for each sprint"
-    )
+    velocity_data: list[VelocityDataPoint] = Field(..., description="Velocity data for each sprint")
 
 
 class CumulativeFlowDataPoint(BaseModel):

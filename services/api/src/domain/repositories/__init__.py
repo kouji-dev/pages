@@ -13,6 +13,7 @@ from src.domain.repositories.invitation_repository import InvitationRepository
 from src.domain.repositories.issue_activity_repository import IssueActivityRepository
 from src.domain.repositories.issue_link_repository import IssueLinkRepository
 from src.domain.repositories.issue_repository import IssueRepository
+from src.domain.repositories.label_repository import LabelRepository
 from src.domain.repositories.macro_repository import MacroRepository
 from src.domain.repositories.notification_repository import NotificationRepository
 from src.domain.repositories.organization_repository import OrganizationRepository
@@ -57,6 +58,7 @@ __all__ = [
     "CustomFieldRepository",
     "CustomFieldValueRepository",
     "IssueLinkRepository",
+    "LabelRepository",
     "TimeEntryRepository",
     "DashboardRepository",
     "SavedFilterRepository",

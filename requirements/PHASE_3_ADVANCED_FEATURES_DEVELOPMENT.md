@@ -6,7 +6,7 @@
 ---
 
 ## Overview
-
+<!--  -->
 This phase focuses on differentiating features including AI-powered capabilities, enterprise-grade security and compliance, and advanced collaboration tools. Tasks are organized by dependency order and feature areas.
 
 ### Task Organization Principles

@@ -122,4 +122,3 @@ class GetSprintIssueStatsUseCase:
             in_progress_story_points=in_progress_story_points,
             todo_story_points=todo_story_points,
         )
-

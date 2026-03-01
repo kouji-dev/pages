@@ -238,9 +238,9 @@ class SQLAlchemyIssueRepository(IssueRepository):
             query = query.where(IssueModel.priority == priority)
 
         if sprint_id:
-            query = query.join(
-                SprintIssueModel, IssueModel.id == SprintIssueModel.issue_id
-            ).where(SprintIssueModel.sprint_id == sprint_id)
+            query = query.join(SprintIssueModel, IssueModel.id == SprintIssueModel.issue_id).where(
+                SprintIssueModel.sprint_id == sprint_id
+            )
 
         query = query.offset(skip).limit(limit).order_by(IssueModel.created_at.desc())
 
@@ -297,9 +297,9 @@ class SQLAlchemyIssueRepository(IssueRepository):
             query = query.where(IssueModel.priority == priority)
 
         if sprint_id:
-            query = query.join(
-                SprintIssueModel, IssueModel.id == SprintIssueModel.issue_id
-            ).where(SprintIssueModel.sprint_id == sprint_id)
+            query = query.join(SprintIssueModel, IssueModel.id == SprintIssueModel.issue_id).where(
+                SprintIssueModel.sprint_id == sprint_id
+            )
 
         result = await self._session.execute(query)
         count: int = result.scalar_one()

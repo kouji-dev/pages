@@ -36,6 +36,7 @@ from src.domain.repositories import (
 from src.domain.repositories.custom_field_repository import CustomFieldRepository
 from src.domain.repositories.dashboard_repository import DashboardRepository
 from src.domain.repositories.issue_link_repository import IssueLinkRepository
+from src.domain.repositories.label_repository import LabelRepository
 from src.domain.repositories.saved_filter_repository import SavedFilterRepository
 from src.domain.repositories.time_entry_repository import TimeEntryRepository
 from src.domain.services import PasswordService, PermissionService, StorageService
@@ -51,6 +52,7 @@ from src.infrastructure.database.repositories import (
     SQLAlchemyIssueActivityRepository,
     SQLAlchemyIssueLinkRepository,
     SQLAlchemyIssueRepository,
+    SQLAlchemyLabelRepository,
     SQLAlchemyMacroRepository,
     SQLAlchemyNotificationRepository,
     SQLAlchemyOrganizationRepository,
@@ -405,6 +407,13 @@ async def get_issue_link_repository(
         SQLAlchemy implementation of IssueLinkRepository
     """
     return SQLAlchemyIssueLinkRepository(session)
+
+
+async def get_label_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> LabelRepository:
+    """Get label repository instance with database session."""
+    return SQLAlchemyLabelRepository(session)
 
 
 async def get_dashboard_repository(

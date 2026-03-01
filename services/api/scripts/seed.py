@@ -168,7 +168,14 @@ async def seed_database() -> None:
         session.add_all([frontend_folder, backend_folder, docs_folder])
         await session.flush()
 
-        folders = [engineering_folder, product_folder, marketing_folder, frontend_folder, backend_folder, docs_folder]
+        folders = [
+            engineering_folder,
+            product_folder,
+            marketing_folder,
+            frontend_folder,
+            backend_folder,
+            docs_folder,
+        ]
         folder_ids = [None] + [f.id for f in folders]  # Include None for root
 
         # Create Projects
@@ -241,12 +248,12 @@ async def seed_database() -> None:
 
         # Create Issues
         print("📋 Creating sample issues...")
-        
+
         def calculate_story_points(issue_type: str, priority: str) -> int | None:
             """Calculate story points based on issue type and priority."""
             if issue_type not in ["story", "task", "epic"]:
                 return None
-            
+
             if priority == "critical":
                 return random.choice([8, 13, 21])
             elif priority == "high":
@@ -255,7 +262,7 @@ async def seed_database() -> None:
                 return random.choice([3, 5, 8])
             else:
                 return random.choice([1, 2, 3])
-        
+
         def create_issue_from_template(
             template: dict,
             project_id,
@@ -268,7 +275,7 @@ async def seed_database() -> None:
             assignee = random.choice([admin_user_id, dev_user_id, None])
             reporter = random.choice([admin_user_id, dev_user_id, test_user_id])
             story_points = calculate_story_points(template["type"], template["priority"])
-            
+
             return IssueModel(
                 id=uuid4(),
                 project_id=project_id,
@@ -282,7 +289,7 @@ async def seed_database() -> None:
                 assignee_id=assignee,
                 story_points=story_points,
             )
-        
+
         # All issue templates (original + backlog)
         all_issue_templates = [
             {
@@ -581,12 +588,12 @@ async def seed_database() -> None:
                 "priority": "medium",
             },
         ]
-        
+
         # Create all issues from templates
         issues = []
         backlog_issues = []  # Track backlog issues separately for sprint assignment
         issue_number = 1
-        
+
         # First 12 issues are original issues
         original_issues_count = 12
         for idx, template in enumerate(all_issue_templates):
@@ -599,20 +606,20 @@ async def seed_database() -> None:
                 test_user.id,
             )
             issues.append(issue)
-            
+
             # Track backlog issues (issues after the first 12)
             if idx >= original_issues_count:
                 backlog_issues.append(issue)
-            
+
             issue_number += 1
-        
+
         session.add_all(issues)
         await session.flush()
 
         # Create Sprints
         print("🏃 Creating sprints...")
         today = date.today()
-        
+
         # Completed sprint (past)
         completed_sprint = SprintModel(
             id=uuid4(),
@@ -623,7 +630,7 @@ async def seed_database() -> None:
             end_date=today - timedelta(days=14),
             status="completed",
         )
-        
+
         # Active sprint (current)
         active_sprint = SprintModel(
             id=uuid4(),
@@ -634,7 +641,7 @@ async def seed_database() -> None:
             end_date=today + timedelta(days=7),
             status="active",
         )
-        
+
         # Planned sprint (future)
         planned_sprint = SprintModel(
             id=uuid4(),
@@ -645,7 +652,7 @@ async def seed_database() -> None:
             end_date=today + timedelta(days=22),
             status="planned",
         )
-        
+
         sprints = [completed_sprint, active_sprint, planned_sprint]
         session.add_all(sprints)
         await session.flush()
@@ -653,7 +660,7 @@ async def seed_database() -> None:
         # Assign issues to sprints
         print("🔗 Assigning issues to sprints...")
         sprint_issues = []
-        
+
         # Completed sprint gets done issues
         done_issues = [issue for issue in issues if issue.status == "done"]
         for idx, issue in enumerate(done_issues[:3]):  # First 3 done issues
@@ -664,12 +671,12 @@ async def seed_database() -> None:
                     order=idx,
                 )
             )
-        
+
         # Active sprint gets in_progress and some todo issues
         active_issues = [issue for issue in issues if issue.status == "in_progress"]
         todo_issues = [issue for issue in issues if issue.status == "todo"]
         active_sprint_issues = active_issues + todo_issues[:2]  # All in_progress + 2 todo
-        
+
         for idx, issue in enumerate(active_sprint_issues[:5]):  # Max 5 issues per sprint
             sprint_issues.append(
                 SprintIssueModel(
@@ -678,11 +685,11 @@ async def seed_database() -> None:
                     order=idx,
                 )
             )
-        
+
         # Planned sprint gets remaining todo issues from original issues
         remaining_todo = [issue for issue in todo_issues if issue not in active_sprint_issues]
         planned_sprint_order = 0
-        
+
         # Add some remaining todo issues from original issues
         for issue in remaining_todo[:3]:  # Max 3 from original
             sprint_issues.append(
@@ -693,15 +700,17 @@ async def seed_database() -> None:
                 )
             )
             planned_sprint_order += 1
-        
+
         # Randomly assign backlog issues to sprints
         # Each backlog issue has a 40% chance of being assigned to a sprint
         sprint_order_counters = {
-            completed_sprint.id: len([si for si in sprint_issues if si.sprint_id == completed_sprint.id]),
+            completed_sprint.id: len(
+                [si for si in sprint_issues if si.sprint_id == completed_sprint.id]
+            ),
             active_sprint.id: len([si for si in sprint_issues if si.sprint_id == active_sprint.id]),
             planned_sprint.id: planned_sprint_order,
         }
-        
+
         for issue in backlog_issues:
             if random.random() < 0.4:  # 40% chance
                 # Randomly choose which sprint to assign to
@@ -714,7 +723,7 @@ async def seed_database() -> None:
                     )
                 )
                 sprint_order_counters[sprint.id] += 1
-        
+
         if sprint_issues:
             session.add_all(sprint_issues)
             await session.flush()
@@ -863,15 +872,15 @@ async def seed_database() -> None:
 
         print("✅ Database seed completed successfully!")
         print("\n📋 Created:")
-        print(f"   - 3 users (password: TestPass123!)")
-        print(f"   - 1 organization (pages-dev)")
+        print("   - 3 users (password: TestPass123!)")
+        print("   - 1 organization (pages-dev)")
         print(f"   - {len(folders)} folders (with hierarchical structure)")
         print(f"   - {len(projects)} projects")
         print(f"   - {len(issues)} issues")
         print(f"   - {len(sprints)} sprints (1 completed, 1 active, 1 planned)")
         print(f"   - {len(sprint_issues)} sprint-issue assignments")
         print(f"   - {len(spaces)} spaces")
-        print(f"   - 4 pages")
+        print("   - 4 pages")
         print(f"   - {len(favorites)} favorites")
         print("\n🔑 Test accounts:")
         print("   - admin@pages.dev (admin)")

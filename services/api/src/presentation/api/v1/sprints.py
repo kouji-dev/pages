@@ -142,24 +142,6 @@ def get_get_sprint_issue_stats_use_case(
     return GetSprintIssueStatsUseCase(sprint_repository, issue_repository, session)
 
 
-def get_get_sprint_burndown_stats_use_case(
-    sprint_repository: Annotated[SprintRepository, Depends(get_sprint_repository)],
-    issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
-    session: Annotated[AsyncSession, Depends(get_session)],
-) -> GetSprintBurndownStatsUseCase:
-    """Get sprint burndown stats use case with dependencies."""
-    return GetSprintBurndownStatsUseCase(sprint_repository, issue_repository, session)
-
-
-def get_get_sprint_issue_stats_use_case(
-    sprint_repository: Annotated[SprintRepository, Depends(get_sprint_repository)],
-    issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
-    session: Annotated[AsyncSession, Depends(get_session)],
-) -> GetSprintIssueStatsUseCase:
-    """Get sprint issue stats use case with dependencies."""
-    return GetSprintIssueStatsUseCase(sprint_repository, issue_repository, session)
-
-
 def get_complete_sprint_use_case(
     sprint_repository: Annotated[SprintRepository, Depends(get_sprint_repository)],
     issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
@@ -573,9 +555,7 @@ async def get_sprint_burndown_stats(
 async def get_sprint_issue_stats(
     sprint_id: UUID,
     current_user: Annotated[User, Depends(get_current_active_user)],
-    use_case: Annotated[
-        GetSprintIssueStatsUseCase, Depends(get_get_sprint_issue_stats_use_case)
-    ],
+    use_case: Annotated[GetSprintIssueStatsUseCase, Depends(get_get_sprint_issue_stats_use_case)],
 ) -> IssueStatsResponse:
     """Get sprint issue stats.
 

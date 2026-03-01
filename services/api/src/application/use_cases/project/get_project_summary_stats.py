@@ -80,8 +80,7 @@ class GetProjectSummaryStatsUseCase:
         for sprint in completed_sprints:
             # Get sprint issues
             sprint_issues_result = await self._session.execute(
-                select(SprintIssueModel.issue_id)
-                .where(SprintIssueModel.sprint_id == sprint.id)
+                select(SprintIssueModel.issue_id).where(SprintIssueModel.sprint_id == sprint.id)
             )
             issue_ids = [row[0] for row in sprint_issues_result.all()]
 
@@ -134,8 +133,9 @@ class GetProjectSummaryStatsUseCase:
         if active_sprint:
             # Get sprint issues
             sprint_issues_result = await self._session.execute(
-                select(SprintIssueModel.issue_id)
-                .where(SprintIssueModel.sprint_id == active_sprint.id)
+                select(SprintIssueModel.issue_id).where(
+                    SprintIssueModel.sprint_id == active_sprint.id
+                )
             )
             issue_ids = [row[0] for row in sprint_issues_result.all()]
 

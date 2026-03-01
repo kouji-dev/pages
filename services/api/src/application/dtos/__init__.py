@@ -65,16 +65,16 @@ from src.application.dtos.project import (
     ProjectResponse,
     UpdateProjectRequest,
 )
-from src.application.dtos.project_reports import (
-    CumulativeFlowReportResponse,
-    ProjectSummaryStatsResponse,
-    VelocityReportResponse,
-)
 from src.application.dtos.project_member import (
     AddProjectMemberRequest,
     ProjectMemberListResponse,
     ProjectMemberResponse,
     UpdateProjectMemberRoleRequest,
+)
+from src.application.dtos.project_reports import (
+    CumulativeFlowReportResponse,
+    ProjectSummaryStatsResponse,
+    VelocityReportResponse,
 )
 from src.application.dtos.sprint import (
     AddIssueToSprintRequest,
@@ -150,6 +150,9 @@ __all__ = [
     "ProjectListResponse",
     "CreateProjectRequest",
     "UpdateProjectRequest",
+    "CumulativeFlowReportResponse",
+    "ProjectSummaryStatsResponse",
+    "VelocityReportResponse",
     # Project Member DTOs
     "ProjectMemberResponse",
     "ProjectMemberListResponse",

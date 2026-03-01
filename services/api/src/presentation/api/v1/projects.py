@@ -6,16 +6,12 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.application.dtos.label import CreateLabelRequest, LabelListResponse, LabelResponse
 from src.application.dtos.project import (
     CreateProjectRequest,
     ProjectListResponse,
     ProjectResponse,
     UpdateProjectRequest,
-)
-from src.application.dtos.project_reports import (
-    CumulativeFlowReportResponse,
-    ProjectSummaryStatsResponse,
-    VelocityReportResponse,
 )
 from src.application.dtos.project_member import (
     AddProjectMemberRequest,
@@ -23,6 +19,12 @@ from src.application.dtos.project_member import (
     ProjectMemberResponse,
     UpdateProjectMemberRoleRequest,
 )
+from src.application.dtos.project_reports import (
+    CumulativeFlowReportResponse,
+    ProjectSummaryStatsResponse,
+    VelocityReportResponse,
+)
+from src.application.use_cases.label import CreateLabelUseCase, ListProjectLabelsUseCase
 from src.application.use_cases.project import (
     AddProjectMemberUseCase,
     CreateProjectUseCase,
@@ -39,6 +41,7 @@ from src.application.use_cases.project import (
 )
 from src.domain.entities import User
 from src.domain.repositories import (
+    LabelRepository,
     OrganizationRepository,
     ProjectRepository,
     SprintRepository,
@@ -53,6 +56,7 @@ from src.presentation.dependencies.permissions import (
     require_organization_member,
 )
 from src.presentation.dependencies.services import (
+    get_label_repository,
     get_organization_repository,
     get_permission_service,
     get_project_repository,
@@ -421,6 +425,72 @@ async def remove_project_member(
     await use_case.execute(str(project_id), str(user_id))
 
 
+def get_create_label_use_case(
+    label_repository: Annotated[LabelRepository, Depends(get_label_repository)],
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+) -> CreateLabelUseCase:
+    """Get create label use case."""
+    return CreateLabelUseCase(label_repository, project_repository)
+
+
+def get_list_project_labels_use_case(
+    label_repository: Annotated[LabelRepository, Depends(get_label_repository)],
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+) -> ListProjectLabelsUseCase:
+    """Get list project labels use case."""
+    return ListProjectLabelsUseCase(label_repository, project_repository)
+
+
+@router.post(
+    "/{project_id}/labels",
+    response_model=LabelResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_label(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    project_id: UUID,
+    request: CreateLabelRequest,
+    use_case: Annotated[CreateLabelUseCase, Depends(get_create_label_use_case)],
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+) -> LabelResponse:
+    """Create a label in a project. Requires edit permission."""
+    from fastapi import HTTPException
+
+    project = await project_repository.get_by_id(project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+    await require_edit_permission(
+        project.organization_id, current_user, permission_service, project_id=project.id
+    )
+    return await use_case.execute(str(project_id), request)
+
+
+@router.get(
+    "/{project_id}/labels",
+    response_model=LabelListResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def list_project_labels(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    project_id: UUID,
+    use_case: Annotated[ListProjectLabelsUseCase, Depends(get_list_project_labels_use_case)],
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+    page: Annotated[int, Query(ge=1, description="Page number (1-based)")] = 1,
+    limit: Annotated[int, Query(ge=1, le=100, description="Items per page")] = 20,
+    search: Annotated[str | None, Query(description="Search by label name")] = None,
+) -> LabelListResponse:
+    """List labels of a project. Requires project membership."""
+    from fastapi import HTTPException
+
+    project = await project_repository.get_by_id(project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+    await require_organization_member(project.organization_id, current_user, permission_service)
+    return await use_case.execute(str(project_id), page=page, limit=limit, search=search)
+
+
 @router.get(
     "/{project_id}/reports/velocity",
     response_model=VelocityReportResponse,
@@ -431,9 +501,7 @@ async def remove_project_member(
 async def get_project_velocity(
     project_id: UUID,
     current_user: Annotated[User, Depends(get_current_active_user)],
-    use_case: Annotated[
-        GetProjectVelocityUseCase, Depends(get_get_project_velocity_use_case)
-    ],
+    use_case: Annotated[GetProjectVelocityUseCase, Depends(get_get_project_velocity_use_case)],
     project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
 ) -> VelocityReportResponse:

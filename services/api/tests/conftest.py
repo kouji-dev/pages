@@ -24,6 +24,7 @@ from src.infrastructure.database.models import (  # noqa: F401
     issue,
     issue_activity,
     issue_link,
+    label,
     macro,
     notification,
     organization,
