@@ -140,7 +140,7 @@ async def test_list_nodes_with_folder_filter(client: AsyncClient, test_user, db_
     assert data["total"] == 1
     assert len(data["nodes"]) == 1
     assert data["nodes"][0]["type"] == "project"
-    assert data["nodes"][0]["folder_id"] == str(folder.id)
+    assert data["nodes"][0]["details"]["folder_id"] == str(folder.id)
 
 
 @pytest.mark.asyncio

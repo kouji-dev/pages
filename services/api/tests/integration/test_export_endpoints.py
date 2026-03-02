@@ -305,3 +305,50 @@ async def test_export_page_invalid_format(client: AsyncClient, test_user, db_ses
 
     # Should return 400 for invalid format
     assert export_response.status_code == 400
+
+
+@pytest.mark.asyncio
+async def test_export_space_html_success(client: AsyncClient, test_user, db_session):
+    """Test successful space export to HTML (no weasyprint required)."""
+    org = OrganizationModel(name="Test Org", slug="test-org")
+    db_session.add(org)
+    await db_session.flush()
+
+    org_member = OrganizationMemberModel(
+        organization_id=org.id,
+        user_id=test_user.id,
+        role="admin",
+    )
+    db_session.add(org_member)
+    await db_session.flush()
+
+    space = SpaceModel(organization_id=org.id, name="Test Space", key="TEST")
+    db_session.add(space)
+    await db_session.flush()
+
+    page = PageModel(
+        space_id=space.id,
+        title="Page One",
+        slug="page-one",
+        content="<p>Content</p>",
+        created_by=test_user.id,
+    )
+    db_session.add(page)
+    await db_session.flush()
+
+    login_response = await client.post(
+        "/api/v1/auth/login",
+        json={
+            "email": test_user.email.value,
+            "password": "TestPassword123!",
+        },
+    )
+    token = login_response.json()["access_token"]
+    auth_headers = {"Authorization": f"Bearer {token}"}
+
+    export_response = await client.get(
+        f"/api/v1/spaces/{space.id}/export?format=html",
+        headers=auth_headers,
+    )
+    assert export_response.status_code == 200
+    assert "text/html" in export_response.headers["content-type"]
