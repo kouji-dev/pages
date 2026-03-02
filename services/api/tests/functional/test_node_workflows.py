@@ -108,7 +108,7 @@ async def test_node_filtering_workflow(client: AsyncClient, test_user, db_sessio
     assert list_folder1_response.status_code == 200
     list_folder1_data = list_folder1_response.json()
     assert list_folder1_data["total"] == 2
-    node_names = [node["name"] for node in list_folder1_data["nodes"]]
+    node_names = [node["details"]["name"] for node in list_folder1_data["nodes"]]
     assert "Project 1" in node_names
     assert "Space 1" in node_names
 
@@ -121,11 +121,11 @@ async def test_node_filtering_workflow(client: AsyncClient, test_user, db_sessio
     assert list_folder2_response.status_code == 200
     list_folder2_data = list_folder2_response.json()
     assert list_folder2_data["total"] == 1
-    assert list_folder2_data["nodes"][0]["name"] == "Project 2"
+    assert list_folder2_data["nodes"][0]["details"]["name"] == "Project 2"
 
     # 4. Verify folder_id in response
     for node in list_folder1_data["nodes"]:
-        assert node["folder_id"] == str(folder1.id)
+        assert node["details"]["folder_id"] == str(folder1.id)
 
 
 @pytest.mark.asyncio
@@ -188,7 +188,7 @@ async def test_node_organization_isolation_workflow(client: AsyncClient, test_us
     assert list_org1_response.status_code == 200
     list_org1_data = list_org1_response.json()
     assert list_org1_data["total"] == 1
-    assert list_org1_data["nodes"][0]["name"] == "Org1 Project"
+    assert list_org1_data["nodes"][0]["details"]["name"] == "Org1 Project"
 
     # List nodes in org2 (should only show org2 project)
     list_org2_response = await client.get(
@@ -198,4 +198,4 @@ async def test_node_organization_isolation_workflow(client: AsyncClient, test_us
     assert list_org2_response.status_code == 200
     list_org2_data = list_org2_response.json()
     assert list_org2_data["total"] == 1
-    assert list_org2_data["nodes"][0]["name"] == "Org2 Project"
+    assert list_org2_data["nodes"][0]["details"]["name"] == "Org2 Project"

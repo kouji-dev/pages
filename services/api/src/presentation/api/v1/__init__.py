@@ -5,6 +5,7 @@ from fastapi import APIRouter
 from src.presentation.api.v1.attachments import router as attachments_router
 from src.presentation.api.v1.auth import router as auth_router
 from src.presentation.api.v1.backlog import router as backlog_router
+from src.presentation.api.v1.board_lists import router as board_lists_router
 from src.presentation.api.v1.boards import router as boards_router
 from src.presentation.api.v1.collaboration import router as collaboration_router
 from src.presentation.api.v1.comments import router as comments_router
@@ -50,6 +51,7 @@ router.include_router(notifications_router, tags=["Notifications"])
 router.include_router(search_router, tags=["Search"])
 router.include_router(projects_router, prefix="/projects", tags=["Projects"])
 router.include_router(boards_router, prefix="/boards", tags=["Boards"])
+router.include_router(board_lists_router, prefix="/board-lists", tags=["Board Lists"])
 router.include_router(sprints_router, tags=["Sprints"])
 router.include_router(backlog_router, tags=["Backlog"])
 router.include_router(issues_router, prefix="/issues", tags=["Issues"])

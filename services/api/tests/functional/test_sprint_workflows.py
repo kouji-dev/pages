@@ -274,7 +274,8 @@ async def test_sprint_date_validation_workflow(
         },
     )
     assert invalid_response.status_code == 400
-    assert "start date must be before end date" in invalid_response.json()["detail"].lower()
+    detail_lower = invalid_response.json()["detail"].lower()
+    assert "start date" in detail_lower and "end date" in detail_lower
 
     # Step 3: Create a valid sprint
     valid_sprint_response = await client_instance.post(

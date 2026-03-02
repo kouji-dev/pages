@@ -104,24 +104,10 @@ class IssueRepository(ABC):
         type: str | None = None,
         priority: str | None = None,
         sprint_id: UUID | None = None,
+        label_ids: list[UUID] | None = None,
+        parent_issue_id: UUID | None = None,
     ) -> list[Issue]:
-        """Get all issues in a project with filters and pagination.
-
-        Args:
-            project_id: Project UUID to filter by
-            skip: Number of records to skip
-            limit: Maximum number of records to return
-            include_deleted: Whether to include soft-deleted issues
-            assignee_id: Optional assignee filter
-            reporter_id: Optional reporter filter
-            status: Optional status filter
-            type: Optional type filter
-            priority: Optional priority filter
-            sprint_id: Optional sprint filter
-
-        Returns:
-            List of issues
-        """
+        """Get all issues in a project with filters and pagination."""
         ...
 
     @abstractmethod
@@ -135,22 +121,10 @@ class IssueRepository(ABC):
         type: str | None = None,
         priority: str | None = None,
         sprint_id: UUID | None = None,
+        label_ids: list[UUID] | None = None,
+        parent_issue_id: UUID | None = None,
     ) -> int:
-        """Count total issues in a project with filters.
-
-        Args:
-            project_id: Project UUID to filter by
-            include_deleted: Whether to include soft-deleted issues
-            assignee_id: Optional assignee filter
-            reporter_id: Optional reporter filter
-            status: Optional status filter
-            type: Optional type filter
-            priority: Optional priority filter
-            sprint_id: Optional sprint filter
-
-        Returns:
-            Total count of issues
-        """
+        """Count total issues in a project with filters."""
         ...
 
     @abstractmethod

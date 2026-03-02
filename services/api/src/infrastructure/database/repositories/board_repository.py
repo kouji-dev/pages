@@ -158,3 +158,67 @@ class SQLAlchemyBoardRepository(BoardRepository):
         for model in result.scalars().all():
             model.is_default = model.id == board_id
         await self._session.flush()
+
+    async def create_board_list(self, board_list: BoardList) -> BoardList:
+        """Create a new board list."""
+        model = BoardListModel(
+            id=board_list.id,
+            board_id=board_list.board_id,
+            list_type=board_list.list_type,
+            list_config=board_list.list_config,
+            position=board_list.position,
+            created_at=board_list.created_at,
+            updated_at=board_list.updated_at,
+        )
+        self._session.add(model)
+        await self._session.flush()
+        await self._session.refresh(model)
+        return self._list_to_entity(model)
+
+    async def get_board_list_by_id(self, list_id: UUID) -> BoardList | None:
+        """Get a board list by ID."""
+        result = await self._session.execute(
+            select(BoardListModel).where(BoardListModel.id == list_id)
+        )
+        model = result.scalar_one_or_none()
+        if model is None:
+            return None
+        return self._list_to_entity(model)
+
+    async def update_board_list(self, board_list: BoardList) -> BoardList:
+        """Update an existing board list."""
+        result = await self._session.execute(
+            select(BoardListModel).where(BoardListModel.id == board_list.id)
+        )
+        model = result.scalar_one_or_none()
+        if model is None:
+            raise EntityNotFoundException("BoardList", str(board_list.id))
+        model.list_type = board_list.list_type
+        model.list_config = board_list.list_config
+        model.position = board_list.position
+        model.updated_at = board_list.updated_at
+        await self._session.flush()
+        await self._session.refresh(model)
+        return self._list_to_entity(model)
+
+    async def delete_board_list(self, list_id: UUID) -> None:
+        """Delete a board list."""
+        result = await self._session.execute(
+            select(BoardListModel).where(BoardListModel.id == list_id)
+        )
+        model = result.scalar_one_or_none()
+        if model is None:
+            raise EntityNotFoundException("BoardList", str(list_id))
+        await self._session.delete(model)
+        await self._session.flush()
+
+    async def get_max_list_position(self, board_id: UUID) -> int:
+        """Get the maximum position among lists for a board (-1 if none)."""
+        from sqlalchemy import func
+
+        result = await self._session.execute(
+            select(func.coalesce(func.max(BoardListModel.position), -1)).where(
+                BoardListModel.board_id == board_id
+            )
+        )
+        return int(result.scalar_one())

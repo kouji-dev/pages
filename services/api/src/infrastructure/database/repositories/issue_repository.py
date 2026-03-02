@@ -8,7 +8,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.domain.entities import Issue
 from src.domain.exceptions import EntityNotFoundException
 from src.domain.repositories import IssueRepository
-from src.infrastructure.database.models import IssueModel, ProjectModel, SprintIssueModel
+from src.infrastructure.database.models import (
+    IssueLabelModel,
+    IssueModel,
+    ProjectModel,
+    SprintIssueModel,
+)
 
 
 class SQLAlchemyIssueRepository(IssueRepository):
@@ -200,23 +205,10 @@ class SQLAlchemyIssueRepository(IssueRepository):
         type: str | None = None,
         priority: str | None = None,
         sprint_id: UUID | None = None,
+        label_ids: list[UUID] | None = None,
+        parent_issue_id: UUID | None = None,
     ) -> list[Issue]:
-        """Get all issues in a project with filters and pagination.
-
-        Args:
-            project_id: Project UUID to filter by
-            skip: Number of records to skip
-            limit: Maximum number of records to return
-            include_deleted: Whether to include soft-deleted issues
-            assignee_id: Optional assignee filter
-            reporter_id: Optional reporter filter
-            status: Optional status filter
-            type: Optional type filter
-            priority: Optional priority filter
-
-        Returns:
-            List of issues
-        """
+        """Get all issues in a project with filters and pagination."""
         query = select(IssueModel).where(IssueModel.project_id == project_id)
 
         if not include_deleted:
@@ -242,6 +234,17 @@ class SQLAlchemyIssueRepository(IssueRepository):
                 SprintIssueModel.sprint_id == sprint_id
             )
 
+        if label_ids:
+            subq = (
+                select(IssueLabelModel.issue_id)
+                .where(IssueLabelModel.label_id.in_(label_ids))
+                .distinct()
+            )
+            query = query.where(IssueModel.id.in_(subq))
+
+        if parent_issue_id:
+            query = query.where(IssueModel.parent_issue_id == parent_issue_id)
+
         query = query.offset(skip).limit(limit).order_by(IssueModel.created_at.desc())
 
         result = await self._session.execute(query)
@@ -259,21 +262,10 @@ class SQLAlchemyIssueRepository(IssueRepository):
         type: str | None = None,
         priority: str | None = None,
         sprint_id: UUID | None = None,
+        label_ids: list[UUID] | None = None,
+        parent_issue_id: UUID | None = None,
     ) -> int:
-        """Count total issues in a project with filters.
-
-        Args:
-            project_id: Project UUID to filter by
-            include_deleted: Whether to include soft-deleted issues
-            assignee_id: Optional assignee filter
-            reporter_id: Optional reporter filter
-            status: Optional status filter
-            type: Optional type filter
-            priority: Optional priority filter
-
-        Returns:
-            Total count of issues
-        """
+        """Count total issues in a project with filters."""
         query = (
             select(func.count()).select_from(IssueModel).where(IssueModel.project_id == project_id)
         )
@@ -300,6 +292,17 @@ class SQLAlchemyIssueRepository(IssueRepository):
             query = query.join(SprintIssueModel, IssueModel.id == SprintIssueModel.issue_id).where(
                 SprintIssueModel.sprint_id == sprint_id
             )
+
+        if label_ids:
+            subq = (
+                select(IssueLabelModel.issue_id)
+                .where(IssueLabelModel.label_id.in_(label_ids))
+                .distinct()
+            )
+            query = query.where(IssueModel.id.in_(subq))
+
+        if parent_issue_id:
+            query = query.where(IssueModel.parent_issue_id == parent_issue_id)
 
         result = await self._session.execute(query)
         count: int = result.scalar_one()

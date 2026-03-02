@@ -132,3 +132,97 @@ class UpdateBoardRequest(BaseModel):
         if not v:
             raise ValueError("Board name cannot be empty")
         return v
+
+
+# --- Board List (Column) DTOs ---
+
+
+class CreateBoardListRequest(BaseModel):
+    """Request DTO for creating a board list (column)."""
+
+    list_type: str = Field(..., description="One of: label, assignee, milestone")
+    list_config: dict[str, Any] | None = Field(
+        None, description="e.g. label_id, user_id, sprint_id"
+    )
+
+    @field_validator("list_type")
+    @classmethod
+    def validate_list_type(cls, v: str) -> str:
+        """Validate list type."""
+        allowed = ("label", "assignee", "milestone")
+        if v not in allowed:
+            raise ValueError(f"list_type must be one of {allowed}")
+        return v
+
+
+class UpdateBoardListRequest(BaseModel):
+    """Request DTO for updating a board list."""
+
+    position: int | None = Field(None, ge=0)
+    list_config: dict[str, Any] | None = None
+
+
+class BoardListColumnListResponse(BaseModel):
+    """Response DTO for list of board lists (GET /boards/:id/lists)."""
+
+    lists: list[BoardListColumnResponse] = Field(..., description="Lists ordered by position")
+    total: int = Field(..., description="Total number of lists")
+
+
+# --- Board Issues (for GET /boards/:id/issues) ---
+
+
+class BoardIssueItemResponse(BaseModel):
+    """Issue summary for board view."""
+
+    id: UUID
+    issue_number: int
+    key: str = Field(..., description="e.g. PROJ-123")
+    title: str
+    type: str = "task"
+    status: str = "todo"
+    priority: str = "medium"
+    assignee_id: UUID | None = None
+    story_points: int | None = None
+    label_ids: list[UUID] = Field(default_factory=list)
+    comment_count: int = 0
+    subtask_count: int = 0
+
+    class Config:
+        """Pydantic config."""
+
+        from_attributes = True
+
+
+class BoardListWithIssuesResponse(BaseModel):
+    """Board list with its issues."""
+
+    id: UUID
+    board_id: UUID
+    list_type: str
+    list_config: dict[str, Any] | None = None
+    position: int = 0
+    issues: list[BoardIssueItemResponse] = Field(default_factory=list)
+
+    class Config:
+        """Pydantic config."""
+
+        from_attributes = True
+
+
+class BoardIssuesResponse(BaseModel):
+    """Response DTO for GET /boards/:id/issues."""
+
+    lists: list[BoardListWithIssuesResponse] = Field(
+        ..., description="Lists with issues grouped by column"
+    )
+
+
+# --- Move issue (Drag & Drop) ---
+
+
+class MoveBoardIssueRequest(BaseModel):
+    """Request DTO for moving an issue between board lists (drag & drop)."""
+
+    source_list_id: UUID = Field(..., description="ID of the list the issue is moved from")
+    target_list_id: UUID = Field(..., description="ID of the list the issue is moved to")

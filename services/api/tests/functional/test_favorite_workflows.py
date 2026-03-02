@@ -128,7 +128,7 @@ async def test_favorite_workflow_create_list_delete(client: AsyncClient, test_us
     assert project_fav["node"] is not None
     assert project_fav["node"]["type"] == "project"
     assert project_fav["node"]["id"] == str(project.id)
-    assert project_fav["node"]["name"] == project.name
+    assert project_fav["node"]["details"]["name"] == project.name
 
     # 6. List favorites filtered by entity type (space)
     list_spaces_response = await client.get(
@@ -145,7 +145,7 @@ async def test_favorite_workflow_create_list_delete(client: AsyncClient, test_us
     assert space_fav["node"] is not None
     assert space_fav["node"]["type"] == "space"
     assert space_fav["node"]["id"] == str(space.id)
-    assert space_fav["node"]["name"] == space.name
+    assert space_fav["node"]["details"]["name"] == space.name
 
     # 7. Delete project favorite
     delete_project_fav_response = await client.delete(

@@ -11,7 +11,7 @@ class BoardList:
     """Board list (column) value object / entity.
 
     Represents a column on a board with type (label, assignee, milestone)
-    and optional config (e.g. label_id, user_id).
+    and optional config (e.g. label_id, user_id, sprint_id).
     """
 
     id: UUID
@@ -27,6 +27,49 @@ class BoardList:
         allowed = ("label", "assignee", "milestone")
         if self.list_type not in allowed:
             raise ValueError(f"list_type must be one of {allowed}")
+        if self.position < 0:
+            raise ValueError("Board list position must be non-negative")
+
+    @classmethod
+    def create(
+        cls,
+        board_id: UUID,
+        list_type: str,
+        list_config: dict[str, Any] | None = None,
+        position: int = 0,
+    ) -> Self:
+        """Create a new board list."""
+        allowed = ("label", "assignee", "milestone")
+        if list_type not in allowed:
+            raise ValueError(f"list_type must be one of {allowed}")
+        if position < 0:
+            raise ValueError("Board list position must be non-negative")
+        now = datetime.utcnow()
+        return cls(
+            id=uuid4(),
+            board_id=board_id,
+            list_type=list_type,
+            list_config=list_config or None,
+            position=position,
+            created_at=now,
+            updated_at=now,
+        )
+
+    def update_position(self, position: int) -> None:
+        """Update list position."""
+        if position < 0:
+            raise ValueError("Board list position must be non-negative")
+        self.position = position
+        self._touch()
+
+    def update_list_config(self, list_config: dict[str, Any] | None) -> None:
+        """Update list config."""
+        self.list_config = list_config
+        self._touch()
+
+    def _touch(self) -> None:
+        """Update the updated_at timestamp."""
+        self.updated_at = datetime.utcnow()
 
 
 @dataclass

@@ -65,3 +65,28 @@ class BoardRepository(ABC):
     async def set_default_board(self, project_id: UUID, board_id: UUID) -> None:
         """Set one board as default and clear others for the project."""
         ...
+
+    @abstractmethod
+    async def create_board_list(self, board_list: BoardList) -> BoardList:
+        """Create a new board list (column)."""
+        ...
+
+    @abstractmethod
+    async def get_board_list_by_id(self, list_id: UUID) -> BoardList | None:
+        """Get a board list by ID."""
+        ...
+
+    @abstractmethod
+    async def update_board_list(self, board_list: BoardList) -> BoardList:
+        """Update an existing board list."""
+        ...
+
+    @abstractmethod
+    async def delete_board_list(self, list_id: UUID) -> None:
+        """Delete a board list."""
+        ...
+
+    @abstractmethod
+    async def get_max_list_position(self, board_id: UUID) -> int:
+        """Get the maximum position among lists for a board (-1 if none)."""
+        ...
