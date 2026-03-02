@@ -3,6 +3,9 @@
 from src.infrastructure.database.repositories.attachment_repository import (
     SQLAlchemyAttachmentRepository,
 )
+from src.infrastructure.database.repositories.board_repository import (
+    SQLAlchemyBoardRepository,
+)
 from src.infrastructure.database.repositories.comment_repository import (
     SQLAlchemyCommentRepository,
 )
@@ -114,4 +117,5 @@ __all__ = [
     "SQLAlchemySavedFilterRepository",
     "SQLAlchemyFolderRepository",
     "SQLAlchemyFavoriteRepository",
+    "SQLAlchemyBoardRepository",
 ]

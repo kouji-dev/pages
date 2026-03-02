@@ -11,6 +11,7 @@ from src.application.services.permission_service import DatabasePermissionServic
 from src.application.services.search_query_service import SearchQueryService
 from src.domain.repositories import (
     AttachmentRepository,
+    BoardRepository,
     CommentRepository,
     FavoriteRepository,
     FolderRepository,
@@ -43,6 +44,7 @@ from src.domain.services import PasswordService, PermissionService, StorageServi
 from src.infrastructure.database import get_session
 from src.infrastructure.database.repositories import (
     SQLAlchemyAttachmentRepository,
+    SQLAlchemyBoardRepository,
     SQLAlchemyCommentRepository,
     SQLAlchemyCustomFieldRepository,
     SQLAlchemyDashboardRepository,
@@ -414,6 +416,13 @@ async def get_label_repository(
 ) -> LabelRepository:
     """Get label repository instance with database session."""
     return SQLAlchemyLabelRepository(session)
+
+
+async def get_board_repository(
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> BoardRepository:
+    """Get board repository instance with database session."""
+    return SQLAlchemyBoardRepository(session)
 
 
 async def get_dashboard_repository(

@@ -16,6 +16,20 @@ from src.application.dtos.auth import (
     RegisterResponse,
     TokenResponse,
 )
+from src.application.dtos.backlog import (
+    BacklogListResponse,
+    PrioritizeBacklogRequest,
+    ReorderBacklogIssueRequest,
+)
+from src.application.dtos.board import (
+    BoardListColumnResponse,
+    BoardListItemResponse,
+    BoardListResponse,
+    BoardResponse,
+    BoardWithListsResponse,
+    CreateBoardRequest,
+    UpdateBoardRequest,
+)
 from src.application.dtos.comment import (
     CommentListItemResponse,
     CommentListResponse,
@@ -153,6 +167,18 @@ __all__ = [
     "CumulativeFlowReportResponse",
     "ProjectSummaryStatsResponse",
     "VelocityReportResponse",
+    # Backlog DTOs
+    "BacklogListResponse",
+    "PrioritizeBacklogRequest",
+    "ReorderBacklogIssueRequest",
+    # Board DTOs
+    "BoardResponse",
+    "BoardWithListsResponse",
+    "BoardListItemResponse",
+    "BoardListResponse",
+    "BoardListColumnResponse",
+    "CreateBoardRequest",
+    "UpdateBoardRequest",
     # Project Member DTOs
     "ProjectMemberResponse",
     "ProjectMemberListResponse",

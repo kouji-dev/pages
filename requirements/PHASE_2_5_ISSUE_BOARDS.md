@@ -7,34 +7,43 @@
 
 **Note**: Cette phase implémente un système complet de boards pour la gestion visuelle des issues, inspiré de GitLab. Les boards permettent de créer des vues personnalisées avec des colonnes dynamiques basées sur des critères (labels, assignés, milestones).
 
+**Implementation status**:
+| Phase   | Description                          | Status   |
+|---------|--------------------------------------|----------|
+| 2.5.1   | Labels System Backend                | ✅ Done  |
+| 2.5.2   | Labels System Frontend               | Pending  |
+| 2.5.3   | Issue Boards Data Model & CRUD Backend | ✅ Done  |
+| 2.5.4+  | Boards Frontend, Board Lists, etc.   | Pending  |
+
 ---
 
-## Phase 2.5.1: Labels System Backend
+## Phase 2.5.1: Labels System Backend ✅ (Done)
 
 **Priority**: High  
 **Estimated Time**: 3-4 days  
 **Dependencies**: Phase 1.3.2  
-**Assigned To**: BATATA1
+**Assigned To**: BATATA1  
+**Status**: Implemented (models, migration, API, unit/integration/functional tests)
 
 **Backend Tasks**:
 
-- [ ] Design label data model
-  - [ ] Labels table (id, project_id, name, color, description, created_at, updated_at)
-  - [ ] IssueLabels table (id, issue_id, label_id, created_at) - many-to-many relationship
-- [ ] Create label creation endpoint (POST /api/v1/projects/:id/labels)
-  - [ ] Validate unique name per project
-  - [ ] Validate color format (hex)
-- [ ] Create label retrieval endpoint (GET /api/v1/labels/:id)
-- [ ] Create label list endpoint (GET /api/v1/projects/:id/labels)
-  - [ ] Pagination support
-  - [ ] Search by name
-- [ ] Create label update endpoint (PUT /api/v1/labels/:id)
-- [ ] Create label deletion endpoint (DELETE /api/v1/labels/:id)
-  - [ ] Handle cascade deletion from IssueLabels
-- [ ] Create add label to issue endpoint (POST /api/v1/issues/:id/labels)
-- [ ] Create remove label from issue endpoint (DELETE /api/v1/issues/:id/labels/:labelId)
-- [ ] Create issue labels list endpoint (GET /api/v1/issues/:id/labels)
-- [ ] Write label API tests (unit, integration, functional)
+- [x] Design label data model
+  - [x] Labels table (id, project_id, name, color, description, created_at, updated_at)
+  - [x] IssueLabels table (id, issue_id, label_id, created_at) - many-to-many relationship
+- [x] Create label creation endpoint (POST /api/v1/projects/:id/labels)
+  - [x] Validate unique name per project
+  - [x] Validate color format (hex)
+- [x] Create label retrieval endpoint (GET /api/v1/labels/:id)
+- [x] Create label list endpoint (GET /api/v1/projects/:id/labels)
+  - [x] Pagination support
+  - [x] Search by name
+- [x] Create label update endpoint (PUT /api/v1/labels/:id)
+- [x] Create label deletion endpoint (DELETE /api/v1/labels/:id)
+  - [x] Handle cascade deletion from IssueLabels
+- [x] Create add label to issue endpoint (POST /api/v1/issues/:id/labels)
+- [x] Create remove label from issue endpoint (DELETE /api/v1/issues/:id/labels/:labelId)
+- [x] Create issue labels list endpoint (GET /api/v1/issues/:id/labels)
+- [x] Write label API tests (unit, integration, functional)
 
 **Deliverables**:
 
@@ -78,36 +87,37 @@
 
 ---
 
-## Phase 2.5.3: Issue Boards Data Model & CRUD Backend
+## Phase 2.5.3: Issue Boards Data Model & CRUD Backend ✅ (Done)
 
 **Priority**: High  
 **Estimated Time**: 4-5 days  
 **Dependencies**: 2.5.1  
-**Assigned To**: BATATA1
+**Assigned To**: BATATA1  
+**Status**: Implemented (models, migration, API, unit/integration/functional tests, 100% coverage use cases)
 
 **Backend Tasks**:
 
-- [ ] Design board data model
-  - [ ] Boards table (id, project_id, name, description, scope_config (JSON), is_default, position, created_by, created_at, updated_at)
-  - [ ] BoardLists table (id, board_id, list_type, list_config (JSON), position, created_at, updated_at)
-    - [ ] list_type: 'label', 'assignee', 'milestone'
-    - [ ] list_config: stores the specific label_id, user_id, or milestone_id
-- [ ] Create board creation endpoint (POST /api/v1/projects/:id/boards)
-  - [ ] Validate project access
-  - [ ] Set default board if first board
-- [ ] Create board retrieval endpoint (GET /api/v1/boards/:id)
-  - [ ] Include board lists
-  - [ ] Include scope configuration
-- [ ] Create board list endpoint (GET /api/v1/projects/:id/boards)
-  - [ ] Pagination support
-  - [ ] Sort by position
-- [ ] Create board update endpoint (PUT /api/v1/boards/:id)
-  - [ ] Update name, description, scope_config
-  - [ ] Update position
-- [ ] Create board deletion endpoint (DELETE /api/v1/boards/:id)
-  - [ ] Handle cascade deletion of board lists
-  - [ ] Prevent deletion of last board
-- [ ] Write board CRUD API tests (unit, integration, functional)
+- [x] Design board data model
+  - [x] Boards table (id, project_id, name, description, scope_config (JSON), is_default, position, created_by, created_at, updated_at)
+  - [x] BoardLists table (id, board_id, list_type, list_config (JSON), position, created_at, updated_at)
+    - [x] list_type: 'label', 'assignee', 'milestone'
+    - [x] list_config: stores the specific label_id, user_id, or milestone_id
+- [x] Create board creation endpoint (POST /api/v1/projects/:id/boards)
+  - [x] Validate project access
+  - [x] Set default board if first board
+- [x] Create board retrieval endpoint (GET /api/v1/boards/:id)
+  - [x] Include board lists
+  - [x] Include scope configuration
+- [x] Create board list endpoint (GET /api/v1/projects/:id/boards)
+  - [x] Pagination support
+  - [x] Sort by position
+- [x] Create board update endpoint (PUT /api/v1/boards/:id)
+  - [x] Update name, description, scope_config
+  - [x] Update position
+- [x] Create board deletion endpoint (DELETE /api/v1/boards/:id)
+  - [x] Handle cascade deletion of board lists
+  - [x] Prevent deletion of last board
+- [x] Write board CRUD API tests (unit, integration, functional)
 
 **Deliverables**:
 

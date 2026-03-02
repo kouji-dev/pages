@@ -1,6 +1,7 @@
 """Domain repository interfaces (ports)."""
 
 from src.domain.repositories.attachment_repository import AttachmentRepository
+from src.domain.repositories.board_repository import BoardRepository
 from src.domain.repositories.comment_repository import CommentRepository
 from src.domain.repositories.custom_field_repository import (
     CustomFieldRepository,
@@ -64,4 +65,5 @@ __all__ = [
     "SavedFilterRepository",
     "FolderRepository",
     "FavoriteRepository",
+    "BoardRepository",
 ]

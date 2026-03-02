@@ -93,6 +93,7 @@ class TestCreateSprintUseCase:
 
         mock_project_repository.get_by_id.return_value = test_project
         mock_sprint_repository.find_overlapping_sprints.return_value = []
+        mock_sprint_repository.get_sprint_issue_counts.return_value = (0, 0)
         mock_sprint_repository.create.return_value = Sprint.create(
             project_id=test_project.id,
             name=request.name,
@@ -168,7 +169,7 @@ class TestCreateSprintUseCase:
 
         use_case = CreateSprintUseCase(mock_sprint_repository, mock_project_repository)
 
-        with pytest.raises(ValueError, match="start date must be before end date"):
+        with pytest.raises(ValueError, match="End date must be after start date"):
             await use_case.execute(test_project.id, request)
 
 
@@ -184,6 +185,7 @@ class TestGetSprintUseCase:
         """Test successful sprint retrieval."""
         mock_sprint_repository.get_by_id.return_value = test_sprint
         mock_sprint_repository.get_sprint_issues.return_value = []
+        mock_sprint_repository.get_sprint_issue_counts.return_value = (0, 0)
 
         use_case = GetSprintUseCase(mock_sprint_repository)
         result = await use_case.execute(test_sprint.id)
@@ -222,6 +224,7 @@ class TestListSprintsUseCase:
         mock_project_repository.get_by_id.return_value = test_project
         mock_sprint_repository.get_all.return_value = [test_sprint]
         mock_sprint_repository.count.return_value = 1
+        mock_sprint_repository.get_sprint_issue_counts.return_value = (0, 0)
 
         use_case = ListSprintsUseCase(mock_sprint_repository, mock_project_repository)
         result = await use_case.execute(test_project.id, page=1, limit=20)
@@ -244,6 +247,7 @@ class TestListSprintsUseCase:
         mock_project_repository.get_by_id.return_value = test_project
         mock_sprint_repository.get_all.return_value = [test_sprint]
         mock_sprint_repository.count.return_value = 1
+        mock_sprint_repository.get_sprint_issue_counts.return_value = (0, 0)
 
         use_case = ListSprintsUseCase(mock_sprint_repository, mock_project_repository)
         result = await use_case.execute(
@@ -299,6 +303,7 @@ class TestUpdateSprintUseCase:
 
         mock_sprint_repository.get_by_id.return_value = test_sprint
         mock_sprint_repository.find_overlapping_sprints.return_value = []
+        mock_sprint_repository.get_sprint_issue_counts.return_value = (0, 0)
         mock_sprint_repository.update.return_value = updated_sprint
 
         use_case = UpdateSprintUseCase(mock_sprint_repository)

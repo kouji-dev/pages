@@ -1,6 +1,7 @@
 """Domain entities."""
 
 from src.domain.entities.attachment import Attachment
+from src.domain.entities.board import Board, BoardList
 from src.domain.entities.comment import Comment
 from src.domain.entities.custom_field import CustomField, CustomFieldValue
 from src.domain.entities.dashboard import Dashboard, DashboardWidget
@@ -59,4 +60,6 @@ __all__ = [
     "SavedFilter",
     "Folder",
     "Favorite",
+    "Board",
+    "BoardList",
 ]

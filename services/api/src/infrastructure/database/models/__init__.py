@@ -1,6 +1,7 @@
 """SQLAlchemy database models."""
 
 from src.infrastructure.database.models.attachment import AttachmentModel
+from src.infrastructure.database.models.board import BoardListModel, BoardModel
 from src.infrastructure.database.models.comment import CommentModel
 from src.infrastructure.database.models.custom_field import (
     CustomFieldModel,
@@ -83,4 +84,6 @@ __all__ = [
     "SavedFilterModel",
     "FolderModel",
     "FavoriteModel",
+    "BoardModel",
+    "BoardListModel",
 ]

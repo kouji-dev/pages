@@ -6,6 +6,11 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.application.dtos.board import (
+    BoardListResponse,
+    BoardResponse,
+    CreateBoardRequest,
+)
 from src.application.dtos.label import CreateLabelRequest, LabelListResponse, LabelResponse
 from src.application.dtos.project import (
     CreateProjectRequest,
@@ -24,6 +29,7 @@ from src.application.dtos.project_reports import (
     ProjectSummaryStatsResponse,
     VelocityReportResponse,
 )
+from src.application.use_cases.board import CreateBoardUseCase, ListProjectBoardsUseCase
 from src.application.use_cases.label import CreateLabelUseCase, ListProjectLabelsUseCase
 from src.application.use_cases.project import (
     AddProjectMemberUseCase,
@@ -41,6 +47,7 @@ from src.application.use_cases.project import (
 )
 from src.domain.entities import User
 from src.domain.repositories import (
+    BoardRepository,
     LabelRepository,
     OrganizationRepository,
     ProjectRepository,
@@ -56,6 +63,7 @@ from src.presentation.dependencies.permissions import (
     require_organization_member,
 )
 from src.presentation.dependencies.services import (
+    get_board_repository,
     get_label_repository,
     get_organization_repository,
     get_permission_service,
@@ -439,6 +447,71 @@ def get_list_project_labels_use_case(
 ) -> ListProjectLabelsUseCase:
     """Get list project labels use case."""
     return ListProjectLabelsUseCase(label_repository, project_repository)
+
+
+def get_create_board_use_case(
+    board_repository: Annotated[BoardRepository, Depends(get_board_repository)],
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+) -> CreateBoardUseCase:
+    """Get create board use case."""
+    return CreateBoardUseCase(board_repository, project_repository)
+
+
+def get_list_project_boards_use_case(
+    board_repository: Annotated[BoardRepository, Depends(get_board_repository)],
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+) -> ListProjectBoardsUseCase:
+    """Get list project boards use case."""
+    return ListProjectBoardsUseCase(board_repository, project_repository)
+
+
+@router.post(
+    "/{project_id}/boards",
+    response_model=BoardResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_board(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    project_id: UUID,
+    request: CreateBoardRequest,
+    use_case: Annotated[CreateBoardUseCase, Depends(get_create_board_use_case)],
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+) -> BoardResponse:
+    """Create a board in a project. Set as default if first board. Requires edit permission."""
+    from fastapi import HTTPException
+
+    project = await project_repository.get_by_id(project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+    await require_edit_permission(
+        project.organization_id, current_user, permission_service, project_id=project.id
+    )
+    return await use_case.execute(project_id, request, created_by=current_user.id)
+
+
+@router.get(
+    "/{project_id}/boards",
+    response_model=BoardListResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def list_project_boards(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    project_id: UUID,
+    use_case: Annotated[ListProjectBoardsUseCase, Depends(get_list_project_boards_use_case)],
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+    page: Annotated[int, Query(ge=1, description="Page number (1-based)")] = 1,
+    limit: Annotated[int, Query(ge=1, le=100, description="Items per page")] = 20,
+) -> BoardListResponse:
+    """List boards of a project. Sorted by position. Requires project membership."""
+    from fastapi import HTTPException
+
+    project = await project_repository.get_by_id(project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+    await require_organization_member(project.organization_id, current_user, permission_service)
+    return await use_case.execute(project_id, page=page, limit=limit)
 
 
 @router.post(

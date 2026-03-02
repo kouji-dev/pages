@@ -119,6 +119,13 @@ class ProjectModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         lazy="selectin",
         cascade="all, delete-orphan",
     )
+    boards = relationship(
+        "BoardModel",
+        back_populates="project",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+        order_by="BoardModel.position",
+    )
 
     def __repr__(self) -> str:
         return f"<Project(id={self.id}, key={self.key}, name={self.name})>"

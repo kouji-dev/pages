@@ -75,7 +75,7 @@ class SQLAlchemyLabelRepository(LabelRepository):
         if search and search.strip():
             query = query.where(LabelModel.name.ilike(f"%{search.strip()}%"))
         result = await self._session.execute(query)
-        return result.scalar_one()
+        return int(result.scalar_one())
 
     async def exists_by_name(
         self, project_id: UUID, name: str, exclude_id: UUID | None = None

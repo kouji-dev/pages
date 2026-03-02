@@ -1,5 +1,6 @@
 """Unit tests for backlog use cases."""
 
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock
 from uuid import uuid4
 
@@ -77,11 +78,26 @@ class TestListBacklogUseCase:
         mock_sprint_result.all.return_value = []
         mock_session.execute.return_value = mock_sprint_result
 
-        # Mock backlog issues
-        issue1 = MagicMock(spec=IssueModel)
-        issue1.id = uuid4()
-        issue2 = MagicMock(spec=IssueModel)
-        issue2.id = uuid4()
+        # Mock backlog issues with real types for IssueListItemResponse validation
+        def make_issue_mock(num: int):
+            m = MagicMock(spec=IssueModel)
+            m.id = uuid4()
+            m.project_id = test_project.id
+            m.issue_number = num
+            m.title = f"Issue {num}"
+            m.type = "task"
+            m.status = "open"
+            m.priority = "high"
+            m.assignee_id = None
+            m.reporter_id = uuid4()
+            m.due_date = None  # date | None for Pydantic
+            m.story_points = None
+            m.created_at = datetime.now(UTC)
+            m.updated_at = datetime.now(UTC)
+            return m
+
+        issue1 = make_issue_mock(1)
+        issue2 = make_issue_mock(2)
 
         mock_issues_result = MagicMock()
         mock_issues_result.scalars.return_value.all.return_value = [issue1, issue2]
