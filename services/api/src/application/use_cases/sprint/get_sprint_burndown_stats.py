@@ -8,7 +8,6 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dtos.sprint_stats import BurndownStatsResponse
-from src.domain.entities import Sprint
 from src.domain.exceptions import EntityNotFoundException
 from src.domain.repositories import IssueRepository, SprintRepository
 from src.infrastructure.database.models import IssueModel
@@ -123,4 +122,3 @@ class GetSprintBurndownStatsUseCase:
             sprint_id=sprint_id,
             burndown_data=burndown_data,
         )
-

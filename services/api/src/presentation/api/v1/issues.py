@@ -13,6 +13,7 @@ from src.application.dtos.issue import (
     UpdateIssueRequest,
 )
 from src.application.dtos.issue_activity import IssueActivityListResponse
+from src.application.dtos.label import AddLabelToIssueRequest, LabelResponse
 from src.application.use_cases.issue import (
     CreateIssueUseCase,
     DeleteIssueUseCase,
@@ -21,10 +22,16 @@ from src.application.use_cases.issue import (
     ListIssuesUseCase,
     UpdateIssueUseCase,
 )
+from src.application.use_cases.label import (
+    AddLabelToIssueUseCase,
+    ListIssueLabelsUseCase,
+    RemoveLabelFromIssueUseCase,
+)
 from src.domain.entities import User
 from src.domain.repositories import (
     IssueActivityRepository,
     IssueRepository,
+    LabelRepository,
     NotificationRepository,
     ProjectRepository,
     UserRepository,
@@ -39,6 +46,7 @@ from src.presentation.dependencies.permissions import (
 from src.presentation.dependencies.services import (
     get_issue_activity_repository,
     get_issue_repository,
+    get_label_repository,
     get_notification_repository,
     get_permission_service,
     get_project_repository,
@@ -116,6 +124,29 @@ def get_list_issue_activities_use_case(
 ) -> ListIssueActivitiesUseCase:
     """Get list issue activities use case with dependencies."""
     return ListIssueActivitiesUseCase(issue_repository, activity_repository, session)
+
+
+def get_add_label_to_issue_use_case(
+    label_repository: Annotated[LabelRepository, Depends(get_label_repository)],
+    issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
+) -> AddLabelToIssueUseCase:
+    """Get add label to issue use case."""
+    return AddLabelToIssueUseCase(label_repository, issue_repository)
+
+
+def get_remove_label_from_issue_use_case(
+    label_repository: Annotated[LabelRepository, Depends(get_label_repository)],
+) -> RemoveLabelFromIssueUseCase:
+    """Get remove label from issue use case."""
+    return RemoveLabelFromIssueUseCase(label_repository)
+
+
+def get_list_issue_labels_use_case(
+    label_repository: Annotated[LabelRepository, Depends(get_label_repository)],
+    issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
+) -> ListIssueLabelsUseCase:
+    """Get list issue labels use case."""
+    return ListIssueLabelsUseCase(label_repository, issue_repository)
 
 
 @router.post("/", response_model=IssueResponse, status_code=status.HTTP_201_CREATED)
@@ -313,3 +344,85 @@ async def list_issue_activities(
     await require_organization_member(project.organization_id, current_user, permission_service)
 
     return await use_case.execute(str(issue_id), page=page, limit=limit)
+
+
+@router.get(
+    "/{issue_id}/labels",
+    response_model=list[LabelResponse],
+    status_code=status.HTTP_200_OK,
+)
+async def list_issue_labels(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    issue_id: UUID,
+    use_case: Annotated[ListIssueLabelsUseCase, Depends(get_list_issue_labels_use_case)],
+    issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+) -> list[LabelResponse]:
+    """List labels for an issue. Requires project membership."""
+    from fastapi import HTTPException
+
+    issue = await issue_repository.get_by_id(issue_id)
+    if issue is None:
+        raise HTTPException(status_code=404, detail="Issue not found")
+    project = await project_repository.get_by_id(issue.project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+    await require_organization_member(project.organization_id, current_user, permission_service)
+    return await use_case.execute(str(issue_id))
+
+
+@router.post(
+    "/{issue_id}/labels",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def add_label_to_issue(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    issue_id: UUID,
+    request: AddLabelToIssueRequest,
+    use_case: Annotated[AddLabelToIssueUseCase, Depends(get_add_label_to_issue_use_case)],
+    issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+) -> None:
+    """Add a label to an issue. Requires edit permission."""
+    from fastapi import HTTPException
+
+    issue = await issue_repository.get_by_id(issue_id)
+    if issue is None:
+        raise HTTPException(status_code=404, detail="Issue not found")
+    project = await project_repository.get_by_id(issue.project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+    await require_edit_permission(
+        project.organization_id, current_user, permission_service, project_id=project.id
+    )
+    await use_case.execute(str(issue_id), str(request.label_id))
+
+
+@router.delete(
+    "/{issue_id}/labels/{label_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def remove_label_from_issue(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    issue_id: UUID,
+    label_id: UUID,
+    use_case: Annotated[RemoveLabelFromIssueUseCase, Depends(get_remove_label_from_issue_use_case)],
+    issue_repository: Annotated[IssueRepository, Depends(get_issue_repository)],
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+) -> None:
+    """Remove a label from an issue. Requires edit permission."""
+    from fastapi import HTTPException
+
+    issue = await issue_repository.get_by_id(issue_id)
+    if issue is None:
+        raise HTTPException(status_code=404, detail="Issue not found")
+    project = await project_repository.get_by_id(issue.project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+    await require_edit_permission(
+        project.organization_id, current_user, permission_service, project_id=project.id
+    )
+    await use_case.execute(str(issue_id), str(label_id))

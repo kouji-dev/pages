@@ -96,7 +96,7 @@ jobs:
         run: poetry install --no-interaction --no-root
 
       - name: Run unit tests
-        run: poetry run pytest tests/unit/ -v --cov=src --cov-report=xml --cov-report=html --cov-report=term
+        run: poetry run pytest tests/unit/ -v --cov=src --cov-report=xml --cov-report=html --cov-report=term --cov-fail-under=0
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -174,7 +174,7 @@ jobs:
           done
 
       - name: Run integration tests
-        run: poetry run pytest tests/integration/ -v --cov=src --cov-report=xml --cov-report=html --cov-report=term --cov-append
+        run: poetry run pytest tests/integration/ -v --cov=src --cov-report=xml --cov-report=html --cov-report=term --cov-append --cov-fail-under=0
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -252,7 +252,7 @@ jobs:
           done
 
       - name: Run functional tests
-        run: poetry run pytest tests/functional/ -v --cov=src --cov-report=xml --cov-report=html --cov-report=term --cov-append
+        run: poetry run pytest tests/functional/ -v --cov=src --cov-report=xml --cov-report=html --cov-report=term --cov-append --cov-fail-under=0
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4

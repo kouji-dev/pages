@@ -152,7 +152,8 @@ async def test_list_backlog_with_filters(client: AsyncClient, test_user, db_sess
     assert priority_response.status_code == 200
     priority_data = priority_response.json()
     assert priority_data["total"] == 1
-    assert str(issue2.id) in priority_data["issues"]
+    priority_issue_ids = [issue["id"] for issue in priority_data["issues"]]
+    assert str(issue2.id) in priority_issue_ids
 
 
 @pytest.mark.asyncio

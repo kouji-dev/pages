@@ -1,6 +1,5 @@
 """Sprint stats DTOs."""
 
-from datetime import date
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -28,4 +27,3 @@ class IssueStatsResponse(BaseModel):
     completed_story_points: int = Field(..., description="Completed story points")
     in_progress_story_points: int = Field(..., description="In-progress story points")
     todo_story_points: int = Field(..., description="Todo story points")
-

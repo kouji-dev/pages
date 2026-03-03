@@ -5,6 +5,8 @@ from fastapi import APIRouter
 from src.presentation.api.v1.attachments import router as attachments_router
 from src.presentation.api.v1.auth import router as auth_router
 from src.presentation.api.v1.backlog import router as backlog_router
+from src.presentation.api.v1.board_lists import router as board_lists_router
+from src.presentation.api.v1.boards import router as boards_router
 from src.presentation.api.v1.collaboration import router as collaboration_router
 from src.presentation.api.v1.comments import router as comments_router
 from src.presentation.api.v1.custom_fields import router as custom_fields_router
@@ -15,6 +17,7 @@ from src.presentation.api.v1.folders import router as folders_router
 from src.presentation.api.v1.health import router as health_router
 from src.presentation.api.v1.issue_links import router as issue_links_router
 from src.presentation.api.v1.issues import router as issues_router
+from src.presentation.api.v1.labels import router as labels_router
 from src.presentation.api.v1.languages import router as languages_router
 from src.presentation.api.v1.macros import router as macros_router
 from src.presentation.api.v1.nodes import router as nodes_router
@@ -47,9 +50,12 @@ router.include_router(organizations_router, prefix="/organizations", tags=["Orga
 router.include_router(notifications_router, tags=["Notifications"])
 router.include_router(search_router, tags=["Search"])
 router.include_router(projects_router, prefix="/projects", tags=["Projects"])
+router.include_router(boards_router, prefix="/boards", tags=["Boards"])
+router.include_router(board_lists_router, prefix="/board-lists", tags=["Board Lists"])
 router.include_router(sprints_router, tags=["Sprints"])
 router.include_router(backlog_router, tags=["Backlog"])
 router.include_router(issues_router, prefix="/issues", tags=["Issues"])
+router.include_router(labels_router, prefix="/labels", tags=["Labels"])
 router.include_router(comments_router, tags=["Comments"])
 router.include_router(folders_router, tags=["Folders"])
 router.include_router(nodes_router, tags=["Nodes"])

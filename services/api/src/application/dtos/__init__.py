@@ -16,6 +16,20 @@ from src.application.dtos.auth import (
     RegisterResponse,
     TokenResponse,
 )
+from src.application.dtos.backlog import (
+    BacklogListResponse,
+    PrioritizeBacklogRequest,
+    ReorderBacklogIssueRequest,
+)
+from src.application.dtos.board import (
+    BoardListColumnResponse,
+    BoardListItemResponse,
+    BoardListResponse,
+    BoardResponse,
+    BoardWithListsResponse,
+    CreateBoardRequest,
+    UpdateBoardRequest,
+)
 from src.application.dtos.comment import (
     CommentListItemResponse,
     CommentListResponse,
@@ -65,16 +79,16 @@ from src.application.dtos.project import (
     ProjectResponse,
     UpdateProjectRequest,
 )
-from src.application.dtos.project_reports import (
-    CumulativeFlowReportResponse,
-    ProjectSummaryStatsResponse,
-    VelocityReportResponse,
-)
 from src.application.dtos.project_member import (
     AddProjectMemberRequest,
     ProjectMemberListResponse,
     ProjectMemberResponse,
     UpdateProjectMemberRoleRequest,
+)
+from src.application.dtos.project_reports import (
+    CumulativeFlowReportResponse,
+    ProjectSummaryStatsResponse,
+    VelocityReportResponse,
 )
 from src.application.dtos.sprint import (
     AddIssueToSprintRequest,
@@ -150,6 +164,21 @@ __all__ = [
     "ProjectListResponse",
     "CreateProjectRequest",
     "UpdateProjectRequest",
+    "CumulativeFlowReportResponse",
+    "ProjectSummaryStatsResponse",
+    "VelocityReportResponse",
+    # Backlog DTOs
+    "BacklogListResponse",
+    "PrioritizeBacklogRequest",
+    "ReorderBacklogIssueRequest",
+    # Board DTOs
+    "BoardResponse",
+    "BoardWithListsResponse",
+    "BoardListItemResponse",
+    "BoardListResponse",
+    "BoardListColumnResponse",
+    "CreateBoardRequest",
+    "UpdateBoardRequest",
     # Project Member DTOs
     "ProjectMemberResponse",
     "ProjectMemberListResponse",

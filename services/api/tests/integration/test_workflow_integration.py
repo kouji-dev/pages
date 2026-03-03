@@ -457,3 +457,73 @@ async def test_get_workflow_not_found(client: AsyncClient, test_user, db_session
     )
 
     assert get_response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_validate_transition_success(client: AsyncClient, test_user, db_session):
+    """Test validating a workflow transition."""
+    org = OrganizationModel(name="Test Org", slug="test-org")
+    db_session.add(org)
+    await db_session.flush()
+
+    org_member = OrganizationMemberModel(
+        organization_id=org.id,
+        user_id=test_user.id,
+        role="admin",
+    )
+    db_session.add(org_member)
+    await db_session.flush()
+
+    project = ProjectModel(
+        organization_id=org.id,
+        name="Test Project",
+        key="TEST",
+    )
+    db_session.add(project)
+    await db_session.flush()
+
+    project_member = ProjectMemberModel(
+        project_id=project.id,
+        user_id=test_user.id,
+        role="admin",
+    )
+    db_session.add(project_member)
+    await db_session.flush()
+
+    login_response = await client.post(
+        "/api/v1/auth/login",
+        json={
+            "email": test_user.email.value,
+            "password": "TestPassword123!",
+        },
+    )
+    token = login_response.json()["access_token"]
+    auth_headers = {"Authorization": f"Bearer {token}"}
+
+    create_response = await client.post(
+        f"/api/v1/projects/{project.id}/workflows",
+        json={
+            "name": "Test Workflow",
+            "is_default": True,
+            "statuses": [
+                {"name": "To Do", "order": 0, "is_initial": True, "is_final": False},
+                {"name": "Done", "order": 1, "is_initial": False, "is_final": True},
+            ],
+            "transitions": [],
+        },
+        headers=auth_headers,
+    )
+    assert create_response.status_code == 201
+    workflow_id = create_response.json()["id"]
+    statuses = create_response.json()["statuses"]
+    from_id = statuses[0]["id"]
+    to_id = statuses[1]["id"]
+
+    validate_response = await client.post(
+        f"/api/v1/workflows/{workflow_id}/validate-transition",
+        json={"from_status_id": from_id, "to_status_id": to_id},
+        headers=auth_headers,
+    )
+    assert validate_response.status_code == 200
+    data = validate_response.json()
+    assert "is_valid" in data

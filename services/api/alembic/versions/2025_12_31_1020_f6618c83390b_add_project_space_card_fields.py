@@ -5,17 +5,16 @@ Revises: 1581b495f287
 Create Date: 2025-12-31 10:20:54.278196
 
 """
-from typing import Sequence, Union
+
+from collections.abc import Sequence
 
 from alembic import op
-import sqlalchemy as sa
-
 
 # revision identifiers, used by Alembic.
-revision: str = 'f6618c83390b'
-down_revision: Union[str, None] = '1581b495f287'
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+revision: str = "f6618c83390b"
+down_revision: str | None = "1581b495f287"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -135,4 +134,3 @@ def downgrade() -> None:
     # Remove project fields
     op.drop_column("projects", "status")
     op.drop_column("projects", "color")
-

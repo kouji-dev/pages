@@ -7,7 +7,6 @@ from pydantic import BaseModel, Field
 
 from src.application.dtos.project import ProjectListItemResponse
 from src.application.dtos.space import SpaceListItemResponse
-from src.application.dtos.unified import DTOResponseProject, DTOResponseSpace
 
 
 class NodeResponse(BaseModel):

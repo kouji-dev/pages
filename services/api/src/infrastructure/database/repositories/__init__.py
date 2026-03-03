@@ -3,6 +3,9 @@
 from src.infrastructure.database.repositories.attachment_repository import (
     SQLAlchemyAttachmentRepository,
 )
+from src.infrastructure.database.repositories.board_repository import (
+    SQLAlchemyBoardRepository,
+)
 from src.infrastructure.database.repositories.comment_repository import (
     SQLAlchemyCommentRepository,
 )
@@ -30,6 +33,9 @@ from src.infrastructure.database.repositories.issue_link_repository import (
 )
 from src.infrastructure.database.repositories.issue_repository import (
     SQLAlchemyIssueRepository,
+)
+from src.infrastructure.database.repositories.label_repository import (
+    SQLAlchemyLabelRepository,
 )
 from src.infrastructure.database.repositories.macro_repository import (
     SQLAlchemyMacroRepository,
@@ -105,9 +111,11 @@ __all__ = [
     "SQLAlchemyCustomFieldRepository",
     "SQLAlchemyCustomFieldValueRepository",
     "SQLAlchemyIssueLinkRepository",
+    "SQLAlchemyLabelRepository",
     "SQLAlchemyTimeEntryRepository",
     "SQLAlchemyDashboardRepository",
     "SQLAlchemySavedFilterRepository",
     "SQLAlchemyFolderRepository",
     "SQLAlchemyFavoriteRepository",
+    "SQLAlchemyBoardRepository",
 ]

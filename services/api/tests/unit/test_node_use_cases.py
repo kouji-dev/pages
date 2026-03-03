@@ -141,7 +141,7 @@ class TestListNodesUseCase:
 
         assert len(result.nodes) == 1
         assert result.nodes[0].type == "project"
-        assert result.nodes[0].folder_id == folder_id
+        assert result.nodes[0].details.folder_id == folder_id
         # Verify folder_id was passed to repositories
         mock_project_repository.get_all.assert_called_with(
             organization_id=test_organization.id,

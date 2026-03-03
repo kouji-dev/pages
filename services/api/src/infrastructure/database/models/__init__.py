@@ -1,6 +1,11 @@
 """SQLAlchemy database models."""
 
 from src.infrastructure.database.models.attachment import AttachmentModel
+from src.infrastructure.database.models.board import (
+    BoardListModel,
+    BoardModel,
+    GroupBoardProjectModel,
+)
 from src.infrastructure.database.models.comment import CommentModel
 from src.infrastructure.database.models.custom_field import (
     CustomFieldModel,
@@ -16,6 +21,7 @@ from src.infrastructure.database.models.invitation import InvitationModel
 from src.infrastructure.database.models.issue import IssueModel
 from src.infrastructure.database.models.issue_activity import IssueActivityModel
 from src.infrastructure.database.models.issue_link import IssueLinkModel
+from src.infrastructure.database.models.label import IssueLabelModel, LabelModel
 from src.infrastructure.database.models.macro import MacroModel
 from src.infrastructure.database.models.notification import NotificationModel
 from src.infrastructure.database.models.organization import (
@@ -73,11 +79,16 @@ __all__ = [
     "WorkflowTransitionModel",
     "CustomFieldModel",
     "CustomFieldValueModel",
+    "IssueLabelModel",
     "IssueLinkModel",
+    "LabelModel",
     "TimeEntryModel",
     "DashboardModel",
     "DashboardWidgetModel",
     "SavedFilterModel",
     "FolderModel",
     "FavoriteModel",
+    "BoardModel",
+    "BoardListModel",
+    "GroupBoardProjectModel",
 ]

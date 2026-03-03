@@ -111,7 +111,8 @@ async def test_sprint_issue_management_workflow(
     assert get_sprint_response.status_code == 200
     sprint_data = get_sprint_response.json()
     assert len(sprint_data["issues"]) == 3
-    issue_ids = [issue["id"] for issue in sprint_data["issues"]]
+    # API returns issues as list of UUIDs (strings)
+    issue_ids = [str(uid) for uid in sprint_data["issues"]]
     assert issue1["id"] in issue_ids
     assert issue2["id"] in issue_ids
     assert issue3["id"] in issue_ids
@@ -145,7 +146,7 @@ async def test_sprint_issue_management_workflow(
     assert get_sprint_after_remove.status_code == 200
     sprint_data_after = get_sprint_after_remove.json()
     assert len(sprint_data_after["issues"]) == 2
-    issue_ids_after = [issue["id"] for issue in sprint_data_after["issues"]]
+    issue_ids_after = [str(uid) for uid in sprint_data_after["issues"]]
     assert issue2["id"] not in issue_ids_after
 
 

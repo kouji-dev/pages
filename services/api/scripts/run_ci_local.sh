@@ -53,7 +53,8 @@ echo "2️⃣  UNIT TESTS"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 echo "🧪 Exécution des tests unitaires avec coverage..."
-poetry run pytest tests/unit/ -v --cov=src --cov-report=xml --cov-report=html --cov-report=term
+# Do not enforce 80% on unit tests alone; coverage is checked after integration tests
+poetry run pytest tests/unit/ -v --cov=src --cov-report=xml --cov-report=html --cov-report=term --cov-fail-under=0
 print_result "Unit tests passed"
 
 echo ""
@@ -67,6 +68,7 @@ echo -e "${YELLOW}   Assurez-vous que PostgreSQL est démarré et que TEST_DATAB
 echo ""
 
 echo "🧪 Exécution des tests d'intégration avec coverage..."
+# Enforce 80% coverage after unit + integration (--cov-append adds to unit run)
 poetry run pytest tests/integration/ -v --cov=src --cov-report=xml --cov-report=html --cov-report=term --cov-append
 print_result "Integration tests passed"
 

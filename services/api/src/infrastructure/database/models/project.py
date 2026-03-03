@@ -2,7 +2,7 @@
 
 from uuid import UUID
 
-from sqlalchemy import ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import ForeignKey, String, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -112,6 +112,19 @@ class ProjectModel(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         back_populates="project",
         lazy="selectin",
         cascade="all, delete-orphan",
+    )
+    labels = relationship(
+        "LabelModel",
+        back_populates="project",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+    )
+    boards = relationship(
+        "BoardModel",
+        back_populates="project",
+        lazy="selectin",
+        cascade="all, delete-orphan",
+        order_by="BoardModel.position",
     )
 
     def __repr__(self) -> str:

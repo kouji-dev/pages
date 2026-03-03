@@ -10,7 +10,9 @@ from src.infrastructure.database.models import (
     IssueModel,
     OrganizationMemberModel,
     OrganizationModel,
+    PageModel,
     ProjectModel,
+    SpaceModel,
     UserModel,
 )
 
@@ -558,3 +560,111 @@ async def test_list_comments_pagination(client: AsyncClient, test_user, db_sessi
     assert data["page"] == 1
     assert data["limit"] == 2
     assert data["pages"] == 3
+
+
+@pytest.mark.asyncio
+async def test_create_page_comment_success(client: AsyncClient, test_user, db_session):
+    """Test successful page comment creation."""
+    org = OrganizationModel(name="Test Org", slug="test-org")
+    db_session.add(org)
+    await db_session.flush()
+
+    org_member = OrganizationMemberModel(
+        organization_id=org.id,
+        user_id=test_user.id,
+        role="admin",
+    )
+    db_session.add(org_member)
+    await db_session.flush()
+
+    space = SpaceModel(organization_id=org.id, name="Test Space", key="TEST")
+    db_session.add(space)
+    await db_session.flush()
+
+    page = PageModel(
+        space_id=space.id,
+        title="Test Page",
+        slug="test-page",
+        content="Content",
+        created_by=test_user.id,
+    )
+    db_session.add(page)
+    await db_session.flush()
+
+    login_response = await client.post(
+        "/api/v1/auth/login",
+        json={
+            "email": test_user.email.value,
+            "password": "TestPassword123!",
+        },
+    )
+    token = login_response.json()["access_token"]
+    auth_headers = {"Authorization": f"Bearer {token}"}
+
+    create_response = await client.post(
+        f"/api/v1/pages/{page.id}/comments",
+        json={"content": "A page comment"},
+        headers=auth_headers,
+    )
+    assert create_response.status_code == 201
+    data = create_response.json()
+    assert data["content"] == "A page comment"
+    assert data["user_id"] == str(test_user.id)
+    assert "id" in data
+
+
+@pytest.mark.asyncio
+async def test_list_page_comments_success(client: AsyncClient, test_user, db_session):
+    """Test successful page comment listing."""
+    org = OrganizationModel(name="Test Org", slug="test-org")
+    db_session.add(org)
+    await db_session.flush()
+
+    org_member = OrganizationMemberModel(
+        organization_id=org.id,
+        user_id=test_user.id,
+        role="admin",
+    )
+    db_session.add(org_member)
+    await db_session.flush()
+
+    space = SpaceModel(organization_id=org.id, name="Test Space", key="TEST")
+    db_session.add(space)
+    await db_session.flush()
+
+    page = PageModel(
+        space_id=space.id,
+        title="Test Page",
+        slug="test-page",
+        content="Content",
+        created_by=test_user.id,
+    )
+    db_session.add(page)
+    await db_session.flush()
+
+    login_response = await client.post(
+        "/api/v1/auth/login",
+        json={
+            "email": test_user.email.value,
+            "password": "TestPassword123!",
+        },
+    )
+    token = login_response.json()["access_token"]
+    auth_headers = {"Authorization": f"Bearer {token}"}
+
+    create_response = await client.post(
+        f"/api/v1/pages/{page.id}/comments",
+        json={"content": "Page comment for list"},
+        headers=auth_headers,
+    )
+    assert create_response.status_code == 201
+
+    list_response = await client.get(
+        f"/api/v1/pages/{page.id}/comments",
+        headers=auth_headers,
+    )
+    assert list_response.status_code == 200
+    data = list_response.json()
+    assert "comments" in data
+    assert data["total"] >= 1
+    assert any(c["content"] == "Page comment for list" for c in data["comments"])

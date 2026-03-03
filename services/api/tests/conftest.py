@@ -15,6 +15,7 @@ from src.infrastructure.database.config import Base
 # Import all models to ensure they are registered in Base.metadata
 from src.infrastructure.database.models import (  # noqa: F401
     attachment,
+    board,
     comment,
     custom_field,
     dashboard,
@@ -24,6 +25,7 @@ from src.infrastructure.database.models import (  # noqa: F401
     issue,
     issue_activity,
     issue_link,
+    label,
     macro,
     notification,
     organization,

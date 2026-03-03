@@ -1,6 +1,7 @@
 """Domain entities."""
 
 from src.domain.entities.attachment import Attachment
+from src.domain.entities.board import Board, BoardList
 from src.domain.entities.comment import Comment
 from src.domain.entities.custom_field import CustomField, CustomFieldValue
 from src.domain.entities.dashboard import Dashboard, DashboardWidget
@@ -9,6 +10,7 @@ from src.domain.entities.folder import Folder
 from src.domain.entities.invitation import Invitation
 from src.domain.entities.issue import Issue
 from src.domain.entities.issue_link import IssueLink
+from src.domain.entities.label import Label
 from src.domain.entities.macro import Macro
 from src.domain.entities.notification import Notification
 from src.domain.entities.organization import Organization
@@ -51,10 +53,13 @@ __all__ = [
     "CustomField",
     "CustomFieldValue",
     "IssueLink",
+    "Label",
     "TimeEntry",
     "Dashboard",
     "DashboardWidget",
     "SavedFilter",
     "Folder",
     "Favorite",
+    "Board",
+    "BoardList",
 ]

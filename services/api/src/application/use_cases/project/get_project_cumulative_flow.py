@@ -1,10 +1,10 @@
 """Get project cumulative flow report use case."""
 
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 from uuid import UUID
 
 import structlog
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dtos.project_reports import (
@@ -35,9 +35,7 @@ class GetProjectCumulativeFlowUseCase:
         self._project_repository = project_repository
         self._session = session
 
-    async def execute(
-        self, project_id: UUID, days: int = 7
-    ) -> CumulativeFlowReportResponse:
+    async def execute(self, project_id: UUID, days: int = 7) -> CumulativeFlowReportResponse:
         """Execute getting project cumulative flow report.
 
         Args:
@@ -82,23 +80,29 @@ class GetProjectCumulativeFlowUseCase:
             # Count issues by status as of this date
             # For simplicity, we use current status (in a real implementation,
             # you'd track status changes over time)
-            todo_count = sum(
-                1
-                for issue in issues
-                if issue.status == "todo"
-                and (not issue.created_at or issue.created_at.date() <= current_date)
+            todo_count = len(
+                [
+                    i
+                    for i in issues
+                    if i.status == "todo"
+                    and (not i.created_at or i.created_at.date() <= current_date)
+                ]
             )
-            in_progress_count = sum(
-                1
-                for issue in issues
-                if issue.status == "in_progress"
-                and (not issue.created_at or issue.created_at.date() <= current_date)
+            in_progress_count = len(
+                [
+                    i
+                    for i in issues
+                    if i.status == "in_progress"
+                    and (not i.created_at or i.created_at.date() <= current_date)
+                ]
             )
-            done_count = sum(
-                1
-                for issue in issues
-                if issue.status == "done"
-                and (not issue.created_at or issue.created_at.date() <= current_date)
+            done_count = len(
+                [
+                    i
+                    for i in issues
+                    if i.status == "done"
+                    and (not i.created_at or i.created_at.date() <= current_date)
+                ]
             )
 
             flow_data.append(

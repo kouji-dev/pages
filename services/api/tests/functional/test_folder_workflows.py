@@ -237,7 +237,7 @@ async def test_folder_node_assignment_workflow(client: AsyncClient, test_user, d
     list_filtered_data = list_filtered_response.json()
     assert list_filtered_data["total"] == 2
     for node in list_filtered_data["nodes"]:
-        assert node["folder_id"] == str(folder.id)
+        assert node["details"]["folder_id"] == str(folder.id)
 
     # 4. List nodes without folder filter (should show none, as all are in folder)
     list_no_folder_response = await client.get(
