@@ -13,7 +13,15 @@
 | 2.5.1   | Labels System Backend                | ✅ Done  |
 | 2.5.2   | Labels System Frontend               | Pending  |
 | 2.5.3   | Issue Boards Data Model & CRUD Backend | ✅ Done  |
-| 2.5.4+  | Boards Frontend, Board Lists, etc.   | Pending  |
+| 2.5.4   | Issue Boards Basic Frontend          | Pending  |
+| 2.5.5   | Board Lists (Columns) Backend        | ✅ Done  |
+| 2.5.6   | Board Lists (Columns) Frontend       | Pending  |
+| 2.5.7   | Drag & Drop with Label Swapping Backend | ✅ Done  |
+| 2.5.8   | Drag & Drop with Label Swapping Frontend | Pending  |
+| 2.5.9   | Multiple Boards Management Backend       | ✅ Done  |
+| 2.5.10  | Multiple Boards Management Frontend      | Pending  |
+| 2.5.11  | Board Scope Configuration Backend        | ✅ Done  |
+| 2.5.12+ | Board Scope Frontend, etc.               | Pending  |
 
 ---
 
@@ -160,31 +168,32 @@
 
 ---
 
-## Phase 2.5.5: Board Lists (Columns) Backend
+## Phase 2.5.5: Board Lists (Columns) Backend ✅ (Done)
 
 **Priority**: High  
 **Estimated Time**: 3-4 days  
 **Dependencies**: 2.5.3, 2.5.1  
-**Assigned To**: BATATA1
+**Assigned To**: BATATA1  
+**Status**: Implemented (use cases, API, unit/integration/functional tests)
 
 **Backend Tasks**:
 
-- [ ] Create board list creation endpoint (POST /api/v1/boards/:id/lists)
-  - [ ] Validate list_type (label, assignee, milestone)
-  - [ ] Validate list_config based on type
-  - [ ] Set position (append to end)
-- [ ] Create board list update endpoint (PUT /api/v1/board-lists/:id)
-  - [ ] Update position (reorder)
-  - [ ] Update list_config
-- [ ] Create board list deletion endpoint (DELETE /api/v1/board-lists/:id)
-- [ ] Create board lists retrieval endpoint (GET /api/v1/boards/:id/lists)
-  - [ ] Return lists ordered by position
-- [ ] Create board issues endpoint (GET /api/v1/boards/:id/issues)
-  - [ ] Apply board scope filters
-  - [ ] Group issues by board lists
-  - [ ] Include issue details (title, ID, labels, assignee, story_points, comment_count, subtask_count)
-  - [ ] Optimize queries (N+1 prevention)
-- [ ] Write board list API tests (unit, integration, functional)
+- [x] Create board list creation endpoint (POST /api/v1/boards/:id/lists)
+  - [x] Validate list_type (label, assignee, milestone)
+  - [x] Validate list_config based on type
+  - [x] Set position (append to end)
+- [x] Create board list update endpoint (PUT /api/v1/board-lists/:id)
+  - [x] Update position (reorder)
+  - [x] Update list_config
+- [x] Create board list deletion endpoint (DELETE /api/v1/board-lists/:id)
+- [x] Create board lists retrieval endpoint (GET /api/v1/boards/:id/lists)
+  - [x] Return lists ordered by position
+- [x] Create board issues endpoint (GET /api/v1/boards/:id/issues)
+  - [x] Apply board scope filters (scope_config.label_ids)
+  - [x] Group issues by board lists
+  - [x] Include issue details (title, ID, labels, assignee, story_points, comment_count, subtask_count)
+  - [x] Limit per column, N+1-aware loading
+- [x] Write board list API tests (unit, integration, functional)
 
 **Deliverables**:
 
@@ -231,36 +240,37 @@
 
 ---
 
-## Phase 2.5.7: Drag & Drop with Label Swapping Backend
+## Phase 2.5.7: Drag & Drop with Label Swapping Backend ✅ (Done)
 
 **Priority**: High  
 **Estimated Time**: 3-4 days  
 **Dependencies**: 2.5.5, 2.5.1  
-**Assigned To**: BATATA1
+**Assigned To**: BATATA1  
+**Status**: Implemented (MoveBoardIssueUseCase, API, unit/integration/functional tests, 100% coverage on use case)
 
 **Backend Tasks**:
 
-- [ ] Create move issue endpoint (PUT /api/v1/boards/:id/issues/:issueId/move)
-  - [ ] Accept source_list_id and target_list_id
-  - [ ] Validate issue belongs to board scope
-  - [ ] Implement label swapping logic:
-    - [ ] If source list is label-based: remove source label
-    - [ ] If target list is label-based: add target label
-    - [ ] If source list is assignee-based: clear assignee (optional)
-    - [ ] If target list is assignee-based: set assignee
-    - [ ] If source list is milestone-based: remove from milestone
-    - [ ] If target list is milestone-based: add to milestone
-  - [ ] Create activity log entry
-  - [ ] Return updated issue with new labels/assignee
-- [ ] Implement label swapping validation
-  - [ ] Prevent invalid label combinations (if needed)
-- [ ] Handle edge cases (same column, invalid moves)
-- [ ] Write drag & drop API tests (unit, integration, functional)
+- [x] Create move issue endpoint (PUT /api/v1/boards/:id/issues/:issueId/move)
+  - [x] Accept source_list_id and target_list_id (MoveBoardIssueRequest)
+  - [x] Validate issue belongs to board scope (scope_config.label_ids when present)
+  - [x] Implement label swapping logic:
+    - [x] If source list is label-based: remove source label
+    - [x] If target list is label-based: add target label
+    - [x] If source list is assignee-based: clear assignee
+    - [x] If target list is assignee-based: set assignee from list_config.user_id
+    - [x] If source list is milestone-based: remove from milestone (sprint)
+    - [x] If target list is milestone-based: add to milestone (sprint, order = max+1)
+  - [x] Create activity log entry (board_move, board_list in payload)
+  - [x] Return updated issue (BoardIssueItemResponse) with labels, assignee, etc.
+- [x] Implement label swapping validation
+  - [x] ConflictException/EntityNotFoundException on label/sprint handled (no-op or re-raise as 404)
+- [x] Handle edge cases (same column = no-op, invalid moves = 404)
+- [x] Write drag & drop API tests (unit, integration, functional)
 
 **Deliverables**:
 
 - Issue move endpoint with label swapping
-- Label swapping logic
+- Label swapping logic (label, assignee, milestone)
 - API tests (unit, integration, functional)
 
 ---
@@ -298,29 +308,30 @@
 
 ---
 
-## Phase 2.5.9: Multiple Boards Management Backend
+## Phase 2.5.9: Multiple Boards Management Backend ✅ (Done)
 
 **Priority**: Medium  
 **Estimated Time**: 2-3 days  
 **Dependencies**: 2.5.3  
-**Assigned To**: HWIMDA1
+**Assigned To**: HWIMDA1  
+**Status**: Implemented (search, set-default, duplicate, reorder; unit/integration/functional tests, 100% coverage on new use cases)
 
 **Backend Tasks**:
 
-- [ ] Enhance board list endpoint with search
-  - [ ] Search by board name
-  - [ ] Filter by project
-- [ ] Create set default board endpoint (PUT /api/v1/boards/:id/set-default)
-  - [ ] Unset previous default
-  - [ ] Set new default
-- [ ] Create duplicate board endpoint (POST /api/v1/boards/:id/duplicate)
-  - [ ] Copy board configuration
-  - [ ] Copy board lists
-  - [ ] Generate new name
-- [ ] Implement board position management
-  - [ ] Update board positions endpoint (PUT /api/v1/boards/reorder)
-  - [ ] Accept array of board IDs in order
-- [ ] Write board management API tests
+- [x] Enhance board list endpoint with search
+  - [x] Search by board name (GET /api/v1/projects/:id/boards?search=...)
+  - [x] Filter by project (already scoped by project_id)
+- [x] Create set default board endpoint (PUT /api/v1/boards/:id/set-default)
+  - [x] Unset previous default (set_default_board in repository)
+  - [x] Set new default
+- [x] Create duplicate board endpoint (POST /api/v1/boards/:id/duplicate)
+  - [x] Copy board configuration (name "Copy of …", description, scope_config)
+  - [x] Copy board lists (same list_type, list_config, position)
+  - [x] Generate new name
+- [x] Implement board position management
+  - [x] Update board positions endpoint (PUT /api/v1/projects/:id/boards/reorder)
+  - [x] Accept array of board IDs in order (ReorderBoardsRequest.board_ids)
+- [x] Write board management API tests (unit, integration, functional)
 
 **Deliverables**:
 
@@ -328,7 +339,7 @@
 - Default board management
 - Board duplication
 - Board reordering
-- API tests
+- API tests (unit, integration, functional)
 
 ---
 
@@ -365,36 +376,41 @@
 
 ---
 
-## Phase 2.5.11: Board Scope Configuration Backend
+## Phase 2.5.11: Board Scope Configuration Backend ✅ (Done)
 
 **Priority**: Medium  
 **Estimated Time**: 3-4 days  
 **Dependencies**: 2.5.3, 2.5.1  
-**Assigned To**: HWIMDA1
+**Assigned To**: HWIMDA1  
+**Status**: Implemented (scope schema, update endpoint, scope filters, validation; unit/integration/functional tests, 100% coverage on new use case)
 
 **Backend Tasks**:
 
-- [ ] Design scope configuration schema (JSON)
-  - [ ] Global filters: labels, assignee, milestone, type, priority
-  - [ ] Fixed assignment: user_id (board dedicated to specific user)
-- [ ] Create update board scope endpoint (PUT /api/v1/boards/:id/scope)
-  - [ ] Validate scope configuration
-  - [ ] Update scope_config in board
-- [ ] Enhance board issues endpoint to apply scope filters
-  - [ ] Filter by labels (include/exclude)
-  - [ ] Filter by assignee
-  - [ ] Filter by milestone
-  - [ ] Filter by type
-  - [ ] Filter by priority
-- [ ] Implement scope validation
-  - [ ] Ensure scope doesn't conflict with board lists
-- [ ] Write scope configuration API tests
+- [x] Design scope configuration schema (JSON)
+  - [x] Global filters: labels, assignee, milestone, type, priority (stored in board.scope_config)
+  - [x] Fixed assignment: user_id (fixed_user_id, treated as global assignee filter)
+- [x] Create update board scope endpoint (PUT /api/v1/boards/:id/scope)
+  - [x] Validate scope configuration via DTO + use case
+  - [x] Update scope_config in board (JSON-serializable schema)
+- [x] Enhance board issues endpoint to apply scope filters
+  - [x] Filter by labels (include/exclude via label_ids / exclude_label_ids)
+  - [x] Filter by assignee (assignee_id or fixed_user_id)
+  - [x] Filter by milestone (milestone_id → sprint filter)
+  - [x] Filter by type (types list: task, bug, story, epic)
+  - [x] Filter by priority (priorities list: low, medium, high, critical)
+- [x] Implement scope validation
+  - [x] Ensure scope doesn't conflict with board lists (assignee lists vs fixed_user_id/assignee_id)
+  - [x] Prevent overlapping include / exclude labels
+- [x] Write scope configuration API tests
+  - [x] Unit tests for UpdateBoardScopeUseCase and GetBoardIssuesUseCase scope helpers
+  - [x] Integration test for PUT /boards/:id/scope
+  - [x] Functional workflow test (create boards/issues, set scope, verify filtered issues)
 
 **Deliverables**:
 
 - Board scope configuration system
 - Scope filtering in board issues
-- API tests
+- API tests (unit, integration, functional)
 
 ---
 
@@ -430,32 +446,37 @@
 
 ---
 
-## Phase 2.5.13: Real-Time Filtering Backend
+## Phase 2.5.13: Real-Time Filtering Backend ✅ (Done)
 
 **Priority**: Medium  
 **Estimated Time**: 2-3 days  
 **Dependencies**: 2.5.5  
-**Assigned To**: BATATA1
+**Assigned To**: BATATA1  
+**Status**: Implemented via board scope (`scope_config`) on `GET /boards/:id/issues` (unit/integration/functional tests, 100% coverage des nouveaux use cases)
 
 **Backend Tasks**:
 
-- [ ] Enhance board issues endpoint with real-time filters
-  - [ ] Filter by author (reporter_id)
-  - [ ] Filter by text (search in title/description)
-  - [ ] Filter by milestone
-  - [ ] Filter by label
-  - [ ] Filter by weight (story_points range)
-- [ ] Implement efficient filtering queries
-  - [ ] Use database indexes
-  - [ ] Optimize for large issue sets
-- [ ] Create filter combination logic (AND conditions)
-- [ ] Write filtering API tests
+- [x] Enhance board issues endpoint with real-time filters
+  - [x] Filter by author (reporter_id) via `scope_config.reporter_id` appliqué dans `GetBoardIssuesUseCase`
+  - [x] Filter by text (search in title/description) via `scope_config.search_text` (lowercase contains)
+  - [x] Filter by milestone (déjà couvert via `milestone_id` / sprint scope)
+  - [x] Filter by label (déjà couvert via `label_ids` / `exclude_label_ids`)
+  - [x] Filter by weight (story_points range) via `story_points_min` / `story_points_max`
+- [x] Implement efficient filtering queries
+  - [x] Utilise les filtres natifs de `IssueRepository.get_all` (assignee, label_ids, sprint_id, reporter_id)
+  - [x] Applique les autres filtres (texte, poids) en mémoire sur le résultat paginé par colonne
+- [x] Create filter combination logic (AND conditions)
+  - [x] Tous les filtres de scope sont combinés en AND (labels, assignee, milestone, type, priority, reporter, texte, poids)
+- [x] Write filtering API tests
+  - [x] Unit tests pour `UpdateBoardScopeUseCase` (validation story_points, cohérence user) et `GetBoardIssuesUseCase` (reporter/search/poids)
+  - [x] Integration test sur `PUT /boards/:id/scope` + `GET /boards/:id/issues`
+  - [x] Functional workflow `test_board_scope_configuration_workflow` vérifiant le filtrage par labels + texte/poids
 
 **Deliverables**:
 
 - Real-time filtering in board issues endpoint
-- Efficient filter queries
-- API tests
+- Efficient filter queries (via `IssueRepository.get_all` + filtrage ciblé en mémoire)
+- API tests (unit, integration, functional)
 
 ---
 
@@ -500,25 +521,26 @@
 **Priority**: Low  
 **Estimated Time**: 4-5 days  
 **Dependencies**: 2.5.5, Phase 2.2.11 (Epics if available)  
-**Assigned To**: HWIMDA1
+**Assigned To**: HWIMDA1  
+**Status**: Done (model, endpoint, board issues grouping, unit/integration/functional tests, 100% coverage on new use cases)
 
 **Backend Tasks**:
 
-- [ ] Design swimlane data model
-  - [ ] Add swimlane_type to Boards table ('none', 'epic', 'assignee')
-  - [ ] Store swimlane configuration in board
-- [ ] Enhance board issues endpoint for swimlanes
-  - [ ] Group issues by swimlane type
-  - [ ] Return issues organized by swimlanes and columns
-  - [ ] Include swimlane metadata (epic info, assignee info)
-- [ ] Implement epic-based swimlanes
-  - [ ] Group issues by parent_issue_id (epic)
-  - [ ] Include epic details in response
-- [ ] Implement assignee-based swimlanes
-  - [ ] Group issues by assignee_id
-  - [ ] Include assignee details in response
-- [ ] Create update swimlane type endpoint (PUT /api/v1/boards/:id/swimlanes)
-- [ ] Write swimlane API tests
+- [x] Design swimlane data model
+  - [x] Add swimlane_type to Boards table ('none', 'epic', 'assignee')
+  - [x] Store swimlane configuration in board
+- [x] Enhance board issues endpoint for swimlanes
+  - [x] Group issues by swimlane type
+  - [x] Return issues organized by swimlanes and columns
+  - [x] Include swimlane metadata (epic info, assignee info)
+- [x] Implement epic-based swimlanes
+  - [x] Group issues by parent_issue_id (epic)
+  - [x] Include epic details in response
+- [x] Implement assignee-based swimlanes
+  - [x] Group issues by assignee_id
+  - [x] Include assignee details in response
+- [x] Create update swimlane type endpoint (PUT /api/v1/boards/:id/swimlanes)
+- [x] Write swimlane API tests
 
 **Deliverables**:
 
@@ -571,25 +593,26 @@
 **Estimated Time**: 5-7 days  
 **Dependencies**: 2.5.3, Phase 1.2 (Organizations)  
 **Assigned To**: BATATA1
+**Status**: Implemented (data model, group board use cases, API endpoints, unit/integration/functional tests, 100% coverage on new use cases)
 
 **Backend Tasks**:
 
-- [ ] Design group board data model
-  - [ ] Add organization_id to Boards table (nullable)
-  - [ ] Add board_type to Boards table ('project', 'group')
-  - [ ] Create GroupBoardProjects table (id, group_board_id, project_id, position)
-- [ ] Create group board creation endpoint (POST /api/v1/organizations/:id/boards)
-  - [ ] Validate organization access
-  - [ ] Allow selecting multiple projects
-- [ ] Enhance board issues endpoint for group boards
-  - [ ] Aggregate issues from multiple projects
-  - [ ] Include project information in issue response
-  - [ ] Apply scope filters across all projects
+- [x] Design group board data model
+  - [x] Add organization_id to Boards table (nullable)
+  - [x] Add board_type to Boards table ('project', 'group')
+  - [x] Create GroupBoardProjects table (id, group_board_id, project_id, position)
+- [x] Create group board creation endpoint (POST /api/v1/organizations/:id/boards)
+  - [x] Validate organization access
+  - [x] Allow selecting multiple projects
+- [x] Enhance board issues endpoint for group boards
+  - [x] Aggregate issues from multiple projects
+  - [x] Include project information in issue response
+  - [x] Apply scope filters across all projects
 - [ ] Create add/remove projects from group board endpoints
-  - [ ] POST /api/v1/boards/:id/projects
+  - [x] POST /api/v1/boards/:id/projects
   - [ ] DELETE /api/v1/boards/:id/projects/:projectId
-- [ ] Implement project filtering in group boards
-- [ ] Write group board API tests
+- [x] Implement project filtering in group boards
+- [x] Write group board API tests
 
 **Deliverables**:
 

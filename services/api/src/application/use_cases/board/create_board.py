@@ -51,6 +51,9 @@ class CreateBoardUseCase:
         return BoardResponse(
             id=created.id,
             project_id=created.project_id,
+            organization_id=created.organization_id,
+            board_type=created.board_type,
+            swimlane_type=created.swimlane_type,
             name=created.name,
             description=created.description,
             scope_config=created.scope_config,

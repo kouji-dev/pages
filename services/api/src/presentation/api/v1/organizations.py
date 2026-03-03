@@ -6,6 +6,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.application.dtos.board import BoardResponse, CreateGroupBoardRequest
 from src.application.dtos.invitation import (
     AcceptInvitationResponse,
     InvitationListResponse,
@@ -28,6 +29,7 @@ from src.application.dtos.organization_settings import (
     OrganizationSettingsResponse,
     UpdateOrganizationSettingsRequest,
 )
+from src.application.use_cases.board import CreateGroupBoardUseCase
 from src.application.use_cases.organization import (
     AcceptInvitationUseCase,
     AddOrganizationMemberUseCase,
@@ -46,22 +48,28 @@ from src.application.use_cases.organization import (
     UpdateOrganizationUseCase,
 )
 from src.domain.entities import User
+from src.domain.exceptions import EntityNotFoundException, ValidationException
 from src.domain.repositories import (
+    BoardRepository,
     InvitationRepository,
     OrganizationRepository,
+    ProjectRepository,
     UserRepository,
 )
 from src.domain.services import PermissionService
 from src.infrastructure.database import get_session
 from src.presentation.dependencies.auth import get_current_active_user
 from src.presentation.dependencies.permissions import (
+    require_edit_permission,
     require_organization_admin,
     require_organization_member,
 )
 from src.presentation.dependencies.services import (
+    get_board_repository,
     get_invitation_repository,
     get_organization_repository,
     get_permission_service,
+    get_project_repository,
     get_user_repository,
 )
 
@@ -78,6 +86,17 @@ def get_create_organization_use_case(
 ) -> CreateOrganizationUseCase:
     """Get create organization use case with dependencies."""
     return CreateOrganizationUseCase(organization_repository, user_repository, session)
+
+
+def get_create_group_board_use_case(
+    board_repository: Annotated[BoardRepository, Depends(get_board_repository)],
+    organization_repository: Annotated[
+        OrganizationRepository, Depends(get_organization_repository)
+    ],
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+) -> CreateGroupBoardUseCase:
+    """Get create group board use case with dependencies."""
+    return CreateGroupBoardUseCase(board_repository, organization_repository, project_repository)
 
 
 def get_organization_use_case(
@@ -256,6 +275,35 @@ async def create_organization(
         HTTPException: If slug already exists or validation fails
     """
     return await use_case.execute(request, str(current_user.id))
+
+
+@router.post(
+    "/{organization_id}/boards",
+    response_model=BoardResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_group_board(
+    organization_id: UUID,
+    request: CreateGroupBoardRequest,
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    use_case: Annotated[CreateGroupBoardUseCase, Depends(get_create_group_board_use_case)],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+) -> BoardResponse:
+    """Create a group board scoped to an organization with multiple projects.
+
+    Requires edit permission in the organization.
+    """
+    from fastapi import HTTPException
+
+    # Check user has edit permissions at organization level
+    await require_edit_permission(organization_id, current_user, permission_service)
+
+    try:
+        return await use_case.execute(organization_id, request, created_by=current_user.id)
+    except EntityNotFoundException as e:
+        raise HTTPException(status_code=404, detail=e.message) from e
+    except ValidationException as e:
+        raise HTTPException(status_code=400, detail=e.message) from e
 
 
 @router.get(

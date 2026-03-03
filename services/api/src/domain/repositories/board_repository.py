@@ -37,13 +37,19 @@ class BoardRepository(ABC):
         project_id: UUID,
         skip: int = 0,
         limit: int = 20,
+        search: str | None = None,
     ) -> list[Board]:
-        """Get boards for a project, ordered by position."""
+        """Get boards for a project, ordered by position. Optional search by board name."""
         ...
 
     @abstractmethod
-    async def count_by_project(self, project_id: UUID) -> int:
-        """Count boards in a project."""
+    async def count_by_project(self, project_id: UUID, search: str | None = None) -> int:
+        """Count boards in a project. Optional search by board name."""
+        ...
+
+    @abstractmethod
+    async def reorder_boards(self, project_id: UUID, board_ids: list[UUID]) -> None:
+        """Set board positions by order of board_ids (index = position)."""
         ...
 
     @abstractmethod
@@ -89,4 +95,16 @@ class BoardRepository(ABC):
     @abstractmethod
     async def get_max_list_position(self, board_id: UUID) -> int:
         """Get the maximum position among lists for a board (-1 if none)."""
+        ...
+
+    # --- Group boards (organization-level boards spanning multiple projects) ---
+
+    @abstractmethod
+    async def get_projects_for_board(self, board_id: UUID) -> list[UUID]:
+        """Get project IDs associated to a board (for group boards this is the full mapping)."""
+        ...
+
+    @abstractmethod
+    async def set_projects_for_group_board(self, board_id: UUID, project_ids: list[UUID]) -> None:
+        """Replace the list of projects associated to a group board, preserving order as given."""
         ...

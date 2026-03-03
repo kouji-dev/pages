@@ -1,5 +1,6 @@
 """SQLAlchemy implementation of BoardRepository."""
 
+from datetime import datetime
 from uuid import UUID
 
 from sqlalchemy import func, select
@@ -8,7 +9,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.domain.entities.board import Board, BoardList
 from src.domain.exceptions import EntityNotFoundException
 from src.domain.repositories import BoardRepository
-from src.infrastructure.database.models import BoardListModel, BoardModel
+from src.infrastructure.database.models import (
+    BoardListModel,
+    BoardModel,
+    GroupBoardProjectModel,
+)
 
 
 class SQLAlchemyBoardRepository(BoardRepository):
@@ -29,6 +34,9 @@ class SQLAlchemyBoardRepository(BoardRepository):
             is_default=model.is_default,
             position=model.position,
             created_by=model.created_by,
+            organization_id=model.organization_id,
+            board_type=model.board_type,
+            swimlane_type=getattr(model, "swimlane_type", "none") or "none",
             created_at=model.created_at,
             updated_at=model.updated_at,
         )
@@ -56,6 +64,9 @@ class SQLAlchemyBoardRepository(BoardRepository):
             is_default=board.is_default,
             position=board.position,
             created_by=board.created_by,
+            organization_id=board.organization_id,
+            board_type=board.board_type,
+            swimlane_type=board.swimlane_type,
             created_at=board.created_at,
             updated_at=board.updated_at,
         )
@@ -93,26 +104,56 @@ class SQLAlchemyBoardRepository(BoardRepository):
         project_id: UUID,
         skip: int = 0,
         limit: int = 20,
+        search: str | None = None,
     ) -> list[Board]:
-        """Get boards for a project ordered by position."""
+        """Get boards for a project ordered by position. Optional search by board name."""
         query = (
             select(BoardModel)
-            .where(BoardModel.project_id == project_id)
+            .where(
+                BoardModel.project_id == project_id,
+                BoardModel.board_type == "project",
+            )
             .order_by(BoardModel.position, BoardModel.created_at)
             .offset(skip)
             .limit(limit)
         )
+        if search and search.strip():
+            pattern = f"%{search.strip()}%"
+            query = query.where(BoardModel.name.ilike(pattern))
         result = await self._session.execute(query)
         models = result.scalars().all()
         return [self._to_entity(m) for m in models]
 
-    async def count_by_project(self, project_id: UUID) -> int:
-        """Count boards in a project."""
+    async def count_by_project(self, project_id: UUID, search: str | None = None) -> int:
+        """Count boards in a project. Optional search by board name."""
         query = (
-            select(func.count()).select_from(BoardModel).where(BoardModel.project_id == project_id)
+            select(func.count())
+            .select_from(BoardModel)
+            .where(
+                BoardModel.project_id == project_id,
+                BoardModel.board_type == "project",
+            )
         )
+        if search and search.strip():
+            pattern = f"%{search.strip()}%"
+            query = query.where(BoardModel.name.ilike(pattern))
         result = await self._session.execute(query)
         return int(result.scalar_one())
+
+    async def reorder_boards(self, project_id: UUID, board_ids: list[UUID]) -> None:
+        """Set board positions by order of board_ids (index = position)."""
+        for position, board_id in enumerate(board_ids):
+            result = await self._session.execute(
+                select(BoardModel).where(
+                    BoardModel.id == board_id,
+                    BoardModel.project_id == project_id,
+                )
+            )
+            model = result.scalar_one_or_none()
+            if model is not None:
+                model.position = position
+                model.updated_at = datetime.utcnow()
+        await self._session.flush()
 
     async def update(self, board: Board) -> Board:
         """Update an existing board."""
@@ -125,6 +166,7 @@ class SQLAlchemyBoardRepository(BoardRepository):
         model.scope_config = board.scope_config
         model.is_default = board.is_default
         model.position = board.position
+        model.swimlane_type = board.swimlane_type
         model.updated_at = board.updated_at
         await self._session.flush()
         await self._session.refresh(model)
@@ -214,11 +256,44 @@ class SQLAlchemyBoardRepository(BoardRepository):
 
     async def get_max_list_position(self, board_id: UUID) -> int:
         """Get the maximum position among lists for a board (-1 if none)."""
-        from sqlalchemy import func
-
         result = await self._session.execute(
             select(func.coalesce(func.max(BoardListModel.position), -1)).where(
                 BoardListModel.board_id == board_id
             )
         )
         return int(result.scalar_one())
+
+    async def get_projects_for_board(self, board_id: UUID) -> list[UUID]:
+        """Get project IDs associated to a board ordered by position (group boards)."""
+        result = await self._session.execute(
+            select(GroupBoardProjectModel)
+            .where(GroupBoardProjectModel.group_board_id == board_id)
+            .order_by(GroupBoardProjectModel.position, GroupBoardProjectModel.created_at)
+        )
+        rows = result.scalars().all()
+        return [row.project_id for row in rows]
+
+    async def set_projects_for_group_board(self, board_id: UUID, project_ids: list[UUID]) -> None:
+        """Replace mapping rows for a group board with given ordered project IDs."""
+        # Delete existing mappings
+        existing_result = await self._session.execute(
+            select(GroupBoardProjectModel).where(
+                GroupBoardProjectModel.group_board_id == board_id,
+            )
+        )
+        for row in existing_result.scalars().all():
+            await self._session.delete(row)
+
+        # Insert new mappings with explicit positions
+        now = datetime.utcnow()
+        for position, project_id in enumerate(project_ids):
+            mapping = GroupBoardProjectModel(
+                group_board_id=board_id,
+                project_id=project_id,
+                position=position,
+                created_at=now,
+                updated_at=now,
+            )
+            self._session.add(mapping)
+
+        await self._session.flush()

@@ -69,8 +69,15 @@ class MoveBoardIssueUseCase:
         issue = await self._issue_repository.get_by_id(issue_id)
         if issue is None:
             raise EntityNotFoundException("Issue", str(issue_id))
-        if issue.project_id != board.project_id:
-            raise EntityNotFoundException("Issue", str(issue_id))
+
+        if board.board_type == "group":
+            # For group boards, ensure the issue's project is part of the board projects
+            project_ids = await self._board_repository.get_projects_for_board(board_id)
+            if issue.project_id not in project_ids:
+                raise EntityNotFoundException("Issue", str(issue_id))
+        else:
+            if issue.project_id != board.project_id:
+                raise EntityNotFoundException("Issue", str(issue_id))
 
         scope_config = board.scope_config or {}
         scope_label_ids: list[UUID] = _extract_label_ids(scope_config.get("label_ids"))
@@ -88,7 +95,7 @@ class MoveBoardIssueUseCase:
             raise EntityNotFoundException("BoardList", str(target_list_id))
 
         if source_list_id == target_list_id:
-            return await self._build_issue_response(issue, project.key, board.project_id)
+            return await self._build_issue_response(issue, project.key, issue.project_id)
 
         await self._apply_source_list_actions(issue, source_list)
         await self._apply_target_list_actions(issue, target_list, board.project_id)
@@ -181,6 +188,8 @@ class MoveBoardIssueUseCase:
             id=issue.id,
             issue_number=issue.issue_number,
             key=issue.generate_key(project_key),
+            project_id=project_id,
+            project_key=project_key,
             title=issue.title,
             type=issue.type,
             status=issue.status,

@@ -27,6 +27,12 @@ class BoardModel(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         nullable=False,
         index=True,
     )
+    organization_id: Mapped[UUID | None] = mapped_column(
+        PGUUID(as_uuid=True),
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=True,
+        index=True,
+    )
     name: Mapped[str] = mapped_column(
         String(255),
         nullable=False,
@@ -43,6 +49,16 @@ class BoardModel(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         default=False,
         nullable=False,
     )
+    board_type: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default="project",
+    )  # 'project' or 'group'
+    swimlane_type: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default="none",
+    )  # 'none', 'epic', 'assignee'
     position: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
@@ -69,7 +85,10 @@ class BoardModel(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     )
 
     def __repr__(self) -> str:
-        return f"<Board(id={self.id}, name={self.name}, project_id={self.project_id})>"
+        return (
+            f"<Board(id={self.id}, name={self.name}, project_id={self.project_id}, "
+            f"organization_id={self.organization_id}, board_type={self.board_type})>"
+        )
 
 
 class BoardListModel(Base, UUIDPrimaryKeyMixin, TimestampMixin):
@@ -108,3 +127,33 @@ class BoardListModel(Base, UUIDPrimaryKeyMixin, TimestampMixin):
 
     def __repr__(self) -> str:
         return f"<BoardList(id={self.id}, board_id={self.board_id}, list_type={self.list_type})>"
+
+
+class GroupBoardProjectModel(Base, UUIDPrimaryKeyMixin, TimestampMixin):
+    """Mapping between a group board and its projects (ordered)."""
+
+    __tablename__ = "group_board_projects"
+
+    group_board_id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True),
+        ForeignKey("boards.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    project_id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True),
+        ForeignKey("projects.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    position: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=0,
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"<GroupBoardProject(id={self.id}, group_board_id={self.group_board_id}, "
+            f"project_id={self.project_id}, position={self.position})>"
+        )

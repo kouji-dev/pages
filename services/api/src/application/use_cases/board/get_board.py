@@ -42,6 +42,9 @@ class GetBoardUseCase:
         return BoardWithListsResponse(
             id=board.id,
             project_id=board.project_id,
+            organization_id=board.organization_id,
+            board_type=board.board_type,
+            swimlane_type=getattr(board, "swimlane_type", "none"),
             name=board.name,
             description=board.description,
             scope_config=board.scope_config,

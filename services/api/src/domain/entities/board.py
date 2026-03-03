@@ -88,6 +88,9 @@ class Board:
     is_default: bool = False
     position: int = 0
     created_by: UUID | None = None
+    organization_id: UUID | None = None
+    board_type: str = "project"  # 'project' or 'group'
+    swimlane_type: str = "none"  # 'none', 'epic', 'assignee'
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)
 
@@ -102,6 +105,10 @@ class Board:
             raise ValueError("Board description too long")
         if self.position < 0:
             raise ValueError("Board position must be non-negative")
+        if self.board_type not in {"project", "group"}:
+            raise ValueError("Board type must be 'project' or 'group'")
+        if self.swimlane_type not in {"none", "epic", "assignee"}:
+            raise ValueError("swimlane_type must be 'none', 'epic', or 'assignee'")
 
     @classmethod
     def create(
@@ -130,6 +137,48 @@ class Board:
             is_default=is_default,
             position=position,
             created_by=created_by,
+            organization_id=None,
+            board_type="project",
+            swimlane_type="none",
+            created_at=now,
+            updated_at=now,
+        )
+
+    @classmethod
+    def create_group(
+        cls,
+        organization_id: UUID,
+        primary_project_id: UUID,
+        name: str,
+        description: str | None = None,
+        scope_config: dict[str, Any] | None = None,
+        is_default: bool = False,
+        position: int = 0,
+        created_by: UUID | None = None,
+    ) -> Self:
+        """Create a new group board attached to an organization and multiple projects.
+
+        primary_project_id is the project used as the primary/anchor project for the board
+        while the full list of projects is managed via the GroupBoardProjects mapping.
+        """
+        now = datetime.utcnow()
+        name = name.strip() if name else ""
+        if not name:
+            raise ValueError("Board name cannot be empty")
+        if len(name) > 255:
+            raise ValueError("Board name cannot exceed 255 characters")
+        return cls(
+            id=uuid4(),
+            project_id=primary_project_id,
+            name=name,
+            description=description,
+            scope_config=scope_config,
+            is_default=is_default,
+            position=position,
+            created_by=created_by,
+            organization_id=organization_id,
+            board_type="group",
+            swimlane_type="none",
             created_at=now,
             updated_at=now,
         )
@@ -159,6 +208,13 @@ class Board:
         if position < 0:
             raise ValueError("Board position must be non-negative")
         self.position = position
+        self._touch()
+
+    def update_swimlane_type(self, swimlane_type: str) -> None:
+        """Update board swimlane type ('none', 'epic', 'assignee')."""
+        if swimlane_type not in {"none", "epic", "assignee"}:
+            raise ValueError("swimlane_type must be 'none', 'epic', or 'assignee'")
+        self.swimlane_type = swimlane_type
         self._touch()
 
     def set_default(self, is_default: bool) -> None:

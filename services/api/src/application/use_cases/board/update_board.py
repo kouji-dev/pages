@@ -39,6 +39,9 @@ class UpdateBoardUseCase:
         return BoardResponse(
             id=updated.id,
             project_id=updated.project_id,
+            organization_id=updated.organization_id,
+            board_type=updated.board_type,
+            swimlane_type=updated.swimlane_type,
             name=updated.name,
             description=updated.description,
             scope_config=updated.scope_config,

@@ -10,6 +10,7 @@ from src.application.dtos.board import (
     BoardListResponse,
     BoardResponse,
     CreateBoardRequest,
+    ReorderBoardsRequest,
 )
 from src.application.dtos.label import CreateLabelRequest, LabelListResponse, LabelResponse
 from src.application.dtos.project import (
@@ -29,7 +30,11 @@ from src.application.dtos.project_reports import (
     ProjectSummaryStatsResponse,
     VelocityReportResponse,
 )
-from src.application.use_cases.board import CreateBoardUseCase, ListProjectBoardsUseCase
+from src.application.use_cases.board import (
+    CreateBoardUseCase,
+    ListProjectBoardsUseCase,
+    ReorderBoardsUseCase,
+)
 from src.application.use_cases.label import CreateLabelUseCase, ListProjectLabelsUseCase
 from src.application.use_cases.project import (
     AddProjectMemberUseCase,
@@ -46,6 +51,7 @@ from src.application.use_cases.project import (
     UpdateProjectUseCase,
 )
 from src.domain.entities import User
+from src.domain.exceptions import EntityNotFoundException
 from src.domain.repositories import (
     BoardRepository,
     LabelRepository,
@@ -465,6 +471,14 @@ def get_list_project_boards_use_case(
     return ListProjectBoardsUseCase(board_repository, project_repository)
 
 
+def get_reorder_boards_use_case(
+    board_repository: Annotated[BoardRepository, Depends(get_board_repository)],
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+) -> ReorderBoardsUseCase:
+    """Get reorder boards use case."""
+    return ReorderBoardsUseCase(board_repository, project_repository)
+
+
 @router.post(
     "/{project_id}/boards",
     response_model=BoardResponse,
@@ -503,15 +517,43 @@ async def list_project_boards(
     permission_service: Annotated[PermissionService, Depends(get_permission_service)],
     page: Annotated[int, Query(ge=1, description="Page number (1-based)")] = 1,
     limit: Annotated[int, Query(ge=1, le=100, description="Items per page")] = 20,
+    search: Annotated[str | None, Query(description="Search by board name")] = None,
 ) -> BoardListResponse:
-    """List boards of a project. Sorted by position. Requires project membership."""
+    """List boards of a project. Sorted by position. Optional search by name. Requires project membership."""
     from fastapi import HTTPException
 
     project = await project_repository.get_by_id(project_id)
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
     await require_organization_member(project.organization_id, current_user, permission_service)
-    return await use_case.execute(project_id, page=page, limit=limit)
+    return await use_case.execute(project_id, page=page, limit=limit, search=search)
+
+
+@router.put(
+    "/{project_id}/boards/reorder",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def reorder_project_boards(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    project_id: UUID,
+    request: ReorderBoardsRequest,
+    use_case: Annotated[ReorderBoardsUseCase, Depends(get_reorder_boards_use_case)],
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+) -> None:
+    """Reorder boards by providing board IDs in desired order. Requires edit permission."""
+    from fastapi import HTTPException
+
+    project = await project_repository.get_by_id(project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+    await require_edit_permission(
+        project.organization_id, current_user, permission_service, project_id=project.id
+    )
+    try:
+        await use_case.execute(project_id, request.board_ids)
+    except EntityNotFoundException as e:
+        raise HTTPException(status_code=404, detail=e.message) from e
 
 
 @router.post(
