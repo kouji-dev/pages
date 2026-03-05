@@ -6,8 +6,6 @@ import {
   input,
   signal,
   effect,
-  TemplateRef,
-  ViewChild,
   ViewContainerRef,
   model,
 } from '@angular/core';
@@ -27,9 +25,15 @@ import {
   Select,
   SelectOption,
   Badge,
-  IconName,
 } from 'shared-ui';
-import { IssueService, IssueListItem } from '../../../../application/services/issue.service';
+import { IssueListItem } from '../../../../application/services/issue.service';
+import {
+  BoardService,
+  BoardIssueItemResponse,
+  BoardIssuesResponse,
+  BoardListWithIssuesResponse,
+} from '../../../../application/services/board.service';
+import { LabelService, Label } from '../../../../application/services/label.service';
 import { OrganizationService } from '../../../../application/services/organization.service';
 import { NavigationService } from '../../../../application/services/navigation.service';
 import {
@@ -156,6 +160,13 @@ interface BoardSettings {
                     </label>
                   }
                 </div>
+                <div class="kanban-board_settings-section">
+                  <lib-select
+                    [label]="'Swimlanes'"
+                    [options]="swimlaneTypeOptions()"
+                    [(model)]="swimlaneTypeModel"
+                  />
+                </div>
                 <div class="kanban-board_settings-actions">
                   <lib-button variant="ghost" size="sm" (clicked)="resetSettings(settingsDropdown)">
                     {{ 'board.resetAll' | translate }}
@@ -168,9 +179,9 @@ interface BoardSettings {
       </div>
 
       <div class="kanban-board_content">
-        @if (issueService.isLoading()) {
+        @if (isLoadingBoardIssues()) {
           <lib-loading-state [message]="'board.loadingIssues' | translate" />
-        } @else if (issueService.hasError()) {
+        } @else if (hasBoardIssuesError()) {
           <lib-error-state
             [title]="'board.failedToLoad' | translate"
             [message]="errorMessage()"
@@ -431,7 +442,8 @@ interface BoardSettings {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KanbanBoard {
-  readonly issueService = inject(IssueService);
+  readonly boardService = inject(BoardService);
+  readonly labelService = inject(LabelService);
   readonly organizationService = inject(OrganizationService);
   readonly navigationService = inject(NavigationService);
   readonly projectMembersService = inject(ProjectMembersService);
@@ -440,6 +452,17 @@ export class KanbanBoard {
   readonly toast = inject(ToastService);
   private readonly translateService = inject(TranslateService);
   readonly projectId = input.required<string>();
+  readonly boardId = input.required<string>();
+
+  readonly boardIssuesResponse = signal<BoardIssuesResponse | null>(null);
+  readonly boardIssueLists = signal<BoardListWithIssuesResponse[]>([]);
+  readonly issueListMap = signal<Map<string, string>>(new Map());
+  readonly projectLabels = signal<Label[]>([]);
+  readonly swimlaneTypeModel = model<'none' | 'epic' | 'assignee'>('none');
+  readonly isApplyingScope = signal(false);
+  readonly isLoadingBoardIssues = signal(false);
+  readonly boardIssuesError = signal<unknown | null>(null);
+  readonly hasBoardIssuesError = computed(() => this.boardIssuesError() !== null);
 
   readonly organizationId = computed(() => {
     return this.navigationService.currentOrganizationId() || '';
@@ -482,6 +505,7 @@ export class KanbanBoard {
   readonly filterAssignee = signal<string | null>(null);
   readonly filterType = signal<'task' | 'bug' | 'story' | 'epic' | null>(null);
   readonly filterPriority = signal<'low' | 'medium' | 'high' | 'critical' | null>(null);
+  private scopeSyncTimeout: ReturnType<typeof setTimeout> | null = null;
 
   // Model signals for lib-select
   readonly assigneeFilterModel = model<string | null>(null);
@@ -499,6 +523,20 @@ export class KanbanBoard {
 
   private readonly syncPriorityFilterEffect = effect(() => {
     this.filterPriority.set(this.priorityFilterModel());
+  });
+
+  private readonly syncScopeToBoardEffect = effect(() => {
+    const boardId = this.boardId();
+    const assignee = this.filterAssignee();
+    const type = this.filterType();
+    const priority = this.filterPriority();
+    if (!boardId) return;
+    if (this.scopeSyncTimeout) {
+      clearTimeout(this.scopeSyncTimeout);
+    }
+    this.scopeSyncTimeout = setTimeout(() => {
+      void this.applyScope(boardId, assignee, type, priority);
+    }, 250);
   });
 
   // Load project members for assignee filter
@@ -525,9 +563,49 @@ export class KanbanBoard {
         columnWidths: widths,
       });
     });
+
+    effect(() => {
+      const boardId = this.boardId();
+      if (!boardId) return;
+      this.loadBoardIssues(boardId);
+    });
+
+    effect(() => {
+      const projectId = this.projectId();
+      if (!projectId) return;
+      void this.loadProjectLabels(projectId);
+    });
+
+    effect(() => {
+      const boardId = this.boardId();
+      const swimlaneType = this.swimlaneTypeModel();
+      if (!boardId) return;
+      const currentSwimlane = this.boardIssuesResponse()?.swimlane_type;
+      if (!currentSwimlane || currentSwimlane === swimlaneType) return;
+      void this.handleSwimlaneChange(swimlaneType);
+    });
   }
 
-  readonly issues = computed(() => this.issueService.issuesList());
+  readonly issues = computed<IssueListItem[]>(() => {
+    const response = this.boardIssuesResponse();
+    if (!response) return [];
+
+    const uniqueIssues = new Map<string, IssueListItem>();
+    const lists =
+      response.swimlane_type === 'none'
+        ? response.lists
+        : response.swimlanes.flatMap((swimlane) => swimlane.lists);
+
+    for (const list of lists) {
+      for (const issue of list.issues) {
+        if (!uniqueIssues.has(issue.id)) {
+          uniqueIssues.set(issue.id, this.mapBoardIssueToIssueListItem(issue));
+        }
+      }
+    }
+
+    return Array.from(uniqueIssues.values());
+  });
 
   // Filtered issues based on active filters
   readonly filteredIssues = computed(() => {
@@ -585,6 +663,12 @@ export class KanbanBoard {
     { value: 'medium', label: this.translateService.instant('issues.priority.medium') },
     { value: 'high', label: this.translateService.instant('issues.priority.high') },
     { value: 'critical', label: this.translateService.instant('issues.priority.critical') },
+  ]);
+
+  readonly swimlaneTypeOptions = computed<SelectOption<'none' | 'epic' | 'assignee'>[]>(() => [
+    { value: 'none', label: 'No swimlanes' },
+    { value: 'epic', label: 'By epic' },
+    { value: 'assignee', label: 'By assignee' },
   ]);
 
   // All available columns (for settings)
@@ -661,7 +745,7 @@ export class KanbanBoard {
   });
 
   readonly errorMessage = computed(() => {
-    const error = this.issueService.error();
+    const error = this.boardIssuesError();
     if (error) {
       return error instanceof Error
         ? error.message
@@ -673,17 +757,134 @@ export class KanbanBoard {
   // Issues are now automatically loaded when URL organizationId and projectId change
   // No need for manual initialization effect
 
+  private async loadBoardIssues(boardId: string): Promise<void> {
+    this.isLoadingBoardIssues.set(true);
+    this.boardIssuesError.set(null);
+    try {
+      const response = await this.boardService.getBoardIssues(boardId);
+      this.boardIssuesResponse.set(response);
+      this.swimlaneTypeModel.set(response.swimlane_type || 'none');
+
+      const lists = this.extractLists(response);
+      this.boardIssueLists.set(lists);
+
+      const issueListMap = new Map<string, string>();
+      for (const list of lists) {
+        for (const issue of list.issues) {
+          if (!issueListMap.has(issue.id)) {
+            issueListMap.set(issue.id, list.id);
+          }
+        }
+      }
+      this.issueListMap.set(issueListMap);
+    } catch (error) {
+      this.boardIssuesError.set(error);
+      this.boardIssuesResponse.set(null);
+      this.boardIssueLists.set([]);
+      this.issueListMap.set(new Map());
+    } finally {
+      this.isLoadingBoardIssues.set(false);
+    }
+  }
+
+  private extractLists(response: BoardIssuesResponse): BoardListWithIssuesResponse[] {
+    const sourceLists =
+      response.swimlane_type === 'none'
+        ? response.lists
+        : response.swimlanes.flatMap((swimlane) => swimlane.lists);
+    const uniqueListMap = new Map<string, BoardListWithIssuesResponse>();
+    for (const list of sourceLists) {
+      if (!uniqueListMap.has(list.id)) {
+        uniqueListMap.set(list.id, list);
+      }
+    }
+    return Array.from(uniqueListMap.values()).sort((a, b) => a.position - b.position);
+  }
+
+  private mapBoardIssueToIssueListItem(issue: BoardIssueItemResponse): IssueListItem {
+    const labelsById = new Map(this.projectLabels().map((label) => [label.id, label]));
+    return {
+      id: issue.id,
+      project_id: issue.project_id,
+      issue_number: issue.issue_number,
+      key: issue.key,
+      project_key: issue.project_key,
+      title: issue.title,
+      type: this.normalizeIssueType(issue.type),
+      status: this.normalizeIssueStatus(issue.status),
+      priority: this.normalizeIssuePriority(issue.priority),
+      assignee_id: issue.assignee_id ?? undefined,
+      story_points: issue.story_points ?? undefined,
+      labels: (issue.label_ids || []).map((id) => {
+        const label = labelsById.get(id);
+        return {
+          id,
+          name: label?.name || id.slice(0, 6),
+          color: label?.color || '#64748B',
+        };
+      }),
+      comment_count: issue.comment_count,
+      subtask_count: issue.subtask_count,
+      created_at: '',
+      updated_at: '',
+    };
+  }
+
+  private normalizeIssueStatus(value: string): IssueStatus {
+    const allowed: IssueStatus[] = ['todo', 'in_progress', 'done', 'cancelled'];
+    return allowed.includes(value as IssueStatus) ? (value as IssueStatus) : 'todo';
+  }
+
+  private normalizeIssueType(value: string): 'task' | 'bug' | 'story' | 'epic' {
+    const allowed = ['task', 'bug', 'story', 'epic'] as const;
+    return allowed.includes(value as (typeof allowed)[number])
+      ? (value as (typeof allowed)[number])
+      : 'task';
+  }
+
+  private normalizeIssuePriority(value: string): 'low' | 'medium' | 'high' | 'critical' {
+    const allowed = ['low', 'medium', 'high', 'critical'] as const;
+    return allowed.includes(value as (typeof allowed)[number])
+      ? (value as (typeof allowed)[number])
+      : 'medium';
+  }
+
+  private resolveTargetListId(newStatus: IssueStatus, sourceListId?: string): string | undefined {
+    const lists = this.boardIssueLists();
+    const statusAliases: Record<IssueStatus, string[]> = {
+      todo: ['todo', 'to_do', 'to-do', 'backlog'],
+      in_progress: ['in_progress', 'in-progress', 'inprogress', 'doing'],
+      done: ['done', 'closed', 'complete', 'completed'],
+      cancelled: ['cancelled', 'canceled'],
+    };
+
+    const target = lists.find((list) => {
+      const config = (list.list_config ?? {}) as Record<string, unknown>;
+      const candidates = [
+        config['status'],
+        config['issue_status'],
+        config['column_status'],
+        config['name'],
+        config['title'],
+      ]
+        .filter((value): value is string => typeof value === 'string')
+        .map((value) => value.toLowerCase().replace(/\s+/g, '_'));
+
+      return candidates.some((candidate) => statusAliases[newStatus].includes(candidate));
+    });
+
+    return target?.id ?? sourceListId ?? lists[0]?.id;
+  }
+
   async handleDrop(event: CdkDragDrop<IssueListItem[]>, newStatus: IssueStatus): Promise<void> {
     const previousContainer = event.previousContainer;
     const currentContainer = event.container;
-    const issue = currentContainer.data[event.currentIndex];
+    const movedIssue = previousContainer.data[event.previousIndex];
 
     if (previousContainer === currentContainer) {
-      // Reorder within same column - optimistic update
+      // Reorder within same status column (frontend-only for now)
       moveItemInArray(currentContainer.data, event.previousIndex, event.currentIndex);
-      // Note: Backend doesn't support ordering yet, so we just update UI optimistically
     } else {
-      // Move to different column - optimistic update
       transferArrayItem(
         previousContainer.data,
         currentContainer.data,
@@ -691,15 +892,25 @@ export class KanbanBoard {
         event.currentIndex,
       );
 
-      // Update issue status in background
-      if (issue) {
+      if (movedIssue) {
         try {
-          await this.issueService.updateIssue(issue.id, { status: newStatus });
-          // Success - UI already updated optimistically
-        } catch (error) {
+          const boardId = this.boardId();
+          const sourceListId = this.issueListMap().get(movedIssue.id);
+          const targetListId = this.resolveTargetListId(newStatus, sourceListId);
+
+          if (!sourceListId || !targetListId) {
+            throw new Error('Unable to resolve board lists for move');
+          }
+
+          await this.boardService.moveBoardIssue(boardId, movedIssue.id, {
+            source_list_id: sourceListId,
+            target_list_id: targetListId,
+          });
+
+          await this.loadBoardIssues(boardId);
+        } catch {
           this.toast.error(this.translateService.instant('issues.updateStatusError'));
 
-          // Revert the move on error
           transferArrayItem(
             currentContainer.data,
             previousContainer.data,
@@ -746,7 +957,9 @@ export class KanbanBoard {
   }
 
   handleRetry(): void {
-    this.issueService.loadIssues();
+    const boardId = this.boardId();
+    if (!boardId) return;
+    this.loadBoardIssues(boardId);
   }
 
   handleCreateIssue(): void {
@@ -794,7 +1007,54 @@ export class KanbanBoard {
       done: 0,
       cancelled: 0,
     });
+    this.swimlaneTypeModel.set('none');
+    void this.handleSwimlaneChange('none');
     dropdown.open.set(false);
+  }
+
+  async handleSwimlaneChange(swimlaneType: 'none' | 'epic' | 'assignee'): Promise<void> {
+    const boardId = this.boardId();
+    if (!boardId) return;
+    try {
+      await this.boardService.updateBoardSwimlanes(boardId, { swimlane_type: swimlaneType });
+      await this.loadBoardIssues(boardId);
+    } catch {
+      this.toast.error('Failed to update swimlane');
+    }
+  }
+
+  private async loadProjectLabels(projectId: string): Promise<void> {
+    try {
+      const response = await this.labelService.listProjectLabels(projectId, {
+        page: 1,
+        limit: 200,
+      });
+      this.projectLabels.set(response.labels || []);
+    } catch {
+      this.projectLabels.set([]);
+    }
+  }
+
+  private async applyScope(
+    boardId: string,
+    assignee: string | null,
+    type: 'task' | 'bug' | 'story' | 'epic' | null,
+    priority: 'low' | 'medium' | 'high' | 'critical' | null,
+  ): Promise<void> {
+    if (this.isApplyingScope()) return;
+    this.isApplyingScope.set(true);
+    try {
+      await this.boardService.updateBoardScope(boardId, {
+        assignee_id: assignee || undefined,
+        types: type ? [type] : undefined,
+        priorities: priority ? [priority] : undefined,
+      });
+      await this.loadBoardIssues(boardId);
+    } catch {
+      this.toast.error('Failed to apply board scope');
+    } finally {
+      this.isApplyingScope.set(false);
+    }
   }
 
   private loadBoardSettings(): void {
