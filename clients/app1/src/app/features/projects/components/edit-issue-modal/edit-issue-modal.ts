@@ -21,6 +21,8 @@ import {
   Issue,
 } from '../../../../application/services/issue.service';
 import { ProjectMembersService } from '../../../../application/services/project-members.service';
+import { LabelService, Label } from '../../../../application/services/label.service';
+import { LabelSelector } from '../label-selector/label-selector';
 import { getIssuePriorityConfig, type IssuePriority } from '../../helpers/issue-helpers';
 
 type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
@@ -39,6 +41,7 @@ type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
     FormsModule,
     CommonModule,
     TranslatePipe,
+    LabelSelector,
   ],
   template: `
     <lib-modal-container>
@@ -100,6 +103,15 @@ type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
               />
             </div>
           </div>
+          <div class="edit-issue-form_field">
+            <label class="edit-issue-form_label">Labels</label>
+            <app-label-selector
+              [labels]="projectLabels()"
+              [selectedIds]="selectedLabelIds()"
+              (selectedIdsChange)="selectedLabelIds.set($event)"
+              placeholder="Select labels"
+            />
+          </div>
         </form>
       </lib-modal-content>
       <lib-modal-footer>
@@ -155,6 +167,7 @@ export class EditIssueModal {
   private readonly toast = inject(ToastService);
   private readonly modal = inject(Modal);
   private readonly projectMembersService = inject(ProjectMembersService);
+  private readonly labelService = inject(LabelService);
   private readonly translateService = inject(TranslateService);
 
   readonly issueId = input.required<string>();
@@ -167,6 +180,8 @@ export class EditIssueModal {
   readonly priority = signal<IssuePriority>('medium');
   readonly assigneeId = signal<string | null>(null);
   readonly dueDate = signal<string | null>(null);
+  readonly projectLabels = signal<Label[]>([]);
+  readonly selectedLabelIds = signal<string[]>([]);
   readonly isSubmitting = signal(false);
 
   // Model signals for lib-select two-way binding
@@ -251,6 +266,14 @@ export class EditIssueModal {
     }
   });
 
+  private readonly loadLabelsEffect = effect(() => {
+    const issue = this.issue();
+    const issueId = this.issueId();
+    if (issue?.project_id && issueId) {
+      void this.loadLabels(issue.project_id, issueId);
+    }
+  });
+
   readonly titleError = computed(() => {
     const value = this.title();
     if (!value.trim()) {
@@ -285,6 +308,7 @@ export class EditIssueModal {
         priority: this.priority(),
         assignee_id: this.assigneeId() || undefined,
         due_date: this.dueDate() || undefined,
+        label_ids: this.selectedLabelIds(),
       };
 
       await this.issueService.updateIssue(this.issueId(), request);
@@ -298,6 +322,22 @@ export class EditIssueModal {
       this.toast.error(errorMessage);
     } finally {
       this.isSubmitting.set(false);
+    }
+  }
+
+  private async loadLabels(projectId: string, issueId: string): Promise<void> {
+    try {
+      const [projectLabelsResponse, issueLabels] = await Promise.all([
+        this.labelService.listProjectLabels(projectId, { page: 1, limit: 100 }),
+        this.labelService.listIssueLabels(issueId),
+      ]);
+
+      this.projectLabels.set(projectLabelsResponse.labels || []);
+      this.selectedLabelIds.set((issueLabels || []).map((label) => label.id));
+    } catch (error) {
+      console.error('Failed to load labels for issue edit:', error);
+      this.projectLabels.set([]);
+      this.selectedLabelIds.set([]);
     }
   }
 }

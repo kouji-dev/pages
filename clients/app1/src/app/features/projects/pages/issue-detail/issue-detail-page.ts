@@ -21,12 +21,13 @@ import {
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { IssueService } from '../../../../application/services/issue.service';
 import { NavigationService } from '../../../../application/services/navigation.service';
+import { LabelService, Label } from '../../../../application/services/label.service';
 import { CommentList } from '../../components/comment-list/comment-list';
 import { AttachmentList } from '../../components/attachment-list/attachment-list';
 import { IssueActivityList } from '../../components/issue-activity-list/issue-activity-list';
 import { PageBody } from '../../../../shared/layout/page-body/page-body';
 import { PageContent } from '../../../../shared/layout/page-content/page-content';
-import { PageHeader, PageHeaderAction } from '../../../../shared/layout/page-header/page-header';
+import { PageHeader } from '../../../../shared/layout/page-header/page-header';
 
 // Placeholder interfaces for future features
 interface Subtask {
@@ -280,19 +281,37 @@ interface LinkedIssue {
 
                     <div class="issue-detail-page_separator"></div>
 
-                    <!-- Tags -->
+                    <!-- Labels -->
                     <div class="issue-detail-page_sidebar-section">
                       <div class="issue-detail-page_sidebar-section-header">
-                        <h3 class="issue-detail-page_sidebar-title">Tags</h3>
+                        <h3 class="issue-detail-page_sidebar-title">Labels</h3>
                         <lib-button
                           variant="ghost"
                           leftIcon="plus"
                           class="issue-detail-page_sidebar-action"
+                          (clicked)="handleAddLabel()"
                         />
                       </div>
                       <div class="issue-detail-page_tags">
-                        @for (tag of tags(); track tag) {
-                          <lib-badge variant="default" size="sm">{{ tag }}</lib-badge>
+                        @if (!issueLabels().length) {
+                          <span class="issue-detail-page_tags-empty">No labels</span>
+                        }
+                        @for (label of issueLabels(); track label.id) {
+                          <span
+                            class="issue-detail-page_label-chip"
+                            [style]="getLabelStyle(label)"
+                            [title]="label.name"
+                          >
+                            <span>{{ label.name }}</span>
+                            <button
+                              type="button"
+                              class="issue-detail-page_label-remove"
+                              (click)="handleRemoveLabel(label.id)"
+                              [attr.aria-label]="'Remove label ' + label.name"
+                            >
+                              <lib-icon name="x" size="xs" />
+                            </button>
+                          </span>
                         }
                       </div>
                     </div>
@@ -605,6 +624,25 @@ interface LinkedIssue {
         @apply flex flex-wrap gap-2;
       }
 
+      .issue-detail-page_tags-empty {
+        @apply text-xs text-muted-foreground;
+      }
+
+      .issue-detail-page_label-chip {
+        @apply inline-flex items-center gap-1;
+        @apply rounded-full border;
+        @apply px-2 py-1;
+        @apply text-xs;
+        border-color: hsl(var(--color-border));
+        background-color: hsl(var(--color-muted) / 0.4);
+      }
+
+      .issue-detail-page_label-remove {
+        @apply inline-flex items-center justify-center;
+        @apply h-4 w-4 rounded-full;
+        @apply text-current opacity-80 hover:opacity-100;
+      }
+
       .issue-detail-page_linked-issues {
         @apply space-y-3;
       }
@@ -665,6 +703,7 @@ interface LinkedIssue {
 export class IssueDetailPage {
   readonly issueService = inject(IssueService);
   readonly navigationService = inject(NavigationService);
+  readonly labelService = inject(LabelService);
   readonly modal = inject(Modal);
   readonly viewContainerRef = inject(ViewContainerRef);
   readonly translateService = inject(TranslateService);
@@ -692,8 +731,10 @@ export class IssueDetailPage {
 
   // Placeholder data for future features
   readonly subtasks = signal<Subtask[]>([]);
-  readonly tags = signal<string[]>([]);
   readonly linkedIssues = signal<LinkedIssue[]>([]);
+  readonly issueLabels = signal<Label[]>([]);
+  readonly projectLabels = signal<Label[]>([]);
+  readonly isUpdatingLabels = signal(false);
 
   readonly completedSubtasksCount = computed(() => {
     return this.subtasks().filter((s) => s.completed).length;
@@ -729,6 +770,24 @@ export class IssueDetailPage {
         this.handleStatusChange(newStatus);
       }
     });
+
+    effect(() => {
+      const issueId = this.issueId();
+      if (!issueId) {
+        this.issueLabels.set([]);
+        return;
+      }
+      void this.loadIssueLabels(issueId);
+    });
+
+    effect(() => {
+      const projectId = this.projectId();
+      if (!projectId) {
+        this.projectLabels.set([]);
+        return;
+      }
+      void this.loadProjectLabels(projectId);
+    });
   }
 
   handleLink(): void {
@@ -751,7 +810,7 @@ export class IssueDetailPage {
     }
   }
 
-  handleSubtaskToggle(subtaskId: string): void {
+  handleSubtaskToggle(_subtaskId: string): void {
     // TODO: Implement subtask toggle
   }
 
@@ -817,6 +876,96 @@ export class IssueDetailPage {
     const id = this.issueId();
     if (id) {
       this.issueService.fetchIssue(id);
+    }
+  }
+
+  async handleAddLabel(): Promise<void> {
+    const issueId = this.issueId();
+    const projectId = this.projectId();
+    if (!issueId || !projectId || this.isUpdatingLabels()) return;
+
+    const existingLabelIds = new Set(this.issueLabels().map((label) => label.id));
+    const availableLabels = this.projectLabels().filter((label) => !existingLabelIds.has(label.id));
+    const optionsHint = availableLabels.length
+      ? `\n\nAvailable labels:\n${availableLabels.map((label) => `- ${label.name}`).join('\n')}`
+      : '';
+
+    const input = window.prompt(
+      `Add label by name.${optionsHint}\n\nType an existing label name or a new one:`,
+    );
+    const labelName = input?.trim();
+    if (!labelName) return;
+
+    this.isUpdatingLabels.set(true);
+    try {
+      const existing = this.projectLabels().find(
+        (label) => label.name.toLowerCase() === labelName.toLowerCase(),
+      );
+
+      let labelToAttach = existing;
+      if (!labelToAttach) {
+        labelToAttach = await this.labelService.createLabel(projectId, {
+          name: labelName,
+          color: '#64748B',
+        });
+        await this.loadProjectLabels(projectId);
+      }
+
+      await this.labelService.addIssueLabel(issueId, labelToAttach.id);
+      await this.loadIssueLabels(issueId);
+      this.issueService.loadIssues();
+    } catch (error) {
+      console.error('Failed to add label to issue:', error);
+    } finally {
+      this.isUpdatingLabels.set(false);
+    }
+  }
+
+  async handleRemoveLabel(labelId: string): Promise<void> {
+    const issueId = this.issueId();
+    if (!issueId || this.isUpdatingLabels()) return;
+
+    this.isUpdatingLabels.set(true);
+    try {
+      await this.labelService.removeIssueLabel(issueId, labelId);
+      await this.loadIssueLabels(issueId);
+      this.issueService.loadIssues();
+    } catch (error) {
+      console.error('Failed to remove label from issue:', error);
+    } finally {
+      this.isUpdatingLabels.set(false);
+    }
+  }
+
+  getLabelStyle(label: Label): Record<string, string> | null {
+    if (!label.color) return null;
+    return {
+      borderColor: label.color,
+      color: label.color,
+      backgroundColor: `${label.color}22`,
+    };
+  }
+
+  private async loadIssueLabels(issueId: string): Promise<void> {
+    try {
+      const labels = await this.labelService.listIssueLabels(issueId);
+      this.issueLabels.set(labels);
+    } catch (error) {
+      console.error('Failed to load issue labels:', error);
+      this.issueLabels.set([]);
+    }
+  }
+
+  private async loadProjectLabels(projectId: string): Promise<void> {
+    try {
+      const response = await this.labelService.listProjectLabels(projectId, {
+        page: 1,
+        limit: 100,
+      });
+      this.projectLabels.set(response.labels);
+    } catch (error) {
+      console.error('Failed to load project labels:', error);
+      this.projectLabels.set([]);
     }
   }
 }

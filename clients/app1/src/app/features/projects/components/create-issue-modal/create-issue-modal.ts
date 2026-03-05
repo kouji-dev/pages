@@ -13,18 +13,18 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter } from 'shared-ui';
-import { Button, Input, TextEditor, Icon, Select, SelectOption } from 'shared-ui';
+import { Button, Input, TextEditor, Select, SelectOption } from 'shared-ui';
 import { ToastService } from 'shared-ui';
 import { IssueService, CreateIssueRequest } from '../../../../application/services/issue.service';
 import { ProjectMembersService } from '../../../../application/services/project-members.service';
+import { LabelService, Label } from '../../../../application/services/label.service';
+import { LabelSelector } from '../label-selector/label-selector';
 import {
   getIssueTypeConfig,
   getIssuePriorityConfig,
   type IssueType,
   type IssuePriority,
 } from '../../helpers/issue-helpers';
-
-type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
 
 @Component({
   selector: 'app-create-issue-modal',
@@ -40,6 +40,7 @@ type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
     FormsModule,
     CommonModule,
     TranslatePipe,
+    LabelSelector,
   ],
   template: `
     <lib-modal-container>
@@ -106,6 +107,15 @@ type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
               />
             </div>
           </div>
+          <div class="create-issue-form_field">
+            <label class="create-issue-form_label">Labels</label>
+            <app-label-selector
+              [labels]="projectLabels()"
+              [selectedIds]="selectedLabelIds()"
+              (selectedIdsChange)="selectedLabelIds.set($event)"
+              placeholder="Select labels"
+            />
+          </div>
         </form>
       </lib-modal-content>
       <lib-modal-footer>
@@ -161,6 +171,7 @@ export class CreateIssueModal {
   private readonly toast = inject(ToastService);
   private readonly modal = inject(Modal);
   private readonly projectMembersService = inject(ProjectMembersService);
+  private readonly labelService = inject(LabelService);
   private readonly translateService = inject(TranslateService);
 
   readonly projectId = input.required<string>();
@@ -172,6 +183,8 @@ export class CreateIssueModal {
   readonly priority = signal<IssuePriority>('medium');
   readonly assigneeId = signal<string | null>(null);
   readonly dueDate = signal<string | null>(null);
+  readonly projectLabels = signal<Label[]>([]);
+  readonly selectedLabelIds = signal<string[]>([]);
   readonly isSubmitting = signal(false);
 
   // Model signals for lib-select two-way binding
@@ -269,6 +282,12 @@ export class CreateIssueModal {
   });
 
   // Members resource automatically loads when projectId changes via navigation service
+  private readonly loadProjectLabelsEffect = effect(() => {
+    const projectId = this.projectId();
+    if (projectId) {
+      void this.loadProjectLabels(projectId);
+    }
+  });
 
   readonly projectMembers = computed(() => this.projectMembersService.members());
 
@@ -308,6 +327,7 @@ export class CreateIssueModal {
         status: 'todo', // Default status
         assignee_id: this.assigneeId() || undefined,
         due_date: this.dueDate() || undefined,
+        label_ids: this.selectedLabelIds(),
       };
 
       await this.issueService.createIssue(request);
@@ -326,6 +346,7 @@ export class CreateIssueModal {
       this.assigneeId.set(null);
       this.assigneeModel.set(null);
       this.dueDate.set(null);
+      this.selectedLabelIds.set([]);
       if (this.descriptionEditor) {
         this.descriptionEditor.setHtml('');
       }
@@ -336,6 +357,19 @@ export class CreateIssueModal {
       this.toast.error(errorMessage);
     } finally {
       this.isSubmitting.set(false);
+    }
+  }
+
+  private async loadProjectLabels(projectId: string): Promise<void> {
+    try {
+      const response = await this.labelService.listProjectLabels(projectId, {
+        page: 1,
+        limit: 100,
+      });
+      this.projectLabels.set(response.labels || []);
+    } catch (error) {
+      console.error('Failed to load project labels:', error);
+      this.projectLabels.set([]);
     }
   }
 }

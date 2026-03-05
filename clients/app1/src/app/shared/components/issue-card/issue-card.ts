@@ -1,7 +1,7 @@
 import { Component, computed, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Icon, Avatar, IconName, Badge } from 'shared-ui';
-import { IssueListItem } from '../../../application/services/issue.service';
+import { IssueListItem, IssueLabel } from '../../../application/services/issue.service';
 import { SeverityBadge } from '../severity-badge';
 
 @Component({
@@ -11,9 +11,23 @@ import { SeverityBadge } from '../severity-badge';
   template: `
     <div class="issue-card" (click)="handleClick()">
       <p class="issue-card_title">{{ issue().title }}</p>
+      @if (issue().labels?.length) {
+        <div class="issue-card_labels">
+          @for (label of issue().labels!; track label.id) {
+            <span class="issue-card_label-chip" [style]="getLabelStyle(label)">
+              {{ label.name }}
+            </span>
+          }
+        </div>
+      }
 
       <div class="issue-card_footer">
         <div class="issue-card_footer-left">
+          @if (issue().project_key) {
+            <lib-badge variant="default" size="sm" class="issue-card_project-key">
+              {{ issue().project_key }}
+            </lib-badge>
+          }
           <lib-icon [name]="typeIcon()" [size]="'xs'" [class]="typeIconClass()" />
           <span class="issue-card_key">{{ issue().key }}</span>
           <app-severity-badge [severity]="issue().priority" />
@@ -70,6 +84,21 @@ import { SeverityBadge } from '../severity-badge';
         @apply gap-2;
       }
 
+      .issue-card_labels {
+        @apply flex flex-wrap gap-1.5;
+        @apply mb-3;
+      }
+
+      .issue-card_label-chip {
+        @apply inline-flex items-center;
+        @apply px-2 py-0.5 rounded-full;
+        @apply text-xs font-medium;
+        @apply border;
+        border-color: hsl(var(--color-border));
+        background-color: hsl(var(--color-muted) / 0.3);
+        color: hsl(var(--color-foreground));
+      }
+
       .issue-card_footer-left {
         @apply flex items-center;
         @apply gap-2;
@@ -84,6 +113,10 @@ import { SeverityBadge } from '../severity-badge';
         @apply text-xs;
         @apply text-muted-foreground;
         @apply font-mono;
+      }
+
+      .issue-card_project-key {
+        @apply h-5;
       }
 
       .issue-card_priority-icon {
@@ -152,5 +185,14 @@ export class IssueCard {
       return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     }
     return name.substring(0, 2).toUpperCase();
+  }
+
+  getLabelStyle(label: IssueLabel): Record<string, string> | null {
+    if (!label.color) return null;
+    return {
+      backgroundColor: `${label.color}22`,
+      borderColor: label.color,
+      color: label.color,
+    };
   }
 }
