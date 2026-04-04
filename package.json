@@ -10,7 +10,7 @@
     "ng": "ng",
     "dev:api": "cd services/api && poetry run dev",
     "dev:app1": "ng serve app1",
-    "dev:docker": "docker-compose -f docker-compose.dev.yml up",
+    "dev:docker": "docker-compose -f docker-compose.dev.yml up --build",
     "dev:docker:bg": "docker-compose -f docker-compose.dev.yml up -d db redis api",
     "logs:api": "docker-compose -f docker-compose.dev.yml logs -f api",
     "seed:api": "docker-compose -f docker-compose.dev.yml run --rm api poetry run python scripts/seed.py",

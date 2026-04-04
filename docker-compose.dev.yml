@@ -1,6 +1,5 @@
-# Same db/redis as kouji-factory/docker-compose.yml, plus Pages API (run Angular on the host).
-# Default Postgres DB is `kouji-factory`; create `pages` once:
-#   docker compose -f docker-compose.dev.yml exec db psql -U postgres -c "CREATE DATABASE pages;"
+# Local Postgres/Redis plus Pages API (run Angular on the host).
+# Default DB is `pages` (POSTGRES_DB). If you already had a volume with another DB name, remove the volume or recreate data.
 
 name: local-dev
 
@@ -10,7 +9,7 @@ services:
     container_name: local-dev-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: kouji-factory
+      POSTGRES_DB: pages
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
