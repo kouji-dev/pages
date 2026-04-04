@@ -27,6 +27,7 @@ from src.application.use_cases.board import (
     MoveBoardIssueUseCase,
     ReorderBoardsUseCase,
     SetDefaultBoardUseCase,
+    RemoveGroupBoardProjectUseCase,
     SetGroupBoardProjectsUseCase,
     UpdateBoardListUseCase,
     UpdateBoardScopeUseCase,
@@ -304,6 +305,99 @@ class TestSetGroupBoardProjectsUseCase:
         use_case = SetGroupBoardProjectsUseCase(mock_board_repository, mock_project_repository)
         with pytest.raises(ValidationException, match="at least one"):
             await use_case.execute(group_board.id, [])
+
+
+class TestRemoveGroupBoardProjectUseCase:
+    """Tests for RemoveGroupBoardProjectUseCase (Phase 2.5.17)."""
+
+    @pytest.mark.asyncio
+    async def test_remove_project_success(self, mock_board_repository, test_project):
+        """Removing a linked project when another remains calls the repository."""
+        other_id = uuid4()
+        group_board = Board(
+            id=uuid4(),
+            project_id=test_project.id,
+            name="GB",
+            description=None,
+            scope_config=None,
+            is_default=False,
+            position=0,
+            created_by=None,
+            organization_id=test_project.organization_id,
+            board_type="group",
+            created_at=test_project.created_at,
+            updated_at=test_project.updated_at,
+        )
+        mock_board_repository.get_by_id.return_value = group_board
+        mock_board_repository.get_projects_for_board.return_value = [test_project.id, other_id]
+        mock_board_repository.remove_project_from_group_board.return_value = None
+
+        use_case = RemoveGroupBoardProjectUseCase(mock_board_repository)
+        await use_case.execute(group_board.id, other_id)
+
+        mock_board_repository.remove_project_from_group_board.assert_called_once_with(
+            group_board.id, other_id
+        )
+
+    @pytest.mark.asyncio
+    async def test_remove_project_board_not_found(self, mock_board_repository):
+        mock_board_repository.get_by_id.return_value = None
+        use_case = RemoveGroupBoardProjectUseCase(mock_board_repository)
+        with pytest.raises(EntityNotFoundException, match="Board"):
+            await use_case.execute(uuid4(), uuid4())
+
+    @pytest.mark.asyncio
+    async def test_remove_project_not_group_board(
+        self, mock_board_repository, test_board
+    ):
+        mock_board_repository.get_by_id.return_value = test_board
+        use_case = RemoveGroupBoardProjectUseCase(mock_board_repository)
+        with pytest.raises(ValidationException, match="group boards"):
+            await use_case.execute(test_board.id, test_board.project_id)
+
+    @pytest.mark.asyncio
+    async def test_remove_project_not_linked(self, mock_board_repository, test_project):
+        group_board = Board(
+            id=uuid4(),
+            project_id=test_project.id,
+            name="GB",
+            description=None,
+            scope_config=None,
+            is_default=False,
+            position=0,
+            created_by=None,
+            organization_id=test_project.organization_id,
+            board_type="group",
+            created_at=test_project.created_at,
+            updated_at=test_project.updated_at,
+        )
+        mock_board_repository.get_by_id.return_value = group_board
+        mock_board_repository.get_projects_for_board.return_value = [test_project.id]
+        use_case = RemoveGroupBoardProjectUseCase(mock_board_repository)
+        with pytest.raises(ValidationException, match="not linked"):
+            await use_case.execute(group_board.id, uuid4())
+
+    @pytest.mark.asyncio
+    async def test_remove_last_linked_project(self, mock_board_repository, test_project):
+        group_board = Board(
+            id=uuid4(),
+            project_id=test_project.id,
+            name="GB",
+            description=None,
+            scope_config=None,
+            is_default=False,
+            position=0,
+            created_by=None,
+            organization_id=test_project.organization_id,
+            board_type="group",
+            created_at=test_project.created_at,
+            updated_at=test_project.updated_at,
+        )
+        mock_board_repository.get_by_id.return_value = group_board
+        mock_board_repository.get_projects_for_board.return_value = [test_project.id]
+        use_case = RemoveGroupBoardProjectUseCase(mock_board_repository)
+        with pytest.raises(ValidationException, match="at least one"):
+            await use_case.execute(group_board.id, test_project.id)
 
 
 class TestGetBoardUseCase:

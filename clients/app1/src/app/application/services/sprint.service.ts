@@ -154,6 +154,24 @@ export class SprintService {
   /**
    * Create a new sprint
    */
+  async listProjectSprints(
+    projectId: string,
+    options?: { page?: number; limit?: number },
+  ): Promise<SprintListResponse> {
+    let params = new HttpParams();
+    if (options?.page != null) {
+      params = params.set('page', String(options.page));
+    }
+    if (options?.limit != null) {
+      params = params.set('limit', String(options.limit));
+    }
+    return firstValueFrom(
+      this.http.get<SprintListResponse>(`${this.apiUrl}/projects/${projectId}/sprints`, {
+        params,
+      }),
+    );
+  }
+
   async createSprint(request: CreateSprintRequest): Promise<Sprint> {
     const response = await firstValueFrom(
       this.http.post<SprintResponse>(`${this.apiUrl}/projects/${request.projectId}/sprints`, {

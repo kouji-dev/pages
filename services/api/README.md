@@ -57,20 +57,20 @@ poetry run uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
 To seed the database with development data (test users, organizations, projects, etc.):
 
 ```bash
-# Run seed script
-poetry run seed
-
-# Or directly with Python
+# From services/api (Poetry on host)
 poetry run python scripts/seed.py
+
+# From monorepo root (Docker API image; DB must be up)
+pnpm seed:api
+# equivalent: docker-compose -f docker-compose.dev.yml run --rm api poetry run python scripts/seed.py
 ```
 
 The seed script will:
 
 - Create 3 test users (admin@pages.dev, dev@pages.dev, test@pages.dev)
-- Create 1 organization (pages-dev)
-- Create 1 project (PAGES)
-- Create 5 sample issues
-- Create 1 documentation space with 4 pages
+- Create 1 organization (pages-dev), folders, and multiple projects (first project holds sample issues)
+- Create sample issues, sprints, labels (To Do / In Progress / Done), and **Kanban boards** (Team board + Sprint board)
+- Create documentation spaces and pages
 
 **Note:** All test users have the password `TestPass123!`
 

@@ -258,6 +258,8 @@
   "projects": {
     "title": "Projets",
     "subtitle": "Gérez vos projets et suivez les tâches en un seul endroit.",
+    "backToProject": "Retour au projet",
+    "deleteProject": "Supprimer le projet",
     "createProject": "Créer un projet",
     "loadingProjects": "Chargement des projets...",
     "loadingProject": "Chargement du projet...",
@@ -272,6 +274,66 @@
     "noProjectsDescription": "Commencez par créer votre premier projet pour gérer les tâches.",
     "viewProject": "Voir",
     "members": "membre(s)",
+    "board": {
+      "focusMode": "Mode focus",
+      "exitFocus": "Quitter le focus"
+    },
+    "settings": {
+      "title": "Paramètres du projet",
+      "subtitle": "Gérez les paramètres et les détails de votre projet.",
+      "details": "Détails du projet",
+      "name": "Nom *",
+      "nameHelper": "Choisissez un nom de projet clair et descriptif.",
+      "key": "Clé",
+      "keyHelper": "Identifiant court (lettres majuscules et chiffres).",
+      "description": "Description",
+      "descriptionHelper": "Résumé optionnel de votre projet.",
+      "dangerZone": "Zone de danger",
+      "deleteTitle": "Supprimer ce projet",
+      "deleteDescription": "Cette action est définitive et irréversible.",
+      "labels": {
+        "title": "Étiquettes",
+        "description": "Créez et gérez les étiquettes utilisées sur les tâches de ce projet.",
+        "loading": "Chargement des étiquettes…",
+        "loadErrorTitle": "Impossible de charger les étiquettes",
+        "loadErrorMessage": "Une erreur s'est produite lors du chargement des étiquettes.",
+        "empty": "Aucune étiquette pour le moment. Créez-en une pour organiser vos tâches.",
+        "create": "Créer une étiquette",
+        "createSuccess": "Étiquette créée",
+        "createError": "Échec de la création de l'étiquette",
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "colorSwatchAria": "Couleur de l'étiquette",
+        "partialList": "Affichage de {{shown}} étiquettes sur {{total}}. Supprimez-en ou contactez le support pour les très longues listes.",
+        "createModal": {
+          "title": "Créer une étiquette",
+          "nameLabel": "Nom de l'étiquette",
+          "namePlaceholder": "ex. Backend",
+          "nameHelper": "Utilisez un nom court et clair.",
+          "nameRequired": "Le nom de l'étiquette est requis",
+          "nameDuplicate": "Une étiquette porte déjà ce nom",
+          "colorLabel": "Couleur",
+          "colorPlaceholder": "#64748B",
+          "colorHelper": "Couleur hexadécimale, par ex. #22C55E ou #64748B.",
+          "colorRequired": "La couleur est requise",
+          "colorInvalid": "Saisissez une couleur hexadécimale valide (ex. #64748B)",
+          "submit": "Créer l'étiquette"
+        },
+        "editModal": {
+          "title": "Modifier l'étiquette",
+          "saveSuccess": "Étiquette mise à jour",
+          "saveError": "Échec de la mise à jour de l'étiquette"
+        },
+        "deleteModal": {
+          "title": "Supprimer l'étiquette",
+          "message": "Supprimer l'étiquette « {{name}} » ? Elle sera retirée des tâches qui l'utilisent.",
+          "hint": "Cette action est irréversible.",
+          "confirm": "Supprimer l'étiquette",
+          "success": "Étiquette supprimée",
+          "error": "Échec de la suppression de l'étiquette"
+        }
+      }
+    },
     "modals": {
       "createProject": "Créer un projet",
       "projectName": "Nom du projet",
@@ -649,9 +711,30 @@
     "loadingIssues": "Chargement des tâches...",
     "failedToLoad": "Échec du chargement des tâches",
     "noIssues": "Aucune tâche",
+    "columnSearchPlaceholder": "Rechercher dans cette colonne…",
+    "noIssuesMatchSearch": "Aucune tâche ne correspond à la recherche",
     "assigned": "Assigné",
     "overdue": "En retard",
-    "due": "Échéance : {{date}}"
+    "due": "Échéance : {{date}}",
+    "addColumn": {
+      "title": "Ajouter une colonne",
+      "columnType": "Type de colonne",
+      "selectType": "Choisir un type",
+      "typeLabel": "Par libellé",
+      "typeAssignee": "Par assigné",
+      "typeMilestone": "Par sprint / jalon",
+      "label": "Libellé",
+      "selectLabel": "Sélectionner un libellé",
+      "noLabels": "Aucun libellé dans ce projet. Créez-en un d'abord.",
+      "selectMember": "Sélectionner un membre",
+      "sprint": "Sprint",
+      "selectSprint": "Sélectionner un sprint",
+      "loadingSprints": "Chargement des sprints…",
+      "noSprints": "Aucun sprint dans ce projet.",
+      "submit": "Ajouter la colonne",
+      "failedToCreate": "Échec de l'ajout de la colonne",
+      "failedToLoadSprints": "Échec du chargement des sprints"
+    }
   },
   "sprints": {
     "title": "Sprints",

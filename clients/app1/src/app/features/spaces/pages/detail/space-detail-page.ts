@@ -462,11 +462,13 @@ import { PageContent } from '../../../../shared/layout/page-content/page-content
       }
 
       .space-detail-page_recent-pages {
-        @apply flex flex-col;
-        @apply gap-4;
+        @apply grid gap-4;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
       }
 
       .space-detail-page_recent-page {
+        @apply w-full;
+        min-width: min(100%, 300px);
         @apply p-4;
         @apply rounded-lg;
         @apply border;
@@ -478,7 +480,7 @@ import { PageContent } from '../../../../shared/layout/page-content/page-content
       }
 
       .space-detail-page_recent-page-title {
-        @apply text-base font-medium;
+        @apply min-w-0 truncate text-base font-medium;
         @apply text-foreground;
         margin: 0 0 0.5rem 0;
       }

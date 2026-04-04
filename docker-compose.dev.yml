@@ -1,5 +1,31 @@
+# Local Postgres/Redis plus Pages API (run Angular on the host).
+# Default DB is `pages` (POSTGRES_DB). If you already had a volume with another DB name, remove the volume or recreate data.
+
+name: local-dev
+
 services:
-  # FastAPI Backend
+  db:
+    image: postgres:17-alpine
+    container_name: local-dev-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: pages
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: local-dev-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
   api:
     build:
       context: ./services/api
@@ -11,78 +37,14 @@ services:
     environment:
       - DEBUG=true
       - ENVIRONMENT=development
-      # Force DATABASE_URL for Docker (use db service name, not localhost)
       - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/pages
       - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY:-dev-secret-key-change-in-production}
       - ALLOWED_ORIGINS=["http://localhost:4200"]
     depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_started
-    networks:
-      - pages-network
-
-  # Angular Frontend
-  app1:
-    build:
-      context: .
-      dockerfile: clients/app1/Dockerfile.dev
-    volumes:
-      # Mount entire workspace root
-      - .:/app
-      # Prevent overwriting node_modules with host's (if they exist)
-      - /app/node_modules
-      # Exclude library node_modules if they exist
-      - /app/libraries/shared-ui/node_modules
-    ports:
-      - "${APP1_PORT:-4200}:4200"
-    environment:
-      - NODE_ENV=development
-      - API_URL=${API_URL:-http://localhost:8002}
-      - CHOKIDAR_USEPOLLING=true
-      - WATCHPACK_POLLING=true
-    command: pnpm exec ng serve app1 --host 0.0.0.0 --port 4200 --poll 1000
-    depends_on:
-      - api
-    networks:
-      - pages-network
-
-  # PostgreSQL Database
-  db:
-    image: postgres:17-alpine
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER:-postgres}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
-      - POSTGRES_DB=${POSTGRES_DB:-pages}
-    ports:
-      - "${POSTGRES_PORT:-5434}:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - pages-network
-
-  # Redis Cache
-  redis:
-    image: redis:8-alpine
-    volumes:
-      - redis_data:/data
-    ports:
-      - "${REDIS_PORT:-6379}:6379"
-    networks:
-      - pages-network
-
-networks:
-  pages-network:
-    driver: bridge
+      - db
+      - redis
 
 volumes:
-  postgres_data:
-  redis_data:
-
+  db-data:
+  redis-data:

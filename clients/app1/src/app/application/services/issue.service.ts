@@ -12,6 +12,12 @@ export interface IssueUser {
   avatar_url?: string | null;
 }
 
+export interface IssueLabel {
+  id: string;
+  name: string;
+  color?: string;
+}
+
 export interface Issue {
   id: string;
   project_id: string;
@@ -28,6 +34,10 @@ export interface Issue {
   assignee?: IssueUser | null;
   due_date?: string;
   story_points?: number;
+  labels?: IssueLabel[];
+  project_key?: string;
+  comment_count?: number;
+  subtask_count?: number;
   created_at: string;
   updated_at: string;
 }
@@ -38,6 +48,8 @@ export interface IssueListItem {
   issue_number: number;
   key: string;
   title: string;
+  /** Present when loaded from board API; used for client-side search */
+  description?: string;
   type: 'task' | 'bug' | 'story' | 'epic';
   status: 'todo' | 'in_progress' | 'done' | 'cancelled';
   priority: 'low' | 'medium' | 'high' | 'critical';
@@ -45,6 +57,10 @@ export interface IssueListItem {
   reporter_id?: string;
   due_date?: string;
   story_points?: number;
+  labels?: IssueLabel[];
+  project_key?: string;
+  comment_count?: number;
+  subtask_count?: number;
   created_at: string;
   updated_at: string;
 }
@@ -67,6 +83,7 @@ export interface CreateIssueRequest {
   assignee_id?: string;
   due_date?: string;
   story_points?: number;
+  label_ids?: string[];
 }
 
 export interface UpdateIssueRequest {
@@ -78,6 +95,7 @@ export interface UpdateIssueRequest {
   assignee_id?: string;
   due_date?: string;
   story_points?: number;
+  label_ids?: string[];
 }
 
 export interface ListIssuesFilters {

@@ -13,8 +13,8 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subject, fromEvent } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 import { Button, Input, LoadingState, ErrorState, Modal, ToastService } from 'shared-ui';
 import { ProjectService } from '../../../../application/services/project.service';
 import { OrganizationService } from '../../../../application/services/organization.service';
@@ -29,6 +29,7 @@ import { ProjectNav } from '../../components/project-nav/project-nav';
 import { BacklogRibbon } from '../../components/backlog-ribbon/backlog-ribbon';
 import { DeleteProjectModal } from '../../components/delete-project-modal/delete-project-modal';
 import { CreateSprintModal } from '../../components/create-sprint-modal/create-sprint-modal';
+import { BoardSelector } from '../../components/board-selector/board-selector';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PageContent } from '../../../../shared/layout/page-content/page-content';
 import { PageBody } from '../../../../shared/layout/page-body/page-body';
@@ -43,6 +44,9 @@ import { ReviewPage } from '../review/review-page';
 import { PlanningPage } from '../planning/planning-page';
 import { BacklogPage } from '../backlog/backlog-page';
 import { ReportsPage } from '../reports/reports-page';
+import { BoardService, BoardResponse } from '../../../../application/services/board.service';
+
+const BOARD_FOCUS_MODE_STORAGE_KEY = 'pages.projectBoardFocusMode';
 
 type TabType =
   | 'issues'
@@ -66,6 +70,7 @@ type TabType =
     KanbanBoard,
     PageHeader,
     SprintSelector,
+    BoardSelector,
     Progress,
     Icon,
     ProjectNav,
@@ -97,60 +102,105 @@ type TabType =
       />
     } @else {
       <app-page-body>
-        <app-page-header
-          [title]="project()?.name || ''"
-          [subtitle]="project()?.description"
-          [leftAction]="settingsAction()"
-          [actionTemplate]="sprintActionsTemplate"
-        >
-          <ng-template #sprintActionsTemplate>
-            <div class="project-detail-page_sprint-actions">
-              @if (sprintService.currentSprint(); as sprint) {
-                <!-- Progress indicator -->
-                <div class="project-detail-page_progress">
-                  <div class="project-detail-page_progress-bar">
-                    <lib-progress [value]="sprintProgressPercent()" />
+        @if (!shouldHideBoardChrome()) {
+          <app-page-header
+            [title]="project()?.name || ''"
+            [subtitle]="project()?.description"
+            [leftAction]="settingsAction()"
+            [actionTemplate]="sprintActionsTemplate"
+          >
+            <ng-template #sprintActionsTemplate>
+              <div class="project-detail-page_sprint-actions">
+                @if (sprintService.currentSprint(); as sprint) {
+                  <!-- Progress indicator -->
+                  <div class="project-detail-page_progress">
+                    <div class="project-detail-page_progress-bar">
+                      <lib-progress [value]="sprintProgressPercent()" />
+                    </div>
+                    <span class="project-detail-page_progress-text">
+                      {{ sprintProgressPercent() }}%
+                    </span>
+                    <span class="project-detail-page_progress-points">
+                      ({{ sprint.completedIssues }}/{{ sprint.totalIssues }}
+                      {{ 'sprints.issues' | translate }})
+                    </span>
                   </div>
-                  <span class="project-detail-page_progress-text">
-                    {{ sprintProgressPercent() }}%
-                  </span>
-                  <span class="project-detail-page_progress-points">
-                    ({{ sprint.completedIssues }}/{{ sprint.totalIssues }}
-                    {{ 'sprints.issues' | translate }})
-                  </span>
-                </div>
 
-                <!-- Dates -->
-                <div class="project-detail-page_dates">
-                  <lib-icon name="calendar" [size]="'xs'" />
-                  <span>{{ formatSprintDate(sprint.startDate) }}</span>
-                  <span>→</span>
-                  <span>{{ formatSprintDate(sprint.endDate) }}</span>
-                </div>
+                  <!-- Dates -->
+                  <div class="project-detail-page_dates">
+                    <lib-icon name="calendar" [size]="'xs'" />
+                    <span>{{ formatSprintDate(sprint.startDate) }}</span>
+                    <span>→</span>
+                    <span>{{ formatSprintDate(sprint.endDate) }}</span>
+                  </div>
 
-                @if (sprint.status === 'active') {
-                  <lib-button variant="outline" size="sm" (clicked)="handleCompleteSprint()">
-                    {{ 'sprints.complete' | translate }}
-                  </lib-button>
+                  @if (sprint.status === 'active') {
+                    <lib-button variant="outline" size="sm" (clicked)="handleCompleteSprint()">
+                      {{ 'sprints.complete' | translate }}
+                    </lib-button>
+                  }
                 }
-              }
 
-              <app-sprint-selector
-                [sprints]="sprintService.sprintsList()"
-                [selectedSprint]="sprintService.currentSprint()"
-                (onSprintSelect)="handleSprintSelect($event)"
-                (onCreateSprint)="handleCreateSprint()"
-              />
-            </div>
-          </ng-template>
-        </app-page-header>
-        <app-project-nav [projectId]="projectId()" />
+                <app-sprint-selector
+                  [sprints]="sprintService.sprintsList()"
+                  [selectedSprint]="sprintService.currentSprint()"
+                  (onSprintSelect)="handleSprintSelect($event)"
+                  (onCreateSprint)="handleCreateSprint()"
+                />
+              </div>
+            </ng-template>
+          </app-page-header>
+        }
+        @if (!shouldHideBoardChrome()) {
+          <app-project-nav [projectId]="projectId()" />
+        }
         <app-page-content noPadding>
           <div class="project-detail-page_container">
             <div class="project-detail-page_main">
               @if (activeTab() === 'board') {
                 <div class="project-detail-page_board-wrapper">
-                  <app-kanban-board [projectId]="projectId()" />
+                  @if (!isBoardFocusMode()) {
+                    <div class="project-detail-page_board-toolbar">
+                      <app-board-selector
+                        [boards]="boards()"
+                        [selectedBoardId]="selectedBoardId()"
+                        (boardSelected)="handleBoardSelect($event)"
+                        (createBoard)="handleCreateBoard()"
+                        (createGroupBoard)="handleCreateGroupBoard()"
+                        (duplicateBoard)="handleDuplicateBoard($event)"
+                        (deleteBoard)="handleDeleteBoard($event)"
+                        (setDefaultBoard)="handleSetDefaultBoard($event)"
+                      />
+                      <lib-button
+                        variant="ghost"
+                        size="sm"
+                        leftIcon="maximize"
+                        (clicked)="toggleBoardFocusMode()"
+                      >
+                        {{ 'projects.board.focusMode' | translate }}
+                      </lib-button>
+                    </div>
+                  }
+                  @if (isBoardFocusMode()) {
+                    <lib-button
+                      class="project-detail-page_exit-focus"
+                      variant="outline"
+                      size="sm"
+                      leftIcon="x"
+                      (clicked)="toggleBoardFocusMode()"
+                    >
+                      {{ 'projects.board.exitFocus' | translate }}
+                    </lib-button>
+                  }
+                  @if (selectedBoardId(); as boardId) {
+                    <app-kanban-board [projectId]="projectId()" [boardId]="boardId" />
+                  } @else if (isLoadingBoards()) {
+                    <lib-loading-state message="Loading boards..." />
+                  } @else {
+                    <div class="project-detail-page_placeholder">
+                      No boards found for this project.
+                    </div>
+                  }
                 </div>
               } @else if (activeTab() === 'review') {
                 <app-review-page />
@@ -252,7 +302,7 @@ type TabType =
           </div>
         </app-page-content>
 
-        @if (activeTab() === 'board') {
+        @if (activeTab() === 'board' && !isBoardFocusMode()) {
           <app-page-footer>
             <app-backlog-ribbon
               [issues]="backlogIssues()"
@@ -303,9 +353,17 @@ type TabType =
       }
 
       .project-detail-page_board-wrapper {
-        @apply flex flex-col;
-        @apply min-h-0;
-        @apply flex-shrink;
+        @apply flex w-full min-h-0 flex-1 flex-col gap-4;
+      }
+
+      .project-detail-page_board-toolbar {
+        @apply flex items-center justify-end gap-2;
+      }
+
+      .project-detail-page_exit-focus {
+        @apply fixed z-50;
+        @apply bottom-4 right-4;
+        @apply shadow-md;
       }
 
       .project-detail-page_sprint-actions {
@@ -425,6 +483,7 @@ export class ProjectDetailPage {
   readonly navigationService = inject(NavigationService);
   readonly sprintService = inject(SprintService);
   readonly issueService = inject(IssueService);
+  readonly boardService = inject(BoardService);
   readonly modal = inject(Modal);
   readonly toast = inject(ToastService);
   readonly viewContainerRef = inject(ViewContainerRef);
@@ -442,6 +501,10 @@ export class ProjectDetailPage {
   });
 
   readonly project = computed(() => this.projectService.currentProject());
+  readonly boards = signal<BoardResponse[]>([]);
+  readonly selectedBoardId = signal<string | null>(null);
+  readonly isLoadingBoards = signal(false);
+  readonly isBoardFocusMode = signal(false);
 
   // Backlog issues (issues not in any sprint)
   readonly backlogIssuesList = signal<IssueListItem[]>([]);
@@ -462,6 +525,18 @@ export class ProjectDetailPage {
         this.backlogSearch.set(search);
         this.backlogPage.set(1); // Reset to first page on search
         this.loadBacklogIssues();
+      });
+
+    fromEvent(document, 'keydown')
+      .pipe(
+        filter((e): e is KeyboardEvent => e instanceof KeyboardEvent),
+        filter((e) => e.key === 'Escape'),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        if (this.isBoardFocusMode()) {
+          this.setBoardFocusMode(false);
+        }
       });
   }
 
@@ -539,11 +614,31 @@ export class ProjectDetailPage {
   private readonly loadBacklogEffect = effect(() => {
     const projectId = this.projectId();
     const tab = this.activeTab();
-    const page = this.backlogPage();
-    const search = this.backlogSearch();
+    this.backlogPage();
+    this.backlogSearch();
     if (projectId && tab === 'board') {
       this.loadBacklogIssues();
     }
+  });
+
+  private readonly loadBoardsEffect = effect(() => {
+    const projectId = this.projectId();
+    if (!projectId) {
+      this.boards.set([]);
+      this.selectedBoardId.set(null);
+      return;
+    }
+    this.loadBoards(projectId);
+  });
+
+  /** Restore board focus mode from localStorage when viewing the board tab (per project). */
+  private readonly restoreBoardFocusFromStorageEffect = effect(() => {
+    const projectId = this.projectId();
+    const tab = this.activeTab();
+    if (!projectId || tab !== 'board') {
+      return;
+    }
+    this.isBoardFocusMode.set(this.readBoardFocusFromStorage(projectId));
   });
 
   readonly errorMessage = computed(() => {
@@ -708,6 +803,157 @@ export class ProjectDetailPage {
   handleBacklogPageChange(page: number): void {
     this.backlogPage.set(page);
     this.loadBacklogIssues();
+  }
+
+  handleBoardSelect(boardId: string): void {
+    this.selectedBoardId.set(boardId);
+  }
+
+  toggleBoardFocusMode(): void {
+    this.setBoardFocusMode(!this.isBoardFocusMode());
+  }
+
+  private setBoardFocusMode(enabled: boolean): void {
+    this.isBoardFocusMode.set(enabled);
+    const id = this.projectId();
+    if (id) {
+      this.writeBoardFocusToStorage(id, enabled);
+    }
+  }
+
+  private readBoardFocusFromStorage(projectId: string): boolean {
+    if (typeof localStorage === 'undefined') {
+      return false;
+    }
+    try {
+      const raw = localStorage.getItem(BOARD_FOCUS_MODE_STORAGE_KEY);
+      if (!raw) {
+        return false;
+      }
+      const map = JSON.parse(raw) as Record<string, boolean>;
+      return Boolean(map[projectId]);
+    } catch {
+      return false;
+    }
+  }
+
+  private writeBoardFocusToStorage(projectId: string, enabled: boolean): void {
+    if (typeof localStorage === 'undefined') {
+      return;
+    }
+    try {
+      const raw = localStorage.getItem(BOARD_FOCUS_MODE_STORAGE_KEY);
+      const map: Record<string, boolean> = raw ? (JSON.parse(raw) as Record<string, boolean>) : {};
+      map[projectId] = enabled;
+      localStorage.setItem(BOARD_FOCUS_MODE_STORAGE_KEY, JSON.stringify(map));
+    } catch {
+      /* ignore quota / private mode */
+    }
+  }
+
+  readonly shouldHideBoardChrome = computed(() => {
+    return this.activeTab() === 'board' && this.isBoardFocusMode();
+  });
+
+  async handleCreateBoard(): Promise<void> {
+    const projectId = this.projectId();
+    if (!projectId) return;
+
+    try {
+      const createdBoard = await this.boardService.createProjectBoard(projectId, {
+        name: `Board ${this.boards().length + 1}`,
+      });
+      await this.loadBoards(projectId);
+      this.selectedBoardId.set(createdBoard.id);
+      this.toast.success('Board created');
+    } catch (error) {
+      console.error('Failed to create board:', error);
+      this.toast.error('Failed to create board');
+    }
+  }
+
+  async handleCreateGroupBoard(): Promise<void> {
+    const projectId = this.projectId();
+    const organizationId = this.organizationId();
+    if (!projectId || !organizationId) return;
+
+    try {
+      const createdBoard = await this.boardService.createGroupBoard(organizationId, {
+        name: `Group Board ${this.boards().length + 1}`,
+        project_ids: [projectId],
+      });
+      await this.loadBoards(projectId);
+      this.selectedBoardId.set(createdBoard.id);
+      this.toast.success('Group board created');
+    } catch (error) {
+      console.error('Failed to create group board:', error);
+      this.toast.error('Failed to create group board');
+    }
+  }
+
+  async handleDuplicateBoard(boardId: string): Promise<void> {
+    const projectId = this.projectId();
+    if (!projectId) return;
+    try {
+      const duplicated = await this.boardService.duplicateBoard(boardId);
+      await this.loadBoards(projectId);
+      this.selectedBoardId.set(duplicated.id);
+      this.toast.success('Board duplicated');
+    } catch (error) {
+      console.error('Failed to duplicate board:', error);
+      this.toast.error('Failed to duplicate board');
+    }
+  }
+
+  async handleDeleteBoard(boardId: string): Promise<void> {
+    const projectId = this.projectId();
+    if (!projectId) return;
+    try {
+      await this.boardService.deleteBoard(boardId);
+      await this.loadBoards(projectId);
+      this.toast.success('Board deleted');
+    } catch (error) {
+      console.error('Failed to delete board:', error);
+      this.toast.error('Failed to delete board');
+    }
+  }
+
+  async handleSetDefaultBoard(boardId: string): Promise<void> {
+    const projectId = this.projectId();
+    if (!projectId) return;
+    try {
+      await this.boardService.setDefaultBoard(boardId);
+      await this.loadBoards(projectId);
+      this.selectedBoardId.set(boardId);
+      this.toast.success('Default board updated');
+    } catch (error) {
+      console.error('Failed to set default board:', error);
+      this.toast.error('Failed to set default board');
+    }
+  }
+
+  private async loadBoards(projectId: string): Promise<void> {
+    this.isLoadingBoards.set(true);
+    try {
+      const response = await this.boardService.listProjectBoards(projectId, { limit: 100 });
+      const boards = response.boards ?? [];
+      this.boards.set(boards);
+
+      const currentSelection = this.selectedBoardId();
+      const stillExists = boards.some((board) => board.id === currentSelection);
+      if (stillExists && currentSelection) {
+        return;
+      }
+
+      const defaultBoard = boards.find((board) => board.is_default);
+      this.selectedBoardId.set(defaultBoard?.id ?? boards[0]?.id ?? null);
+    } catch (error) {
+      console.error('Failed to load boards:', error);
+      this.boards.set([]);
+      this.selectedBoardId.set(null);
+    } finally {
+      this.isLoadingBoards.set(false);
+    }
   }
 
   private convertToSprintIssue(issue: IssueListItem): SprintIssue {

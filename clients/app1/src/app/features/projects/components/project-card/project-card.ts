@@ -93,9 +93,14 @@ import { TranslatePipe } from '@ngx-translate/core';
     `
       @reference "#mainstyles";
 
+      :host {
+        display: contents;
+      }
+
       .project-card {
         @apply relative;
-        @apply flex flex-col;
+        @apply flex min-w-0 w-full flex-col;
+        min-width: min(100%, 300px);
         @apply rounded-lg;
         @apply border;
         @apply border-border;

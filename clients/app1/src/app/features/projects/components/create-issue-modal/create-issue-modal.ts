@@ -6,25 +6,28 @@ import {
   inject,
   input,
   ViewChild,
+  ViewContainerRef,
   effect,
   model,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
 import { Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter } from 'shared-ui';
-import { Button, Input, TextEditor, Icon, Select, SelectOption } from 'shared-ui';
+import { Button, Input, TextEditor, Select, SelectOption } from 'shared-ui';
 import { ToastService } from 'shared-ui';
 import { IssueService, CreateIssueRequest } from '../../../../application/services/issue.service';
 import { ProjectMembersService } from '../../../../application/services/project-members.service';
+import { LabelService, Label } from '../../../../application/services/label.service';
+import { LabelSelector } from '../label-selector/label-selector';
+import { CreateLabelModal, CreateLabelModalResult } from '../create-label-modal/create-label-modal';
 import {
   getIssueTypeConfig,
   getIssuePriorityConfig,
   type IssueType,
   type IssuePriority,
 } from '../../helpers/issue-helpers';
-
-type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
 
 @Component({
   selector: 'app-create-issue-modal',
@@ -40,6 +43,7 @@ type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
     FormsModule,
     CommonModule,
     TranslatePipe,
+    LabelSelector,
   ],
   template: `
     <lib-modal-container>
@@ -106,6 +110,19 @@ type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
               />
             </div>
           </div>
+          <div class="create-issue-form_field">
+            <label class="create-issue-form_label">Labels</label>
+            <app-label-selector
+              [labels]="projectLabels()"
+              [selectedIds]="selectedLabelIds()"
+              (selectedIdsChange)="selectedLabelIds.set($event)"
+              (manageLabels)="handleManageLabels()"
+              placeholder="Select labels"
+            />
+            @if (projectLabels().length === 0) {
+              <p class="create-issue-form_alert">No labels found. Create your first label.</p>
+            }
+          </div>
         </form>
       </lib-modal-content>
       <lib-modal-footer>
@@ -152,6 +169,11 @@ type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
         @apply text-foreground;
         @apply focus:outline-none focus:ring-2 focus:ring-primary;
       }
+
+      .create-issue-form_alert {
+        @apply text-xs text-amber-600;
+        margin: 0;
+      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -160,7 +182,9 @@ export class CreateIssueModal {
   private readonly issueService = inject(IssueService);
   private readonly toast = inject(ToastService);
   private readonly modal = inject(Modal);
+  private readonly viewContainerRef = inject(ViewContainerRef);
   private readonly projectMembersService = inject(ProjectMembersService);
+  private readonly labelService = inject(LabelService);
   private readonly translateService = inject(TranslateService);
 
   readonly projectId = input.required<string>();
@@ -172,6 +196,8 @@ export class CreateIssueModal {
   readonly priority = signal<IssuePriority>('medium');
   readonly assigneeId = signal<string | null>(null);
   readonly dueDate = signal<string | null>(null);
+  readonly projectLabels = signal<Label[]>([]);
+  readonly selectedLabelIds = signal<string[]>([]);
   readonly isSubmitting = signal(false);
 
   // Model signals for lib-select two-way binding
@@ -269,6 +295,12 @@ export class CreateIssueModal {
   });
 
   // Members resource automatically loads when projectId changes via navigation service
+  private readonly loadProjectLabelsEffect = effect(() => {
+    const projectId = this.projectId();
+    if (projectId) {
+      void this.loadProjectLabels(projectId);
+    }
+  });
 
   readonly projectMembers = computed(() => this.projectMembersService.members());
 
@@ -308,6 +340,7 @@ export class CreateIssueModal {
         status: 'todo', // Default status
         assignee_id: this.assigneeId() || undefined,
         due_date: this.dueDate() || undefined,
+        label_ids: this.selectedLabelIds(),
       };
 
       await this.issueService.createIssue(request);
@@ -326,6 +359,7 @@ export class CreateIssueModal {
       this.assigneeId.set(null);
       this.assigneeModel.set(null);
       this.dueDate.set(null);
+      this.selectedLabelIds.set([]);
       if (this.descriptionEditor) {
         this.descriptionEditor.setHtml('');
       }
@@ -336,6 +370,47 @@ export class CreateIssueModal {
       this.toast.error(errorMessage);
     } finally {
       this.isSubmitting.set(false);
+    }
+  }
+
+  async handleManageLabels(): Promise<void> {
+    const projectId = this.projectId();
+    if (!projectId) {
+      return;
+    }
+
+    const result = await firstValueFrom(
+      this.modal.open<CreateLabelModalResult | null>(CreateLabelModal, this.viewContainerRef, {
+        size: 'sm',
+        data: {
+          existingLabelNames: this.projectLabels().map((label) => label.name),
+        },
+      }),
+    );
+    if (!result) {
+      return;
+    }
+
+    try {
+      const createdLabel = await this.labelService.createLabel(projectId, result);
+      await this.loadProjectLabels(projectId);
+      this.selectedLabelIds.update((ids) => Array.from(new Set([...ids, createdLabel.id])));
+      this.toast.success('Label created');
+    } catch {
+      this.toast.error('Failed to create label');
+    }
+  }
+
+  private async loadProjectLabels(projectId: string): Promise<void> {
+    try {
+      const response = await this.labelService.listProjectLabels(projectId, {
+        page: 1,
+        limit: 100,
+      });
+      this.projectLabels.set(response.labels || []);
+    } catch (error) {
+      console.error('Failed to load project labels:', error);
+      this.projectLabels.set([]);
     }
   }
 }

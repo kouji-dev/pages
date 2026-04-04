@@ -191,6 +191,7 @@ class MoveBoardIssueUseCase:
             project_id=project_id,
             project_key=project_key,
             title=issue.title,
+            description=issue.description,
             type=issue.type,
             status=issue.status,
             priority=issue.priority,

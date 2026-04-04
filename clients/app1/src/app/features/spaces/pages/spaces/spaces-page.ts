@@ -130,11 +130,10 @@ import { PageFooter } from '../../../../shared/layout/page-footer/page-footer';
         @apply min-h-0;
       }
 
+      /* Responsive card grid: min 300px per column; 1 col when viewport < 300px (full width). */
       .spaces-page_grid {
-        @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4;
-        @apply flex-1;
-        @apply content-start;
-        @apply items-stretch;
+        @apply grid gap-4 flex-1 content-start items-stretch;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
       }
     `,
   ],

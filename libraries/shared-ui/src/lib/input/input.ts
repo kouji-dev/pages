@@ -260,6 +260,18 @@ export interface InputAction {
         opacity: 1;
       }
 
+      /* Keep browser autofill aligned with theme colors */
+      .input:-webkit-autofill,
+      .input:-webkit-autofill:hover,
+      .input:-webkit-autofill:focus,
+      .input:-webkit-autofill:active {
+        -webkit-text-fill-color: var(--color-foreground);
+        caret-color: var(--color-foreground);
+        box-shadow: inset 0 0 0 1000px var(--color-background);
+        -webkit-box-shadow: inset 0 0 0 1000px var(--color-background);
+        transition: background-color 9999s ease-out 0s;
+      }
+
       .input:hover:not(:disabled):not(:read-only):not(.input--error) {
         @apply border-ring/50;
       }

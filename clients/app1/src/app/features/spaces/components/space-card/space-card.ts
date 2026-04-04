@@ -118,7 +118,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
       .space-card {
         @apply relative;
-        @apply flex flex-col;
+        @apply flex min-w-0 flex-col;
         @apply rounded-lg;
         @apply border;
         @apply border-border;
