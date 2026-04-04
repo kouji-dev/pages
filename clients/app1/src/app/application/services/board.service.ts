@@ -57,6 +57,7 @@ export interface BoardIssueItemResponse {
   project_id: string;
   project_key: string;
   title: string;
+  description?: string | null;
   type: string;
   status: string;
   priority: string;
@@ -304,5 +305,9 @@ export class BoardService {
   async setGroupBoardProjects(boardId: string, projectIds: string[]): Promise<void> {
     const request: SetGroupBoardProjectsRequest = { project_ids: projectIds };
     await firstValueFrom(this.http.post(`${this.boardsApiUrl}/${boardId}/projects`, request));
+  }
+
+  async removeGroupBoardProject(boardId: string, projectId: string): Promise<void> {
+    await firstValueFrom(this.http.delete(`${this.boardsApiUrl}/${boardId}/projects/${projectId}`));
   }
 }

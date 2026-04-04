@@ -20,11 +20,13 @@ import {
   ErrorState,
   Button,
   Dropdown,
+  EmptyState,
   Modal,
   ToastService,
   Select,
   SelectOption,
   Badge,
+  Input,
 } from 'shared-ui';
 import { IssueListItem } from '../../../../application/services/issue.service';
 import {
@@ -41,23 +43,26 @@ import {
   ProjectMember,
 } from '../../../../application/services/project-members.service';
 import { CreateIssueModal } from '../create-issue-modal/create-issue-modal';
+import { CreateLabelModal, CreateLabelModalResult } from '../create-label-modal/create-label-modal';
+import { AddBoardColumnModal } from '../add-board-column-modal/add-board-column-modal';
 import { IssueCard } from '../../../../shared/components/issue-card';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
 
 type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
 
-interface StatusColumn {
-  status: IssueStatus;
-  label: string;
+interface BoardColumn {
+  id: string;
+  title: string;
   issues: IssueListItem[];
-  visible: boolean;
-  width?: number;
+  listType: string;
+  position: number;
 }
 
-interface BoardSettings {
-  columnOrder: IssueStatus[];
-  columnVisibility: Record<IssueStatus, boolean>;
-  columnWidths: Record<IssueStatus, number>;
+/** Column with optional client-side search filter applied to `issues`. */
+interface BoardColumnView extends BoardColumn {
+  fullIssueCount: number;
+  columnSearchActive: boolean;
 }
 
 @Component({
@@ -70,9 +75,11 @@ interface BoardSettings {
     IssueCard,
     Button,
     Dropdown,
+    EmptyState,
     Select,
     TranslatePipe,
     Badge,
+    Input,
   ],
   template: `
     <div class="kanban-board">
@@ -144,23 +151,6 @@ interface BoardSettings {
             <ng-template #settingsDropdownTemplate>
               <div class="kanban-board_settings-menu">
                 <div class="kanban-board_settings-section">
-                  <label class="kanban-board_settings-label">{{
-                    'board.columnVisibility' | translate
-                  }}</label>
-                  @for (column of allColumns(); track column.status) {
-                    <label class="kanban-board_settings-checkbox">
-                      <input
-                        type="checkbox"
-                        [checked]="columnVisibility()[column.status]"
-                        (change)="
-                          toggleColumnVisibility(column.status, $any($event.target).checked)
-                        "
-                      />
-                      <span>{{ column.label }}</span>
-                    </label>
-                  }
-                </div>
-                <div class="kanban-board_settings-section">
                   <lib-select
                     [label]="'Swimlanes'"
                     [options]="swimlaneTypeOptions()"
@@ -189,24 +179,38 @@ interface BoardSettings {
             (onRetry)="handleRetry()"
           />
         } @else {
+          @if (showNoLabelsMessage()) {
+            <div class="kanban-board_no-labels">
+              <lib-empty-state
+                title="No labels yet"
+                message="Create your first label directly from this board."
+                icon="tag"
+                actionLabel="Create Label"
+                actionIcon="plus"
+                (onAction)="handleCreateLabelFromEmptyState()"
+              />
+            </div>
+          }
           <div class="kanban-board_columns" cdkDropListGroup>
-            @for (column of visibleColumns(); track column.status) {
+            @for (column of visibleColumns(); track column.id) {
               <div
                 class="kanban-board_column"
                 cdkDropList
                 [cdkDropListData]="column.issues"
-                (cdkDropListDropped)="handleDrop($event, column.status)"
+                [cdkDropListDisabled]="boardHasColumnSearch()"
+                (cdkDropListDropped)="handleDrop($event, column.id)"
               >
                 <div class="kanban-board_column-header">
                   <div class="kanban-board_column-header-left">
-                    <span
-                      class="kanban-board_column-title"
-                      [class]="getColumnColorClass(column.status)"
-                    >
-                      {{ column.label }}
+                    <span class="kanban-board_column-title">
+                      {{ column.title }}
                     </span>
                     <lib-badge variant="default" class="kanban-board_column-badge">
-                      {{ column.issues.length }}
+                      @if (column.columnSearchActive) {
+                        {{ column.issues.length }} / {{ column.fullIssueCount }}
+                      } @else {
+                        {{ column.issues.length }}
+                      }
                     </lib-badge>
                   </div>
                   <div class="kanban-board_column-header-actions">
@@ -216,6 +220,7 @@ interface BoardSettings {
                       [iconOnly]="true"
                       leftIcon="plus"
                       class="kanban-board_column-action"
+                      (clicked)="handleAddColumn()"
                     >
                     </lib-button>
                     <lib-button
@@ -228,9 +233,19 @@ interface BoardSettings {
                     </lib-button>
                   </div>
                 </div>
+                <div class="kanban-board_column-search">
+                  <lib-input
+                    type="search"
+                    size="sm"
+                    [placeholder]="'board.columnSearchPlaceholder' | translate"
+                    [model]="columnSearchQueries()[column.id] || ''"
+                    (modelChange)="onColumnSearchChange(column.id, $event)"
+                    [leftAction]="{ icon: 'search' }"
+                  />
+                </div>
                 <div class="kanban-board_column-content">
                   @for (issue of column.issues; track issue.id) {
-                    <div cdkDrag>
+                    <div cdkDrag [cdkDragDisabled]="boardHasColumnSearch()">
                       <app-issue-card
                         [issue]="issue"
                         [assignee]="getAssignee(issue.assignee_id) || null"
@@ -239,7 +254,13 @@ interface BoardSettings {
                     </div>
                   }
                   @if (column.issues.length === 0) {
-                    <div class="kanban-board_empty">{{ 'board.noIssues' | translate }}</div>
+                    <div class="kanban-board_empty">
+                      @if (column.columnSearchActive) {
+                        {{ 'board.noIssuesMatchSearch' | translate }}
+                      } @else {
+                        {{ 'board.noIssues' | translate }}
+                      }
+                    </div>
                   }
                 </div>
               </div>
@@ -253,17 +274,16 @@ interface BoardSettings {
     `
       @reference "#mainstyles";
 
+      :host {
+        @apply flex flex-1 min-h-0 w-full flex-col;
+      }
+
       .kanban-board {
-        @apply flex flex-col;
-        @apply gap-4;
-        @apply w-full;
-        @apply flex-1;
-        @apply min-h-0;
+        @apply flex flex-1 min-h-0 w-full flex-col gap-4;
       }
 
       .kanban-board_header {
-        @apply flex items-center justify-end;
-        @apply gap-4;
+        @apply flex flex-shrink-0 items-center justify-end gap-4;
       }
 
       .kanban-board_header-actions {
@@ -342,34 +362,28 @@ interface BoardSettings {
       }
 
       .kanban-board_content {
-        @apply flex-1;
-        @apply w-full;
-        @apply overflow-hidden;
+        @apply flex flex-1 min-h-0 w-full flex-col overflow-hidden;
       }
 
+      /* Fills remaining height below header; columns stretch to this height (max = board body) */
       .kanban-board_columns {
-        @apply flex;
-        @apply gap-4;
-        @apply h-full;
-        @apply overflow-x-auto;
-        @apply pb-4;
-        @apply min-w-max;
+        @apply flex flex-1 min-h-0 min-w-0 flex-row items-stretch gap-4 overflow-x-auto pb-4;
+      }
+
+      .kanban-board_no-labels {
+        @apply w-full mb-4;
       }
 
       .kanban-board_column {
-        @apply w-72;
-        @apply flex flex-col;
-        @apply flex-shrink-0;
-        @apply h-full;
-        @apply border;
-        @apply border-border;
-        @apply rounded-lg;
-        @apply p-4;
+        @apply flex w-[360px] min-w-[360px] max-h-full flex-shrink-0 flex-col min-h-0 border border-border rounded-lg p-4;
       }
 
       .kanban-board_column-header {
-        @apply flex items-center justify-between;
-        @apply mb-4;
+        @apply mb-3 flex flex-shrink-0 items-center justify-between;
+      }
+
+      .kanban-board_column-search {
+        @apply mb-3 w-full min-w-0 flex-shrink-0;
       }
 
       .kanban-board_column-header-left {
@@ -399,10 +413,10 @@ interface BoardSettings {
         @apply h-6 w-6;
       }
 
+      /* Grows within column up to remaining height; scrolls when issues overflow */
       .kanban-board_column-content {
-        @apply flex-1;
-        @apply space-y-3;
-        @apply min-h-0;
+        /* Inline-end padding so the scrollbar/track sits farther from issue cards */
+        @apply flex flex-1 min-h-0 flex-col gap-3 overflow-y-auto overflow-x-hidden pe-4;
       }
 
       .kanban-board_empty {
@@ -463,42 +477,10 @@ export class KanbanBoard {
   readonly isLoadingBoardIssues = signal(false);
   readonly boardIssuesError = signal<unknown | null>(null);
   readonly hasBoardIssuesError = computed(() => this.boardIssuesError() !== null);
+  readonly showNoLabelsMessage = computed(() => this.projectLabels().length === 0);
 
   readonly organizationId = computed(() => {
     return this.navigationService.currentOrganizationId() || '';
-  });
-
-  // Board settings storage key
-  private readonly STORAGE_KEY = 'kanban_board_settings';
-
-  // Default column order
-  private readonly DEFAULT_COLUMN_ORDER: IssueStatus[] = [
-    'todo',
-    'in_progress',
-    'done',
-    'cancelled',
-  ];
-
-  // Flag to prevent saving during initial load
-  private isInitializing = true;
-
-  // Column visibility signal
-  readonly columnVisibility = signal<Record<IssueStatus, boolean>>({
-    todo: true,
-    in_progress: true,
-    done: true,
-    cancelled: true,
-  });
-
-  // Column order signal
-  readonly columnOrder = signal<IssueStatus[]>(this.DEFAULT_COLUMN_ORDER);
-
-  // Column widths signal
-  readonly columnWidths = signal<Record<IssueStatus, number>>({
-    todo: 0,
-    in_progress: 0,
-    done: 0,
-    cancelled: 0,
   });
 
   // Filter signals
@@ -511,6 +493,14 @@ export class KanbanBoard {
   readonly assigneeFilterModel = model<string | null>(null);
   readonly typeFilterModel = model<'task' | 'bug' | 'story' | 'epic' | null>(null);
   readonly priorityFilterModel = model<'low' | 'medium' | 'high' | 'critical' | null>(null);
+
+  /** Per-column client-side search (title, description, labels, type, priority, key, assignee, …) */
+  readonly columnSearchQueries = signal<Record<string, string>>({});
+
+  /** Drag-and-drop is disabled while any column search is active (filtered lists break CDK indices). */
+  readonly boardHasColumnSearch = computed(() =>
+    Object.values(this.columnSearchQueries()).some((v) => (v ?? '').trim().length > 0),
+  );
 
   // Sync model signals with regular signals
   private readonly syncAssigneeFilterEffect = effect(() => {
@@ -545,25 +535,7 @@ export class KanbanBoard {
   // Initialize members loading
   // Members resource automatically loads when projectId changes via navigation service
 
-  // Load board settings from localStorage on init
   constructor() {
-    this.loadBoardSettings();
-    this.isInitializing = false;
-
-    // Save settings to localStorage when they change (but not during initial load)
-    effect(() => {
-      if (this.isInitializing) return;
-
-      const visibility = this.columnVisibility();
-      const order = this.columnOrder();
-      const widths = this.columnWidths();
-      this.saveBoardSettings({
-        columnVisibility: visibility,
-        columnOrder: order,
-        columnWidths: widths,
-      });
-    });
-
     effect(() => {
       const boardId = this.boardId();
       if (!boardId) return;
@@ -584,6 +556,11 @@ export class KanbanBoard {
       if (!currentSwimlane || currentSwimlane === swimlaneType) return;
       void this.handleSwimlaneChange(swimlaneType);
     });
+
+    effect(() => {
+      this.boardId();
+      this.columnSearchQueries.set({});
+    });
   }
 
   readonly issues = computed<IssueListItem[]>(() => {
@@ -591,6 +568,7 @@ export class KanbanBoard {
     if (!response) return [];
 
     const uniqueIssues = new Map<string, IssueListItem>();
+    const labelsById = new Map(this.projectLabels().map((label) => [label.id, label]));
     const lists =
       response.swimlane_type === 'none'
         ? response.lists
@@ -599,7 +577,7 @@ export class KanbanBoard {
     for (const list of lists) {
       for (const issue of list.issues) {
         if (!uniqueIssues.has(issue.id)) {
-          uniqueIssues.set(issue.id, this.mapBoardIssueToIssueListItem(issue));
+          uniqueIssues.set(issue.id, this.mapBoardIssueToIssueListItem(issue, labelsById));
         }
       }
     }
@@ -671,77 +649,44 @@ export class KanbanBoard {
     { value: 'assignee', label: 'By assignee' },
   ]);
 
-  // All available columns (for settings)
-  readonly allColumns = computed<StatusColumn[]>(() => {
-    return [
-      {
-        status: 'todo',
-        label: this.translateService.instant('issues.status.todo'),
-        issues: [],
-        visible: true,
-      },
-      {
-        status: 'in_progress',
-        label: this.translateService.instant('issues.status.inProgress'),
-        issues: [],
-        visible: true,
-      },
-      {
-        status: 'done',
-        label: this.translateService.instant('issues.status.done'),
-        issues: [],
-        visible: true,
-      },
-      {
-        status: 'cancelled',
-        label: this.translateService.instant('issues.status.cancelled'),
-        issues: [],
-        visible: true,
-      },
-    ];
+  readonly columns = computed<BoardColumn[]>(() => {
+    const filteredIds = new Set(this.filteredIssues().map((issue) => issue.id));
+    const labelsById = new Map(this.projectLabels().map((label) => [label.id, label]));
+    return this.boardIssueLists()
+      .slice()
+      .sort((a, b) => a.position - b.position)
+      .map((list) => {
+        const issues = list.issues
+          .map((issue) => this.mapBoardIssueToIssueListItem(issue, labelsById))
+          .filter((issue) => filteredIds.has(issue.id));
+
+        return {
+          id: list.id,
+          title: this.getBoardListTitle(list),
+          issues,
+          listType: list.list_type,
+          position: list.position,
+        };
+      });
   });
 
-  // Columns with issues grouped, respecting order and visibility
-  readonly columns = computed<StatusColumn[]>(() => {
-    const issues = this.filteredIssues();
-    const order = this.columnOrder();
-    const visibility = this.columnVisibility();
-    const widths = this.columnWidths();
-
-    // Create columns in the specified order
-    const statusColumns: StatusColumn[] = order.map((status) => {
-      const label = this.getColumnLabel(status);
+  readonly visibleColumns = computed<BoardColumnView[]>(() => {
+    const queries = this.columnSearchQueries();
+    return this.columns().map((col) => {
+      const raw = queries[col.id] ?? '';
+      const q = raw.trim().toLowerCase();
+      const columnSearchActive = q.length > 0;
+      const fullIssueCount = col.issues.length;
+      const issues = columnSearchActive
+        ? col.issues.filter((issue) => this.issueMatchesColumnSearch(issue, q))
+        : col.issues;
       return {
-        status,
-        label,
-        issues: [],
-        visible: visibility[status] ?? true,
-        width: widths[status] || undefined,
+        ...col,
+        issues,
+        fullIssueCount,
+        columnSearchActive,
       };
     });
-
-    // Group issues by status
-    issues.forEach((issue) => {
-      const column = statusColumns.find((col) => col.status === issue.status);
-      if (column) {
-        column.issues.push(issue);
-      }
-    });
-
-    return statusColumns;
-  });
-
-  // Only visible columns
-  readonly visibleColumns = computed<StatusColumn[]>(() => {
-    return this.columns().filter((col) => col.visible);
-  });
-
-  // Grid template columns for CSS
-  readonly gridTemplateColumns = computed(() => {
-    const visibleCols = this.visibleColumns();
-    if (visibleCols.length === 0) return '1fr';
-
-    return visibleCols.map((col) => (col.width ? `${col.width}px` : '1fr')).join(' ');
   });
 
   readonly errorMessage = computed(() => {
@@ -777,6 +722,9 @@ export class KanbanBoard {
         }
       }
       this.issueListMap.set(issueListMap);
+
+      // Ensure newly created labels are mapped to label ids returned by board issues.
+      await this.ensureLabelsMappedForBoard(response);
     } catch (error) {
       this.boardIssuesError.set(error);
       this.boardIssuesResponse.set(null);
@@ -801,8 +749,10 @@ export class KanbanBoard {
     return Array.from(uniqueListMap.values()).sort((a, b) => a.position - b.position);
   }
 
-  private mapBoardIssueToIssueListItem(issue: BoardIssueItemResponse): IssueListItem {
-    const labelsById = new Map(this.projectLabels().map((label) => [label.id, label]));
+  private mapBoardIssueToIssueListItem(
+    issue: BoardIssueItemResponse,
+    labelsById: Map<string, Label>,
+  ): IssueListItem {
     return {
       id: issue.id,
       project_id: issue.project_id,
@@ -810,6 +760,7 @@ export class KanbanBoard {
       key: issue.key,
       project_key: issue.project_key,
       title: issue.title,
+      description: issue.description ?? undefined,
       type: this.normalizeIssueType(issue.type),
       status: this.normalizeIssueStatus(issue.status),
       priority: this.normalizeIssuePriority(issue.priority),
@@ -849,34 +800,7 @@ export class KanbanBoard {
       : 'medium';
   }
 
-  private resolveTargetListId(newStatus: IssueStatus, sourceListId?: string): string | undefined {
-    const lists = this.boardIssueLists();
-    const statusAliases: Record<IssueStatus, string[]> = {
-      todo: ['todo', 'to_do', 'to-do', 'backlog'],
-      in_progress: ['in_progress', 'in-progress', 'inprogress', 'doing'],
-      done: ['done', 'closed', 'complete', 'completed'],
-      cancelled: ['cancelled', 'canceled'],
-    };
-
-    const target = lists.find((list) => {
-      const config = (list.list_config ?? {}) as Record<string, unknown>;
-      const candidates = [
-        config['status'],
-        config['issue_status'],
-        config['column_status'],
-        config['name'],
-        config['title'],
-      ]
-        .filter((value): value is string => typeof value === 'string')
-        .map((value) => value.toLowerCase().replace(/\s+/g, '_'));
-
-      return candidates.some((candidate) => statusAliases[newStatus].includes(candidate));
-    });
-
-    return target?.id ?? sourceListId ?? lists[0]?.id;
-  }
-
-  async handleDrop(event: CdkDragDrop<IssueListItem[]>, newStatus: IssueStatus): Promise<void> {
+  async handleDrop(event: CdkDragDrop<IssueListItem[]>, targetListId: string): Promise<void> {
     const previousContainer = event.previousContainer;
     const currentContainer = event.container;
     const movedIssue = previousContainer.data[event.previousIndex];
@@ -896,8 +820,6 @@ export class KanbanBoard {
         try {
           const boardId = this.boardId();
           const sourceListId = this.issueListMap().get(movedIssue.id);
-          const targetListId = this.resolveTargetListId(newStatus, sourceListId);
-
           if (!sourceListId || !targetListId) {
             throw new Error('Unable to resolve board lists for move');
           }
@@ -963,53 +885,123 @@ export class KanbanBoard {
   }
 
   handleCreateIssue(): void {
-    this.modal.open(CreateIssueModal, this.viewContainerRef, {
-      size: 'md',
-      closable: true,
-      data: {
-        projectId: this.projectId(),
-      },
-    });
+    void this.openCreateIssueModal();
   }
 
-  getColumnLabel(status: IssueStatus): string {
-    const labels: Record<IssueStatus, string> = {
-      todo: this.translateService.instant('issues.status.todo'),
-      in_progress: this.translateService.instant('issues.status.inProgress'),
-      done: this.translateService.instant('issues.status.done'),
-      cancelled: this.translateService.instant('issues.status.cancelled'),
-    };
-    return labels[status];
+  handleAddColumn(): void {
+    void this.openAddBoardColumnModal();
   }
 
-  toggleColumnVisibility(status: IssueStatus, visible: boolean): void {
-    this.columnVisibility.update((current) => ({
-      ...current,
-      [status]: visible,
-    }));
+  private async openAddBoardColumnModal(): Promise<void> {
+    const projectId = this.projectId();
+    const boardId = this.boardId();
+    if (!projectId || !boardId) {
+      return;
+    }
+
+    const created = await firstValueFrom(
+      this.modal.open<boolean | null>(AddBoardColumnModal, this.viewContainerRef, {
+        size: 'md',
+        closable: true,
+        data: {
+          boardId,
+          projectId,
+          labels: this.projectLabels(),
+          members: this.projectMembers(),
+        },
+      }),
+    );
+
+    if (created) {
+      await this.loadBoardIssues(boardId);
+    }
   }
 
-  resetColumnOrder(): void {
-    this.columnOrder.set([...this.DEFAULT_COLUMN_ORDER]);
+  handleCreateLabelFromEmptyState(): void {
+    void this.createLabelFromPopup();
+  }
+
+  private async createLabelFromPopup(): Promise<void> {
+    const projectId = this.projectId();
+    if (!projectId) {
+      return;
+    }
+
+    const result = await firstValueFrom(
+      this.modal.open<CreateLabelModalResult | null>(CreateLabelModal, this.viewContainerRef, {
+        size: 'sm',
+        data: {
+          existingLabelNames: this.projectLabels().map((label) => label.name),
+        },
+      }),
+    );
+
+    if (!result) {
+      return;
+    }
+
+    try {
+      await this.labelService.createLabel(projectId, result);
+      await this.loadProjectLabels(projectId);
+      this.toast.success('Label created');
+    } catch {
+      this.toast.error('Failed to create label');
+    }
+  }
+
+  private async openCreateIssueModal(): Promise<void> {
+    const projectId = this.projectId();
+    const boardId = this.boardId();
+
+    await firstValueFrom(
+      this.modal.open(CreateIssueModal, this.viewContainerRef, {
+        size: 'md',
+        closable: true,
+        data: {
+          projectId,
+        },
+      }),
+    );
+
+    if (projectId) {
+      await this.loadProjectLabels(projectId);
+    }
+    if (boardId) {
+      await this.loadBoardIssues(boardId);
+    }
+  }
+
+  private async ensureLabelsMappedForBoard(response: BoardIssuesResponse): Promise<void> {
+    const projectId = this.projectId();
+    if (!projectId) {
+      return;
+    }
+
+    const currentIds = new Set(this.projectLabels().map((label) => label.id));
+    const boardLabelIds = new Set<string>();
+    const lists =
+      response.swimlane_type === 'none'
+        ? response.lists
+        : response.swimlanes.flatMap((swimlane) => swimlane.lists);
+
+    for (const list of lists) {
+      for (const issue of list.issues) {
+        for (const labelId of issue.label_ids || []) {
+          boardLabelIds.add(labelId);
+        }
+      }
+    }
+
+    const hasMissingMapping = Array.from(boardLabelIds).some((id) => !currentIds.has(id));
+    if (hasMissingMapping) {
+      await this.loadProjectLabels(projectId);
+    }
   }
 
   resetSettings(dropdown: Dropdown): void {
-    this.columnVisibility.set({
-      todo: true,
-      in_progress: true,
-      done: true,
-      cancelled: true,
-    });
-    this.columnOrder.set([...this.DEFAULT_COLUMN_ORDER]);
-    this.columnWidths.set({
-      todo: 0,
-      in_progress: 0,
-      done: 0,
-      cancelled: 0,
-    });
+    this.clearFilters(dropdown);
     this.swimlaneTypeModel.set('none');
     void this.handleSwimlaneChange('none');
-    dropdown.open.set(false);
   }
 
   async handleSwimlaneChange(swimlaneType: 'none' | 'epic' | 'assignee'): Promise<void> {
@@ -1027,7 +1019,7 @@ export class KanbanBoard {
     try {
       const response = await this.labelService.listProjectLabels(projectId, {
         page: 1,
-        limit: 200,
+        limit: 100,
       });
       this.projectLabels.set(response.labels || []);
     } catch {
@@ -1057,60 +1049,67 @@ export class KanbanBoard {
     }
   }
 
-  private loadBoardSettings(): void {
-    try {
-      const stored = localStorage.getItem(this.STORAGE_KEY);
-      if (stored) {
-        const settings: BoardSettings = JSON.parse(stored);
-
-        if (settings.columnVisibility) {
-          this.columnVisibility.set({
-            todo: settings.columnVisibility.todo ?? true,
-            in_progress: settings.columnVisibility.in_progress ?? true,
-            done: settings.columnVisibility.done ?? true,
-            cancelled: settings.columnVisibility.cancelled ?? true,
-          });
-        }
-
-        if (settings.columnOrder && settings.columnOrder.length === 4) {
-          // Validate that all statuses are present
-          const allStatuses: IssueStatus[] = ['todo', 'in_progress', 'done', 'cancelled'];
-          const isValid = allStatuses.every((status) => settings.columnOrder.includes(status));
-          if (isValid) {
-            this.columnOrder.set(settings.columnOrder);
-          }
-        }
-
-        if (settings.columnWidths) {
-          this.columnWidths.set({
-            todo: settings.columnWidths.todo || 0,
-            in_progress: settings.columnWidths.in_progress || 0,
-            done: settings.columnWidths.done || 0,
-            cancelled: settings.columnWidths.cancelled || 0,
-          });
-        }
-      }
-    } catch (error) {
-      console.error('Failed to load board settings:', error);
-    }
+  onColumnSearchChange(columnId: string, value: string): void {
+    this.columnSearchQueries.update((prev) => ({ ...prev, [columnId]: value }));
   }
 
-  private saveBoardSettings(settings: BoardSettings): void {
-    try {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(settings));
-    } catch (error) {
-      console.error('Failed to save board settings:', error);
-    }
+  private issueMatchesColumnSearch(issue: IssueListItem, qLower: string): boolean {
+    const tokens = qLower.split(/\s+/).filter(Boolean);
+    if (!tokens.length) return true;
+    const haystack = this.buildIssueSearchHaystack(issue);
+    return tokens.every((tok) => haystack.includes(tok));
   }
 
-  getColumnColorClass(status: IssueStatus): string {
-    const colorMap: Record<IssueStatus, string> = {
-      todo: 'text-muted-foreground',
-      in_progress: 'text-amber-500',
-      done: 'text-green-500',
-      cancelled: 'text-muted-foreground',
+  private buildIssueSearchHaystack(issue: IssueListItem): string {
+    const statusKey = this.issueStatusTranslationKey(issue.status);
+    const statusLabel = this.translateService.instant(`issues.status.${statusKey}`);
+    const typeLabel = this.translateService.instant(`issues.type.${issue.type}`);
+    const priorityLabel = this.translateService.instant(`issues.priority.${issue.priority}`);
+    const assignee = issue.assignee_id ? this.getAssignee(issue.assignee_id) : undefined;
+    const assigneeName = assignee?.user_name ?? '';
+    const labelNames = (issue.labels ?? []).map((l) => l.name).join(' ');
+    const description = (issue.description ?? '').replace(/<[^>]+>/g, ' ');
+    const parts = [
+      issue.title,
+      description,
+      issue.key,
+      issue.project_key,
+      String(issue.issue_number),
+      issue.type,
+      issue.status,
+      issue.priority,
+      typeLabel,
+      priorityLabel,
+      statusLabel,
+      assigneeName,
+      labelNames,
+      issue.story_points != null ? String(issue.story_points) : '',
+    ];
+    return parts.filter(Boolean).join(' ').toLowerCase();
+  }
+
+  private issueStatusTranslationKey(status: IssueListItem['status']): string {
+    const map: Record<IssueListItem['status'], string> = {
+      todo: 'todo',
+      in_progress: 'inProgress',
+      done: 'done',
+      cancelled: 'cancelled',
     };
-    return colorMap[status];
+    return map[status];
+  }
+
+  private getBoardListTitle(list: BoardListWithIssuesResponse): string {
+    const config = (list.list_config ?? {}) as Record<string, unknown>;
+    const explicitTitle =
+      (typeof config['title'] === 'string' && config['title']) ||
+      (typeof config['name'] === 'string' && config['name']) ||
+      (typeof config['status'] === 'string' && config['status']);
+
+    if (explicitTitle) {
+      return explicitTitle;
+    }
+
+    return `${list.list_type} ${list.position + 1}`;
   }
 
   getAssignee(assigneeId: string | undefined): ProjectMember | undefined {

@@ -3,6 +3,7 @@
 ## Backend (FastAPI/Python)
 
 ### Tests unitaires et intégration
+
 ```bash
 cd services/api
 
@@ -110,9 +111,9 @@ pnpm test --include='**/demo.spec.ts'
 ## Docker
 
 ```bash
-# Backend dans Docker
+# Backend dans Docker (stack dev : db, redis, api)
 docker-compose -f docker-compose.dev.yml exec api poetry run pytest
 
-# Frontend dans Docker
-docker-compose -f docker-compose.dev.yml exec app1 pnpm test
+# Frontend : pas de service app1 dans docker-compose.dev.yml — lancer en local (voir ci-dessus) ou
+# docker-compose -f docker-compose.yml run --rm app1 pnpm test
 ```

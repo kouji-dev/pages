@@ -222,6 +222,9 @@ class BoardIssueItemResponse(BaseModel):
     project_id: UUID = Field(..., description="ID of the project the issue belongs to")
     project_key: str = Field(..., description="Key of the project (e.g. PROJ)")
     title: str
+    description: str | None = Field(
+        None, description="Plain-text body for client-side search / previews"
+    )
     type: str = "task"
     status: str = "todo"
     priority: str = "medium"

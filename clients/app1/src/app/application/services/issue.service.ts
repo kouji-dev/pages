@@ -48,6 +48,8 @@ export interface IssueListItem {
   issue_number: number;
   key: string;
   title: string;
+  /** Present when loaded from board API; used for client-side search */
+  description?: string;
   type: 'task' | 'bug' | 'story' | 'epic';
   status: 'todo' | 'in_progress' | 'done' | 'cancelled';
   priority: 'low' | 'medium' | 'high' | 'critical';

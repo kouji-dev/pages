@@ -18,6 +18,8 @@ Script Python qui compare la structure de la base de données avec les modèles 
 
 #### Utilisation
 
+> Exécutez les commandes `docker-compose -f docker-compose.dev.yml …` depuis la **racine du dépôt pages**.
+
 ##### Audit simple
 
 ```bash
@@ -44,7 +46,7 @@ docker-compose -f docker-compose.dev.yml run --rm api poetry run python scripts/
 Cela génère un fichier `scripts/fix_migrations.sql` que vous pouvez appliquer :
 
 ```bash
-# Via Docker
+# Depuis la racine du dépôt pages
 docker-compose -f docker-compose.dev.yml exec -T db psql -U postgres -d pages -f /tmp/fix_migrations.sql
 
 # Ou en copiant le fichier dans le conteneur
@@ -131,9 +133,9 @@ docker-compose -f docker-compose.dev.yml run --rm api poetry run alembic upgrade
 # Générer le script SQL
 docker-compose -f docker-compose.dev.yml run --rm api poetry run python scripts/migration_audit.py --generate-sql
 
-# Appliquer le script
-docker cp services/api/scripts/fix_migrations.sql $(docker-compose -f docker-compose.dev.yml ps -q db):/tmp/
-docker-compose -f docker-compose.dev.yml exec db psql -U postgres -d pages -f /tmp/fix_migrations.sql
+# Appliquer le script (conteneur Postgres kouji-factory)
+docker cp services/api/scripts/fix_migrations.sql local-dev-db:/tmp/
+docker exec -i local-dev-db psql -U postgres -d pages -f /tmp/fix_migrations.sql
 ```
 
 ### 3. Vérification
@@ -151,18 +153,21 @@ Vous devriez voir : `✅ Aucune différence détectée !`
 ### Erreur de connexion à la base de données
 
 Assurez-vous que :
+
 1. Docker est démarré
-2. La base de données est en cours d'exécution : `docker-compose -f docker-compose.dev.yml up -d db`
-3. La variable d'environnement `DATABASE_URL` est correcte (dans Docker, elle est configurée automatiquement)
+2. La base de données est démarrée : `docker-compose -f docker-compose.dev.yml up -d db` (et la base `pages` créée si besoin)
+3. La variable d'environnement `DATABASE_URL` est correcte (dans Docker, elle est configurée automatiquement dans `docker-compose.dev.yml`)
 
 ### Le script ne détecte pas certaines différences
 
 Le script compare uniquement :
+
 - Les noms de colonnes
 - Les noms d'index
 - Les noms de tables
 
 Il ne compare pas :
+
 - Les types de données exacts
 - Les contraintes de clés étrangères (seulement leur existence)
 - Les valeurs par défaut exactes
@@ -174,4 +179,3 @@ Pour une vérification plus approfondie, utilisez `alembic revision --autogenera
 - Le script ignore la table `alembic_version` dans la comparaison
 - Les colonnes/index supplémentaires dans la DB ne sont pas considérés comme des erreurs (sauf avec `--verbose`)
 - Le script SQL généré utilise `IF NOT EXISTS` pour éviter les erreurs si les éléments existent déjà
-

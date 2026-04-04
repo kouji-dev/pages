@@ -44,6 +44,7 @@ poetry run mypy src
 ```
 
 **Résultats attendus :**
+
 - ✅ Black : Tous les fichiers formatés
 - ✅ Ruff : Aucune erreur de linting
 - ✅ MyPy : 407 fichiers vérifiés sans erreur
@@ -64,10 +65,12 @@ poetry run pytest tests/unit/ -v \
 ```
 
 **Résultats attendus :**
+
 - ✅ ~604 tests unitaires passent
 - 📊 Couverture partielle générée (~74%)
 
 **Rapports générés :**
+
 - `coverage.xml` - Pour Codecov/CI
 - `htmlcov/index.html` - Rapport HTML interactif
 
@@ -96,6 +99,7 @@ poetry run pytest tests/integration/ -v \
 ```
 
 **Résultats attendus :**
+
 - ✅ ~338 tests d'intégration passent
 - 📊 Couverture cumulée avec tests unitaires (~81%)
 
@@ -113,6 +117,7 @@ poetry run pytest tests/functional/ -v
 ```
 
 **Résultats attendus :**
+
 - ✅ Tests fonctionnels passent
 - ⚠️ Ignorer `test_custom_field_workflow.py` si besoin
 
@@ -137,6 +142,7 @@ poetry run pytest \
 ```
 
 **Résultats attendus :**
+
 - ✅ **942 tests passent** (604 unitaires + 338 intégration)
 - 📊 **Couverture : 81%**
 - ⚠️ ~1800+ warnings (deprecations, peuvent être ignorés)
@@ -170,7 +176,7 @@ poetry run bandit -r src
 ```bash
 cd services/api
 
-# Démarrer la base de données principale
+# Démarrer la base de données principale (même stack que kouji-factory : local-dev-db, port 5433)
 docker-compose -f ../../docker-compose.dev.yml up -d db
 
 # Vérifier l'état actuel
@@ -220,6 +226,7 @@ docker-compose -f docker-compose.test.yml down
 ```
 
 **Configuration automatique :**
+
 - Port : `5434` (pour éviter les conflits avec PostgreSQL principal sur 5432)
 - User : `postgres`
 - Password : `postgres`
@@ -229,12 +236,12 @@ docker-compose -f docker-compose.test.yml down
 ### Base de données principale (pour migrations)
 
 ```bash
-# Démarrer la base de données principale
+# Démarrer la base de données principale (postgres:17-alpine, conteneur local-dev-db)
 cd services/api
 docker-compose -f ../../docker-compose.dev.yml up -d db
 
-# Vérifier que le container est healthy
-docker ps | grep pages-db
+# Vérifier que le conteneur tourne
+docker ps | grep local-dev-db
 ```
 
 ---
@@ -261,12 +268,13 @@ docker ps | grep pages-db
 ```bash
 cd services/api && \
 docker-compose -f docker-compose.test.yml up -d && \
-docker-compose -f ../../docker-compose.dev.yml up -d db && \
 sleep 5 && \
 poetry run black . && \
 poetry run ruff check --fix . && \
 poetry run mypy src && \
 poetry run pytest --cov=src --cov-report=term --ignore=tests/functional/test_custom_field_workflow.py -q && \
+docker-compose -f ../../docker-compose.dev.yml up -d db redis && \
+sleep 2 && \
 docker-compose -f ../../docker-compose.dev.yml run --rm api poetry run alembic current && \
 docker-compose -f ../../docker-compose.dev.yml run --rm api poetry run python scripts/migration_audit.py
 ```
@@ -301,7 +309,8 @@ open htmlcov/index.html
 
 ```bash
 cd services/api && \
-docker-compose -f ../../docker-compose.dev.yml up -d db && \
+docker-compose -f ../../docker-compose.dev.yml up -d db redis && \
+sleep 2 && \
 docker-compose -f ../../docker-compose.dev.yml run --rm api poetry run python scripts/migration_audit.py
 ```
 
@@ -321,12 +330,14 @@ docker-compose -f ../../docker-compose.dev.yml run --rm api poetry run python sc
 ### 🔍 Zones de couverture
 
 **Bien couvertes (>80%) :**
+
 - ✅ Value Objects & Entities
 - ✅ Use Cases principaux
 - ✅ DTOs & Services de sécurité
 - ✅ Middlewares
 
 **À améliorer (<50%) :**
+
 - ⚠️ Endpoints API (0% - normal, testés via intégration)
 - ⚠️ Certains repositories (18-40%)
 - ⚠️ Services de recherche (25%)
@@ -346,6 +357,7 @@ Ces warnings n'empêchent pas le CI de passer et seront corrigés dans une PR d�
 ### 🔧 Outils de migration
 
 **Script d'audit :** `scripts/migration_audit.py`
+
 - Compare la base de données avec les modèles SQLAlchemy
 - Détecte les colonnes, index et tables manquants
 - Génère un script SQL de correction (optionnel)

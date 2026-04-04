@@ -108,3 +108,8 @@ class BoardRepository(ABC):
     async def set_projects_for_group_board(self, board_id: UUID, project_ids: list[UUID]) -> None:
         """Replace the list of projects associated to a group board, preserving order as given."""
         ...
+
+    @abstractmethod
+    async def remove_project_from_group_board(self, board_id: UUID, project_id: UUID) -> None:
+        """Remove one project from a group board mapping (GroupBoardProject row)."""
+        ...

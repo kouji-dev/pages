@@ -69,6 +69,9 @@ import { BoardResponse } from '../../../../application/services/board.service';
               >
                 <div class="board-selector_item-main">
                   <span class="board-selector_item-name">{{ board.name }}</span>
+                  @if (board.board_type === 'group') {
+                    <lib-badge variant="info" class="board-selector_type-badge">Group</lib-badge>
+                  }
                   @if (board.is_default) {
                     <lib-badge variant="default" class="board-selector_default-badge"
                       >Default</lib-badge
@@ -169,6 +172,10 @@ import { BoardResponse } from '../../../../application/services/board.service';
 
       .board-selector_default-badge {
         @apply text-xs;
+      }
+
+      .board-selector_type-badge {
+        @apply shrink-0 text-xs;
       }
 
       .board-selector_empty {

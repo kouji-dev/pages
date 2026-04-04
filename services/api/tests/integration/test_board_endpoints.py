@@ -870,3 +870,24 @@ async def test_create_group_board_and_set_projects(client: AsyncClient, test_use
         headers=auth_headers,
     )
     assert update_resp.status_code == 204
+
+    board_id = board_data["id"]
+    remove_resp = await client.delete(
+        f"/api/v1/boards/{board_id}/projects/{project1.id}",
+        headers=auth_headers,
+    )
+    assert remove_resp.status_code == 204
+
+    remove_last = await client.delete(
+        f"/api/v1/boards/{board_id}/projects/{project2.id}",
+        headers=auth_headers,
+    )
+    assert remove_last.status_code == 400
+    assert "at least one" in remove_last.json()["detail"].lower()
+
+    remove_unknown = await client.delete(
+        f"/api/v1/boards/{board_id}/projects/{project1.id}",
+        headers=auth_headers,
+    )
+    assert remove_unknown.status_code == 400
+    assert "not linked" in remove_unknown.json()["detail"].lower()

@@ -3,7 +3,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.domain.entities.board import Board, BoardList
@@ -296,4 +296,14 @@ class SQLAlchemyBoardRepository(BoardRepository):
             )
             self._session.add(mapping)
 
+        await self._session.flush()
+
+    async def remove_project_from_group_board(self, board_id: UUID, project_id: UUID) -> None:
+        """Delete the group-board ↔ project mapping row when it exists."""
+        await self._session.execute(
+            delete(GroupBoardProjectModel).where(
+                GroupBoardProjectModel.group_board_id == board_id,
+                GroupBoardProjectModel.project_id == project_id,
+            )
+        )
         await self._session.flush()

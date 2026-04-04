@@ -14,9 +14,13 @@ from src.domain.value_objects import Password
 from src.infrastructure.config import get_settings
 from src.infrastructure.database import get_session_context, init_db
 from src.infrastructure.database.models import (
+    BoardListModel,
+    BoardModel,
     FavoriteModel,
     FolderModel,
+    IssueLabelModel,
     IssueModel,
+    LabelModel,
     OrganizationMemberModel,
     OrganizationModel,
     PageModel,
@@ -711,10 +715,15 @@ async def seed_database() -> None:
             planned_sprint.id: planned_sprint_order,
         }
 
+        existing_sprint_issue_pairs = {(si.sprint_id, si.issue_id) for si in sprint_issues}
+
         for issue in backlog_issues:
             if random.random() < 0.4:  # 40% chance
                 # Randomly choose which sprint to assign to
                 sprint = random.choice([completed_sprint, active_sprint, planned_sprint])
+                if (sprint.id, issue.id) in existing_sprint_issue_pairs:
+                    continue
+                existing_sprint_issue_pairs.add((sprint.id, issue.id))
                 sprint_issues.append(
                     SprintIssueModel(
                         sprint_id=sprint.id,
@@ -727,6 +736,129 @@ async def seed_database() -> None:
         if sprint_issues:
             session.add_all(sprint_issues)
             await session.flush()
+
+        # Labels, issue↔label links, and Kanban boards (main project)
+        print("🏷️ Creating labels, board columns, and boards...")
+        label_todo = LabelModel(
+            id=uuid4(),
+            project_id=project.id,
+            name="To Do",
+            color="#64748b",
+            description="Work not started",
+        )
+        label_in_progress = LabelModel(
+            id=uuid4(),
+            project_id=project.id,
+            name="In Progress",
+            color="#2563eb",
+            description="Actively being worked on",
+        )
+        label_done = LabelModel(
+            id=uuid4(),
+            project_id=project.id,
+            name="Done",
+            color="#16a34a",
+            description="Completed work",
+        )
+        workflow_labels = [label_todo, label_in_progress, label_done]
+        session.add_all(workflow_labels)
+        await session.flush()
+
+        status_to_label_id = {
+            "todo": label_todo.id,
+            "in_progress": label_in_progress.id,
+            "done": label_done.id,
+        }
+        seeded_issue_labels: list[IssueLabelModel] = []
+        for issue in issues:
+            label_id = status_to_label_id.get(issue.status)
+            if label_id is not None:
+                seeded_issue_labels.append(
+                    IssueLabelModel(
+                        id=uuid4(),
+                        issue_id=issue.id,
+                        label_id=label_id,
+                    )
+                )
+        if seeded_issue_labels:
+            session.add_all(seeded_issue_labels)
+            await session.flush()
+
+        board_workflow = BoardModel(
+            id=uuid4(),
+            project_id=project.id,
+            organization_id=None,
+            name="Team board",
+            description="Kanban by workflow labels (To Do / In Progress / Done)",
+            scope_config=None,
+            is_default=True,
+            board_type="project",
+            swimlane_type="none",
+            position=0,
+            created_by=admin_user.id,
+        )
+        board_sprints = BoardModel(
+            id=uuid4(),
+            project_id=project.id,
+            organization_id=None,
+            name="Sprint board",
+            description="Issues grouped by sprint (milestone columns)",
+            scope_config=None,
+            is_default=False,
+            board_type="project",
+            swimlane_type="none",
+            position=1,
+            created_by=admin_user.id,
+        )
+        session.add_all([board_workflow, board_sprints])
+        await session.flush()
+
+        seeded_board_lists = [
+            BoardListModel(
+                id=uuid4(),
+                board_id=board_workflow.id,
+                list_type="label",
+                list_config={"label_id": str(label_todo.id)},
+                position=0,
+            ),
+            BoardListModel(
+                id=uuid4(),
+                board_id=board_workflow.id,
+                list_type="label",
+                list_config={"label_id": str(label_in_progress.id)},
+                position=1,
+            ),
+            BoardListModel(
+                id=uuid4(),
+                board_id=board_workflow.id,
+                list_type="label",
+                list_config={"label_id": str(label_done.id)},
+                position=2,
+            ),
+            BoardListModel(
+                id=uuid4(),
+                board_id=board_sprints.id,
+                list_type="milestone",
+                list_config={"sprint_id": str(completed_sprint.id)},
+                position=0,
+            ),
+            BoardListModel(
+                id=uuid4(),
+                board_id=board_sprints.id,
+                list_type="milestone",
+                list_config={"sprint_id": str(active_sprint.id)},
+                position=1,
+            ),
+            BoardListModel(
+                id=uuid4(),
+                board_id=board_sprints.id,
+                list_type="milestone",
+                list_config={"sprint_id": str(planned_sprint.id)},
+                position=2,
+            ),
+        ]
+        session.add_all(seeded_board_lists)
+        await session.flush()
 
         # Create Spaces
         print("📚 Creating spaces...")
@@ -877,6 +1009,8 @@ async def seed_database() -> None:
         print(f"   - {len(folders)} folders (with hierarchical structure)")
         print(f"   - {len(projects)} projects")
         print(f"   - {len(issues)} issues")
+        print("   - 3 workflow labels (To Do, In Progress, Done) + issue label links")
+        print("   - 2 boards (default Team board + Sprint board) with 6 list columns")
         print(f"   - {len(sprints)} sprints (1 completed, 1 active, 1 planned)")
         print(f"   - {len(sprint_issues)} sprint-issue assignments")
         print(f"   - {len(spaces)} spaces")

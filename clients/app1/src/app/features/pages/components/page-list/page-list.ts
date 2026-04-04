@@ -54,11 +54,14 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
       }
 
       .page-list_items {
-        @apply flex flex-col;
-        @apply gap-2;
+        @apply grid gap-4;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
       }
 
       .page-list_item {
+        @apply w-full;
+        /* At least 300px when the column is wide enough; shrink with column below 300px */
+        min-width: min(100%, 300px);
         @apply p-4;
         @apply rounded-lg;
         @apply border;
@@ -70,12 +73,12 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
       }
 
       .page-list_item-content {
-        @apply flex flex-col;
+        @apply flex min-w-0 flex-col;
         @apply gap-2;
       }
 
       .page-list_item-title {
-        @apply text-base font-semibold;
+        @apply min-w-0 truncate text-base font-semibold;
         @apply text-foreground;
         margin: 0;
       }

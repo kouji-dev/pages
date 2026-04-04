@@ -7,21 +7,28 @@
 
 **Note**: Cette phase implémente un système complet de boards pour la gestion visuelle des issues, inspiré de GitLab. Les boards permettent de créer des vues personnalisées avec des colonnes dynamiques basées sur des critères (labels, assignés, milestones).
 
-**Implementation status**:
-| Phase   | Description                          | Status   |
+**Implementation status** (updated from codebase audit + parallel implementation pass):
+| Phase | Description | Status |
 |---------|--------------------------------------|----------|
-| 2.5.1   | Labels System Backend                | ✅ Done  |
-| 2.5.2   | Labels System Frontend               | Pending  |
-| 2.5.3   | Issue Boards Data Model & CRUD Backend | ✅ Done  |
-| 2.5.4   | Issue Boards Basic Frontend          | Pending  |
-| 2.5.5   | Board Lists (Columns) Backend        | ✅ Done  |
-| 2.5.6   | Board Lists (Columns) Frontend       | Pending  |
-| 2.5.7   | Drag & Drop with Label Swapping Backend | ✅ Done  |
-| 2.5.8   | Drag & Drop with Label Swapping Frontend | Pending  |
-| 2.5.9   | Multiple Boards Management Backend       | ✅ Done  |
-| 2.5.10  | Multiple Boards Management Frontend      | Pending  |
-| 2.5.11  | Board Scope Configuration Backend        | ✅ Done  |
-| 2.5.12+ | Board Scope Frontend, etc.               | Pending  |
+| 2.5.1 | Labels System Backend | ✅ Done |
+| 2.5.2 | Labels System Frontend | 🟨 Partial — settings label CRUD + selector + issue forms + cards; component tests still open |
+| 2.5.3 | Issue Boards Data Model & CRUD Backend | ✅ Done |
+| 2.5.4 | Issue Boards Basic Frontend | 🟨 Partial — project board tab + selector + create modals (see kanban / project-detail) |
+| 2.5.5 | Board Lists (Columns) Backend | ✅ Done |
+| 2.5.6 | Board Lists (Columns) Frontend | 🟨 Partial — columns + add-column modal; **column horizontal reorder** still open |
+| 2.5.7 | Drag & Drop with Label Swapping Backend | ✅ Done |
+| 2.5.8 | Drag & Drop with Label Swapping Frontend | 🟨 Partial — CDK + API move; optimistic/rollback & tests per spec still open |
+| 2.5.9 | Multiple Boards Management Backend | ✅ Done |
+| 2.5.10 | Multiple Boards Management Frontend | 🟨 Partial — default/duplicate/delete + client search; **edit board**, **reorder boards UI**, **server-side search** open |
+| 2.5.11 | Board Scope Configuration Backend | ✅ Done |
+| 2.5.12+ | Board Scope Frontend, etc. | 🟨 Partial — toolbar scope (assignee/type/priority); **full scope modal** (labels, milestone, reporter, text, points) open |
+| 2.5.13 | Real-Time Filtering Backend | ✅ Done |
+| 2.5.14 | Real-Time Filtering Frontend | 🟨 Partial — per-column search + partial scope; **filter bar** per spec open |
+| 2.5.15 | Swimlanes Backend | ✅ Done |
+| 2.5.16 | Swimlanes Frontend | Pending — API consumed but **no swimlane rows** in UI |
+| 2.5.17 | Group Boards Backend | ✅ Done — includes `DELETE /boards/{id}/projects/{project_id}` |
+| 2.5.18 | Group Boards Frontend | 🟨 Partial — create from project + **Group** badge; **manage projects** UI still open |
+| 2.5.19 | Focus Mode Frontend | 🟨 Partial — localStorage, ESC, hide toolbar + floating exit |
 
 ---
 
@@ -608,9 +615,9 @@
   - [x] Aggregate issues from multiple projects
   - [x] Include project information in issue response
   - [x] Apply scope filters across all projects
-- [ ] Create add/remove projects from group board endpoints
+- [x] Create add/remove projects from group board endpoints
   - [x] POST /api/v1/boards/:id/projects
-  - [ ] DELETE /api/v1/boards/:id/projects/:projectId
+  - [x] DELETE /api/v1/boards/:id/projects/:projectId
 - [x] Implement project filtering in group boards
 - [x] Write group board API tests
 
@@ -710,4 +717,3 @@
 
 - 2 Backend developers (BATATA1, HWIMDA1)
 - 2 Frontend developers (BATATA2, HWIMDA2)
-

@@ -58,6 +58,7 @@ import { SeverityBadge } from '../severity-badge';
       @reference "#mainstyles";
 
       .issue-card {
+        @apply min-w-0 max-w-full;
         @apply p-4;
         @apply rounded-lg;
         @apply border;
@@ -76,12 +77,12 @@ import { SeverityBadge } from '../severity-badge';
         @apply text-sm font-medium;
         @apply text-foreground;
         @apply mb-3;
+        @apply break-words;
         margin: 0 0 0.75rem 0;
       }
 
       .issue-card_footer {
-        @apply flex items-center justify-between;
-        @apply gap-2;
+        @apply flex min-w-0 flex-wrap items-center justify-between gap-2;
       }
 
       .issue-card_labels {
@@ -100,13 +101,11 @@ import { SeverityBadge } from '../severity-badge';
       }
 
       .issue-card_footer-left {
-        @apply flex items-center;
-        @apply gap-2;
+        @apply flex min-w-0 flex-1 flex-wrap items-center gap-2;
       }
 
       .issue-card_footer-right {
-        @apply flex items-center;
-        @apply gap-2;
+        @apply flex shrink-0 items-center gap-2;
       }
 
       .issue-card_key {

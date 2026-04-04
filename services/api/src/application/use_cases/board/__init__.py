@@ -13,6 +13,7 @@ from src.application.use_cases.board.list_project_boards import ListProjectBoard
 from src.application.use_cases.board.move_board_issue import MoveBoardIssueUseCase
 from src.application.use_cases.board.reorder_boards import ReorderBoardsUseCase
 from src.application.use_cases.board.set_default_board import SetDefaultBoardUseCase
+from src.application.use_cases.board.remove_group_board_project import RemoveGroupBoardProjectUseCase
 from src.application.use_cases.board.set_group_board_projects import SetGroupBoardProjectsUseCase
 from src.application.use_cases.board.update_board import UpdateBoardUseCase
 from src.application.use_cases.board.update_board_list import UpdateBoardListUseCase
@@ -32,6 +33,7 @@ __all__ = [
     "ListProjectBoardsUseCase",
     "MoveBoardIssueUseCase",
     "ReorderBoardsUseCase",
+    "RemoveGroupBoardProjectUseCase",
     "SetDefaultBoardUseCase",
     "SetGroupBoardProjectsUseCase",
     "UpdateBoardScopeUseCase",

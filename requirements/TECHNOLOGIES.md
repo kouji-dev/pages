@@ -422,7 +422,7 @@ Load Testing:       k6 (open source)
 Release Management: Semantic Versioning (semver)
                      Conventional Commits
                      Automated changelog generation (standard-version)
-Scripts:            Development scripts (pnpm dev, pnpm test, etc.)
+Scripts:            Development scripts (pnpm dev:api, pnpm dev:app1, pnpm test, etc.)
                      Deployment scripts (scripts/deploy.sh)
                      Release scripts (scripts/release.sh)
                      Self-hosted deployment workflows
@@ -647,9 +647,9 @@ monorepo/
 ```json
 {
   "scripts": {
-    "dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up",
-    "dev:api": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up api",
-    "dev:app1": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up app1",
+    "dev:api": "cd services/api && poetry run dev",
+    "dev:app1": "ng serve app1",
+    "dev:docker": "docker-compose -f docker-compose.dev.yml up",
     "build": "docker-compose run --rm app1 pnpm build",
     "build:api": "docker-compose run --rm api poetry build",
     "test": "docker-compose run --rm app1 pnpm test",

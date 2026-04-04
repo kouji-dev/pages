@@ -4,6 +4,7 @@ import { ProjectService } from '../../../../application/services/project.service
 import { OrganizationService } from '../../../../application/services/organization.service';
 import { NavigationService } from '../../../../application/services/navigation.service';
 import { Modal, ToastService } from 'shared-ui';
+import { LabelService } from '../../../../application/services/label.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
@@ -59,6 +60,19 @@ describe('ProjectSettingsPage', () => {
       error: vi.fn(),
     };
 
+    const labelService = {
+      listProjectLabels: vi.fn().mockResolvedValue({
+        labels: [],
+        total: 0,
+        page: 1,
+        limit: 100,
+        pages: 0,
+      }),
+      createLabel: vi.fn(),
+      updateLabel: vi.fn(),
+      deleteLabel: vi.fn(),
+    };
+
     await TestBed.configureTestingModule({
       imports: [ProjectSettingsPage, TranslateModule.forRoot()],
       providers: [
@@ -67,6 +81,7 @@ describe('ProjectSettingsPage', () => {
         { provide: NavigationService, useValue: navigationService },
         { provide: Modal, useValue: modal },
         { provide: ToastService, useValue: toast },
+        { provide: LabelService, useValue: labelService },
         {
           provide: ActivatedRoute,
           useValue: {

@@ -13,8 +13,8 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subject, fromEvent } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 import { Button, Input, LoadingState, ErrorState, Modal, ToastService } from 'shared-ui';
 import { ProjectService } from '../../../../application/services/project.service';
 import { OrganizationService } from '../../../../application/services/organization.service';
@@ -45,6 +45,8 @@ import { PlanningPage } from '../planning/planning-page';
 import { BacklogPage } from '../backlog/backlog-page';
 import { ReportsPage } from '../reports/reports-page';
 import { BoardService, BoardResponse } from '../../../../application/services/board.service';
+
+const BOARD_FOCUS_MODE_STORAGE_KEY = 'pages.projectBoardFocusMode';
 
 type TabType =
   | 'issues'
@@ -157,26 +159,39 @@ type TabType =
             <div class="project-detail-page_main">
               @if (activeTab() === 'board') {
                 <div class="project-detail-page_board-wrapper">
-                  <div class="project-detail-page_board-toolbar">
-                    <app-board-selector
-                      [boards]="boards()"
-                      [selectedBoardId]="selectedBoardId()"
-                      (boardSelected)="handleBoardSelect($event)"
-                      (createBoard)="handleCreateBoard()"
-                      (createGroupBoard)="handleCreateGroupBoard()"
-                      (duplicateBoard)="handleDuplicateBoard($event)"
-                      (deleteBoard)="handleDeleteBoard($event)"
-                      (setDefaultBoard)="handleSetDefaultBoard($event)"
-                    />
+                  @if (!isBoardFocusMode()) {
+                    <div class="project-detail-page_board-toolbar">
+                      <app-board-selector
+                        [boards]="boards()"
+                        [selectedBoardId]="selectedBoardId()"
+                        (boardSelected)="handleBoardSelect($event)"
+                        (createBoard)="handleCreateBoard()"
+                        (createGroupBoard)="handleCreateGroupBoard()"
+                        (duplicateBoard)="handleDuplicateBoard($event)"
+                        (deleteBoard)="handleDeleteBoard($event)"
+                        (setDefaultBoard)="handleSetDefaultBoard($event)"
+                      />
+                      <lib-button
+                        variant="ghost"
+                        size="sm"
+                        leftIcon="maximize"
+                        (clicked)="toggleBoardFocusMode()"
+                      >
+                        {{ 'projects.board.focusMode' | translate }}
+                      </lib-button>
+                    </div>
+                  }
+                  @if (isBoardFocusMode()) {
                     <lib-button
-                      variant="ghost"
+                      class="project-detail-page_exit-focus"
+                      variant="outline"
                       size="sm"
-                      leftIcon="maximize"
+                      leftIcon="x"
                       (clicked)="toggleBoardFocusMode()"
                     >
-                      {{ isBoardFocusMode() ? 'Exit Focus' : 'Focus Mode' }}
+                      {{ 'projects.board.exitFocus' | translate }}
                     </lib-button>
-                  </div>
+                  }
                   @if (selectedBoardId(); as boardId) {
                     <app-kanban-board [projectId]="projectId()" [boardId]="boardId" />
                   } @else if (isLoadingBoards()) {
@@ -338,14 +353,17 @@ type TabType =
       }
 
       .project-detail-page_board-wrapper {
-        @apply flex flex-col;
-        @apply gap-4;
-        @apply min-h-0;
-        @apply flex-shrink;
+        @apply flex w-full min-h-0 flex-1 flex-col gap-4;
       }
 
       .project-detail-page_board-toolbar {
         @apply flex items-center justify-end gap-2;
+      }
+
+      .project-detail-page_exit-focus {
+        @apply fixed z-50;
+        @apply bottom-4 right-4;
+        @apply shadow-md;
       }
 
       .project-detail-page_sprint-actions {
@@ -508,6 +526,18 @@ export class ProjectDetailPage {
         this.backlogPage.set(1); // Reset to first page on search
         this.loadBacklogIssues();
       });
+
+    fromEvent(document, 'keydown')
+      .pipe(
+        filter((e): e is KeyboardEvent => e instanceof KeyboardEvent),
+        filter((e) => e.key === 'Escape'),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        if (this.isBoardFocusMode()) {
+          this.setBoardFocusMode(false);
+        }
+      });
   }
 
   readonly backlogIssues = computed<SprintIssue[]>(() => {
@@ -599,6 +629,16 @@ export class ProjectDetailPage {
       return;
     }
     this.loadBoards(projectId);
+  });
+
+  /** Restore board focus mode from localStorage when viewing the board tab (per project). */
+  private readonly restoreBoardFocusFromStorageEffect = effect(() => {
+    const projectId = this.projectId();
+    const tab = this.activeTab();
+    if (!projectId || tab !== 'board') {
+      return;
+    }
+    this.isBoardFocusMode.set(this.readBoardFocusFromStorage(projectId));
   });
 
   readonly errorMessage = computed(() => {
@@ -770,7 +810,45 @@ export class ProjectDetailPage {
   }
 
   toggleBoardFocusMode(): void {
-    this.isBoardFocusMode.update((value) => !value);
+    this.setBoardFocusMode(!this.isBoardFocusMode());
+  }
+
+  private setBoardFocusMode(enabled: boolean): void {
+    this.isBoardFocusMode.set(enabled);
+    const id = this.projectId();
+    if (id) {
+      this.writeBoardFocusToStorage(id, enabled);
+    }
+  }
+
+  private readBoardFocusFromStorage(projectId: string): boolean {
+    if (typeof localStorage === 'undefined') {
+      return false;
+    }
+    try {
+      const raw = localStorage.getItem(BOARD_FOCUS_MODE_STORAGE_KEY);
+      if (!raw) {
+        return false;
+      }
+      const map = JSON.parse(raw) as Record<string, boolean>;
+      return Boolean(map[projectId]);
+    } catch {
+      return false;
+    }
+  }
+
+  private writeBoardFocusToStorage(projectId: string, enabled: boolean): void {
+    if (typeof localStorage === 'undefined') {
+      return;
+    }
+    try {
+      const raw = localStorage.getItem(BOARD_FOCUS_MODE_STORAGE_KEY);
+      const map: Record<string, boolean> = raw ? (JSON.parse(raw) as Record<string, boolean>) : {};
+      map[projectId] = enabled;
+      localStorage.setItem(BOARD_FOCUS_MODE_STORAGE_KEY, JSON.stringify(map));
+    } catch {
+      /* ignore quota / private mode */
+    }
   }
 
   readonly shouldHideBoardChrome = computed(() => {

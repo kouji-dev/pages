@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, computed, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Badge, Button, Dropdown, Icon } from 'shared-ui';
+import { Badge, Button, Dropdown, EmptyState, Icon } from 'shared-ui';
 
 export interface LabelSelectorItem {
   id: string;
@@ -11,7 +11,7 @@ export interface LabelSelectorItem {
 @Component({
   selector: 'app-label-selector',
   standalone: true,
-  imports: [Button, Badge, Dropdown, Icon, FormsModule],
+  imports: [Button, Badge, Dropdown, Icon, EmptyState, FormsModule],
   template: `
     <lib-button
       variant="outline"
@@ -40,6 +40,18 @@ export interface LabelSelectorItem {
         <lib-icon name="chevron-down" size="sm" class="label-selector_chevron" />
       </div>
     </lib-button>
+    @if (labels().length === 0) {
+      <div class="label-selector_alert">
+        <lib-empty-state
+          title="No labels yet"
+          message="Create your first label directly from this form."
+          icon="tag"
+          actionLabel="Create Label"
+          actionIcon="plus"
+          (onAction)="handleManageLabelsAction()"
+        />
+      </div>
+    }
 
     <ng-template #dropdownTemplate>
       <div class="label-selector_panel">
@@ -54,7 +66,9 @@ export interface LabelSelectorItem {
         </div>
 
         <div class="label-selector_list">
-          @if (filteredLabels().length === 0) {
+          @if (labels().length === 0) {
+            <p class="label-selector_empty">No labels yet. Use "Create Label" to add one.</p>
+          } @else if (filteredLabels().length === 0) {
             <p class="label-selector_empty">No labels found.</p>
           } @else {
             @for (label of filteredLabels(); track label.id) {
@@ -110,6 +124,11 @@ export interface LabelSelectorItem {
         @apply w-72 p-2 flex flex-col gap-2;
       }
 
+      .label-selector_alert {
+        @apply w-full;
+        @apply mt-1;
+      }
+
       .label-selector_search-input {
         @apply w-full px-3 py-2 rounded-md border border-border;
         @apply bg-background text-foreground;
@@ -149,6 +168,7 @@ export class LabelSelector {
   readonly selectedIds = input<string[]>([]);
   readonly placeholder = input<string>('Select labels');
   readonly selectedIdsChange = output<string[]>();
+  readonly manageLabels = output<void>();
 
   readonly searchQuery = signal('');
 
@@ -181,5 +201,9 @@ export class LabelSelector {
     }
 
     this.selectedIdsChange.emit(Array.from(next));
+  }
+
+  handleManageLabelsAction(): void {
+    this.manageLabels.emit();
   }
 }

@@ -258,6 +258,8 @@
   "projects": {
     "title": "Projects",
     "subtitle": "Manage your projects and track issues in one place.",
+    "backToProject": "Back to Project",
+    "deleteProject": "Delete Project",
     "createProject": "Create Project",
     "loadingProjects": "Loading projects...",
     "loadingProject": "Loading project...",
@@ -272,6 +274,66 @@
     "noProjectsDescription": "Get started by creating your first project to manage issues and tasks.",
     "viewProject": "View",
     "members": "member(s)",
+    "board": {
+      "focusMode": "Focus mode",
+      "exitFocus": "Exit focus"
+    },
+    "settings": {
+      "title": "Project Settings",
+      "subtitle": "Manage your project settings and details.",
+      "details": "Project Details",
+      "name": "Name *",
+      "nameHelper": "Choose a clear and descriptive project name.",
+      "key": "Key",
+      "keyHelper": "Short identifier (uppercase letters and numbers).",
+      "description": "Description",
+      "descriptionHelper": "Optional summary of your project.",
+      "dangerZone": "Danger Zone",
+      "deleteTitle": "Delete this project",
+      "deleteDescription": "This action is permanent and cannot be undone.",
+      "labels": {
+        "title": "Labels",
+        "description": "Create and manage labels used on issues in this project.",
+        "loading": "Loading labels…",
+        "loadErrorTitle": "Could not load labels",
+        "loadErrorMessage": "Something went wrong while loading labels.",
+        "empty": "No labels yet. Create one to organize your issues.",
+        "create": "Create label",
+        "createSuccess": "Label created",
+        "createError": "Failed to create label",
+        "edit": "Edit",
+        "delete": "Delete",
+        "colorSwatchAria": "Label color",
+        "partialList": "Showing {{shown}} of {{total}} labels. Remove some or contact support to manage very large lists.",
+        "createModal": {
+          "title": "Create label",
+          "nameLabel": "Label name",
+          "namePlaceholder": "e.g. Backend",
+          "nameHelper": "Use a short, clear name.",
+          "nameRequired": "Label name is required",
+          "nameDuplicate": "A label with this name already exists",
+          "colorLabel": "Label color",
+          "colorPlaceholder": "#64748B",
+          "colorHelper": "Hex color such as #22C55E or #64748B.",
+          "colorRequired": "Color is required",
+          "colorInvalid": "Enter a valid hex color (e.g. #64748B)",
+          "submit": "Create label"
+        },
+        "editModal": {
+          "title": "Edit label",
+          "saveSuccess": "Label updated",
+          "saveError": "Failed to update label"
+        },
+        "deleteModal": {
+          "title": "Delete label",
+          "message": "Delete the label “{{name}}”? It will be removed from issues that use it.",
+          "hint": "This cannot be undone.",
+          "confirm": "Delete label",
+          "success": "Label deleted",
+          "error": "Failed to delete label"
+        }
+      }
+    },
     "modals": {
       "createProject": "Create Project",
       "projectName": "Project Name",
@@ -649,9 +711,30 @@
     "loadingIssues": "Loading issues...",
     "failedToLoad": "Failed to Load Issues",
     "noIssues": "No issues",
+    "columnSearchPlaceholder": "Search this column…",
+    "noIssuesMatchSearch": "No issues match your search",
     "assigned": "Assigned",
     "overdue": "Overdue",
-    "due": "Due: {{date}}"
+    "due": "Due: {{date}}",
+    "addColumn": {
+      "title": "Add column",
+      "columnType": "Column type",
+      "selectType": "Select type",
+      "typeLabel": "By label",
+      "typeAssignee": "By assignee",
+      "typeMilestone": "By sprint / milestone",
+      "label": "Label",
+      "selectLabel": "Select a label",
+      "noLabels": "No labels in this project. Create a label first.",
+      "selectMember": "Select a member",
+      "sprint": "Sprint",
+      "selectSprint": "Select a sprint",
+      "loadingSprints": "Loading sprints…",
+      "noSprints": "No sprints in this project.",
+      "submit": "Add column",
+      "failedToCreate": "Failed to add column",
+      "failedToLoadSprints": "Failed to load sprints"
+    }
   },
   "sprints": {
     "title": "Sprints",

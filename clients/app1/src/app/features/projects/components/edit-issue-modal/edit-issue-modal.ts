@@ -7,11 +7,13 @@ import {
   input,
   effect,
   ViewChild,
+  ViewContainerRef,
   model,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
 import { Modal, ModalContainer, ModalHeader, ModalContent, ModalFooter } from 'shared-ui';
 import { Button, Input, TextEditor, Select, SelectOption } from 'shared-ui';
 import { ToastService } from 'shared-ui';
@@ -23,6 +25,7 @@ import {
 import { ProjectMembersService } from '../../../../application/services/project-members.service';
 import { LabelService, Label } from '../../../../application/services/label.service';
 import { LabelSelector } from '../label-selector/label-selector';
+import { CreateLabelModal, CreateLabelModalResult } from '../create-label-modal/create-label-modal';
 import { getIssuePriorityConfig, type IssuePriority } from '../../helpers/issue-helpers';
 
 type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
@@ -109,8 +112,12 @@ type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
               [labels]="projectLabels()"
               [selectedIds]="selectedLabelIds()"
               (selectedIdsChange)="selectedLabelIds.set($event)"
+              (manageLabels)="handleManageLabels()"
               placeholder="Select labels"
             />
+            @if (projectLabels().length === 0) {
+              <p class="edit-issue-form_alert">No labels found. Create your first label.</p>
+            }
           </div>
         </form>
       </lib-modal-content>
@@ -158,6 +165,11 @@ type IssueStatus = 'todo' | 'in_progress' | 'done' | 'cancelled';
         @apply text-foreground;
         @apply focus:outline-none focus:ring-2 focus:ring-primary;
       }
+
+      .edit-issue-form_alert {
+        @apply text-xs text-amber-600;
+        margin: 0;
+      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -166,6 +178,7 @@ export class EditIssueModal {
   private readonly issueService = inject(IssueService);
   private readonly toast = inject(ToastService);
   private readonly modal = inject(Modal);
+  private readonly viewContainerRef = inject(ViewContainerRef);
   private readonly projectMembersService = inject(ProjectMembersService);
   private readonly labelService = inject(LabelService);
   private readonly translateService = inject(TranslateService);
@@ -322,6 +335,34 @@ export class EditIssueModal {
       this.toast.error(errorMessage);
     } finally {
       this.isSubmitting.set(false);
+    }
+  }
+
+  async handleManageLabels(): Promise<void> {
+    const projectId = this.issue().project_id;
+    if (!projectId) {
+      return;
+    }
+
+    const result = await firstValueFrom(
+      this.modal.open<CreateLabelModalResult | null>(CreateLabelModal, this.viewContainerRef, {
+        size: 'sm',
+        data: {
+          existingLabelNames: this.projectLabels().map((label) => label.name),
+        },
+      }),
+    );
+    if (!result) {
+      return;
+    }
+
+    try {
+      const createdLabel = await this.labelService.createLabel(projectId, result);
+      await this.loadLabels(projectId, this.issueId());
+      this.selectedLabelIds.update((ids) => Array.from(new Set([...ids, createdLabel.id])));
+      this.toast.success('Label created');
+    } catch {
+      this.toast.error('Failed to create label');
     }
   }
 

@@ -28,6 +28,7 @@ from src.application.use_cases.board import (
     GetBoardUseCase,
     ListBoardListsUseCase,
     MoveBoardIssueUseCase,
+    RemoveGroupBoardProjectUseCase,
     SetDefaultBoardUseCase,
     SetGroupBoardProjectsUseCase,
     UpdateBoardListUseCase,
@@ -197,6 +198,13 @@ def get_set_group_board_projects_use_case(
     return SetGroupBoardProjectsUseCase(board_repository, project_repository)
 
 
+def get_remove_group_board_project_use_case(
+    board_repository: Annotated[BoardRepository, Depends(get_board_repository)],
+) -> RemoveGroupBoardProjectUseCase:
+    """Remove one project from a group board use case."""
+    return RemoveGroupBoardProjectUseCase(board_repository)
+
+
 @router.post(
     "/{board_id}/lists",
     response_model=BoardListColumnResponse,
@@ -349,6 +357,39 @@ async def set_group_board_projects(
     )
     try:
         await use_case.execute(board_id, request.project_ids)
+    except EntityNotFoundException as e:
+        raise HTTPException(status_code=404, detail=e.message) from e
+    except ValidationException as e:
+        raise HTTPException(status_code=400, detail=e.message) from e
+
+
+@router.delete(
+    "/{board_id}/projects/{project_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def remove_group_board_project(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    board_id: UUID,
+    project_id: UUID,
+    use_case: Annotated[
+        RemoveGroupBoardProjectUseCase, Depends(get_remove_group_board_project_use_case)
+    ],
+    board_repository: Annotated[BoardRepository, Depends(get_board_repository)],
+    project_repository: Annotated[ProjectRepository, Depends(get_project_repository)],
+    permission_service: Annotated[PermissionService, Depends(get_permission_service)],
+) -> None:
+    """Remove one project from a group board. Requires edit permission in the board's organization."""
+    board = await board_repository.get_by_id(board_id)
+    if board is None:
+        raise HTTPException(status_code=404, detail="Board not found")
+    project = await project_repository.get_by_id(board.project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+    await require_edit_permission(
+        project.organization_id, current_user, permission_service, project_id=project.id
+    )
+    try:
+        await use_case.execute(board_id, project_id)
     except EntityNotFoundException as e:
         raise HTTPException(status_code=404, detail=e.message) from e
     except ValidationException as e:
